@@ -86,10 +86,10 @@ def pcsWithSVD(train, dimension):
 
   assert zeroMean.shape == train.shape
 
+  # SVD guaranteed that the singular values are in non-increasing order
+  # this means that the u's are already ordered as required, according
+  # to the magnitute of the eigen values
   u, s, vh = scipy.linalg.svd(zeroMean)
-
-  print s
-  print vh.shape
   return vh[0:dimension-1]
 
 
@@ -122,13 +122,13 @@ Returns:
     The second element of the tuple if formed from the vector version of the
       eigen faces. This is kept for optimization reasons.
 """
-def getEigenFaces(images, dimension):
+def getEigenFaces(pcaMethod, images, dimension):
   imgs = map(lambda x: misc.imread(x, flatten=True), images)
   imgSize = imgs[0].shape;
   imgs = trasformImageVectors(imgs)
   imgs = scipy.array(imgs)
 
-  vectors = pcsWithSVD(imgs, dimension)
+  vectors = pcaMethod(imgs, dimension)
   eigenFaces = map(lambda x: transformVectorToImage(x, imgSize), vectors)
 
   return (eigenFaces, vectors)
@@ -141,7 +141,7 @@ def main():
   picFiles = [ os.path.join(PICTURE_PATH, f) for f in os.listdir(imagePath)
                if os.path.isfile(os.path.join(imagePath,f)) ]
 
-  eigenFaces, vectors = getEigenFaces(picFiles, 3)
+  eigenFaces, vectors = getEigenFaces(pcsWithSVD, picFiles, 3)
   plt.imshow(eigenFaces[0], cmap=plt.cm.gray)
   plt.show()
 
