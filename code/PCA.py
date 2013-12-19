@@ -10,17 +10,38 @@ import matplotlib.pyplot as plt
 
 from os.path import isfile, join
 
+
+# The directory path to the images
 PICTURE_PATH = "pics/cambrdige_pics/s1"
 
+# The current directory where the script is ran
 currentDir = os.path.dirname(os.path.abspath(__file__))
 
+
+def convertDataToZeroMean(data):
+  means = scipy.mean(data, axis=0)
+
+  # Step2: Substract the mean of it's column from every element
+  rows, cols = data.shape
+  zeroMean = numpy.zeros((rows, cols))
+  for i in xrange(rows):
+    zeroMean[i] = data[i] - means
+
+  assert zeroMean.shape == data.shape
+
+  return zeroMean
+
 """
+This method uses the  Karhunen Lowe transform to fastly compute the
+eigen vaues of the data.
+
 Arguments:
   train:
     Numpy array of arrays
+  dimension: the dimension to which to reduce the size of the data set.
+
 Returns:
   The principal components of the data.
-
 """
 # Returns the principal components of the given training
 # data by commputing the principal eigen vectors of the
@@ -28,30 +49,22 @@ Returns:
 def pca(train, dimension):
   # Use the Karhunen Lowe transform to fastly compute
   # the principal components.
-
+  rows, cols = train.shape
   # Step1: Get the mean of each column of the data
   # Ie create the average image
-  means = scipy.mean(train, axis=0)
+  u = convertDataToZeroMean(train)
 
-  # Step2: Substract the mean of it's column from every element
-  rows, cols = train.shape
-  u = numpy.zeros((rows, cols))
-  for i in xrange(rows):
-    u[i] = train[i] - means
-
-  assert u.shape == train.shape
-
-  # Step3: Compute the eigen values of the U * U^T matrix
+  # Step2: Compute the eigen values of the U * U^T matrix
   # the size of U * U^T is rows * rows (ie the number of data points you have
   # in your training)
   eigVals, eigVecs = scipy.linalg.eig(u.dot(u.T))
 
-  # Step4: Compute the eigen values of U^T*U from the eigen values of U * U^T
+  # Step3: Compute the eigen values of U^T*U from the eigen values of U * U^T
   bigEigVecs = numpy.zeros((rows, cols))
   for i in xrange(rows):
     bigEigVecs[i] = u.T.dot(eigVecs[i])
 
-  # Step 5: Normalize the eigen vectors to get orthonormal components
+  # Step 4: Normalize the eigen vectors to get orthonormal components
   bigEigVecs = map(lambda x: x / scipy.linalg.norm(x), bigEigVecs)
 
   eigValsBigVecs = zip(eigVals, bigEigVecs)
@@ -71,20 +84,23 @@ def pca(train, dimension):
 
   return result
 
+"""
+Arguments:
+  train:
+    Numpy array of arrays
+  dimension: the dimension to which to reduce the size of the data set.
 
-# TODO: remove code duplication between this and above
+Returns:
+  The principal components of the data.
+
+  This method should be preferred over the above: it is well known that the
+  SVD methods are more stable than the ones that require the computation of
+  the eigen values and eigen vectors.
+  For more detail see:
+  http://math.stackexchange.com/questions/3869/what-is-the-intuitive-relationship-between-svd-and-pca
+"""
 def pcsWithSVD(train, dimension):
-  # Step1: Get the mean of each column of the data
-  # Ie create the average image
-  means = scipy.mean(train, axis=0)
-
-  # Step2: Substract the mean of it's column from every element
-  rows, cols = train.shape
-  zeroMean = numpy.zeros((rows, cols))
-  for i in xrange(rows):
-    zeroMean[i] = train[i] - means
-
-  assert zeroMean.shape == train.shape
+  zeroMean = convertDataToZeroMean(train)
 
   # SVD guaranteed that the singular values are in non-increasing order
   # this means that the u's are already ordered as required, according
@@ -95,8 +111,12 @@ def pcsWithSVD(train, dimension):
 
 """
 Arguments:
-  vec:
+  vec: A numpy 1-D vector.
   size: A 2D tuple
+
+Returns:
+  A 2-D vector of dimension 'size', only if 'vec' has compatible dimensions.
+  Otherwise it throws an error.
 """
 def transformVectorToImage(vec, size):
   return vec.reshape(size)
@@ -114,7 +134,9 @@ def trasformImageVectors(images):
 
 """
 Arguments:
+  pcaMethod: a method to use for PCA.
   images: A python list of images that have to be of the same size.
+  dimension: the dimension to which to reduce the size of the data set.
 Returns:
   A tuple:
     The first element of the tuple is formed from the eigen faces of given
