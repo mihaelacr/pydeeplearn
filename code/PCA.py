@@ -17,7 +17,9 @@ currentDir = os.path.dirname(os.path.abspath(__file__))
 """
 Arguments:
   train:
-    Numpy array of arrays?
+    Numpy array of arrays
+Returns:
+  The principal components of the data.
 
 """
 # Returns the principal components of the given training
@@ -69,6 +71,28 @@ def pca(train, dimension):
 
   return result
 
+
+# TODO: remove code duplication between this and above
+def pcsWithSVD(train, dimension):
+  # Step1: Get the mean of each column of the data
+  # Ie create the average image
+  means = scipy.mean(train, axis=0)
+
+  # Step2: Substract the mean of it's column from every element
+  rows, cols = train.shape
+  zeroMean = numpy.zeros((rows, cols))
+  for i in xrange(rows):
+    zeroMean[i] = train[i] - means
+
+  assert zeroMean.shape == train.shape
+
+  u, s, vh = scipy.linalg.svd(zeroMean)
+
+  print s
+  print vh.shape
+  return vh[0:dimension-1]
+
+
 """
 Arguments:
   vec:
@@ -87,6 +111,28 @@ Returns:
 def trasformImageVectors(images):
   return map(lambda x: x.reshape(-1), images)
 
+
+"""
+Arguments:
+  images: A python list of images that have to be of the same size.
+Returns:
+  A tuple:
+    The first element of the tuple is formed from the eigen faces of given
+      images.
+    The second element of the tuple if formed from the vector version of the
+      eigen faces. This is kept for optimization reasons.
+"""
+def getEigenFaces(images, dimension):
+  imgs = map(lambda x: misc.imread(x, flatten=True), images)
+  imgSize = imgs[0].shape;
+  imgs = trasformImageVectors(imgs)
+  imgs = scipy.array(imgs)
+
+  vectors = pcsWithSVD(imgs, dimension)
+  eigenFaces = map(lambda x: transformVectorToImage(x, imgSize), vectors)
+
+  return (eigenFaces, vectors)
+
 def main():
   # Load all the image files in the current directory
   imagePath = os.path.join(currentDir, PICTURE_PATH)
@@ -95,14 +141,8 @@ def main():
   picFiles = [ os.path.join(PICTURE_PATH, f) for f in os.listdir(imagePath)
                if os.path.isfile(os.path.join(imagePath,f)) ]
 
-  imgs = map(lambda x: misc.imread(x, flatten=True), picFiles)
-  imgSize = imgs[0].shape;
-  imgs = trasformImageVectors(imgs)
-  imgs = scipy.array(imgs)
-  result = pca(imgs, 3)
-
-  imagePcas = map(lambda x: transformVectorToImage(x, imgSize), result)
-  plt.imshow(imagePcas[0], cmap=plt.cm.gray)
+  eigenFaces, vectors = getEigenFaces(picFiles, 3)
+  plt.imshow(eigenFaces[0], cmap=plt.cm.gray)
   plt.show()
 
   print "done"
