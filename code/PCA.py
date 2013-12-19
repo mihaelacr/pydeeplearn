@@ -50,7 +50,7 @@ def pca(train, dimension):
     bigEigVecs[i] = u.T.dot(eigVecs[i])
 
   # Step 5: Normalize the eigen vectors to get orthonormal components
-  print bigEigVecs
+  bigEigVecs = map(lambda x: x / scipy.linalg.norm(x), bigEigVecs)
 
   eigValsBigVecs = zip(eigVals, bigEigVecs)
   sortedEigValsBigVecs = sorted(eigValsBigVecs, key=lambda x : x[0], reverse=True)
@@ -95,14 +95,15 @@ def main():
   picFiles = [ os.path.join(PICTURE_PATH, f) for f in os.listdir(imagePath)
                if os.path.isfile(os.path.join(imagePath,f)) ]
 
-  imgs = map(lambda x: misc.imread(x), picFiles)
+  imgs = map(lambda x: misc.imread(x, flatten=True), picFiles)
   imgSize = imgs[0].shape;
   imgs = trasformImageVectors(imgs)
   imgs = scipy.array(imgs)
   result = pca(imgs, 3)
 
   imagePcas = map(lambda x: transformVectorToImage(x, imgSize), result)
-  plt.imshow(imagePcas[0])
+  plt.imshow(imagePcas[0], cmap=plt.cm.gray)
+  plt.show()
 
   print "done"
 
