@@ -60,7 +60,7 @@ def dimensionFromEigenValues(eigenValues):
   return dimension
 
 # requires the eigen values to be sorted before
-def dimensionFromEigenValues(eigenValues):
+def dimensionFromEigenValues2(eigenValues):
   threshold = 0.95
   dimension = 0
 
@@ -77,12 +77,10 @@ def dimensionFromEigenValues(eigenValues):
   return dimension
 
 
-# TODO: somehow fix this. Using this instead of SVD does not seem to work :(
 """
 This method uses the  Karhunen Lowe transform to fastly compute the
 eigen vaues of the data.
 
-The SVD method below should be preferred to this one.
 Arguments:
   train:
     Numpy array of arrays
@@ -107,10 +105,12 @@ def pca(train, dimension):
   # in your training)
   eigVals, eigVecs = scipy.linalg.eig(u.dot(u.T))
 
+
+  print type(eigVecs)
   # Step3: Compute the eigen values of U^T*U from the eigen values of U * U^T
   bigEigVecs = numpy.zeros((rows, cols))
   for i in xrange(rows):
-    bigEigVecs[i] = u.T.dot(eigVecs[i])
+    bigEigVecs[i] = u.T.dot(eigVecs[:, i])
 
   # Step 4: Normalize the eigen vectors to get orthonormal components
   bigEigVecs = map(lambda x: x / scipy.linalg.norm(x), bigEigVecs)
@@ -127,7 +127,9 @@ def pca(train, dimension):
     # however, this is fine because they just differ by a factor
     # so the ratio between eigen values will be preserved
     eigenValues = map(lambda x : x[0], sortedEigValsBigVecs)
-    dimension = dimensionFromEigenValues(eigenValues)
+    dimension = dimensionFromEigenValues2(eigenValues)
+    print "Using PCA dimension " + str(dimension)
+
 
   for eigVal, vector in sortedEigValsBigVecs:
     if index >= dimension:
@@ -167,7 +169,7 @@ def pcaWithSVD(train, dimension):
   if dimension == None:
     # Get the eigen values from the singular values
     eigenValues = s ** 2;
-    dimension = dimensionFromEigenValues(eigenValues)
+    dimension = dimensionFromEigenValues2(eigenValues)
     print "Using PCA dimension " + str(dimension)
 
   return vh[0:dimension-1]
@@ -229,7 +231,8 @@ def reduceImageToLowerDimensions(principalComponents, image2D):
   vector = transformVectorToImage(image2D, size)
 
   lowDimRepresentation = map(lambda x : x.T.dot(vector), principalComponents)
-  sameDimRepresentation = sum([ x * y for x, y in zip(principalComponents, lowDimRepresentation)])
+  sameDimRepresentation = \
+    sum([ x * y for x, y in zip(principalComponents, lowDimRepresentation)])
   return  (lowDimRepresentation, sameDimRepresentation)
 
 
@@ -245,7 +248,7 @@ def main():
 
   imgs = map(lambda x: misc.imread(x, flatten=True), picFiles)
 
-  eigenFaces, principalComponents = getEigenFaces(pcaWithSVD, imgs)
+  eigenFaces, principalComponents = getEigenFaces(pca, imgs)
   # plt.imshow(eigenFaces[0], cmap=plt.cm.gray)
   # plt.show()
 
