@@ -80,6 +80,8 @@ def dimensionFromEigenValues2(eigenValues):
 This method uses the  Karhunen Lowe transform to fastly compute the
 eigen vaues of the data.
 
+It is faster than the SVD method below, but can be prone to floating point
+errors more than the SVD one.
 Arguments:
   train:
     Numpy array of arrays
