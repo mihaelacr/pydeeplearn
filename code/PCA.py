@@ -1,13 +1,12 @@
-from scipy import misc
-
 import heapq
+import matplotlib.pyplot as plt
+import numpy
 import os
 import scipy
 import scipy.linalg
-import numpy
-import matplotlib.pyplot as plt
 
 from os.path import isfile, join
+from scipy import misc
 
 
 # The directory path to the images
@@ -159,7 +158,7 @@ Returns:
   For more detail see:
   http://math.stackexchange.com/questions/3869/what-is-the-intuitive-relationship-between-svd-and-pca
 """
-def pcaWithSVD(train, dimension):
+def pcaWithSVD(train, dimension=None):
   zeroMean = convertDataToZeroMean(train)
 
   # SVD guaranteed that the singular values are in non-increasing order
