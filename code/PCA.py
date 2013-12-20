@@ -44,7 +44,7 @@ Arguments:
 Returns:
   The dimension the data should be reduced to.
 """
-def dimensionFromEigenValues(eigenValues):
+def dimensionFromEigenIndividualVariance(eigenValues):
   threshold = 0.01
   dimension = 0
 
@@ -59,7 +59,7 @@ def dimensionFromEigenValues(eigenValues):
   return dimension
 
 # requires the eigen values to be sorted before
-def dimensionFromEigenValues2(eigenValues):
+def dimensionFromEigenTotalVariance(eigenValues):
   threshold = 0.95
   dimension = 0
 
@@ -128,7 +128,7 @@ def pca(train, dimension):
     # however, this is fine because they just differ by a factor
     # so the ratio between eigen values will be preserved
     eigenValues = map(lambda x : x[0], sortedEigValsBigVecs)
-    dimension = dimensionFromEigenValues2(eigenValues)
+    dimension = dimensionFromEigenTotalVariance(eigenValues)
     print "Using PCA dimension " + str(dimension)
 
 
@@ -170,7 +170,7 @@ def pcaWithSVD(train, dimension):
   if dimension == None:
     # Get the eigen values from the singular values
     eigenValues = s ** 2;
-    dimension = dimensionFromEigenValues2(eigenValues)
+    dimension = dimensionFromEigenTotalVariance(eigenValues)
     print "Using PCA dimension " + str(dimension)
 
   return vh[0:dimension-1]
