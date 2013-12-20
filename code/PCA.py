@@ -106,7 +106,6 @@ def pca(train, dimension):
   eigVals, eigVecs = scipy.linalg.eig(u.dot(u.T))
 
 
-  print type(eigVecs)
   # Step3: Compute the eigen values of U^T*U from the eigen values of U * U^T
   bigEigVecs = numpy.zeros((rows, cols))
   for i in xrange(rows):
