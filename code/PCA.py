@@ -5,7 +5,6 @@ import os
 import scipy
 import scipy.linalg
 import numpy
-import math
 import matplotlib.pyplot as plt
 
 from os.path import isfile, join
