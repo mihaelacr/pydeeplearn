@@ -77,6 +77,7 @@ def dimensionFromEigenValues(eigenValues):
   return dimension
 
 
+# TODO: somehow fix this. Using this instead of SVD does not seem to work :(
 """
 This method uses the  Karhunen Lowe transform to fastly compute the
 eigen vaues of the data.
@@ -155,7 +156,7 @@ Returns:
   For more detail see:
   http://math.stackexchange.com/questions/3869/what-is-the-intuitive-relationship-between-svd-and-pca
 """
-def pcsWithSVD(train, dimension):
+def pcaWithSVD(train, dimension):
   zeroMean = convertDataToZeroMean(train)
 
   # SVD guaranteed that the singular values are in non-increasing order
@@ -222,7 +223,7 @@ def getEigenFaces(pcaMethod, images, dimension=None):
  to a lower dimension, dictated by the number of principal components.
 """
 def reduceImageToLowerDimensions(principalComponents, image2D):
-  assert len(principalComponents > 0)
+  assert len(principalComponents) > 0
 
   size = principalComponents[0].shape
   vector = transformVectorToImage(image2D, size)
@@ -244,7 +245,7 @@ def main():
 
   imgs = map(lambda x: misc.imread(x, flatten=True), picFiles)
 
-  eigenFaces, principalComponents = getEigenFaces(pcsWithSVD, imgs)
+  eigenFaces, principalComponents = getEigenFaces(pcaWithSVD, imgs)
   # plt.imshow(eigenFaces[0], cmap=plt.cm.gray)
   # plt.show()
 
