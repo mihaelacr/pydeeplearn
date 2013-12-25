@@ -67,13 +67,28 @@ class RBM(object):
 # Makes a step in the contrastiveDivergence algorithm
 # online or with mini-bathces?
 # you have multiple choices about how to implement this
+# It is importaant that the hidden values from the data are binary,
+# not probabilities
 def contrastiveDivergence(data, biases, weights, cdSteps=1):
-  pass
+  # TODO: do something smarter
+  epsilon = 0.0001
+  for d in data:
+    # TODO: do CDn after some point
+    # you can do it by calling the same function with the remaining data
+    # TODO: check if you have to use samples
+    hidden = updateLayer(Layer.HIDDEN, d, weights, True)
+    visibleReconstruction = updateLayer(Layer.VISIBLE, visible, weights, True)
+    hiddenReconstruction = updateLayer(Layer.HIDDEN, visible, weights, True)
+    weights = weights - epsilon * (np.outer(visible, hidden)
+         - np.outer(visibleReconstruction - hiddenReconstruction))
+
+    # TODO: update the biases
+  return weights
 
 """ Updates an entire layer. This procedure can be used both in training
     and in testing.
 """
-def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=True):
+def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=False):
     bias = biases(layer)
 
     def activation(x):
