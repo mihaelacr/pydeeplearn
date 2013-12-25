@@ -13,17 +13,12 @@ TODO: mean filed and dumped mean field
 """
 import numpy as np
 import math
+import multiprocessing
 
-# Makes a step in the contrastiveDivergence algorithm
-# online or with mini-bathces?
-# you have multiple choices about how to implement this
-def contrastiveDivergence(data, biases, weights, cdSteps=1):
-  pass
+# Global multiprocessing pool, used for all updates in the networks
+pool = multiprocessing.Pool()
 
-# Another training algorithm. Slower than Contrastive divergence, but
-# gives better results. Not used in practice as it is too slow.
-def PCD():
-  pass
+
 
 """
  Represents a RBM
@@ -45,15 +40,15 @@ class RBM(object):
     self.biases = intializeBiases(data, nrHidden)
 
   # you need to take a training algorithm as a parameter (CD, PCD)
-  def train():
+  def train(self):
     self.weights = trainingFunction(self.data, self.biases, self.weights)
 
   @classmethod
-  def initializeWeights(nrVisible, nrHidden):
+  def initializeWeights(cls, nrVisible, nrHidden):
     return np.random.normal(0, 0.01, (nrVisible, nrHidden))
 
   @classmethod
-  def initalizeBiases(data, nrHidden):
+  def initalizeBiases(cls, data, nrHidden):
     # get the procentage of data points that have the i'th unit on
     # and set the visible vias to log (p/(1-p))
     percentages = data.mean(axis=0, dtype='float') / len(data)
@@ -64,6 +59,56 @@ class RBM(object):
     # TODO: if sparse hiddeen weights, use that information
     hiddenBiases = np.zeros(nrHidden)
     return visibleBiases, hiddenBiases
+
+
+# think of adding this to the class
+# this might require some inheritance or things
+""" Training functions."""
+# Makes a step in the contrastiveDivergence algorithm
+# online or with mini-bathces?
+# you have multiple choices about how to implement this
+def contrastiveDivergence(data, biases, weights, cdSteps=1):
+  pass
+
+""" Updates an entire layer. This procedure can be used both in training
+    and in testing.
+"""
+def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=True):
+    bias = biases(layer)
+
+    def activation(x):
+      w = getWeights(layer, weightMatrix, x):
+      return activationProbability(activationSum(w, bias, otherLayerValues))
+
+  probs = pool.map(activation, xrange(weightMatrix.shape(layer)))
+
+  if binary:
+    # Sample from the distributions
+    return sampleAll(probs)
+
+def getWeights(layer, weightMatrix, neuronNumber):
+  if layer == Layer.VISIBLE:
+    return weights[neuronNumber, :]
+  else layer == Layer.HIDDEN
+    return weights[:, neuronNumber]
+
+# TODO: check if you do it faster with matrix multiplication stuff
+# but hinton was adamant about the paralell thing
+def activationSum(weights, bias, otherLayerValues):
+  return bias + np.dot(weights, otherLayerValues)
+
+""" Gets the activation sums for all the units in one layer.
+    Assumesthat the dimensions of the weihgt matrix and biases
+    are given correctly. It will throw an exception otherwise.
+"""
+
+def activationProbability(activationSum):
+  return sigmoid(activationSum)
+
+# Another training algorithm. Slower than Contrastive divergence, but
+# gives better results. Not used in practice as it is too slow.
+def PCD():
+  pass
 
 
 """ general unitily functions"""
@@ -77,4 +122,11 @@ def sample(p):
   return 0
 
 def sampleAll(probs):
-  return map(sample, probs)
+  vectorizedSample = np.vectorize(sample)
+  return vectorizedSample(probs)
+
+def enum(**enums):
+  return type('Enum', (), enums)
+
+# Create an enum for visible and hidden, for
+Layer = enum(VISIBLE=0, HIDDEN=1)
