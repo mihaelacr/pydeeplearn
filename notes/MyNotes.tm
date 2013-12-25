@@ -1333,7 +1333,7 @@
   from the visible unit of this user to the hidden units will be the same for
   all users
 
-  You average the predicitions of the RBM with matrix factorization models
+  You average the predicitions of the RBM with matrix factorization models4
 
   \;
 
@@ -1404,6 +1404,38 @@
   When talking about RBM talk about all the implementations that could be,
   and then the difference in speed in training. Implement multiple of them
   and show how the change in time versus precision
+
+  <with|font-series|bold|THIRD order boltzmann machines: read about them, but
+  I do not think I need them>
+
+  https://www.youtube.com/watch?v=VdIURAu1-aU finish this\ 
+
+  \;
+
+  use this somehow
+
+  The receptive field of a sensory neuron is a region of space in which the
+  presence of a stimulus will alter the firing of that neuron.
+
+  Talk about the different kinds of weight decay you can do, using L1 or L2
+  and so on
+
+  When you talk about the possible ways of using RBM for discriminiation,
+  make nice pictures of all possible methods
+
+  \;
+
+  https://github.com/jdeng/rbm-mnist
+
+  https://github.com/tjake/rbm-dbn-mnist/tree/master/src/main/java/com/github/tjake/rbm
+
+  \;
+
+  http://metaoptimize.com/qa/questions/12592/monitoring-the-training-of-restricted-boltzmann-machines
+
+  \;
+
+  \;
 </body>
 
 <\initial>
