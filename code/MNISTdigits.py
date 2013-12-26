@@ -20,7 +20,6 @@ def main():
   rbm = RBM.RBM(vectors, 3, RBM.contrastiveDivergence)
   rbm.train()
 
-
   print "done"
 
 if __name__ == '__main__':

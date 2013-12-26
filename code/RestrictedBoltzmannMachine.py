@@ -13,8 +13,12 @@ TODO: mean filed and dumped mean field
 """
 import numpy as np
 import math
+# TODO: work out if you can use this somehow
 import multiprocessing
+import logging
 
+# Do not print unless needed
+logging.basicConfig(level=logging.CRITICAL)
 # Global multiprocessing pool, used for all updates in the networks
 pool = multiprocessing.Pool()
 
@@ -58,14 +62,22 @@ class RBM(object):
     # get the procentage of data points that have the i'th unit on
     # and set the visible vias to log (p/(1-p))
     percentages = data.mean(axis=0, dtype='float') / len(data)
-    # TODO:what happens if one of them is 1?
-    vectorized = np.vectorize(lambda p: 0 if p == 1 else math.log(p / (1 -p)) )
+    vectorized = np.vectorize(safeLogFraction)
     visibleBiases = vectorized(percentages)
 
     # TODO: if sparse hiddeen weights, use that information
     hiddenBiases = np.zeros(nrHidden)
     return np.array([visibleBiases, hiddenBiases])
 
+
+
+def safeLogFraction(p):
+  assert p >=0 and p <= 1
+  # TODO: think about this a bit better
+  # you should not set them to be equal, on the contrary, they should be opposites
+  if p * (1 - p) == 0:
+    return 0
+  return math.log(p / (1 -p))
 
 # TODO: add momentum to learning
 # TODO: different learning rates for weights and biases
@@ -83,7 +95,7 @@ def contrastiveDivergence(data, biases, weights, cdSteps=1):
   for visible in data:
     # TODO: do CDn after some point
     # you can do it by calling the same function with the remaining data
-    print "visible" + str(visible)
+    logging.debug("visible" + str(visible))
     hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
     visibleReconstruction = updateLayer(Layer.VISIBLE, hidden, biases, weights, False)
     hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction, biases, weights, False)
@@ -103,13 +115,13 @@ def contrastiveDivergence(data, biases, weights, cdSteps=1):
 def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=False):
   bias = biases[layer]
 
-  print "updating layer " + str(layer)
-  print "with bias" + str(bias)
+  logging.debug("updating layer " + str(layer))
+  logging.debug("with bias" + str(bias))
 
-  print "weights" + str(weightMatrix.shape)
+  logging.debug("weights" + str(weightMatrix.shape))
   def activation(x):
     w = weightVectorForNeuron(layer, weightMatrix, x)
-    print "weight vector" + str(w)
+    logging.debug("weight vector" + str(w))
     return activationProbability(activationSum(w, bias[x], otherLayerValues))
 
   probs = map(activation, xrange(weightMatrix.shape[layer]))
@@ -131,9 +143,9 @@ def weightVectorForNeuron(layer, weightMatrix, neuronNumber):
 # TODO: check if you do it faster with matrix multiplication stuff
 # but hinton was adamant about the paralell thing
 def activationSum(weights, bias, otherLayerValues):
-  print "in activationSum"
-  print otherLayerValues
-  print weights
+  logging.debug("in activationSum")
+  logging.debug(otherLayerValues)
+  logging.debug(weights)
 
   return bias + np.dot(weights, otherLayerValues)
 
