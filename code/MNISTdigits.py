@@ -7,6 +7,8 @@ import readmnist
 import matplotlib.pyplot as plt
 import numpy
 
+from common import *
+
 def main():
   images, labels = readmnist.read([2], dataset="training", path="MNIST")
   plt.imshow(images[0], cmap=plt.cm.gray)

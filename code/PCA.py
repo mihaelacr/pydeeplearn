@@ -190,11 +190,11 @@ Returns:
 """
 def getEigenFaces(pcaMethod, images, dimension=None):
   imgSize = images[0].shape;
-  imgs = transformImageToVector(images)
+  imgs = imagesToVectors(images)
   imgs = scipy.array(imgs)
 
   vectors = pcaMethod(imgs, dimension)
-  eigenFaces = map(lambda x: transformVectorToImage(x, imgSize), vectors)
+  eigenFaces = map(lambda x: vectorToImage(x, imgSize), vectors)
 
   return (eigenFaces, vectors)
 
@@ -206,7 +206,7 @@ def reduceImageToLowerDimensions(principalComponents, image2D):
   assert len(principalComponents) > 0
 
   size = principalComponents[0].shape
-  vector = transformVectorToImage(image2D, size)
+  vector = vectorToImage(image2D, size)
 
   lowDimRepresentation = map(lambda x : x.T.dot(vector), principalComponents)
   sameDimRepresentation = \
@@ -236,7 +236,7 @@ def main():
   plt.imshow(imgs[0], cmap=plt.cm.gray)
   plt.show()
 
-  image2D = transformVectorToImage(sameDimRepresentation, imgs[0].shape)
+  image2D = vectorToImage(sameDimRepresentation, imgs[0].shape)
   plt.imshow(image2D, cmap=plt.cm.gray)
   plt.show()
   print "done"
