@@ -54,7 +54,7 @@ class RBM(object):
     # and set the visible vias to log (p/(1-p))
     percentages = data.mean(axis=0, dtype='float') / len(data)
     # TODO:what happens if one of them is 1?
-    vectorized = np.vectorize(lambda p: math.log(p / (1 -p)))
+    vectorized = np.vectorize(lambda p: 0 if p == 1 else math.log(p / (1 -p)) )
     visibleBiases = vectorized(percentages)
 
     # TODO: if sparse hiddeen weights, use that information
@@ -148,12 +148,10 @@ def PCD():
 """ general unitily functions"""
 
 def sigmoid(x):
-  return 1 / 1 + np.exp(-x);
+  return 1 / (1 + np.exp(-x));
 
 def sample(p):
-  if np.random.uniform() < p:
-    return 1
-  return 0
+  return int(np.random.uniform() < p)
 
 def sampleAll(probs):
   return np.random.uniform(size=probs.shape) < probs
