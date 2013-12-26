@@ -8,6 +8,9 @@ import scipy.linalg
 from os.path import isfile, join
 from scipy import misc
 
+# Import all common functions
+from common import *
+
 
 # The directory path to the images
 PICTURE_PATH = "/pics/cambrdige_pics/"
@@ -172,30 +175,6 @@ def pcaWithSVD(train, dimension=None):
     print "Using PCA dimension " + str(dimension)
 
   return vh[0:dimension-1]
-
-"""
-Arguments:
-  vec: A numpy 1-D vector.
-  size: A 2D tuple
-
-Returns:
-  A 2-D vector of dimension 'size', only if 'vec' has compatible dimensions.
-  Otherwise it throws an error.
-"""
-def transformVectorToImage(vec, size):
-  return vec.reshape(size)
-
-
-""" Transforms the 2D images into 1D vectors
-Arguments:
-  images: is a python list of numpy arrays
-Returns:
-  A python list of 1-D numpy arrays, transformed from the input 2D ones
-  No data is lost in the transformation.
-"""
-def transformImageToVector(images):
-  return map(lambda x: x.reshape(-1), images)
-
 
 """
 Arguments:
