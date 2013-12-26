@@ -59,8 +59,7 @@ class RBM(object):
 
     # TODO: if sparse hiddeen weights, use that information
     hiddenBiases = np.zeros(nrHidden)
-    return visibleBiases, hiddenBiases
-
+    return np.array([visibleBiases, hiddenBiases])
 
 # TODO: add momentum to learning
 # TODO: different learning rates for weights and biases
@@ -83,7 +82,7 @@ def contrastiveDivergence(data, biases, weights, cdSteps=1):
     visibleReconstruction = updateLayer(Layer.VISIBLE, hidden, biases, weights, False)
     hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction, biases, weights, False)
     weights = weights + epsilon * (np.outer(visible, hidden)
-         - np.outer(visibleReconstruction - hiddenReconstruction))
+         - np.outer(visibleReconstruction, hiddenReconstruction))
 
     # Update the visible biases
     biases[0] += epsilon * (visible - visibleReconstruction)
