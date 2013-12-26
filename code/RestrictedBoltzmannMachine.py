@@ -44,6 +44,11 @@ class RBM(object):
   def train(self):
     self.biases, self.weights = self.trainingFunction(self.data, self.biases, self.weights)
 
+  def reconstruct(dataInstance):
+    hidden = updateLayer(Layer.HIDDEN, dataInstance, biases, weights, True)
+    visibleReconstruction = updateLayer(Layer.VISIBLE, hidden, biases, weights, False)
+    return visibleReconstruction
+
   @classmethod
   def initializeWeights(cls, nrVisible, nrHidden):
     return np.random.normal(0, 0.01, (nrVisible, nrHidden))
@@ -60,6 +65,7 @@ class RBM(object):
     # TODO: if sparse hiddeen weights, use that information
     hiddenBiases = np.zeros(nrHidden)
     return np.array([visibleBiases, hiddenBiases])
+
 
 # TODO: add momentum to learning
 # TODO: different learning rates for weights and biases
