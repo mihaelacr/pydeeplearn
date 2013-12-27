@@ -1436,6 +1436,11 @@
   \;
 
   \;
+
+  http://g.sweyla.com/blog/2012/mnist-numpy/ this is how I read the MNIST
+  digits
+
+  \;
 </body>
 
 <\initial>
