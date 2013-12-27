@@ -15,7 +15,8 @@ from common import *
 
 #
 def visualizeWeights(weights, imgShape, tileShape):
-  return utils.tile_raster_images(weights, imgShape, tileShape, tile_spacing=(1, 1),scale_rows_to_unit_interval=False)
+  # return utils.tile_raster_images(weights, imgShape, tileShape, tile_spacing=(1, 1),scale_rows_to_unit_interval=False)
+  return utils.tile_raster_images(weights, imgShape, tileShape, tile_spacing=(1, 1))
 
 def main():
 
