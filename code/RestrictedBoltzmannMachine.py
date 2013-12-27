@@ -48,9 +48,9 @@ class RBM(object):
   def train(self):
     self.biases, self.weights = self.trainingFunction(self.data, self.biases, self.weights)
 
-  def reconstruct(dataInstance):
-    hidden = updateLayer(Layer.HIDDEN, dataInstance, biases, weights, True)
-    visibleReconstruction = updateLayer(Layer.VISIBLE, hidden, biases, weights, False)
+  def reconstruct(self, dataInstance):
+    hidden = updateLayer(Layer.HIDDEN, dataInstance, self.biases, self.weights, True)
+    visibleReconstruction = updateLayer(Layer.VISIBLE, hidden, self.biases, self.weights, False)
     return visibleReconstruction
 
   @classmethod
@@ -95,7 +95,7 @@ def contrastiveDivergence(data, biases, weights, cdSteps=1):
   for visible in data:
     # TODO: do CDn after some point
     # you can do it by calling the same function with the remaining data
-    logging.debug("visible" + str(visible))
+    # logging.debug("visible" + str(visible))
     hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
     visibleReconstruction = updateLayer(Layer.VISIBLE, hidden, biases, weights, False)
     hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction, biases, weights, False)
@@ -115,14 +115,19 @@ def contrastiveDivergence(data, biases, weights, cdSteps=1):
 def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=False):
   bias = biases[layer]
 
-  logging.debug("updating layer " + str(layer))
-  logging.debug("with bias" + str(bias))
+  # logging.debug("updating layer " + str(layer))
+  # logging.debug("with bias" + str(bias))
 
-  logging.debug("weights" + str(weightMatrix.shape))
+  # logging.debug("weights" + str(weightMatrix.shape))
   def activation(x):
-    w = weightVectorForNeuron(layer, weightMatrix, x)
-    logging.debug("weight vector" + str(w))
-    return activationProbability(activationSum(w, bias[x], otherLayerValues))
+    if layer == Layer.VISIBLE:
+      w =  weightMatrix[x, :]
+    else:
+      w =  weightMatrix[:, x]
+
+    return sigmoid(bias[x] + np.dot(w, otherLayerValues))
+    # w = weightVectorForNeuron(layer, weightMatrix, x)
+    # return activationProbability(activationSum(w, bias[x], otherLayerValues))
 
   probs = map(activation, xrange(weightMatrix.shape[layer]))
   probs = np.array(probs)
@@ -143,9 +148,9 @@ def weightVectorForNeuron(layer, weightMatrix, neuronNumber):
 # TODO: check if you do it faster with matrix multiplication stuff
 # but hinton was adamant about the paralell thing
 def activationSum(weights, bias, otherLayerValues):
-  logging.debug("in activationSum")
-  logging.debug(otherLayerValues)
-  logging.debug(weights)
+  # logging.debug("in activationSum")
+  # logging.debug(otherLayerValues)
+  # logging.debug(weights)
 
   return bias + np.dot(weights, otherLayerValues)
 
@@ -194,6 +199,10 @@ def main():
                 [1,1,1,0,0,0]])
   rbm = RBM(X, 3, contrastiveDivergence)
   rbm.train()
+
+
+def rmse(prediction, actual):
+  return np.linalg.norm(prediction - actual) / np.sqrt(len(prediction))
 
 
 if __name__ == '__main__':
