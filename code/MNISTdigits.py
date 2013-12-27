@@ -38,7 +38,8 @@ def main():
   recon = rbm.reconstruct(scaledVecs[0,:])
   print recon.sum()
 
-  plt.imshow(vectorToImage(utils.scale_to_unit_interval(recon), images[0].shape), cmap=plt.cm.gray)
+  print recon
+  plt.imshow(vectorToImage(recon, images[0].shape), cmap=plt.cm.gray)
   plt.show()
 
   print rbm.weights.T
