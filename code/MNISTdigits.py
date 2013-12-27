@@ -35,7 +35,7 @@ def main():
   rbm = RBM.RBM(scaledVecs, 500, RBM.contrastiveDivergence)
   rbm.train()
 
-  recon = rbm.reconstruct(imagesToVectors([images[0]])[0])
+  recon = rbm.reconstruct(scaledVecs[0,:])
   print recon.sum()
 
   plt.imshow(vectorToImage(utils.scale_to_unit_interval(recon), images[0].shape), cmap=plt.cm.gray)
@@ -44,9 +44,9 @@ def main():
   print rbm.weights.T
   t = visualizeWeights(rbm.weights.T, images[0].shape, (10,10))
   # TODO: add pickle behaviour to RBM
-  pickle.dump(t, open( "weights.p", "wb" ) )
-  pickle.dump(rbm.weights, open( "weights.p", "wb" ) )
-  pickle.dump(rbm.biases, open( "weights.p", "wb" ) )
+  # pickle.dump(t, open( "weights.p", "wb" ) )
+  # pickle.dump(rbm.weights, open( "weights.p", "wb" ) )
+  # pickle.dump(rbm.biases, open( "weights.p", "wb" ) )
 
   print t.sum()
   print t.shape
