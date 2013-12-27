@@ -18,7 +18,7 @@ Done today:
 
 TODO:
 Short term:
- implement the free energy function
+ implement the free energy function: or just a way to track error
  RBM class needs a write function for serialization (see pickle)
  Add momentum to the RBM class
  Figure out how to parallelize some of the work; multiprocessing does not work with this
