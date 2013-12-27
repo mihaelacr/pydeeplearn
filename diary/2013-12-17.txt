@@ -22,6 +22,7 @@ Short term:
  RBM class needs a write function for serialization (see pickle)
  Add momentum to the RBM class
  Figure out how to parallelize some of the work; multiprocessing does not work with this
+ See if batch learning improves speed
 
  Longer term:
   After finishing playing around with RBM, finish the coursera entire course
