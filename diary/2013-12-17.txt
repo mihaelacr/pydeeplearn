@@ -1,0 +1,30 @@
+First diary
+
+Current status:
+  Implemented PCA and tested it with multiple images datavases
+
+  Followed coursera Hinton course up to and including RBM. Stop course for implementation
+  Read the Hinton guide on traning RBMS
+  Followed multiple youtube vidoes that talk about deep learning
+  Looked at multiple implementations for RBM found on github
+  Enquired a bit about the posibily (or need) of using theano for speed (using CPU)
+
+
+  Implemented a simple version of RBM
+  Downloaded MNIST data and running RBM for a part of it to visualize the weights
+
+Done today:
+
+TODO:
+Short term:
+ implement the free energy function
+ RBM class needs a write function for serialization (see pickle)
+ Add momentum to the RBM class
+ Figure out how to parallelize some of the work; multiprocessing does not work with this
+
+ Longer term:
+  After finishing playing around with RBM, finish the coursera entire course
+  Implement deep learning for discriminative learning using backpropagation
+  Look at Abbas paper on increasing capacity of Hopfield
+  Think of how to do it for RBM
+  Increase speed: IMPORTANT
