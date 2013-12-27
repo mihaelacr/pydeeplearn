@@ -109,6 +109,8 @@ def contrastiveDivergence(data, biases, weights, miniBatch=False):
   cd5Data = data[endCD3:N]
   biases, weights = contrastiveDivergenceStep(cd5Data, biases, weights, cdSteps=5)
 
+  return biases, weights
+
 # Makes a step in the contrastiveDivergence algorithm
 # online or with mini-bathces?
 # you have multiple choices about how to implement this
