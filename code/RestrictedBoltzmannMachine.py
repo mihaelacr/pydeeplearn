@@ -83,24 +83,57 @@ def safeLogFraction(p):
 # TODO: different learning rates for weights and biases
 
 """ Training functions."""
+
+""" Full CD function.
+Arguments:
+  data: the data to use for traning.
+    A numpy ndarray.
+  biases:
+
+Returns:
+"""
+def contrastiveDivergence(data, biases, weights, miniBatch=False):
+
+  N = len(data)
+  # Train the first 70 percent of the data with CD1
+  endCD1 = math.floor(N / 10 * 7)
+  cd1Data = data[0:endCD1]
+  biases, weights = contrastiveDivergenceStep(cd1Data, biases, weights, cdSteps=1)
+
+  # Train the next 20 percent with CD3
+  endCD3 = math.floor(N / 10 * 2) + endCD1
+  cd3Data = data[endCD1:endCD3]
+  biases, weights = contrastiveDivergenceStep(cd3Data, biases, weights, cdSteps=3)
+
+  # Train the next 10 percent of data with CD10
+  cd5Data = data[endCD3:N]
+  biases, weights = contrastiveDivergenceStep(cd5Data, biases, weights, cdSteps=5)
+
 # Makes a step in the contrastiveDivergence algorithm
 # online or with mini-bathces?
 # you have multiple choices about how to implement this
 # It is importaant that the hidden values from the data are binary,
 # not probabilities
-def contrastiveDivergence(data, biases, weights, cdSteps=1):
+def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
   # TODO: do something smarter with the learning
   epsilon = 0.0001
+  assert cdSteps >=1
   # Check that it does rows in loops
   for visible in data:
     # TODO: do CDn after some point
     # you can do it by calling the same function with the remaining data
-    # logging.debug("visible" + str(visible))
     hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
     visibleReconstruction = updateLayer(Layer.VISIBLE, hidden, biases, weights, False)
+    # TODO: consider this
+    for i in xrange(cdSteps - 1):
+      hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction, biases, weights, True)
+      weights = weights + epsilon * (np.outer(visible, hidden)
+           - np.outer(visibleReconstruction, hiddenReconstruction))
+
+    # Do the last reconstruction from the probabilities
     hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction, biases, weights, False)
-    weights = weights + epsilon * (np.outer(visible, hidden)
-         - np.outer(visibleReconstruction, hiddenReconstruction))
+      weights = weights + epsilon * (np.outer(visible, hidden)
+           - np.outer(visibleReconstruction, hiddenReconstruction))
 
     # Update the visible biases
     biases[0] += epsilon * (visible - visibleReconstruction)
