@@ -155,14 +155,14 @@ def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=False):
 
   # logging.debug("weights" + str(weightMatrix.shape))
   def activation(x):
-    if layer == Layer.VISIBLE:
-      w =  weightMatrix[x, :]
-    else:
-      w =  weightMatrix[:, x]
+    # if layer == Layer.VISIBLE:
+    #   w =  weightMatrix[x, :]
+    # else:
+    #   w =  weightMatrix[:, x]
 
-    return sigmoid(bias[x] + np.dot(w, otherLayerValues))
-    # w = weightVectorForNeuron(layer, weightMatrix, x)
-    # return activationProbability(activationSum(w, bias[x], otherLayerValues))
+    # return sigmoid(bias[x] + np.dot(w, otherLayerValues))
+    w = weightVectorForNeuron(layer, weightMatrix, x)
+    return activationProbability(activationSum(w, bias[x], otherLayerValues))
 
   probs = map(activation, xrange(weightMatrix.shape[layer]))
   probs = np.array(probs)
