@@ -127,13 +127,13 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
     # TODO: consider this
     for i in xrange(cdSteps - 1):
       hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction, biases, weights, True)
-      weights = weights + epsilon * (np.outer(visible, hidden)
+      weights += epsilon * (np.outer(visible, hidden)
            - np.outer(visibleReconstruction, hiddenReconstruction))
 
     # Do the last reconstruction from the probabilities
     hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction, biases, weights, False)
-      weights = weights + epsilon * (np.outer(visible, hidden)
-           - np.outer(visibleReconstruction, hiddenReconstruction))
+    weights += epsilon * (np.outer(visible, hidden)
+                - np.outer(visibleReconstruction, hiddenReconstruction))
 
     # Update the visible biases
     biases[0] += epsilon * (visible - visibleReconstruction)
