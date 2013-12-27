@@ -25,7 +25,6 @@ def main():
   images, labels = readmnist.read([2], dataset="training", path="MNIST")
   vectors = np.array(imagesToVectors(images))
 
-  print len(images)
   # Normalize the vectors to have them binary
   scaledVecs = utils.scale_to_unit_interval(vectors)
 
@@ -39,9 +38,10 @@ def main():
   recon = rbm.reconstruct(imagesToVectors([images[0]])[0])
   print recon.sum()
 
-  plt.imshow(vectorToImage(recon, images[0].shape), cmap=plt.cm.gray)
+  plt.imshow(vectorToImage(utils.scale_to_unit_interval(recon), images[0].shape), cmap=plt.cm.gray)
   plt.show()
 
+  print rbm.weights.T
   t = visualizeWeights(rbm.weights.T, images[0].shape, (10,10))
   # TODO: add pickle behaviour to RBM
   pickle.dump(t, open( "weights.p", "wb" ) )
