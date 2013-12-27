@@ -8,7 +8,8 @@ Current status:
   Followed multiple youtube vidoes that talk about deep learning
   Looked at multiple implementations for RBM found on github
   Enquired a bit about the posibily (or need) of using theano for speed (using CPU)
-
+  Took notes on all the given in the coursera course
+  Got an intuitive understanding of the matter
 
   Implemented a simple version of RBM
   Downloaded MNIST data and running RBM for a part of it to visualize the weights
