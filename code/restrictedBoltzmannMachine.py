@@ -16,6 +16,7 @@ import math
 # TODO: work out if you can use this somehow
 import multiprocessing
 
+EXPENSIVE_CHECKS_ON = False
 
 # Global multiprocessing pool, used for all updates in the networks
 pool = multiprocessing.Pool()
@@ -42,7 +43,7 @@ class RBM(object):
     else:
       self.data = np.concatenate(self.data, data)
 
-    self.biases, self.weights = self.trainingFunction(self, data,
+    self.biases, self.weights = self.trainingFunction(data,
                                                       self.biases,
                                                       self.weights)
 
@@ -127,10 +128,14 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
 
   N = len(data)
 
+  # How often should you compute the reconstruction error of the data
+  reconstructionStep = N / 100
+
   for i in xrange(N):
-    if i % 100 == 0:
-      print "reconstructionError"
-      print reconstructionError(biases, weights, data)
+    if EXPENSIVE_CHECKS_ON:
+      if i % reconstructionStep == 0:
+        print "reconstructionError"
+        print reconstructionError(biases, weights, data)
 
     visible = data[i]
     # Reconstruct the hidden weigs from the data
@@ -179,7 +184,6 @@ def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=False):
     return sampleAll(probs)
 
   return probs
-
 
 def weightVectorForNeuron(layer, weightMatrix, neuronNumber):
   if layer == Layer.VISIBLE:
