@@ -15,10 +15,8 @@ import numpy as np
 import math
 # TODO: work out if you can use this somehow
 import multiprocessing
-import logging
 
-# Do not print unless needed
-logging.basicConfig(level=logging.CRITICAL)
+
 # Global multiprocessing pool, used for all updates in the networks
 pool = multiprocessing.Pool()
 
@@ -27,27 +25,29 @@ pool = multiprocessing.Pool()
 """
 class RBM(object):
 
-  def __init__(self, data, nrHidden, trainingFunction):
+  def __init__(self, nrVisible, nrHidden, trainingFunction):
     # Initialize weights to random
-    assert len(data) !=0
-
-    print data.sum()
     self.nrHidden = nrHidden
-    self.nrVisible = len(data[0])
-    self.data = data
+    self.nrVisible = nrVisible
     self.trainingFunction = trainingFunction
-    self.weights = self.initializeWeights(self.nrVisible, self.nrHidden)
-    self.biases = self.intializeBiases(data, self.nrHidden)
+    self.initialized = False
 
+  def train(self, data):
+    # If the network has not been initialized yet, do it now
+    # Ie if this is the time it is traning batch of traning
+    if not self.initialized:
+      self.weights = self.initializeWeights(self.nrVisible, self.nrHidden)
+      self.biases = self.intializeBiases(data, self.nrHidden)
+      self.data = data
+    else:
+      self.data = np.concatenate(self.data, data)
 
-  # you need to take a training algorithm as a parameter (CD, PCD)
-  def train(self):
-    self.biases, self.weights = self.trainingFunction(self.data, self.biases, self.weights)
+    self.biases, self.weights = self.trainingFunction(self, data,
+                                                      self.biases,
+                                                      self.weights)
 
   def reconstruct(self, dataInstance):
-    hidden = updateLayer(Layer.HIDDEN, dataInstance, self.biases, self.weights, True)
-    visibleReconstruction = updateLayer(Layer.VISIBLE, hidden, self.biases, self.weights, False)
-    return visibleReconstruction
+    return reconstruct(biases, weights, dataInstance)
 
   @classmethod
   def initializeWeights(cls, nrVisible, nrHidden):
@@ -65,16 +65,22 @@ class RBM(object):
     hiddenBiases = np.zeros(nrHidden)
     return np.array([visibleBiases, hiddenBiases])
 
-def safeLogFraction(p):
-  assert p >=0 and p <= 1
-  # TODO: think about this a bit better
-  # you should not set them to be equal, on the contrary, they should be opposites
-  if p * (1 - p) == 0:
-    return 0
-  return math.log(p / (1 -p))
 
 # TODO: add momentum to learning
 # TODO: different learning rates for weights and biases
+
+def reconstruct(biases, weights, dataInstance):
+  hidden = updateLayer(Layer.HIDDEN, dataInstance, biases, weights, True)
+  visibleReconstruction = updateLayer(Layer.VISIBLE, hidden,
+                                      biases, weights, False)
+  return visibleReconstruction
+
+def reconstructionError(biases, weights, data):
+    # Returns the rmse of the reconstruction of the data
+    # Good to keep track of it, should decrease trough training
+    # Initially faster, and then slower
+    recFunc = lambda x: reconstruct(biases, weights, x)
+    return rmse(np.array(map(recFunc, data)), data)
 
 """ Training functions."""
 
@@ -87,23 +93,27 @@ Arguments:
 Returns:
 """
 def contrastiveDivergence(data, biases, weights, miniBatch=False):
-
   N = len(data)
   # Train the first 70 percent of the data with CD1
   endCD1 = math.floor(N / 10 * 7)
   cd1Data = data[0:endCD1, :]
-  biases, weights = contrastiveDivergenceStep(cd1Data, biases, weights, cdSteps=1)
+  biases, weights = contrastiveDivergenceStep(cd1Data, biases,
+                                              weights, cdSteps=1)
 
   # Train the next 20 percent with CD3
   endCD3 = math.floor(N / 10 * 2) + endCD1
   cd3Data = data[endCD1:endCD3, :]
-  biases, weights = contrastiveDivergenceStep(cd3Data, biases, weights, cdSteps=3)
+  biases, weights = contrastiveDivergenceStep(cd3Data, biases,
+                                              weights, cdSteps=3)
 
   # Train the next 10 percent of data with CD10
   cd5Data = data[endCD3:N, :]
-  biases, weights = contrastiveDivergenceStep(cd5Data, biases, weights, cdSteps=5)
+  biases, weights = contrastiveDivergenceStep(cd5Data, biases,
+                                              weights, cdSteps=5)
 
   return biases, weights
+
+# TODO: add a mini batch method
 
 # Makes a step in the contrastiveDivergence algorithm
 # online or with mini-bathces?
@@ -115,17 +125,28 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
   epsilon = 0.0001
   assert cdSteps >=1
 
-  for visible in data:
+  N = len(data)
+
+  for i in xrange(N):
+    if i % 100 == 0:
+      print "reconstructionError"
+      print reconstructionError(biases, weights, data)
+
+    visible = data[i]
     # Reconstruct the hidden weigs from the data
     hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
     hiddenReconstruction = hidden
     for i in xrange(cdSteps - 1):
-      visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction, biases, weights, False)
-      hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction, biases, weights, True)
+      visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
+                                          biases, weights, False)
+      hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
+                                         biases, weights, True)
 
     # Do the last reconstruction from the probabilities in the last phase
-    visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction, biases, weights, False)
-    hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction, biases, weights, False)
+    visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
+                                        biases, weights, False)
+    hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
+                                       biases, weights, False)
 
     # Update the weights
     weights += epsilon * (np.outer(visible, hidden)
@@ -136,6 +157,7 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
 
     # Update the hidden biases
     biases[1] += epsilon * (hidden - hiddenReconstruction)
+
   return biases, weights
 
 
@@ -201,10 +223,15 @@ def enum(**enums):
 # Create an enum for visible and hidden, for
 Layer = enum(VISIBLE=0, HIDDEN=1)
 
-
 def rmse(prediction, actual):
   return np.linalg.norm(prediction - actual) / np.sqrt(len(prediction))
 
+def safeLogFraction(p):
+  assert p >=0 and p <= 1
+  # TODO: think about this a bit better
+  # you should not set them to be equal, on the contrary,
+  # they should be opposites
+  if p * (1 - p) == 0:
+    return 0
+  return math.log(p / (1 -p))
 
-if __name__ == '__main__':
-  main()

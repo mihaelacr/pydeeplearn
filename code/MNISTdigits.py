@@ -18,19 +18,26 @@ NETWORK_FILE = "weights.p"
 
 # Get the arguments of the program
 parser = argparse.ArgumentParser(description='RBM for digit recognition')
-parser.add_argument('--save', type=bool,
-                    default=True, help="if true, the network is serialized and saved")
-parser.add_argument('--train', type=bool,
-                    default=True, help="if true, the network is trained from scratch from the traning data")
+parser.add_argument('--save',
+                    type=bool,
+                    default=True,
+                    help="if true, the network is serialized and saved")
+parser.add_argument('--train',
+                    type=bool,
+                    default=True,
+                    help="if true, the network is trained from scratch from the traning data")
 args = parser.parse_args()
 
 
 def visualizeWeights(weights, imgShape, tileShape):
-  return utils.tile_raster_images(weights, imgShape, tileShape, tile_spacing=(1, 1))
+  return utils.tile_raster_images(weights, imgShape,
+                                  tileShape, tile_spacing=(1, 1))
 
 def main():
-  trainImages, trainLabels = readmnist.read([2], dataset="training", path="MNIST")
-  testImages, testLabels = readmnist.read([2], dataset="testing", path="MNIST")
+  trainImages, trainLabels =\
+      readmnist.read([2], dataset="training", path="MNIST")
+  testImages, testLabels =\
+      readmnist.read([2], dataset="testing", path="MNIST")
   trainVectors = imagesToVectors(trainImages)
 
   # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
@@ -44,8 +51,10 @@ def main():
     # The number of hidden units is taken from a deep learning tutorial
     # The data are the values of the images have to be normalized before being
     # presented to the network
-    rbm = RBM.RBM(trainingScaledVectors, 500, RBM.contrastiveDivergence)
-    rbm.train()
+    nrVisible = len(trainingScaledVectors[0])
+    nrHidden = 500
+    rbm = RBM.RBM(nrVisible, nrHidden, RBM.contrastiveDivergence)
+    rbm.train(trainingScaledVectors)
     t = visualizeWeights(rbm.weights.T, trainImages[0].shape, (10,10))
   else:
     # Take the saved network and use that for reconstructions
