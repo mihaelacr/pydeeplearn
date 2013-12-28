@@ -12,7 +12,6 @@ Returns:
 def vectorToImage(vec, size):
   return vec.reshape(size)
 
-
 """ Transforms the 2D images into 1D vectors
 Arguments:
   images: is a python list of numpy arrays

@@ -97,16 +97,16 @@ def contrastiveDivergence(data, biases, weights, miniBatch=False):
   N = len(data)
   # Train the first 70 percent of the data with CD1
   endCD1 = math.floor(N / 10 * 7)
-  cd1Data = data[0:endCD1]
+  cd1Data = data[0:endCD1, :]
   biases, weights = contrastiveDivergenceStep(cd1Data, biases, weights, cdSteps=1)
 
   # Train the next 20 percent with CD3
   endCD3 = math.floor(N / 10 * 2) + endCD1
-  cd3Data = data[endCD1:endCD3]
+  cd3Data = data[endCD1:endCD3, :]
   biases, weights = contrastiveDivergenceStep(cd3Data, biases, weights, cdSteps=3)
 
   # Train the next 10 percent of data with CD10
-  cd5Data = data[endCD3:N]
+  cd5Data = data[endCD3:N, :]
   biases, weights = contrastiveDivergenceStep(cd5Data, biases, weights, cdSteps=5)
 
   return biases, weights
@@ -122,10 +122,7 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
   assert cdSteps >=1
   # Check that it does rows in loops
   for visible in data:
-    # TODO: do CDn after some point
-    # you can do it by calling the same function with the remaining data
     hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
-    # TODO: consider this
     hiddenReconstruction = hidden
     for i in xrange(cdSteps - 1):
       visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction, biases, weights, False)
