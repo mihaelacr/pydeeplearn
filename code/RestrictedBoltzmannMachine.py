@@ -26,13 +26,7 @@ pool = multiprocessing.Pool()
  Represents a RBM
 """
 class RBM(object):
-  # 2 layers
-  # weights
-  # biases for each layer.
-  # you can have a type of RBM that just extends the kind of functions
-  # you use to update, depending on what kind of energy you use, which also
-  # decides what kind of units you have
-  # data is a numpy array:
+
   def __init__(self, data, nrHidden, trainingFunction):
     # Initialize weights to random
     assert len(data) !=0
