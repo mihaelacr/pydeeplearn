@@ -133,12 +133,9 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
 
     # Update the visible biases
     biases[0] += epsilon * (visible - visibleReconstruction)
-    print "visibleBiases"
-    print biases[0]
+
     # Update the hidden biases
     biases[1] += epsilon * (hidden - hiddenReconstruction)
-    print "hiddenBiases"
-    print biases[0]
   return biases, weights
 
 
@@ -149,12 +146,6 @@ def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=False):
   bias = biases[layer]
 
   def activation(x):
-    # if layer == Layer.VISIBLE:
-    #   w =  weightMatrix[x, :]
-    # else:
-    #   w =  weightMatrix[:, x]
-
-    # return sigmoid(bias[x] + np.dot(w, otherLayerValues))
     w = weightVectorForNeuron(layer, weightMatrix, x)
     return activationProbability(activationSum(w, bias[x], otherLayerValues))
 
@@ -209,21 +200,6 @@ def enum(**enums):
 
 # Create an enum for visible and hidden, for
 Layer = enum(VISIBLE=0, HIDDEN=1)
-
-
-"""Main. """
-def main():
-  X = np.array([[1,1,1,0,0,0], # Training subset
-                [1,0,1,0,0,0],
-                [1,1,1,0,0,0],
-                [0,0,1,1,1,0],
-                [0,0,1,1,0,0],
-                [0,0,1,1,1,0],
-
-                [0,0,1,1,1,1], # Validation subset
-                [1,1,1,0,0,0]])
-  rbm = RBM(X, 3, contrastiveDivergence)
-  rbm.train()
 
 
 def rmse(prediction, actual):

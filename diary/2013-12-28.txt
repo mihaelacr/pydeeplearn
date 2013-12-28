@@ -13,7 +13,7 @@ Done today:
 TODO:
 Short term:
  implement the free energy function: or just a way to track error
- RBM class needs a write function for serialization (see pickle)
+ RBM class needs a write function for serialization (see pickle)- does it?
  as of tomorrow start the rest of the coursera course
 
 Long term:

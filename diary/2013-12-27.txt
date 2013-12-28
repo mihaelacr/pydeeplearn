@@ -14,8 +14,6 @@ Current status:
   Implemented a simple version of RBM
   Downloaded MNIST data and running RBM for a part of it to visualize the weights
 
-Done today:
-
 TODO:
 Short term:
  implement the free energy function: or just a way to track error
