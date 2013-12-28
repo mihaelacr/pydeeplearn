@@ -191,7 +191,6 @@ Returns:
 def getEigenFaces(pcaMethod, images, dimension=None):
   imgSize = images[0].shape;
   imgs = imagesToVectors(images)
-  imgs = scipy.array(imgs)
 
   vectors = pcaMethod(imgs, dimension)
   eigenFaces = map(lambda x: vectorToImage(x, imgSize), vectors)

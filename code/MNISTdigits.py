@@ -23,7 +23,7 @@ def main():
   # t = pickle.load( open( "weights.p", "rb" ) )
 
   images, labels = readmnist.read([2], dataset="training", path="MNIST")
-  vectors = np.array(imagesToVectors(images))
+  vectors = imagesToVectors(images)
 
   # Normalize the vectors to have them binary
   scaledVecs = utils.scale_to_unit_interval(vectors)

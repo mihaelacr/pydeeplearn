@@ -1,4 +1,4 @@
-import numpy
+import scipy
 
 """
 Arguments:
@@ -21,4 +21,4 @@ Returns:
   No data is lost in the transformation.
 """
 def imagesToVectors(images):
-  return map(lambda x: x.reshape(-1), images)
+  return scipy.array(map(lambda x: x.reshape(-1), images))
