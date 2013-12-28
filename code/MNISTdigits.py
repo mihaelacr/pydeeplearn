@@ -25,34 +25,17 @@ def main():
   images, labels = readmnist.read([2], dataset="training", path="MNIST")
   vectors = imagesToVectors(images)
 
-  print "images"
-  # print images.sum(axis=1)
-  print "vectors"
-  # print vectors
-  # print vectors.sum(axis=1)
-  # Normalize the vectors to have them binary
-  # print vectors[0]
-  # print utils.scale_to_unit_interval(vectors[0])
   # scaledVecs = utils.scale_to_unit_interval(vectors)
-
-
   scaledVecs = vectors / 256
-
-  print scaledVecs
 
   # The number of hidden units is taken from a deep learning tutorial
   # Train the network
   # The data are the values of the images have to be normalized before being
   # presented to the network
-  print "scaledVecs.sum"
-  print scaledVecs.sum()
   rbm = RBM.RBM(scaledVecs, 500, RBM.contrastiveDivergence)
   rbm.train()
 
   recon = rbm.reconstruct(scaledVecs[0,:])
-  # print recon.sum()
-
-  print recon
   plt.imshow(vectorToImage(recon, images[0].shape), cmap=plt.cm.gray)
   plt.show()
 
