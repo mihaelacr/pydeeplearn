@@ -4,7 +4,7 @@ http://g.sweyla.com/blog/2012/mnist-numpy/
 
 import os, struct
 from array import array as pyarray
-from numpy import append, array, int8, uint8, zeros
+from numpy import append, array, int8, uint8, zeros, float32
 
 def read(digits, dataset = "training", path = "."):
     """
@@ -35,7 +35,7 @@ def read(digits, dataset = "training", path = "."):
     ind = [ k for k in xrange(size) if lbl[k] in digits ]
     N = len(ind)
 
-    images = zeros((N, rows, cols), dtype=uint8)
+    images = zeros((N, rows, cols), dtype=float32)
     labels = zeros((N, 1), dtype=int8)
     for i in xrange(len(ind)):
         images[i] = array(img[ ind[i]*rows*cols : (ind[i]+1)*rows*cols ]).reshape((rows, cols))
