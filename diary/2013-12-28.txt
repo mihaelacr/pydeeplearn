@@ -1,0 +1,24 @@
+Done today:
+  Fixed the issue with the training: it was actually caused due to the normalization
+  of the input: it was all 0 due to the type of the input being int
+
+  Vizualizing the weights properly and checking the reconstruction
+
+  Clean up all the debugging
+
+  Test reconstruction on testing data
+
+  Added various options to RBM: mini-batch, momentum
+
+TODO:
+Short term:
+ implement the free energy function: or just a way to track error
+ RBM class needs a write function for serialization (see pickle)
+ as of tomorrow start the rest of the coursera course
+
+Long term:
+  monitor the overfitting
+  implement deep learning with backprop for MNIST
+  maths stuff
+
+
