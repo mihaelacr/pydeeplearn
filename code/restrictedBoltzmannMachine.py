@@ -48,7 +48,7 @@ class RBM(object):
                                                       self.weights)
 
   def reconstruct(self, dataInstance):
-    return reconstruct(biases, weights, dataInstance)
+    return reconstruct(self.biases, self.weights, dataInstance)
 
   @classmethod
   def initializeWeights(cls, nrVisible, nrHidden):
