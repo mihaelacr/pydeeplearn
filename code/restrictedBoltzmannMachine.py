@@ -67,9 +67,9 @@ class RBM(object):
     return np.array([visibleBiases, hiddenBiases])
 
 
+
 # TODO: add momentum to learning
 # TODO: different learning rates for weights and biases
-
 def reconstruct(biases, weights, dataInstance):
   hidden = updateLayer(Layer.HIDDEN, dataInstance, biases, weights, True)
   visibleReconstruction = updateLayer(Layer.VISIBLE, hidden,
@@ -121,15 +121,20 @@ def contrastiveDivergence(data, biases, weights, miniBatch=False):
 # you have multiple choices about how to implement this
 # It is importaant that the hidden values from the data are binary,
 # not probabilities
-def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
+def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True):
   # TODO: do something smarter with the learning
   epsilon = 0.0001
+  a = 0.9
   assert cdSteps >=1
 
   N = len(data)
 
   # How often should you compute the reconstruction error of the data
   reconstructionStep = N / 100
+
+  oldDeltaWeights = np.zeros(weights.shape)
+  oldDeltaVisible = np.zeros(biases[0].shape)
+  oldDeltaHidden = np.zeros(biases[1].shape)
 
   for i in xrange(N):
     if EXPENSIVE_CHECKS_ON:
@@ -154,14 +159,28 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
                                        biases, weights, False)
 
     # Update the weights
-    weights += epsilon * (np.outer(visible, hidden)
-                - np.outer(visibleReconstruction, hiddenReconstruction))
+    deltaWeights = epsilon * (np.outer(visible, hidden)
+                      -  np.outer(visibleReconstruction, hiddenReconstruction))
 
+    deltaVisible = epsilon * (visible - visibleReconstruction)
+    deltaHidden  = epsilon * (hidden - hiddenReconstruction)
+
+    # TODO: do first step differently
+    if momentum:
+      deltaWeights = a * oldDeltaWeights - deltaWeights
+      deltaVisible = a * oldDeltaVisible - deltaVisible
+      deltaWeights = a * oldDeltaHidden - deltaHidden
+
+      oldDeltaWeights = deltaWeights
+      oldDeltaVisible = deltaVisible
+      oldDeltaHidden = deltaHidden
+
+    weights += deltaWeights
     # Update the visible biases
-    biases[0] += epsilon * (visible - visibleReconstruction)
+    biases[0] += deltaVisible
 
     # Update the hidden biases
-    biases[1] += epsilon * (hidden - hiddenReconstruction)
+    biases[1] += deltaHidden
 
   return biases, weights
 
