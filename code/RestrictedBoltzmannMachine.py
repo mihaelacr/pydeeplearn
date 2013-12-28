@@ -36,6 +36,8 @@ class RBM(object):
   def __init__(self, data, nrHidden, trainingFunction):
     # Initialize weights to random
     assert len(data) !=0
+
+    print data.sum()
     self.nrHidden = nrHidden
     self.nrVisible = len(data[0])
     self.data = data
@@ -61,15 +63,16 @@ class RBM(object):
   def intializeBiases(cls, data, nrHidden):
     # get the procentage of data points that have the i'th unit on
     # and set the visible vias to log (p/(1-p))
-    percentages = data.mean(axis=0, dtype='float') / len(data)
+    percentages = data.mean(axis=0, dtype='float')
     vectorized = np.vectorize(safeLogFraction)
+    # TODO: why are they intge?
     visibleBiases = vectorized(percentages)
+
+    print visibleBiases
 
     # TODO: if sparse hiddeen weights, use that information
     hiddenBiases = np.zeros(nrHidden)
     return np.array([visibleBiases, hiddenBiases])
-
-
 
 def safeLogFraction(p):
   assert p >=0 and p <= 1
@@ -139,8 +142,12 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
 
     # Update the visible biases
     biases[0] += epsilon * (visible - visibleReconstruction)
+    print "visibleBiases"
+    print biases[0]
     # Update the hidden biases
     biases[1] += epsilon * (hidden - hiddenReconstruction)
+    print "hiddenBiases"
+    print biases[0]
   return biases, weights
 
 
@@ -150,10 +157,6 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1):
 def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=False):
   bias = biases[layer]
 
-  # logging.debug("updating layer " + str(layer))
-  # logging.debug("with bias" + str(bias))
-
-  # logging.debug("weights" + str(weightMatrix.shape))
   def activation(x):
     # if layer == Layer.VISIBLE:
     #   w =  weightMatrix[x, :]
@@ -183,10 +186,6 @@ def weightVectorForNeuron(layer, weightMatrix, neuronNumber):
 # TODO: check if you do it faster with matrix multiplication stuff
 # but hinton was adamant about the paralell thing
 def activationSum(weights, bias, otherLayerValues):
-  # logging.debug("in activationSum")
-  # logging.debug(otherLayerValues)
-  # logging.debug(weights)
-
   return bias + np.dot(weights, otherLayerValues)
 
 """ Gets the activation sums for all the units in one layer.
