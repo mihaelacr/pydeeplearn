@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 import readmnist
-import RestrictedBoltzmannMachine as RBM
+import restrictedBoltzmannMachine as RBM
 import utils
 
 from common import *
