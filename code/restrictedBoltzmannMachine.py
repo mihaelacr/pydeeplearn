@@ -145,6 +145,8 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True, w
   oldDeltaVisible = np.zeros(biases[0].shape)
   oldDeltaHidden = np.zeros(biases[1].shape)
 
+  # TODO: try and rewrite some of these things to use matrix stuff
+  # but then you lose the chance of doing parallel stuff
   for i in xrange(N):
     if EXPENSIVE_CHECKS_ON:
       if i % reconstructionStep == 0:
@@ -168,8 +170,12 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True, w
                                        biases, weights, False)
 
     # Update the weights
+    # Positive phase
     deltaWeights = epsilon * (np.outer(visible, hidden)
-                    -  np.outer(visibleReconstruction, hiddenReconstruction))
+                    # Negative phase
+                    -  np.outer(visibleReconstruction, hiddenReconstruction)
+                    # Weight decay factor
+                    - weightDecay * decayFactor *  weights)
 
     deltaVisible = epsilon * (visible - visibleReconstruction)
     deltaHidden  = epsilon * (hidden - hiddenReconstruction)
@@ -189,7 +195,7 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True, w
       oldDeltaVisible = deltaVisible
       oldDeltaHidden = deltaHidden
 
-    weights += deltaWeights - weightDecay * decayFactor *  weights
+    weights += deltaWeights
     # Update the visible biases
     biases[0] += deltaVisible
 
