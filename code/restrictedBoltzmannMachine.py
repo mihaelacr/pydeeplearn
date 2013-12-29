@@ -16,7 +16,7 @@ import math
 # TODO: work out if you can use this somehow
 import multiprocessing
 
-EXPENSIVE_CHECKS_ON = True
+EXPENSIVE_CHECKS_ON = False
 
 # Global multiprocessing pool, used for all updates in the networks
 pool = multiprocessing.Pool()
@@ -122,10 +122,18 @@ def contrastiveDivergence(data, biases, weights, miniBatch=False):
 # you have multiple choices about how to implement this
 # It is importaant that the hidden values from the data are binary,
 # not probabilities
-def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True):
+"""
+
+  Momentum and weight decay should always be on for performance. s
+  TODO: Understand more why momentum works. And why it should be done like this
+  TODO: for performance might consider doing two if statements and repeating the code?
+  or just remove the option
+"""
+def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True, weightDecay=True):
   # TODO: do something smarter with the learning
   epsilon = 0.0001
-  a = 0.5
+  decayFactor = 0.0002
+  momentum = 0.5
   assert cdSteps >=1
 
   N = len(data)
@@ -169,16 +177,19 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True):
     # TODO: do first step differently
     if momentum:
 
+      # this is not required: it is not in Hinton's thing
+      # and an if statement might make it considerably shorted in
+      # uses in Deep belief networks when we have to train multiple
       if i > 1:
-        deltaWeights = a * oldDeltaWeights + deltaWeights
-        deltaVisible = a * oldDeltaVisible + deltaVisible
-        deltaWeights = a * oldDeltaHidden + deltaHidden
+        deltaWeights = momentum * oldDeltaWeights + deltaWeights
+        deltaVisible = momentum * oldDeltaVisible + deltaVisible
+        deltaWeights = momentum * oldDeltaHidden + deltaHidden
 
       oldDeltaWeights = deltaWeights
       oldDeltaVisible = deltaVisible
       oldDeltaHidden = deltaHidden
 
-    weights += deltaWeights
+    weights += deltaWeights - weightDecay * decayFactor *  weights
     # Update the visible biases
     biases[0] += deltaVisible
 
