@@ -1287,6 +1287,9 @@
 
   Once the weights are big enough you use CD3, CD10 etc.
 
+  <subsection|IMPORTANT: the hidden units of the RBM are conditionally
+  independent given the visible units of the visible vector>
+
   <with|font-series|bold|An example of RBM learning>
 
   works for hand written digits.
@@ -1338,6 +1341,378 @@
   \;
 
   <with|font-series|bold|How to choose how many hidden units to use?>
+
+  <section|Lecture 13: the ups and downs of backpropagation>
+
+  SVM cannot deal with multiple layer
+
+  \;
+
+  Why backpropagation failed (or why people thought it failed)
+
+  <\itemize>
+    <item>could not get use of multiple hidden layers
+
+    <item>did not work well with RNN and deep auto encoders
+
+    <item>SVM: had a fanicer theory and worked well
+  </itemize>
+
+  Why Hinton thinks it failed:
+
+  <\itemize>
+    <item>too slow computer and too small data sets
+
+    <item>the deep nets were not intialized properly\ 
+  </itemize>
+
+  <subsection|<with|font-series|bold|Belief nets>>
+
+  What was wrong with backpropagation
+
+  <\itemize>
+    <item>almost all data is unlabelled -\<gtr\> you need to label it
+
+    <item>it is very slow in networks with multiple hidden layers
+
+    <item>it can get stuck in poor local optima: these are often quite good,
+    but for deep nets they are far from optimal
+
+    <item>should we retreat to models that allow convex optimization? (in
+    practice, this just means you run away from the complexity of the data)
+  </itemize>
+
+  <with|font-series|bold|Idea>: overcoming the limitatoins of
+  back-propagation by using unsupervised learning
+
+  Keep the efficiency and simplicity of using gradient methods for asjusting
+  the weights, but use it for modelling the structure of the sensory input
+  (adjust the weights to maximize the probability that the generative model
+  would have generated the sensory input.
+
+  \;
+
+  <with|font-series|bold|Graphical models>: \ graphical models: sigmoid
+  belief networks (they also use binary threshold neurons). Good for
+  representing what variables depend on other varaibles. They were mainly
+  created by experts.
+
+  <with|font-series|bold|Belief nets>: directed acyclic graphical model:
+  sparsly connected. They have nice algorithms, but it is important that the
+  graph is sparse.
+
+  For graphical models the learning was not a problem, because they used
+  experts to define the network.
+
+  <with|font-series|bold|There are two types of generative neural networks
+  composed out of stochastic binary units>
+
+  <\itemize>
+    <item><with|font-series|bold|Energy based models>: we connect binary
+    stoachstic nerons using <with|font-series|bold|symmetric> connections to
+    get a BM (hard to learn a BM, but you can do RBM. But RBM has only one
+    layer)
+
+    <item><with|font-series|bold|Causal>: we connect the binary stochastic
+    neurons in a directed acyclic graph to get a Sigmoid Belief net (Niel
+    proved that they are easier to learn than RBMs)
+  </itemize>
+
+  <with|font-series|bold|Learning sigmoid belief nets>
+
+  It is hard.
+
+  Good news: you do not need two phases, you only need to deal with the
+  'positive phase'
+
+  Why? You do not need to deal with the partition function, because they are
+  local localized models
+
+  There is no energy in sigmoid belief networks
+
+  The good news is that if you get an umbiased sample from the posterior
+  distribution of the hidden units, it is easy to learn. The bad news that it
+  is hard to sample from the posterior distrbutoin.
+
+  <with|font-series|bold|Learning rule if you have an unbiased sample of the
+  hidden posterior distrbution given the data>
+
+  For each unit, max the log probability of
+
+  <\equation*>
+    p<rsub|i>=p<around*|(|s<rsub|i>=1|)>=<frac|1|1+exp<around*|(|-b<rsub|i>-<big|sum>w<rsub|j,i>*s<rsub|j>|)>>
+  </equation*>
+
+  <\equation*>
+    \<nabla\>w<rsub|j,i>=\<varepsilon\>*s<rsub|j>*<around*|(|s<rsub|i>-p<rsub|i>|)>
+  </equation*>
+
+  If you know the posterior, you sample from the posterir so that you can
+  compute <math|s<rsub|j>> and then use the learning rule for the updates.
+  This makes it clear that you need to know the values of the hidden units
+
+  Problem: due to explaning away, the hidden variables are not independent.
+  This is a problem because you also need to consider all possible patterns
+  of the activities in the hidden layers above, because we need to compute
+  the prior.
+
+  <with|font-series|bold|Methods for learning deep belief nets>
+
+  Monte carlo method: does all the work, it runs the Markov chain and see
+  what happens with the distrubtions
+
+  and this is very slow for large deep belief networks.
+
+  <with|font-series|bold|Other methods>: variational methods: they do not get
+  unbiased samples of the distrbutions, but rather an approximation, they
+  improve the lower bound of the log probablity, not thelog probability
+
+  <with|font-series|bold|The wake up sleep algorithm for traning sigmoid
+  networks>
+
+  Not to be confused with RBM training
+
+  an example of variational learning: one of the main ways of learning
+  graphical models
+
+  Idea: compute a cheap approximation of the posterir and use that
+
+  Assume wrongly that the hidden units are independent (as they are in the
+  restricted boltzmann machine), we just do not take into account explaining
+  away.
+
+  Then you can factorized the joint input
+
+  <with|font-series|bold|The wake sleep algorithm>
+
+  <\itemize>
+    <item>A neural network with 2 different set of weights<math| W> (the part
+    of the generative models), determining the distribution of the visible
+    data
+
+    <item>And the reconstruction weights <math|R> used to approximate the
+    posterior distribution (a factorial distribution of each hidden layer)
+
+    <item>Wake phase: you put a data vector at the bottom of the network and
+    do a forward pass with the recongition weights <math|R>, and at each
+    layer you make a stochastic decision independetly if they should be on or
+    off
+
+    <item>Once you have the stochastic binary weights, you treat them as the
+    actual posterior distribution, and you do maximum likelihood learning,
+    but we do that on the generative weights using the <math|W> weights
+
+    <item>Sleep phase: you do the opposite: you use the genrative weights to
+    generate a sample from the model. Now you train the hidden weights to
+    actually recover the hidden states from the data (or from the layer
+    below)
+
+    <item>Start with random states and alternate between wake and sleep
+    states
+
+    \;
+  </itemize>
+
+  Problem with this algorithm: you get incorrect mode averaging
+
+  \;
+
+  <with|font-series|bold|I find it a bit unclear in the mathematical
+  explanation of why the hidden units in the RBM are independent and in
+  sigmoid belief nets they are not>. Seems to me that it is due to the fact
+  that RBM has symmetric connections.
+
+  <subsection|Stakcing RBM for learning: deep belief networks>
+
+  Stack rbms:the hidden output of some RBM are the visible of the others: you
+  get the hidden by running the first RBM once
+  (<with|font-series|bold|patterns of activation>)
+
+  <\itemize>
+    <item>it can be proved that each time we add another layer of features we
+    improve the variational lower bound on the log probability of generating
+    training data
+  </itemize>
+
+  <subsubsection|How to train a deep belief network>
+
+  <\itemize>
+    <item>you first train a usual RBM network from data to hidden (weights
+    W1)
+
+    <item>then you train another RBM netwrok by looking at the hidden
+    patterns of activation from the data, and setting that to be the visible
+    units of the second RBM (weights W2)
+
+    <item>Interesting: you can start the second machine with W2 as W1^T, then
+    you get an already good model for the hidden activities (you can try
+    this). This is just the initial phase of the learning
+
+    <item>You then compose them to form a single model: the top 2 layers, are
+    just the second RBM (undidrected model), while the lower layers only have
+    the connections from hidden to visible (we have thrown away the
+    connections between visible and hidden). Note that you keep the same
+    weights. The resulting model is not a BM since it is not a symmetric
+    graph.
+  </itemize>
+
+  <with|font-series|bold|To generate data from such a model>
+
+  <\itemize>
+    <item>get an equilibruim sample from the top level RBM by performing
+    alternating Gibbs sampling for a long time
+
+    <item>Perform a top down pass from the upper layes to down layers: (here
+    where you do not have symmetric connections again)
+
+    Now using the generative connections you use them to get the patterns in
+    the lower levels, and you repreat this as many levels as you can
+
+    <item>You also have the reverse connections, from down level hidden to
+    the upper ones, but they are not used to generate data from the model
+    (they are just used the inerence and you set them as the transposed of
+    the generative models)
+  </itemize>
+
+  Averaging 2 factorial distributions, you do not get a factorial
+  distribution
+
+  Greedy approach = learning RBM's separately
+
+  What you learn from the RBM <math|p<around*|(|v<around*|\||h|\<nobracket\>>|)>,p<around*|(|h<around*|\||v|\<nobracket\>>|)>,p<around*|(|v|)>,p<around*|(|h|)>,p<around*|(|v,h|)>>
+
+  define
+
+  <\equation*>
+    p<around*|(|v|)>=<big|sum><rsub|h>p<around*|(|v<around*|\||h|\<nobracket\>>|)>*p<around*|(|h|)>
+  </equation*>
+
+  And if we improve our estimate of <math|p<around*|(|h|)>> and leave
+  <math|p<around*|(|v<around*|\||h|\<nobracket\>>|)>> then we can improve our
+  estimate of <math|p<around*|(|v|)>>\ 
+
+  We need a better estimate of <math|p<around*|(|h|)> >than the aggregated
+  (mean) posterior of <math|h> over all visible vectors
+
+  How to build a good model of this aggreagted posterior:
+
+  <\itemize>
+    <item>you learn the RBMs, but then you want to fine tune the learned
+    weights
+
+    <item>1. Do a stochastic bottom up pass: asjust the top down generative
+    weights to be good at reconstructing the feature activities of the layer
+    below (just like in the standard wake sleep algorithm)
+
+    <item>2. do a few sampling iteration in the top RBMS: then you do CD
+
+    <item>3. Do a top down stochatic pass from the visible layer (down layer)
+    of the top RBM (the only RBM left in the model) to generate data, and
+    then use that to adjust the bottom up weights to be good at
+    reconstruction the activity features above
+  </itemize>
+
+  The difference between sigmoid belief nets and RBMs is that by using the
+  top RBM you get a much better prior than by just assuming that the units
+  are independent
+
+  <subsection|Discriminative fine tuning: backprop on stack RBMS>
+
+  fixes most of the problems with backprop, as it only does a search in the
+  local space, and you start with a lot better weights.
+
+  you learned the features of the data already
+
+  you need a lot less labeled data
+
+  less overfitting, and better optimization
+
+  2 effects: optimization and generalization
+
+  With this approach you get to use a lot more information: you get to use
+  the information from the data vectros, which is a lot more than the one
+  from the labels. You get to learn the features yourselves.
+
+  A small objection:
+
+  Without knowing the task in advacance, you will learn a lot of features
+  that are not used for the particular discriminative task you want to do.\ 
+
+  You do a 10 way softmax to be able to label the data.
+
+  <subsubsection|SIMPLE PERMUTATION ON MNIST: works with deep belief nets,
+  but not with convolution>
+
+  <\with|par-line-sep|0fn>
+    \;
+  </with>
+
+  <subsection|Model real valued data using RBM>
+
+  this is required for images, not so much required for mnist, due to the
+  structure od the data.
+
+  instead of binary stochastic units, make the visible units real valued with
+  guassian noise
+
+  It is harder to train the network using the real values, you have to use
+  different kind of activation functions, rectified liner unit
+
+  \;
+
+  Idea: model pixels as gaussian variables
+
+  <\equation*>
+    E<around*|(|v,h|)>=<big|sum><rsub|i\<in\>vis><frac|<around*|(|v<rsub|i>-b<rsub|i>|)>|2\<sigma\><rsup|2><rsub|i>>-<big|sum><rsub|j\<in\>hid>b<rsub|j>*h<rsub|j>-<big|sum><frac|v<rsub|i>|\<sigma\><rsub|i>>h<rsub|j>*w<rsub|i,j>
+  </equation*>
+
+  You still need to do Gibbs sampling, but now it will be much slower
+
+  The first term sets the visible vector centred at the biases, but the last
+  once changes each unit with a rate of\ 
+
+  <math|<frac|h<rsub|j>*w<rsub|i,j>|\<sigma\><rsub|i>>>
+
+  (do nice picture like in the HInton video)
+
+  <with|font-series|bold|Stepped sigmoid units>
+
+  Make many copies of the stochastic binary unit, all copies have the same
+  weights and the same biases which have been learned, but they have
+  different fixed offsets to the bias (what does this actually mean)
+
+  <\equation*>
+    b-0.5,b-1.5,b-2,\<ldots\>.
+  </equation*>
+
+  this is quite expensive to use with the logistic function
+
+  <\equation*>
+    \<less\>y\<gtr\>=<big|sum><rsup|inf><rsub|n=0>\<sigma\><around*|(|x+0.5-n|)>\<simeq\>log<around*|(|1+e<rsup|x>|)>=max<around*|(|0,x+noise|)>
+  </equation*>
+
+  CD works well with this. The noise variance is the logistic of <math|y>.
+
+  Otherwise just use rectified linear units, and CD works as well with that.
+
+  Nice property of rectified linear unit: scale equivariance
+
+  <subsection|See RBMS as infinite sigmoid belief nets>
+
+  not much focus on this, but show a nice pic!
+
+  <subsection|Important: because you have pre traning (generative pretraning)
+  you can increase the number of layers and get better results, and you get
+  the opposite with no pre trainig>
+
+  The kind of solutions you find if you find is just different than the one
+  you get wirhout pre training
+
+  Show the function space image from Hinton
+
+  Write of why you unsupervised learning makes sense (lecture 14.4)
+
+  \;
 
   <section|From Andrew Ng's talk>
 
@@ -1423,6 +1798,12 @@
   When you talk about the possible ways of using RBM for discriminiation,
   make nice pictures of all possible methods
 
+  Talk about a lot of the things that Hinton talks in the RBM paper
+
+  scholarpedia in RBM
+
+  http://www.scholarpedia.org/article/Boltzmann_machine#Restricted_Boltzmann_machines
+
   \;
 
   https://github.com/jdeng/rbm-mnist
@@ -1438,9 +1819,27 @@
   \;
 
   http://g.sweyla.com/blog/2012/mnist-numpy/ this is how I read the MNIST
-  digits
+  digits4
 
   \;
+
+  \;
+
+  IN THE REPORT COMPARE MY ERROR RATE WITH THE ERROR RATES of the different
+  kind of tasks
+
+  \;
+
+  When using\ 
+
+  \;
+
+  Make as many pictures as possible. For all pictures it is good to look
+  again at the video.
+
+  Learn photoshop?
+
+  Gaussian units require a nice picture.
 </body>
 
 <\initial>
@@ -1457,10 +1856,19 @@
     <associate|auto-11|<tuple|2.0.1|?>>
     <associate|auto-12|<tuple|2.1|?>>
     <associate|auto-13|<tuple|3|?>>
-    <associate|auto-14|<tuple|4|?>>
-    <associate|auto-15|<tuple|5|?>>
-    <associate|auto-16|<tuple|6|?>>
+    <associate|auto-14|<tuple|3.1|?>>
+    <associate|auto-15|<tuple|4|?>>
+    <associate|auto-16|<tuple|4.1|?>>
+    <associate|auto-17|<tuple|4.2|?>>
+    <associate|auto-18|<tuple|4.2.1|?>>
+    <associate|auto-19|<tuple|4.3|?>>
     <associate|auto-2|<tuple|1.1|?>>
+    <associate|auto-20|<tuple|4.3.1|?>>
+    <associate|auto-21|<tuple|4.4|?>>
+    <associate|auto-22|<tuple|4.5|?>>
+    <associate|auto-23|<tuple|4.6|?>>
+    <associate|auto-24|<tuple|5|?>>
+    <associate|auto-25|<tuple|6|?>>
     <associate|auto-3|<tuple|1.2|?>>
     <associate|auto-4|<tuple|1.3|?>>
     <associate|auto-5|<tuple|1.4|?>>

@@ -16,11 +16,15 @@ import math
 # TODO: work out if you can use this somehow
 import multiprocessing
 
-EXPENSIVE_CHECKS_ON = False
+EXPENSIVE_CHECKS_ON = True
 
 # Global multiprocessing pool, used for all updates in the networks
 pool = multiprocessing.Pool()
 
+
+# TODO: weight decay
+# TODO: add momentum to learning
+# TODO: different learning rates for weights and biases
 """
  Represents a RBM
 """
@@ -67,9 +71,6 @@ class RBM(object):
     return np.array([visibleBiases, hiddenBiases])
 
 
-
-# TODO: add momentum to learning
-# TODO: different learning rates for weights and biases
 def reconstruct(biases, weights, dataInstance):
   hidden = updateLayer(Layer.HIDDEN, dataInstance, biases, weights, True)
   visibleReconstruction = updateLayer(Layer.VISIBLE, hidden,
@@ -124,7 +125,7 @@ def contrastiveDivergence(data, biases, weights, miniBatch=False):
 def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True):
   # TODO: do something smarter with the learning
   epsilon = 0.0001
-  a = 0.9
+  a = 0.5
   assert cdSteps >=1
 
   N = len(data)
@@ -160,16 +161,18 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True):
 
     # Update the weights
     deltaWeights = epsilon * (np.outer(visible, hidden)
-                      -  np.outer(visibleReconstruction, hiddenReconstruction))
+                    -  np.outer(visibleReconstruction, hiddenReconstruction))
 
     deltaVisible = epsilon * (visible - visibleReconstruction)
     deltaHidden  = epsilon * (hidden - hiddenReconstruction)
 
     # TODO: do first step differently
     if momentum:
-      deltaWeights = a * oldDeltaWeights - deltaWeights
-      deltaVisible = a * oldDeltaVisible - deltaVisible
-      deltaWeights = a * oldDeltaHidden - deltaHidden
+
+      if i > 1:
+        deltaWeights = a * oldDeltaWeights + deltaWeights
+        deltaVisible = a * oldDeltaVisible + deltaVisible
+        deltaWeights = a * oldDeltaHidden + deltaHidden
 
       oldDeltaWeights = deltaWeights
       oldDeltaVisible = deltaVisible
