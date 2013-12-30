@@ -92,29 +92,100 @@ Arguments:
   biases:
 
 Returns:
+
+Defaults the mini batch size 1, so normal learning
 """
-def contrastiveDivergence(data, biases, weights, miniBatch=False):
+# Think of removing the step method all together and keep one to just
+# optimize the code but also make it easier to change them
+# rather than have a function  that you pass in for every batch
+# if nice and easy refactoring can be seen then you can do that
+def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
   N = len(data)
-  # Train the first 70 percent of the data with CD1
-  endCD1 = math.floor(N / 10 * 7)
-  cd1Data = data[0:endCD1, :]
-  biases, weights = contrastiveDivergenceStep(cd1Data, biases,
-                                              weights, cdSteps=1)
 
-  # Train the next 20 percent with CD3
-  endCD3 = math.floor(N / 10 * 2) + endCD1
-  cd3Data = data[endCD1:endCD3, :]
-  biases, weights = contrastiveDivergenceStep(cd3Data, biases,
-                                              weights, cdSteps=3)
+  epochs = N / miniBatchSize
 
-  # Train the next 10 percent of data with CD10
-  cd5Data = data[endCD3:N, :]
-  biases, weights = contrastiveDivergenceStep(cd5Data, biases,
-                                              weights, cdSteps=5)
+  epsilon = 0.001
+  decayFactor = 0.0002
+  weightDecay = True
+
+  for epoch in xrange(epochs):
+    # TODO: you are missing the last part of the data if you
+    #
+    batchData = data[epoch * miniBatchSize: (epoch + 1) * miniBatchSize]
+    # TODO: change this and make it proportional to the data
+    # like the CD-n
+    if epoch < 5:
+      momentum = 0.5
+    else:
+      momentum = 0.9
+
+    if epoch < 10:
+      cdSteps = 1
+    elif epoch < 50:
+      cdSteps = 3
+    else:
+      cdSteps = 10
+
+    # Move the reconstruction at the end
+    for i in xrange(len(batchData)):
+    #   if EXPENSIVE_CHECKS_ON:
+    #     if i % reconstructionStep == 0:
+    #       print "reconstructionError"
+    #       print reconstructionError(biases, weights, data)
+
+      visible = batchData[i]
+      # Reconstruct the hidden weigs from the data
+      hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
+      hiddenReconstruction = hidden
+
+      for i in xrange(cdSteps - 1):
+        visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
+                                            biases, weights, False)
+        hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
+                                           biases, weights, True)
+
+      # Do the last reconstruction from the probabilities in the last phase
+      visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
+                                          biases, weights, False)
+      hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
+                                         biases, weights, False)
+
+      # Update the weights
+      # Positive phase
+      deltaWeights = epsilon * (np.outer(visible, hidden)
+                      # Negative phase
+                      -  np.outer(visibleReconstruction, hiddenReconstruction)
+                      # Weight decay factor
+                      - weightDecay * decayFactor *  weights)
+
+      deltaVisible = epsilon * (visible - visibleReconstruction)
+      deltaHidden  = epsilon * (hidden - hiddenReconstruction)
+
+      # TODO: do first step differently
+      # if momentum:
+
+        # this is not required: it is not in Hinton's thing
+        # and an if statement might make it considerably shorted in
+        # uses in Deep belief networks when we have to train multiple
+      if i > 1:
+        deltaWeights = momentum * oldDeltaWeights + deltaWeights
+        deltaVisible = momentum * oldDeltaVisible + deltaVisible
+        deltaWeights = momentum * oldDeltaHidden + deltaHidden
+
+      oldDeltaWeights = deltaWeights
+      oldDeltaVisible = deltaVisible
+      oldDeltaHidden = deltaHidden
+
+      weights += deltaWeights
+      # Update the visible biases
+      biases[0] += deltaVisible
+
+      # Update the hidden biases
+      biases[1] += deltaHidden
+
 
   return biases, weights
 
-# TODO: add a mini batch method
 
 # Makes a step in the contrastiveDivergence algorithm
 # online or with mini-bathces?
@@ -139,10 +210,6 @@ def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True, w
 
   # How often should you compute the reconstruction error of the data
   reconstructionStep = N / 100
-
-  oldDeltaWeights = np.zeros(weights.shape)
-  oldDeltaVisible = np.zeros(biases[0].shape)
-  oldDeltaHidden = np.zeros(biases[1].shape)
 
   # TODO: try and rewrite some of these things to use matrix stuff
   # but then you lose the chance of doing parallel stuff
