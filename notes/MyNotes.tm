@@ -1699,7 +1699,7 @@
 
   <subsection|See RBMS as infinite sigmoid belief nets>
 
-  not much focus on this, but show a nice pic!
+  ot much focus on this, but show a nice pic!
 
   <subsection|Important: because you have pre traning (generative pretraning)
   you can increase the number of layers and get better results, and you get
@@ -1713,6 +1713,91 @@
   Write of why you unsupervised learning makes sense (lecture 14.4)
 
   \;
+
+  <section|Lecture 15:PCA and autoencoders>
+
+  Deep auto encoders work better than PCA, so maybe I should try them.\ 
+
+  You can do PCA when the data sits near a linear manifold in the
+  multidimensional space: you project the data onto the manifold.
+
+  You can do the same thing with autoencoders, and then you can generalize
+  them.
+
+  Autoencoders: you have linear activation functions for the input and
+  output.\ 
+
+  <with|font-series|bold|PCA using backpropagation:>
+
+  Try to make the output the same as the input using a central bottleneck.
+
+  You have a code of <math|M> hidden units and they correspond to the
+  principal components (they will span the same space as the principal
+  components, but they will not be the same ones, they could be rotational
+  and scale invariant) (if the hidden and output layers you get the same
+  reconstruction error as PCA)
+
+  The weights from the input to the hidden layer may not be orthogonal.
+
+  If using stochastic gradient decent, we might be slower than with PCA.
+
+  But we can generalize PCA, if we use non-linear hidden units then we can
+  project data that is not on a linear manifold.
+
+  input vector -\<gtr\> hidden layers (non linear) -\<gtr\> code -\<gtr\>
+  hidden layers (non linear) -\<gtr\> output (same as input for learning)
+
+  <with|font-series|bold|Deep autoencoders with stacked RBMs>
+
+  You can stack RBMS, and use the decoding weight matrices as the tranposed
+  of the learned weights of the RBMS and then use backprop to fine tune it.
+
+  Works better than with PCA.
+
+  Deep auto encoders can be used for document classification and they work
+  better than PCA.
+
+  <with|font-series|bold|Semantic hashing>
+
+  for document retrieval
+
+  simple idea: rely on encoders to give you similar encodings of ismilar
+  documents, and store the documents in memory at that address. Then in order
+  to find similar documents you just have to flip some bits (like \ a Hamming
+  ball)
+
+  <with|font-series|bold|Learning binary codes for images retrieval>
+
+  could be useful for retrieval of similar images before running the network
+  for face recognition.
+
+  Because what I need to do is get the most similar face.
+
+  <with|font-series|bold|Shallow autoencoders for pre-traning>
+
+  ie. one hidden layer: like RBM, which can be seen as an autoencoder
+
+  RBM has strong regularization.
+
+  You can use noise autoecondoer and contractive autoencoder instead of RBMS?
+
+  Stack of RBMS can be replaced with stack of denoising autoencoders.
+
+  Good idea to try them out: also the nice thing about denoising autoencoders
+  is that you can print out the objecting function that is regularized
+
+  it lacks a theoretical nice bound that you get with RBM, but this is only
+  of theoretical interest
+
+  <with|font-series|bold|Contractive autoencoder>
+
+  work well for pretraining: have the property that only a small subset of
+  their hidden units are in their sensitive range (note that here we are not
+  having binary stochastic units anymore)
+
+  <subsection|PRETRAINING: CONCLUSION>
+
+  Regularization methods: learn dropout.
 
   <section|From Andrew Ng's talk>
 
@@ -1840,6 +1925,19 @@
   Learn photoshop?
 
   Gaussian units require a nice picture.
+
+  Definitely talk and do PCA and autoencoders. Start with PCA for data and
+  then do it with deep auto encoders.
+
+  <subsection|IDea for project: why not use discrimination with labelling for
+  emtion instead of getting another picture with an attractor?>
+
+  Problem: I need labelled images of emtions
+
+  Also the problem is: (not sure about how the reinforcement learning iwll
+  go), but the deep netwroks might be too good to fall into abbas trap
+
+  maybe think of using deep autoencoders for some things.
 </body>
 
 <\initial>
@@ -1868,7 +1966,10 @@
     <associate|auto-22|<tuple|4.5|?>>
     <associate|auto-23|<tuple|4.6|?>>
     <associate|auto-24|<tuple|5|?>>
-    <associate|auto-25|<tuple|6|?>>
+    <associate|auto-25|<tuple|5.1|?>>
+    <associate|auto-26|<tuple|6|?>>
+    <associate|auto-27|<tuple|7|?>>
+    <associate|auto-28|<tuple|7.1|?>>
     <associate|auto-3|<tuple|1.2|?>>
     <associate|auto-4|<tuple|1.3|?>>
     <associate|auto-5|<tuple|1.4|?>>
