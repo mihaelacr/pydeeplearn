@@ -5,6 +5,12 @@ Done today:
 
 
 TODO:
+Near near near future:
+  Clean up the momentum
+  Implement deep belief nets with backprop and RBM
+  test them for MNIST data
+
+Not near future:
   make hidden units sparse.
   Use deep autoencoders
   Add anti-overfitting measures: including drop out
