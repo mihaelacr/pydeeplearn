@@ -16,7 +16,7 @@ import math
 # TODO: work out if you can use this somehow
 import multiprocessing
 
-EXPENSIVE_CHECKS_ON = True
+EXPENSIVE_CHECKS_ON = False
 
 # Global multiprocessing pool, used for all updates in the networks
 pool = multiprocessing.Pool()
@@ -130,7 +130,7 @@ def contrastiveDivergence(data, biases, weights, miniBatch=False):
 """
 def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True, weightDecay=True):
   # TODO: do something smarter with the learning
-  epsilon = 0.0001
+  epsilon = 0.001
   decayFactor = 0.0002
   momentum = 0.5
   assert cdSteps >=1
@@ -212,7 +212,7 @@ def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=False):
 
   def activation(x):
     w = weightVectorForNeuron(layer, weightMatrix, x)
-    return activationProbability(activationSum(w, bias[x], otherLayerValues))
+    return activationProbability(w, bias[x], otherLayerValues)
 
   probs = map(activation, xrange(weightMatrix.shape[layer]))
   probs = np.array(probs)
@@ -229,8 +229,10 @@ def weightVectorForNeuron(layer, weightMatrix, neuronNumber):
   # else layer == Layer.HIDDEN
   return weightMatrix[:, neuronNumber]
 
-# TODO: check if you do it faster with matrix multiplication stuff
-# but hinton was adamant about the paralell thing
+# Made in one function to increase speed
+def activationProbability(weights, bias, otherLayerValues):
+  return sigmoid(bias + np.dot(weights, otherLayerValues))
+
 def activationSum(weights, bias, otherLayerValues):
   return bias + np.dot(weights, otherLayerValues)
 
@@ -239,8 +241,8 @@ def activationSum(weights, bias, otherLayerValues):
     are given correctly. It will throw an exception otherwise.
 """
 
-def activationProbability(activationSum):
-  return sigmoid(activationSum)
+# def activationProbability(activationSum):
+#   return sigmoid(activationSum)
 
 # Another training algorithm. Slower than Contrastive divergence, but
 # gives better results. Not used in practice as it is too slow.
