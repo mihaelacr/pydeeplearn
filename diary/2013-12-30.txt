@@ -1,0 +1,10 @@
+Done today:
+  finished the Hinton videos (apart from the optional ones).
+   I think that after more reading and more maths understanding, some of them need to be
+   rewatched.
+
+
+TODO:
+  make hidden units sparse.
+  Use deep autoencoders
+  Add anti-overfitting measures: including drop out
