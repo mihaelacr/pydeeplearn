@@ -16,13 +16,12 @@ import math
 # TODO: work out if you can use this somehow
 import multiprocessing
 
-EXPENSIVE_CHECKS_ON = False
+EXPENSIVE_CHECKS_ON = True
 
 # Global multiprocessing pool, used for all updates in the networks
 pool = multiprocessing.Pool()
 
 
-# TODO: weight decay
 # TODO: add momentum to learning
 # TODO: different learning rates for weights and biases
 """
