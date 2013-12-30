@@ -22,7 +22,6 @@ EXPENSIVE_CHECKS_ON = False
 pool = multiprocessing.Pool()
 
 
-# TODO: add momentum to learning
 # TODO: different learning rates for weights and biases
 """
  Represents a RBM
@@ -133,37 +132,18 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
     #       print "reconstructionError"
     #       print reconstructionError(biases, weights, data)
 
-      visible = batchData[i]
-      # Reconstruct the hidden weigs from the data
-      hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
-      hiddenReconstruction = hidden
-
-      for j in xrange(cdSteps - 1):
-        visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                            biases, weights, False)
-        hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                           biases, weights, True)
-
-      # Do the last reconstruction from the probabilities in the last phase
-      visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                          biases, weights, False)
-      hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                         biases, weights, False)
-
+      weightsDiff, visibleBiasDiff, hiddenBiasDiff = modelAndDataSampleDiffs(batchData[i], biases, weights)
       # Update the weights
-      # Positive phase
-      deltaWeights = epsilon * (np.outer(visible, hidden)
-                      # Negative phase
-                      -  np.outer(visibleReconstruction, hiddenReconstruction)
-                      # Weight decay factor
-                      - weightDecay * decayFactor *  weights)
+      # data - model
+      # Positive phase - negative
+      # Weight decay factor
+      deltaWeights = (epsilon / len(batchData) * weightsDiff
+                      - epsilon * weightDecay * decayFactor *  weights)
 
-      deltaVisible = epsilon * (visible - visibleReconstruction)
-      deltaHidden  = epsilon * (hidden - hiddenReconstruction)
+      deltaVisible = epsilon * visibleBiasDiff
+      deltaHidden  = epsilon * hiddenBiasDiff
 
-      # TODO: do first step differently
       # if momentum:
-
         # this is not required: it is not in Hinton's thing
         # and an if statement might make it considerably shorted in
         # uses in Deep belief networks when we have to train multiple
@@ -176,6 +156,7 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
       oldDeltaVisible = deltaVisible
       oldDeltaHidden = deltaHidden
 
+      # Update the weighths
       weights += deltaWeights
       # Update the visible biases
       biases[0] += deltaVisible
@@ -183,9 +164,31 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
       # Update the hidden biases
       biases[1] += deltaHidden
 
-
   return biases, weights
 
+
+def modelAndDataSampleDiffs(visible, biases, weights, cdSteps=1):
+  # Reconstruct the hidden weigs from the data
+  hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
+  hiddenReconstruction = hidden
+
+  for i in xrange(cdSteps - 1):
+    visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
+                                        biases, weights, False)
+    hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
+                                       biases, weights, True)
+
+  # Do the last reconstruction from the probabilities in the last phase
+  visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
+                                      biases, weights, False)
+  hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
+                                     biases, weights, False)
+
+  weightsDiff = np.outer(visible, hidden) - np.outer(visibleReconstruction, hiddenReconstruction)
+  visibleBiasDiff = visible - visibleReconstruction
+  hiddenBiasDiff = hidden - hiddenReconstruction
+
+  return weightsDiff, visibleBiasDiff, hiddenBiasDiff
 
 # Makes a step in the contrastiveDivergence algorithm
 # online or with mini-bathces?
