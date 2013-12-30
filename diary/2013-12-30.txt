@@ -2,6 +2,12 @@ Done today:
   finished the Hinton videos (apart from the optional ones).
    I think that after more reading and more maths understanding, some of them need to be
    rewatched.
+   Read the paper of NIPS 2010 on RBM convergence with AIS: main point is that
+    the reconstrciton error is not a good measure, because it keeps decreasing.
+    Another main point made in the paper is that the most important thing to focus on when learning
+    is the learning rate. This has been seen by me when changing the learning rate from 0.0001 to 0.001
+    To small learning rates od not let the network learn the features well.
+    again visualising the network is an important part
 
 
 TODO:
