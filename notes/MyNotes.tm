@@ -1638,7 +1638,8 @@
   Without knowing the task in advacance, you will learn a lot of features
   that are not used for the particular discriminative task you want to do.\ 
 
-  You do a 10 way softmax to be able to label the data.
+  <with|font-series|bold|You do a 10 way softmax to be able to label the
+  data.>
 
   <subsubsection|SIMPLE PERMUTATION ON MNIST: works with deep belief nets,
   but not with convolution>
@@ -1938,6 +1939,24 @@
   go), but the deep netwroks might be too good to fall into abbas trap
 
   maybe think of using deep autoencoders for some things.
+
+  Write about the different kind of RBM learning and the convergence paper
+  read on AIS (especially that they also use MNIST data) For AIS I would
+  write the formulas at the end of page 3 in the paper. looks both cool and
+  professional
+
+  \;
+
+  From the paper on the convergence of RBM it is important to note that the
+  reconstruction error is not a good measure for the likelihood and that the
+  important measure is the learning rate, the other ones are not as
+  important.
+
+  Talk at least about GPU considerations
+
+  possible library
+
+  http://www.ais.uni-bonn.de/deep_learning/doc/html/index.html
 </body>
 
 <\initial>
