@@ -119,9 +119,9 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
     else:
       momentum = 0.9
 
-    if epoch < 10:
+    if epoch < (N/7) * 10:
       cdSteps = 1
-    elif epoch < 50:
+    elif epoch < (N/9) * 10:
       cdSteps = 3
     else:
       cdSteps = 10
@@ -138,7 +138,7 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
       hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
       hiddenReconstruction = hidden
 
-      for i in xrange(cdSteps - 1):
+      for j in xrange(cdSteps - 1):
         visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
                                             biases, weights, False)
         hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
