@@ -166,10 +166,9 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
 
   return biases, weights
 
-
-def modelAndDataSampleDiffs(visible, biases, weights, cdSteps=1):
+def modelAndDataSampleDiffs(batchData, biases, weights, cdSteps=1):
   # Reconstruct the hidden weigs from the data
-  hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
+  hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, True)
   hiddenReconstruction = hidden
 
   for i in xrange(cdSteps - 1):
@@ -184,9 +183,9 @@ def modelAndDataSampleDiffs(visible, biases, weights, cdSteps=1):
   hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
                                      biases, weights, False)
 
-  weightsDiff = np.outer(visible, hidden) - np.outer(visibleReconstruction, hiddenReconstruction)
-  visibleBiasDiff = visible - visibleReconstruction
-  hiddenBiasDiff = hidden - hiddenReconstruction
+  weightsDiff = np.dot(batchData.T, hidden) - np.dot(visibleReconstruction.T, hiddenReconstruction)
+  visibleBiasDiff = np.sum(batchData - visibleReconstruction, axis=0)
+  hiddenBiasDiff = np.sum(hidden - hiddenReconstruction, axis=0)
 
   return weightsDiff, visibleBiasDiff, hiddenBiasDiff
 
@@ -195,95 +194,19 @@ def modelAndDataSampleDiffs(visible, biases, weights, cdSteps=1):
 # you have multiple choices about how to implement this
 # It is importaant that the hidden values from the data are binary,
 # not probabilities
-"""
-
-  Momentum and weight decay should always be on for performance. s
-  TODO: Understand more why momentum works. And why it should be done like this
-  TODO: for performance might consider doing two if statements and repeating the code?
-  or just remove the option
-"""
-def contrastiveDivergenceStep(data, biases, weights, cdSteps=1, momentum=True, weightDecay=True):
-  # TODO: do something smarter with the learning
-  epsilon = 0.001
-  decayFactor = 0.0002
-  momentum = 0.5
-  assert cdSteps >=1
-
-  N = len(data)
-
-  # How often should you compute the reconstruction error of the data
-  reconstructionStep = N / 100
-
-  # TODO: try and rewrite some of these things to use matrix stuff
-  # but then you lose the chance of doing parallel stuff
-  for i in xrange(N):
-    if EXPENSIVE_CHECKS_ON:
-      if i % reconstructionStep == 0:
-        print "reconstructionError"
-        print reconstructionError(biases, weights, data)
-
-    visible = data[i]
-    # Reconstruct the hidden weigs from the data
-    hidden = updateLayer(Layer.HIDDEN, visible, biases, weights, True)
-    hiddenReconstruction = hidden
-    for i in xrange(cdSteps - 1):
-      visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                          biases, weights, False)
-      hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                         biases, weights, True)
-
-    # Do the last reconstruction from the probabilities in the last phase
-    visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                        biases, weights, False)
-    hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                       biases, weights, False)
-
-    # Update the weights
-    # Positive phase
-    deltaWeights = epsilon * (np.outer(visible, hidden)
-                    # Negative phase
-                    -  np.outer(visibleReconstruction, hiddenReconstruction)
-                    # Weight decay factor
-                    - weightDecay * decayFactor *  weights)
-
-    deltaVisible = epsilon * (visible - visibleReconstruction)
-    deltaHidden  = epsilon * (hidden - hiddenReconstruction)
-
-    # TODO: do first step differently
-    if momentum:
-
-      # this is not required: it is not in Hinton's thing
-      # and an if statement might make it considerably shorted in
-      # uses in Deep belief networks when we have to train multiple
-      if i > 1:
-        deltaWeights = momentum * oldDeltaWeights + deltaWeights
-        deltaVisible = momentum * oldDeltaVisible + deltaVisible
-        deltaWeights = momentum * oldDeltaHidden + deltaHidden
-
-      oldDeltaWeights = deltaWeights
-      oldDeltaVisible = deltaVisible
-      oldDeltaHidden = deltaHidden
-
-    weights += deltaWeights
-    # Update the visible biases
-    biases[0] += deltaVisible
-
-    # Update the hidden biases
-    biases[1] += deltaHidden
-
-  return biases, weights
-
 
 """ Updates an entire layer. This procedure can be used both in training
-    and in testing.
+    and in testing. Does not use matrix multiplication, so it is slower then
+    the updateLayer method.
 """
-def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=False):
+def updateLayerSingle(layer, otherLayerValues, biases, weightMatrix, binary=False):
   bias = biases[layer]
 
   def activation(x):
     w = weightVectorForNeuron(layer, weightMatrix, x)
     return activationProbability(w, bias[x], otherLayerValues)
 
+  # He said we can update these in parallel but when doing the multibatch that cannot be anymore
   probs = map(activation, xrange(weightMatrix.shape[layer]))
   probs = np.array(probs)
 
@@ -293,6 +216,31 @@ def updateLayer(layer, otherLayerValues, biases, weightMatrix, binary=False):
 
   return probs
 
+""" Updates an entire layer. This procedure can be used both in training
+    and in testing.
+    Can even take multiple values of the layer, each of them given as rows
+    Uses matrix operations.
+"""
+def updateLayer(layer, otherLayerValues, biases, weights, binary=False):
+  bias = biases[layer]
+  # might not work if it is just a row
+  size = otherLayerValues.shape[0]
+
+  if layer == Layer.VISIBLE:
+    activation = np.dot(otherLayerValues, weights.T)
+  else:
+    activation = np.dot(otherLayerValues, weights)
+
+  probs = sigmoidVec(np.tile(bias, (size, 1)) + activation)
+
+  if binary:
+    # Sample from the distributions
+    return sampleAll(probs)
+
+  return probs
+
+"""Function kept in case we go back to trying to make things in parallel
+and not with matrix stuff. """
 def weightVectorForNeuron(layer, weightMatrix, neuronNumber):
   if layer == Layer.VISIBLE:
     return weightMatrix[neuronNumber, :]
@@ -316,6 +264,7 @@ def activationSum(weights, bias, otherLayerValues):
 
 # Another training algorithm. Slower than Contrastive divergence, but
 # gives better results. Not used in practice as it is too slow.
+# This is what Hinton said but it is not OK due to NIPS paper
 def PCD():
   pass
 
@@ -323,10 +272,12 @@ def PCD():
 """ general unitily functions"""
 
 def sigmoid(x):
-  return 1 / (1 + np.exp(-x));
+  return 1 / (1 + np.exp(-x))
+
+sigmoidVec = np.vectorize(sigmoid, otypes=[np.float])
 
 def sample(p):
-  return int(np.random.uniform() < p)
+  return np.random.uniform() < p
 
 def sampleAll(probs):
   return np.random.uniform(size=probs.shape) < probs
