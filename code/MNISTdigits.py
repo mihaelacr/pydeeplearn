@@ -65,7 +65,7 @@ def main():
 
   # Reconstruct a training image and see that it actually looks like a digit
   recon = rbm.reconstruct(testingScaledVectors[0,:])
-  plt.imshow(vectorToImage(recon, trainImages[0].shape), cmap=plt.cm.gray)
+  plt.imshow(vectorToImage(recon, trainImages[0,:].shape), cmap=plt.cm.gray)
   plt.show()
 
   # Show the weights and their form in a tile fashion

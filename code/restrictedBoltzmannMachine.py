@@ -48,6 +48,14 @@ class RBM(object):
     self.biases, self.weights = self.trainingFunction(data,
                                                       self.biases,
                                                       self.weights)
+    assert self.weights.shape == (self.nrVisible, self.nrHidden)
+    print self.biases[0].shape
+    print "nrVisible" + str(self.nrVisible)
+    # assert self.biases[0].shape == self.nrVisible
+
+    print self.biases[1].shape
+    print "nrHidden" + str(self.nrHidden)
+    # assert self.biases[1].shape == self.nrHidden
 
   def reconstruct(self, dataInstance):
     return reconstruct(self.biases, self.weights, dataInstance)
@@ -68,11 +76,18 @@ class RBM(object):
     hiddenBiases = np.zeros(nrHidden)
     return np.array([visibleBiases, hiddenBiases])
 
-
 def reconstruct(biases, weights, dataInstance):
+  print "output"
+  print "dataInstance" + str(dataInstance.shape)
   hidden = updateLayer(Layer.HIDDEN, dataInstance, biases, weights, True)
+
+  print "hidden" + str(hidden.shape)
+
   visibleReconstruction = updateLayer(Layer.VISIBLE, hidden,
                                       biases, weights, False)
+
+  print "data" + str(dataInstance.shape)
+  print "rec" + str(visibleReconstruction.shape)
   return visibleReconstruction
 
 def reconstructionError(biases, weights, data):
@@ -107,10 +122,12 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
   decayFactor = 0.0002
   weightDecay = True
 
+  batchLearningRate = epsilon / miniBatchSize
+
   for epoch in xrange(epochs):
     # TODO: you are missing the last part of the data if you
     #
-    batchData = data[epoch * miniBatchSize: (epoch + 1) * miniBatchSize]
+    batchData = data[epoch * miniBatchSize: (epoch + 1) * miniBatchSize, :]
     # TODO: change this and make it proportional to the data
     # like the CD-n
     if epoch < 5:
@@ -126,43 +143,42 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
       cdSteps = 10
 
     # Move the reconstruction at the end
-    for i in xrange(len(batchData)):
     #   if EXPENSIVE_CHECKS_ON:
     #     if i % reconstructionStep == 0:
     #       print "reconstructionError"
     #       print reconstructionError(biases, weights, data)
 
-      weightsDiff, visibleBiasDiff, hiddenBiasDiff = modelAndDataSampleDiffs(batchData[i], biases, weights)
-      # Update the weights
-      # data - model
-      # Positive phase - negative
-      # Weight decay factor
-      deltaWeights = (epsilon / len(batchData) * weightsDiff
-                      - epsilon * weightDecay * decayFactor *  weights)
+    weightsDiff, visibleBiasDiff, hiddenBiasDiff = modelAndDataSampleDiffs(batchData, biases, weights)
+    # Update the weights
+    # data - model
+    # Positive phase - negative
+    # Weight decay factor
+    deltaWeights = (batchLearningRate * weightsDiff
+                    - epsilon * weightDecay * decayFactor *  weights)
 
-      deltaVisible = epsilon * visibleBiasDiff
-      deltaHidden  = epsilon * hiddenBiasDiff
+    deltaVisible = batchLearningRate * visibleBiasDiff
+    deltaHidden  = batchLearningRate * hiddenBiasDiff
 
-      # if momentum:
-        # this is not required: it is not in Hinton's thing
-        # and an if statement might make it considerably shorted in
-        # uses in Deep belief networks when we have to train multiple
-      if i > 1:
-        deltaWeights = momentum * oldDeltaWeights + deltaWeights
-        deltaVisible = momentum * oldDeltaVisible + deltaVisible
-        deltaWeights = momentum * oldDeltaHidden + deltaHidden
+    # if momentum:
+      # this is not required: it is not in Hinton's thing
+      # and an if statement might make it considerably shorted in
+      # uses in Deep belief networks when we have to train multiple
+    if epoch > 1:
+      deltaWeights = momentum * oldDeltaWeights + deltaWeights
+      deltaVisible = momentum * oldDeltaVisible + deltaVisible
+      deltaWeights = momentum * oldDeltaHidden + deltaHidden
 
-      oldDeltaWeights = deltaWeights
-      oldDeltaVisible = deltaVisible
-      oldDeltaHidden = deltaHidden
+    oldDeltaWeights = deltaWeights
+    oldDeltaVisible = deltaVisible
+    oldDeltaHidden = deltaHidden
 
-      # Update the weighths
-      weights += deltaWeights
-      # Update the visible biases
-      biases[0] += deltaVisible
+    # Update the weighths
+    weights += deltaWeights
+    # Update the visible biases
+    biases[0] += deltaVisible
 
-      # Update the hidden biases
-      biases[1] += deltaHidden
+    # Update the hidden biases
+    biases[1] += deltaHidden
 
   return biases, weights
 
@@ -184,8 +200,12 @@ def modelAndDataSampleDiffs(batchData, biases, weights, cdSteps=1):
                                      biases, weights, False)
 
   weightsDiff = np.dot(batchData.T, hidden) - np.dot(visibleReconstruction.T, hiddenReconstruction)
+  assert weightsDiff.shape == weights.shape
   visibleBiasDiff = np.sum(batchData - visibleReconstruction, axis=0)
+
+  assert visibleBiasDiff.shape == biases[0].shape
   hiddenBiasDiff = np.sum(hidden - hiddenReconstruction, axis=0)
+  assert hiddenBiasDiff.shape == biases[1].shape
 
   return weightsDiff, visibleBiasDiff, hiddenBiasDiff
 
@@ -223,8 +243,12 @@ def updateLayerSingle(layer, otherLayerValues, biases, weightMatrix, binary=Fals
 """
 def updateLayer(layer, otherLayerValues, biases, weights, binary=False):
   bias = biases[layer]
-  # might not work if it is just a row
-  size = otherLayerValues.shape[0]
+
+  # TODO: think about doing this better
+  if len(otherLayerValues.shape) == 2:
+    size = otherLayerValues.shape[0]
+  else:
+    size = 1
 
   if layer == Layer.VISIBLE:
     activation = np.dot(otherLayerValues, weights.T)
