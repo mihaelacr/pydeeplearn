@@ -118,12 +118,14 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
 
   epochs = N / miniBatchSize
 
-  epsilon = 0.001
+  epsilon = 0.05
   decayFactor = 0.0002
   weightDecay = True
   reconstructionStep = 100
 
   batchLearningRate = epsilon / miniBatchSize
+  print "batchLearningRate"
+  print batchLearningRate
 
   for epoch in xrange(epochs):
     # TODO: you are missing the last part of the data if you
