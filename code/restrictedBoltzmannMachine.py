@@ -121,6 +121,7 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
   epsilon = 0.001
   decayFactor = 0.0002
   weightDecay = True
+  reconstructionStep = 100
 
   batchLearningRate = epsilon / miniBatchSize
 
@@ -142,11 +143,10 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
     else:
       cdSteps = 10
 
-    # Move the reconstruction at the end
-    #   if EXPENSIVE_CHECKS_ON:
-    #     if i % reconstructionStep == 0:
-    #       print "reconstructionError"
-    #       print reconstructionError(biases, weights, data)
+    if EXPENSIVE_CHECKS_ON:
+      if epoch % reconstructionStep == 0:
+        print "reconstructionError"
+        print reconstructionError(biases, weights, data)
 
     weightsDiff, visibleBiasDiff, hiddenBiasDiff = modelAndDataSampleDiffs(batchData, biases, weights)
     # Update the weights
