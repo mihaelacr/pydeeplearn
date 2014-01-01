@@ -1,3 +1,7 @@
+% Author
+% My title
+% June 15, 2006
+
 # Introduction
   The aim of the project.
   clarify this iwth abbas
@@ -38,7 +42,11 @@
 
 ## Deep belief networks
 
+### Softmax units
   use of backpropagation.
   stacking multiple RBMs
-  ### Softmax units
+
+  * One
+  * Two
+  * Three
 
