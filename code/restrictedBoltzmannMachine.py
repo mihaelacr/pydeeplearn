@@ -113,7 +113,7 @@ Defaults the mini batch size 1, so normal learning
 # optimize the code but also make it easier to change them
 # rather than have a function  that you pass in for every batch
 # if nice and easy refactoring can be seen then you can do that
-def contrastiveDivergence(data, biases, weights, miniBatchSize=1):
+def contrastiveDivergence(data, biases, weights, miniBatchSize=10):
   N = len(data)
 
   epochs = N / miniBatchSize
