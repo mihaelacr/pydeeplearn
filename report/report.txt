@@ -1,6 +1,6 @@
-% Author
-% My title
-% June 15, 2006
+% Mihaela Rosca
+% Deep learning and other machine learning cool stuff
+% 1 Jan 2014
 
 # Introduction
   The aim of the project.
