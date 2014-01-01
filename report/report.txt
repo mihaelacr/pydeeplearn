@@ -1,0 +1,44 @@
+# Introduction
+  The aim of the project.
+  clarify this iwth abbas
+
+# Background
+
+## History of machine learning and progresses
+
+## Neural networks
+
+ City some semnficant results and their decay
+ Quote Hinton in the reasons that neural nets were abandoned (lack of CPU, too much backprop, not enough labeled data)
+
+ Why deep nets did not work before. Talk about how with the pre trained nets you have the guarantte to get better results
+  than you got beore
+
+ Backpropagation here?
+
+## Hopfield networks
+  Add nice pics.
+
+  Do not talk much about them
+
+
+## Boltzmann machines
+  Stochastic hopfield nets
+  Talk about the issues with their training algorithms
+
+## Restricted Boltzmann machines
+  Idea.
+  Why they are easier to train and understand than
+
+## Pre training
+  Using unsupervised learning for supervised learning
+  This is important and sketch the importance of learned features
+
+  Mention auto encoders and deep auto encoders vs PCA
+
+## Deep belief networks
+
+  use of backpropagation.
+  stacking multiple RBMs
+  ### Softmax units
+
