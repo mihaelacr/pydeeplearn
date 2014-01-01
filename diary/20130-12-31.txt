@@ -1,0 +1,8 @@
+Done today:
+  Cleaned up RBm, done some testing with the different error measures
+  finished proper implementation on mini batch
+
+TODO:
+  have a clear design of implementation
+  recap backprop
+  start report (on clean using pandoc)
