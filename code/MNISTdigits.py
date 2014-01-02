@@ -53,7 +53,7 @@ def main():
     # presented to the network
     nrVisible = len(trainingScaledVectors[0])
     nrHidden = 500
-    net = rbm.RBM(nrVisible, nrHidden, RBM.contrastiveDivergence)
+    net = rbm.RBM(nrVisible, nrHidden, rbm.contrastiveDivergence)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, trainImages[0].shape, (10,10))
   else:
