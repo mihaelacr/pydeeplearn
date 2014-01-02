@@ -55,8 +55,9 @@ class RBM(object):
     print "nrHidden" + str(self.nrHidden)
     # assert self.biases[1].shape == self.nrHidden
 
-  def reconstruct(self, dataInstance):
-    return reconstruct(self.biases, self.weights, dataInstance)
+  """ Reconstructs the data given using this boltzmann machine."""
+  def reconstruct(self, dataInstances):
+    return reconstruct(self.biases, self.weights, dataInstances)
 
   @classmethod
   def initializeWeights(cls, nrVisible, nrHidden):
@@ -74,19 +75,13 @@ class RBM(object):
     hiddenBiases = np.zeros(nrHidden)
     return np.array([visibleBiases, hiddenBiases])
 
-def reconstruct(biases, weights, dataInstance):
-  print "output"
-  print "dataInstance" + str(dataInstance.shape)
-  hidden = updateLayer(Layer.HIDDEN, dataInstance, biases, weights, True)
+def reconstruct(biases, weights, dataInstances):
+  hidden = updateLayer(Layer.HIDDEN, dataInstances, biases, weights, True)
 
-  print "hidden" + str(hidden.shape)
-
-  visibleReconstruction = updateLayer(Layer.VISIBLE, hidden,
+  visibleReconstructions = updateLayer(Layer.VISIBLE, hidden,
                                       biases, weights, False)
 
-  print "data" + str(dataInstance.shape)
-  print "rec" + str(visibleReconstruction.shape)
-  return visibleReconstruction
+  return visibleReconstructions
 
 def reconstructionError(biases, weights, data):
     # Returns the rmse of the reconstruction of the data
