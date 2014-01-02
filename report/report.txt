@@ -1,9 +1,6 @@
-\usepackage[margin=0.5in]{geometry}
-
 % Mihaela Rosca
 % Deep learning and other machine learning cool stuff
 % 1 Jan 2014
-
 
 # Introduction
   The aim of the project.
@@ -195,8 +192,8 @@ Using the chain rule:
 \begin{center} $\frac {dC}{d {z_i}} = \sum{ \frac{dC} {d{y_j}} \frac{d{y_j}}{d{z_i}} } $ \end{center}
 
 Note that we require the sum since the output of the neuron in the softmax unit depends on the activities of all other neurons in the unit.
-\begin{center} $\frac {dC}{d {z_i}} = \sum{- {t_j} \frac {1} {y_j} \frac{d{y_j}}{d{z_i}} }
-      = - \sum{ {t_j} \frac {1} {y_j}  {y_j} (1 - {y_j})} = - \sum{{t_j} (1 - {y_j})} = {t_i} (1 - {y_i}) = {t_i} - {y_i}$ \end{center}
+\begin{center} $\frac {dC}{d {z_i}} = \sum{- {t_j} \frac {1} {y_j} \frac{d{y_j}}{d{z_i}} = - \sum{ {t_j} \frac {1} {y_j}  {y_j} (1 - {y_j})} } $\end{center}
+\begin{center} $\frac {dC}{d {z_i}} = - \sum{{t_j} (1 - {y_j})} = {t_i} (1 - {y_i}) = {t_i} - {y_i}$ \end{center}
 
 
 
