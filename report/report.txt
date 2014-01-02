@@ -171,7 +171,8 @@
 
   A softmax function has multiple properties which make it suitable for it's use in machine learning:
 
-  * Good use for discrimination: classifying using softmax nodes
+  * A softmax unit can be used to model the posterior of a probaility distribution, and can be used for discrimination
+  : classifying using softmax nodes
 
   * It is suitable for representing probablity distribution: it's output is between (0, 1)
 
@@ -191,7 +192,7 @@
 Using the chain rule:
 \begin{center} $\frac {dC}{d {z_i}} = \sum{ \frac{dC} {d{y_j}} \frac{d{y_j}}{d{z_i}} } $ \end{center}
 
-Note that we require the sum since the output of the neuron in the softmax unit depends on the activities of all other neurons in the unit.
+Note that we require the sum since the output of the neuron in the softmax unit depends on the activities of all other neurons in the unit (this is not required for the logistic neuron)
 \begin{center} $\frac {dC}{d {z_i}} = \sum{- {t_j} \frac {1} {y_j} \frac{d{y_j}}{d{z_i}} = - \sum{ {t_j} \frac {1} {y_j}  {y_j} (1 - {y_j})} } $\end{center}
 \begin{center} $\frac {dC}{d {z_i}} = - \sum{{t_j} (1 - {y_j})} = {t_i} (1 - {y_i}) = {t_i} - {y_i}$ \end{center}
 
@@ -208,7 +209,7 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
 # Experiments
 
- ## MNIST digits
+## MNIST digits
   Quote other MNIST digits results, with different methods
 
   Say how you can make deep belieg nets learn even with a permutation of all pixels, but this would not work for convolutional neural nets, because they have hard wired information.
