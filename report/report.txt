@@ -1,6 +1,9 @@
+
 % Mihaela Rosca
 % Deep learning and other machine learning cool stuff
 % 1 Jan 2014
+
+\usepackage[margin=0.5in]{geometry}
 
 # Introduction
   The aim of the project.
@@ -60,10 +63,10 @@
 
 ### Other tricks
 
-    1. Weight decay: same as gaussian something, discuss that (maybe picture)
-    2. Momentum
-    3. Dumped mean field
-    4. Drop out
+  1. Weight decay: same as gaussian something, discuss that (maybe picture)
+  2. Momentum
+  3. Dumped mean field
+  4. Drop out
 
 ### Overfitting
     Weight decay is also good for this: hight weights => overfitting
@@ -104,10 +107,105 @@
   Talk of how they are deep belief nets and they can be used for better generative models and also discriminative ones.
 
 
-### Softmax units
-  use of backpropagation.
-  Good use for discrimination: classifying using softmax nodes
-  Good for representing probabilities, it is between (0, 1)
+### Softmax groups
+
+#### Justification
+
+  When we use a neural network for classification, we would like that the output of the network represents a probability distribution of the labels.
+
+
+  TODO: picture
+
+  This is not easy to achieve with a logit neuron, because ...
+
+
+
+
+
+  The simple and elegant way to solve the above problems is by using a softmax group. A softmax group can be seen as a continous version of the maximum function.
+
+  TODO: graph of softmax function and a nice picture of the
+
+  In order to ensure that the sum of the output of the unit is 1 (required in order for it to represent a probablity distribution), the output of a unit does not only depend soley on it's but also on the input of the other elements of the unit.
+  In the following, the input of one of the units (also called 'the logit') is denoted by $x_i$ and the output of the unit is denoted by $y_i$
+
+\begin{center} $y_i = \frac{e^{x_i}}{\sum{e^{x_j}}}$ \end{center}
+
+  The derivative of the softmax function is very similar to the one for the logistic function:
+
+  \begin{center} $\frac{d {y_i}}{d {x_i}} = {y_i} (1-{y_i})$ \end{center}
+
+  When using a softmax unit as the final layer in a neural network used for classification, the mean square error is not a very good measure.
+  In order to ilustrate this we will look at an example.
+    Why RMSE is not good.
+    -Example-
+
+  TODO: either say consider the function in an online case or say you consider one training case, also move this above and explain
+  it somehoe differently since this is about why RMSE and logistic is not good.
+
+
+  TODO: think of how to schedule this and how to put it. I think how it was before was a bit better. Justify it using the softmax group instead of the logistic and show that this is th same for both (since they have the same derivative function)
+
+  Consider the case when the desired output of a logistic neuron is 1 but when the output it produces is 0.000001. The neuron is very far off from the actual result, but there is almost no gradient to allow the logistic unit to change in the use of backpropagation.
+
+  As before (TODO, from the numbered equation above), let $E$ be the error we get by using the mean square error measure.
+  We now compute the error derivative on the last layer of the network:
+
+  \begin{center}$ \frac{d E} {d {w_i_j}} = \frac{d E} {d {z_j}} \frac{d {z_j}} {d w_i_j} = \frac{d E} {d {z_j}} {y_i} $\end{center}
+  Using the logistic function derivative TODO insert number here
+
+  \begin{center}$ \frac{d E} {d z_j} = \frac{d E} {d {y_j}} \frac{d {y_j}} {d z_j} = \frac{d E} {d {y_j}} {y_j} (1 - {y_j}) $\end{center}
+
+  Since $E$ is the mean square error
+    \begin{center}$ \frac{d E}{d {y_j}}= -({t_j} - {y_j})$\end{center}
+
+    \begin{center}$ \frac{d E} {d {z_j}} = -({t_j} - {y_j}) {y_j} (1 - {y_j})$\end{center}
+
+    When $t_j = 1$ $y_j = 0.000001$ (as per our example), then
+    \begin{center}$ \frac{d E} {d {z_j}} = - (1 -  0.000001) *  0.000001 * (1 -  0.000001) = 9.99998e-7 $\end{center}
+
+    TODO: clarify next sentence.
+    Hence the change in the weight derivative will be very small.
+
+
+
+
+
+  The best function to use is the cross entropy cost function:
+
+\begin{center} $C=- \sum{t_j \log{y_j}}$ where $t_j$ is the target value of the unit. \end{center}
+
+  This is equivalent to maximizing the log probability of the right answer, since for the labeled data $t_j$ will be 1 only for the class corresponding to the training instance (we assume distinct classes).
+
+  A softmax function has multiple properties which make it suitable for it's use in machine learning:
+
+  * Good use for discrimination: classifying using softmax nodes
+
+  * It is suitable for representing probablity distribution: it's output is between (0, 1)
+
+  * Any discrete probability distribution can be presented using a softmax unit.
+
+  * Has the property that it has a very big gradient when the correct answer is 1 and the network outputs a very small value (close to lower bound 0), and hence it is very suitable for gradient descent methods such as backpropagation, as it has a high impact on the weight changes.
+  This solves the problems which arise when using the mean square error measure.
+
+  Taking the example before with the cross entropy error function, we see how the gradient will now change substantially.
+
+    \begin{center} $C=- \sum{t_j \log{y_j}}$ \end{center}
+
+    \
+
+
+
+
+  Due to the above, in all the classification models discuss further, we will use a softmax unit as the top layer of the neural network.
 
 ## Comparison between deep belief nets and convolutional nets
 
+
+
+# Experiments
+
+ ## MNIST digits
+  Quote other MNIST digits results, with different methods
+
+  Say how you can make deep belieg nets learn even with a permutation of all pixels, but this would not work for convolutional neural nets, because they have hard wired information.
