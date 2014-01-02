@@ -1,4 +1,4 @@
-import scipy
+import numpy as np
 
 """
 Arguments:
@@ -20,8 +20,7 @@ Returns:
   No data is lost in the transformation.
 """
 def imagesToVectors(images):
-  return scipy.array(map(lambda x: x.reshape(-1), images))
-
+  return np.array(map(lambda x: x.reshape(-1), images))
 
 def sigmoid(x):
   return 1 / (1 + np.exp(-x))
