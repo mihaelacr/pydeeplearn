@@ -16,11 +16,9 @@ import math
 # TODO: work out if you can use this somehow
 import multiprocessing
 
+from common import *
+
 EXPENSIVE_CHECKS_ON = False
-
-# Global multiprocessing pool, used for all updates in the networks
-pool = multiprocessing.Pool()
-
 
 # TODO: different learning rates for weights and biases
 """
@@ -296,11 +294,6 @@ def PCD():
 
 
 """ general unitily functions"""
-
-def sigmoid(x):
-  return 1 / (1 + np.exp(-x))
-
-sigmoidVec = np.vectorize(sigmoid, otypes=[np.float])
 
 def sample(p):
   return np.random.uniform() < p

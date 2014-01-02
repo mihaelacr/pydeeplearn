@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 import readmnist
-import restrictedBoltzmannMachine as RBM
+import restrictedBoltzmannMachine as rbm
 import utils
 
 from common import *
@@ -53,18 +53,18 @@ def main():
     # presented to the network
     nrVisible = len(trainingScaledVectors[0])
     nrHidden = 500
-    rbm = RBM.RBM(nrVisible, nrHidden, RBM.contrastiveDivergence)
-    rbm.train(trainingScaledVectors)
-    t = visualizeWeights(rbm.weights.T, trainImages[0].shape, (10,10))
+    net = rbm.RBM(nrVisible, nrHidden, RBM.contrastiveDivergence)
+    net.train(trainingScaledVectors)
+    t = visualizeWeights(net.weights.T, trainImages[0].shape, (10,10))
   else:
     # Take the saved network and use that for reconstructions
     f = open(NETWORK_FILE, "rb")
     t = pickle.load(f)
-    rbm = pickle.load(f)
+    net = pickle.load(f)
 
 
   # Reconstruct a training image and see that it actually looks like a digit
-  recon = rbm.reconstruct(testingScaledVectors[0,:])
+  recon = net.reconstruct(testingScaledVectors[0,:])
   plt.imshow(vectorToImage(recon, trainImages[0,:].shape), cmap=plt.cm.gray)
   plt.show()
 
@@ -78,7 +78,7 @@ def main():
   if args.save:
     f = open("NETWORK_FILE.p", "wb")
     pickle.dump(t, f)
-    pickle.dump(rbm, f)
+    pickle.dump(net, f)
 
 
 

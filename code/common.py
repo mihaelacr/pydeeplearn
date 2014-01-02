@@ -21,3 +21,15 @@ Returns:
 """
 def imagesToVectors(images):
   return scipy.array(map(lambda x: x.reshape(-1), images))
+
+
+def sigmoid(x):
+  return 1 / (1 + np.exp(-x))
+
+sigmoidVec = np.vectorize(sigmoid, otypes=[np.float])
+
+# Takes the value of the sigmoid function and returns the derivative
+def sigmoidDerivativeFromValue(sigmoidValue):
+  return sigmoidValue * (1 - sigmoidValue)
+
+sigmoidDerivativeVec = np.vectorize(sigmoidDerivativeFromValue, otypes=[np.float])
