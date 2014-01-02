@@ -18,35 +18,96 @@
  Why deep nets did not work before. Talk about how with the pre trained nets you have the guarantte to get better results
   than you got beore
 
- Backpropagation here?
+## Backpropagation and gradient descent methods
+  * Gradient descent
+  * Using mini-batches vs online gradient descent vs full batch
+  * Learning rate
 
 ## Hopfield networks
   Add nice pics.
 
   Do not talk much about them
 
+  * Energy
+  * Training
+  * Spirous minima
+  * Elizabeth Gardner's traning for Hopfield using perceptron trainig (just mention and quote it)
+
 
 ## Boltzmann machines
   Stochastic hopfield nets
   Talk about the issues with their training algorithms
 
+
 ## Restricted Boltzmann machines
   Idea.
-  Why they are easier to train and understand than
+  Why they are easier to train and understand than BM
+  Generative models
+  Free energy
+
+  Important, hidden units are conditionally independent due to the nature of the graph
+
+### Training an RBM
+
+#### Neals algorithm (could be presented in BM learning)
+    does not work well for online learning
+
+#### Contrastive divergence
+  Rough approximation of likelihood, does not use one term from KL divergence masure,
+  but works well in practice (and fast enough)
+
+### PCD
+
+### Other tricks
+
+    1. Weight decay: same as gaussian something, discuss that (maybe picture)
+    2. Momentum
+    3. Dumped mean field
+    4. Drop out
+
+### Overfitting
+    Weight decay is also good for this: hight weights => overfitting
+    Talk about the reconstruction error and how it is not a good measure for the log likelihood
+
+### Non binary units
+  Gaussian units and why they are harder to train
+
+## Sigmoid belief nets
+  Graphical models, hard to learn them etc
 
 ## Pre training
+  Less overfitting because the input vectors contain a lot more information than the data.
+
   Using unsupervised learning for supervised learning
   This is important and sketch the importance of learned features
 
   Mention auto encoders and deep auto encoders vs PCA
 
-## Deep belief networks
+  Add a image with the stuff and the images and the labels that Hinton had.
+
+
+## Deep belief networks: sigmoid belief nets from stacking RBM
+  Discovered by Geoff Hinton in 2006, deep belief networks are graphical models which use the principle of greedy layer wise traning, in which each of the layers is trained separetely, after which the weights of the entire network are fine tuned either to maximize the log likelihood of the generative model, or to minimize the error with respect to a classification criteria.
+
+  It works because backpropagation does not need to learn new features of the data.
+
+
+### Theoretical justification of the greedy learning
+  http://deeplearning.net/tutorial/DBN.html
+
+  They are graphical models
+  Greedy traning
+  Only pre trained RBM
+
+  Remember to mention the transpose trick that Hinton uses when training the nets
+
+  Talk of how they are deep belief nets and they can be used for better generative models and also discriminative ones.
+
 
 ### Softmax units
   use of backpropagation.
-  stacking multiple RBMs
+  Good use for discrimination: classifying using softmax nodes
+  Good for representing probabilities, it is between (0, 1)
 
-  * One
-  * Two
-  * Three
+## Comparison between deep belief nets and convolutional nets
 
