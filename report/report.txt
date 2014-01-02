@@ -1,9 +1,9 @@
+\usepackage[margin=0.5in]{geometry}
 
 % Mihaela Rosca
 % Deep learning and other machine learning cool stuff
 % 1 Jan 2014
 
-\usepackage[margin=0.5in]{geometry}
 
 # Introduction
   The aim of the project.
@@ -143,15 +143,12 @@
   TODO: either say consider the function in an online case or say you consider one training case, also move this above and explain
   it somehoe differently since this is about why RMSE and logistic is not good.
 
-
-  TODO: think of how to schedule this and how to put it. I think how it was before was a bit better. Justify it using the softmax group instead of the logistic and show that this is th same for both (since they have the same derivative function)
-
   Consider the case when the desired output of a logistic neuron is 1 but when the output it produces is 0.000001. The neuron is very far off from the actual result, but there is almost no gradient to allow the logistic unit to change in the use of backpropagation.
 
   As before (TODO, from the numbered equation above), let $E$ be the error we get by using the mean square error measure.
   We now compute the error derivative on the last layer of the network:
 
-  \begin{center}$ \frac{d E} {d {w_i_j}} = \frac{d E} {d {z_j}} \frac{d {z_j}} {d w_i_j} = \frac{d E} {d {z_j}} {y_i} $\end{center}
+  \begin{center}$ \frac{d E} {d {w_{i,j}}} = \frac{d E} {d {z_j}} \frac{d {z_j}} {d w_{i,j}} = \frac{d E} {d {z_j}} {y_i} $\end{center}
   Using the logistic function derivative TODO insert number here
 
   \begin{center}$ \frac{d E} {d z_j} = \frac{d E} {d {y_j}} \frac{d {y_j}} {d z_j} = \frac{d E} {d {y_j}} {y_j} (1 - {y_j}) $\end{center}
@@ -162,16 +159,14 @@
     \begin{center}$ \frac{d E} {d {z_j}} = -({t_j} - {y_j}) {y_j} (1 - {y_j})$\end{center}
 
     When $t_j = 1$ $y_j = 0.000001$ (as per our example), then
-    \begin{center}$ \frac{d E} {d {z_j}} = - (1 -  0.000001) *  0.000001 * (1 -  0.000001) = 9.99998e-7 $\end{center}
+    \begin{center}$ \frac{d E} {d {z_j}} = - (1 -  0.000001) \cdot  0.000001  \cdot (1 -  0.000001) = 9.99998e-7 $\end{center}
 
     TODO: clarify next sentence.
     Hence the change in the weight derivative will be very small.
 
 
 
-
-
-  The best function to use is the cross entropy cost function:
+  The best error function to use for a softmax unit is the cross entropy cost function:
 
 \begin{center} $C=- \sum{t_j \log{y_j}}$ where $t_j$ is the target value of the unit. \end{center}
 
@@ -190,9 +185,20 @@
 
   Taking the example before with the cross entropy error function, we see how the gradient will now change substantially.
 
-    \begin{center} $C=- \sum{t_j \log{y_j}}$ \end{center}
+  Let $t_i = 1$ (hence $t_j = 1 \forall j \ne i$ ) and $y_i = 0.000001$
 
-    \
+\begin{center} $C=- \sum{t_j \log{y_j}}$ \end{center}
+
+\begin{center} $\frac {dC}{d {y_j}} = - {t_j} \frac {1} {y_j}$ \end{center}
+
+Using the chain rule:
+\begin{center} $\frac {dC}{d {z_i}} = \sum{ \frac{dC} {d{y_j}} \frac{d{y_j}}{d{z_i}} } $ \end{center}
+
+Note that we require the sum since the output of the neuron in the softmax unit depends on the activities of all other neurons in the unit.
+\begin{center} $\frac {dC}{d {z_i}} = \sum{- {t_j} \frac {1} {y_j} \frac{d{y_j}}{d{z_i}} }
+      = - \sum{ {t_j} \frac {1} {y_j}  {y_j} (1 - {y_j})} = - \sum{{t_j} (1 - {y_j})} = {t_i} (1 - {y_i}) = {t_i} - {y_i}$ \end{center}
+
+
 
 
 
