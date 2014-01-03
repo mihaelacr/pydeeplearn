@@ -3,6 +3,11 @@ import numpy as np
 import restrictedBoltzmannMachine as rbm
 
 # TODO: use momentum for backpropagation
+# TODO: try tanh instead of the usual 1 /(1 + exp.(-x)) ?
+# Note that this requires also changes in output function
+
+# TODO: use conjugate gradient for  backpropagation instead of stepeest descent
+
 
 from common import *
 

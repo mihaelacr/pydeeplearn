@@ -43,6 +43,8 @@
   * Learning rate
   * momentum? dropout etc here (not sure if here: momentum should be here though)
 
+  TODO: quote bishop here as well
+
 ### Issues with backpropagation
   Write the wiki things
 
