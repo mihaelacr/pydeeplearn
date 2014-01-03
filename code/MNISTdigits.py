@@ -98,7 +98,7 @@ def deepbeliefMain():
   testingVectors = imagesToVectors(testImages)
   testingScaledVectors = testingVectors / 256
 
-  vectorLabels = labelsToVectors(trainLabels)
+  vectorLabels = labelsToVectors(trainLabels, 10)
 
   net = db.DBN(3, [784, 500, 500], [sigmoid, softmax])
 
