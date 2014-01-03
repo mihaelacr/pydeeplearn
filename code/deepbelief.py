@@ -81,7 +81,7 @@ class DBN(object):
     # Think of this
     self.biases += [np.random.normal(0, 0.01, self.layerSizes[-1])]
 
-
+    assert len(self.weights) == self.nrLayers - 1
     # Does backprop or wake sleep?
     self.fineTune(data, labels)
 
@@ -144,14 +144,25 @@ def backprop(weights, layerValues, finalLayerErrors):
   # Compute the last layer derivatives for the softmax
   deDz = softmaxDerivativeForLinearSum(finalLayerErrors, layerValues[-1])
 
+  assert deDz.shape == layerValues[-1].shape
+
   nrLayers = len(weights)
   deDw = []
 
   for layer in xrange(nrLayers -1, -1, -1):
     dw, dbottom = derivativesForBottomLayer(weights[layer], layerValues[layer], deDz)
 
+    print "dbottom"
+    print dbottom.shape
+
+    print "weights"
+    print weights[layer].shape
+
+    print "layer values"
+    print layerValues[layer - 1].shape
+
     if layer is not 0:
-      deDz = sigmoidDerivativeForLinearSum(dbottom, layerValues[layer - 1])
+      deDz = sigmoidDerivativeForLinearSum(dbottom, layerValues[layer])
 
     deDw += [dw]
 
@@ -196,6 +207,6 @@ def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
 
   # Matrix, same shape as layerWeights
   weightDerivatives = np.outer(y, derivativesWrtLinearInputSum)
-  assert weights.shape == weightDerivatives.shape
+  assert layerWeights.shape == weightDerivatives.shape
 
   return weightDerivatives, bottomLayerDerivatives
