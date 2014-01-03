@@ -12,7 +12,6 @@ TODO: mean filed and dumped mean field
 
 """
 import numpy as np
-import math
 # TODO: work out if you can use this somehow
 import multiprocessing
 
@@ -312,5 +311,5 @@ def safeLogFraction(p):
   # they should be opposites
   if p * (1 - p) == 0:
     return 0
-  return math.log(p / (1 -p))
+  return np.log(p / (1 -p))
 

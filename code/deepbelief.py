@@ -135,7 +135,7 @@ Arguments:
 """
 def backprop(weights, layerValues, finalLayerErrors):
   # Compute the last layer derivatives for the softmax
-  deDz = softmaxDerivativeForLinearSum(finalLayerErrors, layerValues)
+  deDz = softmaxDerivativeForLinearSum(finalLayerErrors, layerValues[-1])
 
   nrLayers = len(weights)
   deDw = []
@@ -167,8 +167,11 @@ def outputDerivativesCrossEntropyErrorFunction(expected, actual):
 
 def softmaxDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
   # write it as matrix multiplication
+  print "topLayerActivations"
+  print topLayerActivations.shape
+
   d = - np.outer(topLayerActivations, topLayerActivations)
-  d[np.np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
+  d[np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
   return np.dot(topLayerDerivatives, d)
 
 
