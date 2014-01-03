@@ -44,6 +44,11 @@ class DBN(object):
     self.initialized = False
     self.discriminative = True
 
+    # Simple checks
+    assert len(layerSizes) == nrLayers
+    assert len(activationFunctions) == nrLayers - 1
+
+
     """
     TODO:
     If labels = None, only does the generative training
@@ -88,8 +93,7 @@ class DBN(object):
     # TODO: maybe find a better way than this to find a stopping criteria
     for epoch in xrange(epochs):
 
-      for i in xrange(data):
-        d = data[i]
+      for i, d in enumerate(data):
         # this is a list of layer activities
         layerValues = forwardPass(d)
 
@@ -140,11 +144,6 @@ def backprop(weights, layerValues, finalLayerErrors):
 
   return deDw
 
-
-def softmax(activation):
-  expVec = np.vectorize(lambda x: math.exp(x), dtype=float)
-  out = expVec(activation)
-  return out / out.sum()
 
 # Could make small clases that jus tapply the function and also ge tthe derivatives for it
 def sigmoidDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):

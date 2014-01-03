@@ -89,6 +89,7 @@ def deepbeliefMain():
       readmnist.read(range(10), dataset="training", path="MNIST")
   testImages, testLabels =\
       readmnist.read(range(10), dataset="testing", path="MNIST")
+
   trainVectors = imagesToVectors(trainImages)
 
   # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
@@ -97,6 +98,9 @@ def deepbeliefMain():
   testingVectors = imagesToVectors(testImages)
   testingScaledVectors = testingVectors / 256
 
+  vectorLabels = labelsToVectors(trainLabels)
+
+  net = db.DBN(3, [784, 500, 500], [sigmoid, softmax])
 
 
 def main():

@@ -27,8 +27,21 @@ def sigmoid(x):
 
 sigmoidVec = np.vectorize(sigmoid, otypes=[np.float])
 
+def softmax(activation):
+  expVec = np.vectorize(lambda x: math.exp(x), dtype=float)
+  out = expVec(activation)
+  return out / out.sum()
+
+
 # Takes the value of the sigmoid function and returns the derivative
-def softmaxDerivativeFromVakue(valueFunction):
+def softmaxDerivativeFromVal(valueFunction):
   return valueFunction * (1 - valueFunction)
 
-sigmoidDerivativeVec = np.vectorize(softmaxDerivativeFromVakue, otypes=[np.float])
+sigmoidDerivativeVec = np.vectorize(softmaxDerivativeFromVal, otypes=[np.float])
+
+def labelsToVector(labels, size):
+  result = np.zeros(len(labels), size)
+  for index, label in enumerate(labels):
+    result[index, label] = 1
+
+  return result
