@@ -103,7 +103,7 @@ def deepbeliefMain():
   vectorLabels = labelsToVectors(trainLabels, 10)
 
   # net = db.DBN(3, [784, 500, 500], [sigmoid, softmax])
-  net = db.DBN(3, [784, 5, 10], [sigmoid, softmax])
+  net = db.DBN(3, [784, 5, 10], [Sigmoid, Softmax])
 
   # TODO: think about what the network should do for 2 layers
   net.train(trainingScaledVectors, vectorLabels)

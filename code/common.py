@@ -44,3 +44,47 @@ def labelsToVectors(labels, size):
 
 def indexOfMin(l):
   return min(xrange(len(l)),key=l.__getitem__)
+
+# can make the thing class methods
+# if I feel like I am hardcore, make this callable and replace value with
+# the call
+class ActivationFunction(object):
+
+  def value(self, input):
+    pass
+
+  # why is this not used anywhere? should be  unless it is used explicitely in the
+  # functions below
+  def derivativeFromValue(self, val):
+    pass
+
+  def derivativeForLinearSum(topLayerDerivatives, topLayerActivations):
+    pass
+
+class Softmax(ActivationFunction):
+
+  def value(self, inputVector):
+    expVec = np.vectorize(lambda x: np.exp(x), otypes=[np.float])
+    out = expVec(inputVector)
+    return out / out.sum()
+
+  def derivativeFromValue(self, value):
+    return value * (1.0 - value)
+
+  def derivativeForLinearSum(topLayerDerivatives, topLayerActivations):
+    # write it as matrix multiplication
+    d = - np.outer(topLayerActivations, topLayerActivations)
+    d[np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
+    return np.dot(topLayerDerivatives, d)
+
+
+class Sigmoid(ActivationFunction):
+
+  def value(self, inputVector):
+    return 1 / (1 + np.exp(-x))
+
+  def derivativeFromValue(self, value):
+    return value * (1.0 - value)
+
+  def derivativeForLinearSum(topLayerDerivatives, topLayerActivations):
+    return topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives

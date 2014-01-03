@@ -29,7 +29,7 @@ class DBN(object):
         the input of a neuron into its output. The functions should be
         vectorized (as per numpy) to be able to apply them for an entire
         layer.
-        type: list of functions
+        type: list of objects of type ActivationFunction
       discriminative: if the network is discriminative, then the last
         layer is required to be a softmax, in order to output the class probablities
   """
@@ -114,16 +114,15 @@ class DBN(object):
      Required for backpropagation and classification. """
   # TODO: think if you can do it with matrix stuff
   def forwardPass(self, dataInstace):
-    # You have to use the layer's activation function
     currentLayerValues = dataInstace
-    layerValues = []
-    layerValues += [currentLayerValues]
+    layerValues = [currentLayerValues]
+
     for stage in xrange(self.nrLayers - 1):
       weights = self.weights[stage]
       biases = self.biases[stage]
-      fun = self.activationFunctions[stage]
+      activation = self.activationFunctions[stage]
 
-      currentLayerValues = fun(np.dot(currentLayerValues, weights) + biases)
+      currentLayerValues = activation.value(np.dot(currentLayerValues, weights) + biases)
       layerValues += [currentLayerValues]
 
     return layerValues
@@ -145,20 +144,17 @@ Arguments:
   layerValues: list of numpy nd-arrays
   finalLayerErrors: errors on the final layer, they depend on the error function chosen
 """
-def backprop(weights, layerValues, finalLayerErrors):
+def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   # Compute the last layer derivatives for the softmax
-  deDz = softmaxDerivativeForLinearSum(finalLayerErrors, layerValues[-1])
 
-  assert deDz.shape == layerValues[-1].shape
+  # assert deDz.shape == layerValues[-1].shape
 
   nrLayers = len(weights)
   deDw = []
 
   for layer in xrange(nrLayers -1, -1, -1):
+    deDz = activationFunctions[layer].derivativeForLinearSum(finalLayerErrors, layerValues[layer])
     dw, dbottom = derivativesForBottomLayer(weights[layer], layerValues[layer], deDz)
-
-    if layer is not 0:
-      deDz = sigmoidDerivativeForLinearSum(dbottom, layerValues[layer])
 
     # Iterating in decreasing order of layers, so we are required to
     # append the weight derivatives at the front as we go along
@@ -205,30 +201,3 @@ def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
   assert layerWeights.shape == weightDerivatives.shape
 
   return weightDerivatives, bottomLayerDerivatives
-
-# can make the thing class methods
-class ActivationFunction(object):
-
-  def value(self, input):
-    pass
-
-  def derivativeFromValue(self, val):
-    pass
-
-class Softmax(ActivationFunction):
-
-  def value(self, inputVector):
-    expVec = np.vectorize(lambda x: np.exp(x), otypes=[np.float])
-    out = expVec(inputVector)
-    return out / out.sum()
-
-  def derivativeFromValue(self, value):
-    return value * (1.0 - value)
-
-class Sigmoid(ActivationFunction):
-
-  def value(self, inputVector):
-    return 1 / (1 + np.exp(-x))
-
-  def derivativeFromValue(self, value):
-    return value * (1.0 - value)
