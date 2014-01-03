@@ -1,7 +1,8 @@
 import numpy as np
 
-
 import restrictedBoltzmannMachine as rbm
+
+# TODO: use momentum for backpropagation
 
 from common import *
 

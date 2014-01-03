@@ -41,7 +41,7 @@
 
 #### Parameters for backpropagation
   * Learning rate
-  * momentum? dropout etc here
+  * momentum? dropout etc here (not sure if here: momentum should be here though)
 
 ### Issues with backpropagation
   Write the wiki things
