@@ -122,6 +122,13 @@ class DBN(object):
       biases = self.biases[stage]
       fun = self.activationFunctions[stage]
 
+      # print "currentLayerValues"
+      # print currentLayerValues.shape
+
+      # print "np.dot(currentLayerValues, weights)"
+      # print np.dot(currentLayerValues, weights).shape
+      # print "biases"
+      # print biases.shape
       currentLayerValues = fun(np.dot(currentLayerValues, weights) + biases)
       layerValues += [currentLayerValues]
 
@@ -188,7 +195,7 @@ def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
   bottomLayerDerivatives = np.dot(layerWeights, derivativesWrtLinearInputSum)
 
   # Matrix, same shape as layerWeights
-  weightDerivatives = np.outer(y, derivativesForZ)
+  weightDerivatives = np.outer(y, derivativesWrtLinearInputSum)
   assert weights.shape == weightDerivatives.shape
 
   return weightDerivatives, bottomLayerDerivatives
