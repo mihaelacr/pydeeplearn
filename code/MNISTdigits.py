@@ -106,6 +106,7 @@ def deepbeliefMain():
   # TODO: think about what the network should do for 2 layers
   net.train(trainingScaledVectors, vectorLabels)
 
+  print "in classify"
   net.classify(trainVectors[0])
 
 
