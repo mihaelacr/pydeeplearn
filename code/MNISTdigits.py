@@ -3,9 +3,11 @@ on MNIST data and see how it behaves. It is not used for classification of
 handwritten digits, but rather as a way of visualizing the error of the RBM
 and the weights, to see what features we have learned"""
 
+
+# import numpypy
 # TODO: use cpikle instead of pikle
 import argparse
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 import readmnist
@@ -86,9 +88,9 @@ def rbmMain():
 
 def deepbeliefMain():
   trainImages, trainLabels =\
-      readmnist.read(range(1), dataset="training", path="MNIST")
+      readmnist.read(range(10), dataset="training", path="MNIST")
   testImages, testLabels =\
-      readmnist.read(range(1), dataset="testing", path="MNIST")
+      readmnist.read(range(10), dataset="testing", path="MNIST")
 
   trainVectors = imagesToVectors(trainImages)
 
