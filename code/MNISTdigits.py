@@ -10,6 +10,7 @@ import numpy as np
 import pickle
 import readmnist
 import restrictedBoltzmannMachine as rbm
+import deepbelief as db
 import utils
 
 from common import *
@@ -33,7 +34,8 @@ def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,
                                   tileShape, tile_spacing=(1, 1))
 
-def main():
+
+def rbmMain():
   trainImages, trainLabels =\
       readmnist.read([2], dataset="training", path="MNIST")
   testImages, testLabels =\
@@ -80,6 +82,25 @@ def main():
     pickle.dump(t, f)
     pickle.dump(net, f)
 
+
+
+def deepbeliefMain():
+  trainImages, trainLabels =\
+      readmnist.read(range(10), dataset="training", path="MNIST")
+  testImages, testLabels =\
+      readmnist.read(range(10), dataset="testing", path="MNIST")
+  trainVectors = imagesToVectors(trainImages)
+
+  # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
+  trainingScaledVectors = trainVectors / 256
+
+  testingVectors = imagesToVectors(testImages)
+  testingScaledVectors = testingVectors / 256
+
+
+
+def main():
+  deepbeliefMain()
 
 
 if __name__ == '__main__':
