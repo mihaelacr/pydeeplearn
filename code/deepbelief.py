@@ -44,13 +44,14 @@ class DBN(object):
     self.initialized = False
     self.discriminative = True
 
-   """
+    """
     TODO:
     If labels = None, only does the generative training
-     with fine tuning for generation, not for discrimintaiton
-     TODO: what happens if you do both? do the fine tuning for generation and then
-     do backprop for discrimintaiton
-   """
+      with fine tuning for generation, not for discrimintaiton
+      TODO: what happens if you do both? do the fine tuning for generation and then
+      do backprop for discrimintaiton
+    """
+
   def train(self, data, labels=None):
     # train the RBMS and set the weights
     # the weihghts can be stored as a list of numpy nd-arrays
@@ -73,21 +74,31 @@ class DBN(object):
     # Does backprop or wake sleep?
     self.fineTune(data, labels)
 
-  """Fine tunes the weigths and biases using backpropagation. """
+  """Fine tunes the weigths and biases using backpropagation.
+
+    Arguments:
+      labels: A matrix, not a vector. Each label should be transformed into a binary b
+        base vector before passed into this function.
+  """
   # TODO: actually fine tune the biases as well.
+
   def fineTune(self, data, labels, miniBatch=1, epochs=100):
+    learningRate = 0.0001
 
-  # TODO: maybe find a better way than this to find a stopping criteria
-  for epoch in xrange(epochs):
+    # TODO: maybe find a better way than this to find a stopping criteria
+    for epoch in xrange(epochs):
 
-    for i in xrange(data):
-      d = data[i]
-      # this is a list of layer activities
-      layerValues = forwardPass(d)
-      # Compute all derivatives
-      backprop(self, layerValues, labels, )
+      for i in xrange(data):
+        d = data[i]
+        # this is a list of layer activities
+        layerValues = forwardPass(d)
 
-    pass
+        finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i], layerValues[-1])
+        # Compute all derivatives
+        dWeights = backprop(self.weights, layerValues, finalLayerErrors)
+        for w, dw in zip(self.weights, dWeights):
+          w = w - learningRate * dw
+
 
   """Does a forward pass trought the network and computes the values of all the layers.
      Required for backpropagation. """
@@ -105,6 +116,30 @@ class DBN(object):
       layerValues += [currentLayerValues]
 
     return layerValues
+
+"""
+Arguments:
+  weights: list of numpy nd-arrays
+  layerValues: list of numpy nd-arrays
+  finalLayerErrors: errors on the final layer, they depend on the error function chosen
+"""
+def backprop(weights, layerValues, finalLayerErrors):
+  # Compute the last layer derivatives for the softmax
+  deDz = softmaxDerivativeForLinearSum(finalLayerErrors, layerValues)
+
+  nrLayers = len(weights)
+  deDw = []
+
+  for layer in xrange(nrLayers -1, -1, -1):
+    dw, dbottom = derivativesForBottomLayer(weights[layer], layerValues[layer], deDz)
+
+    if layer is not 0:
+      deDz = sigmoidDerivativeForLinearSum(dbottom, layerValues[layer - 1])
+
+    deDw += [dw]
+
+  return deDw
+
 
 def softmax(activation):
   expVec = np.vectorize(lambda x: math.exp(x), dtype=float)
@@ -134,17 +169,17 @@ def softmaxDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
 
 """
 Arguments:
-  weights: the weight matrix between the layers
+  weights: the weight matrix between the layers for which the derivatives are computed
 rename y
 """
-def computeWeightDerivatives(weights, y, derivativesWrtLinearInputSum):
+def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
   # vectorized derivative function
   # IMPORTANT: this will not work as gor sigmoid you put y in
   # does not work for softmax?
   # maybe compute the derivatives for z in a different function and pass it here
-  bottomLayerDerivatives = np.dot(weights, derivativesWrtLinearInputSum)
+  bottomLayerDerivatives = np.dot(layerWeights, derivativesWrtLinearInputSum)
 
-  # Matrix, same shape as weights
+  # Matrix, same shape as layerWeights
   weightDerivatives = np.outer(y, derivativesForZ)
   assert weights.shape == weightDerivatives.shape
 
