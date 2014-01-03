@@ -132,8 +132,10 @@ class DBN(object):
   # implementing wake and sleep and backprop could be something
   # Do wake and sleep first nd then backprop: improve weights for generation
   # and then improve them for classification
-  def classify()
-
+  # TODO: get more data instances
+  def classify(self, dataInstace):
+    lastLayerValues = self.forwardPass(dataInstace)[-1]
+    return lastLayerValues, indexOfMin(lastLayerValues)
 
 
 """

@@ -45,3 +45,6 @@ def labelsToVectors(labels, size):
     result[index, label] = 1
 
   return result
+
+def indexOfMin(l):
+  return min(xrange(len(l)),key=l.__getitem__)
