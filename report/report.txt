@@ -51,13 +51,15 @@
 
   TODO: overfitting example!!! (Hinton gives the poligon one, I should give a different one)
 
-    Weight decay is also good for this: hight weights => overfitting
-    Talk about the reconstruction error and how it is not a good measure for the log likelihood
 
   How to stop overfitting:
     * Cross validation
     * Weight decay
+    * Weight sharing (maybe do not mention this)
     * Early stopping
+    * Model averaging
+    * Dropout (mention this)
+    * Generative pre traning (discussed later in the report)
 
 ## Hopfield networks
   Add nice pics.
@@ -82,6 +84,8 @@
   Free energy
 
   Important, hidden units are conditionally independent due to the nature of the graph
+
+  Talk about the reconstruction error and how it is not a good measure for the log likelihood
 
 ### Training an RBM
 
