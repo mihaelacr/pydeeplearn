@@ -265,7 +265,7 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
   * python version 2.7
   * numpy
-  * pypy if I manage to get it to work now
+  * pypy if I manage to get it to work now (in case you do, talk about the issues and so on encountered)
   * matrix operations (exploit and give some examples (both from RBM and backprop))
 
 # Project management

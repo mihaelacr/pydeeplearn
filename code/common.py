@@ -25,19 +25,15 @@ def imagesToVectors(images):
 def sigmoid(x):
   return 1 / (1 + np.exp(-x))
 
-sigmoidVec = np.vectorize(sigmoid, otypes=[np.float])
-
 def softmax(activation):
   expVec = np.vectorize(lambda x: np.exp(x), otypes=[np.float])
   out = expVec(activation)
   return out / out.sum()
 
-
 # Takes the value of the sigmoid function and returns the derivative
+# Works for numpy arrays as well
 def softmaxDerivativeFromVal(valueFunction):
-  return valueFunction * (1 - valueFunction)
-
-sigmoidDerivativeVec = np.vectorize(softmaxDerivativeFromVal, otypes=[np.float])
+  return valueFunction * (1.0 - valueFunction)
 
 def labelsToVectors(labels, size):
   result = np.zeros((len(labels), size), dtype=float)

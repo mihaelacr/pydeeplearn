@@ -249,7 +249,7 @@ def updateLayer(layer, otherLayerValues, biases, weights, binary=False):
   else:
     activation = np.dot(otherLayerValues, weights)
 
-  probs = sigmoidVec(np.tile(bias, (size, 1)) + activation)
+  probs = sigmoid(np.tile(bias, (size, 1)) + activation)
 
   if binary:
     # Sample from the distributions

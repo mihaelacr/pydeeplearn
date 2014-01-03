@@ -205,3 +205,30 @@ def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
   assert layerWeights.shape == weightDerivatives.shape
 
   return weightDerivatives, bottomLayerDerivatives
+
+# can make the thing class methods
+class ActivationFunction(object):
+
+  def value(self, input):
+    pass
+
+  def derivativeFromValue(self, val):
+    pass
+
+class Softmax(ActivationFunction):
+
+  def value(self, inputVector):
+    expVec = np.vectorize(lambda x: np.exp(x), otypes=[np.float])
+    out = expVec(inputVector)
+    return out / out.sum()
+
+  def derivativeFromValue(self, value):
+    return value * (1.0 - value)
+
+class Sigmoid(ActivationFunction):
+
+  def value(self, inputVector):
+    return 1 / (1 + np.exp(-x))
+
+  def derivativeFromValue(self, value):
+    return value * (1.0 - value)
