@@ -19,9 +19,29 @@
   than you got beore
 
 ## Backpropagation and gradient descent methods
-  * Gradient descent
-  * Using mini-batches vs online gradient descent vs full batch
+  introduction bla bla
+
+### Computing the error derivative with respect to the weights
+
+
+### Using the error derivative
+  Once we know how to compute the error derivatives with respect to the weights of the network, multiple issues arise:
+    * When should we update the weights
+    * By how much we should update the weights
+
+#### Gradient descent
+
+#### Types of learning
+  * online
+  * full-batch
+  * mini-batch
+
+#### Parameters for backpropagation
   * Learning rate
+  * momentum? dropout etc here
+
+### Issues with backpropagation
+  Write the wiki things
 
 ## Hopfield networks
   Add nice pics.
