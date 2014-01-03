@@ -33,8 +33,11 @@
 
 #### Types of learning
   * online
+     Update the weights after each traning case. This means that the error function changes for each update, and hence the weight updates do not necessarily agree, and one training case can condratict another traning case
   * full-batch
+    Use the entire data set to compute the error function (which is them sum of all the errors on the individual cases) and then do the weight updates by using the gradient with respect to this error function (the gradient with respect to the weights will be the sum of the individiual error derivatives for each training case). The issue with this is that when we start off, we have very bad weights, and it will take significant amount of time until we improve the weights. A better approach is to use some traning case at the begining to asjust the weights to be sensitive, and then continue updating the weights. This leads to mini-batch learning.
   * mini-batch
+    Combine the above two approaches: update after a small sample of traning cases. This will make the weights oscilate less then online learning and will solve the issues of batch learning as well.
 
 #### Parameters for backpropagation
   * Learning rate
