@@ -61,16 +61,16 @@ class DBN(object):
     if labels == None and self.discriminative == True:
       raise Exception("need labels for discriminative training")
 
-    nrRbms = nrLayers - 1 - self.discriminative
+    nrRbms = self.nrLayers - 1 - self.discriminative
 
     self.weights = []
     self.biases = []
     currentData = data
     for i in xrange(nrRbms):
-      net = rbm(self.layerSizes[i], self.layerSizes[i+1], rbm.contrastiveDivergence)
+      net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1], rbm.contrastiveDivergence)
       net.train(currentData)
       self.weights += [net.weights]
-      self.biases += [self.biases]
+      self.biases += [net.biases]
 
       currentData = net.reconstruct(currentData)
 
@@ -93,7 +93,7 @@ class DBN(object):
 
       for i, d in enumerate(data):
         # this is a list of layer activities
-        layerValues = forwardPass(d)
+        layerValues = self.forwardPass(d)
 
         finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i], layerValues[-1])
         # Compute all derivatives
