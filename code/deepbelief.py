@@ -127,6 +127,15 @@ class DBN(object):
 
     return layerValues
 
+  # Do not support this if not discriminative, but I think that makes no sense to implement
+  # to be honest
+  # implementing wake and sleep and backprop could be something
+  # Do wake and sleep first nd then backprop: improve weights for generation
+  # and then improve them for classification
+  def classify()
+
+
+
 """
 Arguments:
   weights: list of numpy nd-arrays
