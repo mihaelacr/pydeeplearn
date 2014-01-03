@@ -28,7 +28,7 @@ def sigmoid(x):
 sigmoidVec = np.vectorize(sigmoid, otypes=[np.float])
 
 def softmax(activation):
-  expVec = np.vectorize(lambda x: math.exp(x), otypes=[np.float])
+  expVec = np.vectorize(lambda x: np.exp(x), otypes=[np.float])
   out = expVec(activation)
   return out / out.sum()
 

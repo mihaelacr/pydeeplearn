@@ -70,9 +70,17 @@ class DBN(object):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1], rbm.contrastiveDivergence)
       net.train(currentData)
       self.weights += [net.weights]
-      self.biases += [net.biases]
+      self.biases += [net.biases[1]]
 
       currentData = net.reconstruct(currentData)
+
+    # The last softmax unit also has weights and biases, but it;s not a RBM
+    # CHECK THAT
+    self.weights += [np.random.normal(0, 0.01, (self.layerSizes[-2], self.layerSizes[-1]))]
+
+    # Think of this
+    self.biases += [np.random.normal(0, 0.01, self.layerSizes[-1])]
+
 
     # Does backprop or wake sleep?
     self.fineTune(data, labels)
