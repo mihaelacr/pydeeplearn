@@ -92,7 +92,7 @@ class DBN(object):
         base vector before passed into this function.
   """
   # TODO: actually fine tune the biases as well.
-
+  # TODO: implement the minibatch business
   def fineTune(self, data, labels, miniBatch=1, epochs=100):
     learningRate = 0.0001
 
@@ -182,9 +182,6 @@ def outputDerivativesCrossEntropyErrorFunction(expected, actual):
 
 def softmaxDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
   # write it as matrix multiplication
-  print "topLayerActivations"
-  print topLayerActivations.shape
-
   d = - np.outer(topLayerActivations, topLayerActivations)
   d[np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
   return np.dot(topLayerDerivatives, d)
