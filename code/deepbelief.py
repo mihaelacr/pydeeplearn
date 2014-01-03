@@ -118,6 +118,8 @@ def softmax(activation):
 def sigmoidDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
   return topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives
 
-
 def softmaxDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
-  return 1
+  # write it as matrix multiplication
+  d = - np.outer(topLayerActivations, topLayerActivations)
+  d[np.np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
+  return np.dot(topLayerDerivatives, d)
