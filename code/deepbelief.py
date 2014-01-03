@@ -13,8 +13,6 @@ import restrictedBoltzmannMachine as rbm
 
 from common import *
 
-# Returns a vector of derivatives
-
 
 """ Class that implements a deep blief network, for classifcation """
 

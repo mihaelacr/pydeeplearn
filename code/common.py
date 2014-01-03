@@ -39,7 +39,7 @@ def softmaxDerivativeFromVal(valueFunction):
 
 sigmoidDerivativeVec = np.vectorize(softmaxDerivativeFromVal, otypes=[np.float])
 
-def labelsToVector(labels, size):
+def labelsToVectors(labels, size):
   result = np.zeros(len(labels), size)
   for index, label in enumerate(labels):
     result[index, label] = 1
