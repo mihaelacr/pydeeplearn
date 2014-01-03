@@ -4,6 +4,8 @@ Done today:
 
   pretty sure some bugs will still be cracking around
 
+  realised there are better ways of doing backprop than gradient descent, documented them and will try to implement them
+
 TODO:
   a lot of clean up to do.
   make more space for generalization
@@ -13,3 +15,4 @@ TODO:
 
   add wake sleep algorithm to see if it performs better with wake sleep for
   generative fine tuning and then backprop for discriminative?
+  caching

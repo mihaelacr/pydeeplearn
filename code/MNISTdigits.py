@@ -107,7 +107,7 @@ def deepbeliefMain():
   net.train(trainingScaledVectors, vectorLabels)
 
   print "in classify"
-  net.classify(trainVectors[0])
+  print net.classify(trainVectors[0])
 
 
 def main():
