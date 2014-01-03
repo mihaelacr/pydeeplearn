@@ -46,6 +46,17 @@
 ### Issues with backpropagation
   Write the wiki things
 
+## Overfitting
+  The aim of a neural network is to learn the regularities from the mapping to input to output. (TODO: nice picture here ). Due to the limited amount of data presented to the network, there will also be accidental regularities found in the particular traning cases chosen. Those accidental regularities result in **sampling error**, potentally making the network not generalize well to unseen testing data. This is an important issue that arises when machine learning technquies, generally referred to as overfitting.
+
+    Weight decay is also good for this: hight weights => overfitting
+    Talk about the reconstruction error and how it is not a good measure for the log likelihood
+
+  How to stop overfitting:
+    * Cross validation
+    * Weight decay
+    * Early stopping
+
 ## Hopfield networks
   Add nice pics.
 
@@ -81,16 +92,13 @@
 
 ### PCD
 
-### Other tricks
+### Other tricks: they should not be here, they are general, so move them up
 
   1. Weight decay: same as gaussian something, discuss that (maybe picture)
   2. Momentum
   3. Dumped mean field
   4. Drop out
 
-### Overfitting
-    Weight decay is also good for this: hight weights => overfitting
-    Talk about the reconstruction error and how it is not a good measure for the log likelihood
 
 ### Non binary units
   Gaussian units and why they are harder to train
