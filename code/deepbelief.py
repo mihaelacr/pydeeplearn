@@ -5,31 +5,16 @@ import restrictedBoltzmannMachine as rbm
 # TODO: use momentum for backpropagation
 # TODO: try tanh instead of the usual 1 /(1 + exp.(-x)) ?
 # Note that this requires also changes in output function
+# This function is also mentioned in bishop
 
 # TODO: use conjugate gradient for  backpropagation instead of stepeest descent
 
+"""In all the above topLayer does not mean the uppo """
 
 from common import *
 
 # Returns a vector of derivatives
-"""
-Arguments:
-  weights: the weight matrix between the layers
-rename y z
-they have been computed already for the forward pass so no need to compute everything again
-"""
-def backprop(weights, y, derivativesWrtLinearInputSum):
-  # vectorized derivative function
-  # IMPORTANT: this will not work as gor sigmoid you put y in
-  # does not work for softmax?
-  # maybe compute the derivatives for z in a different function and pass it here
-  bottomLayerDerivatives = np.dot(weights, derivativesWrtLinearInputSum)
 
-  # Matrix, same shape as weights
-  weightDerivatives = np.outer(y, derivativesForZ)
-  assert weights.shape == weightDerivatives.shape
-
-  return weightDerivatives, bottomLayerDerivatives
 
 """ Class that implements a deep blief network, for classifcation """
 
@@ -80,21 +65,27 @@ class DBN(object):
     for i in xrange(nrRbms):
       net = rbm(self.layerSizes[i], self.layerSizes[i+1], rbm.contrastiveDivergence)
       net.train(currentData)
-      self.weights += net.weights
-      self.biases += self.biases
+      self.weights += [net.weights]
+      self.biases += [self.biases]
 
       currentData = net.reconstruct(currentData)
 
     # Does backprop or wake sleep?
-    self.fineTune(data)
+    self.fineTune(data, labels)
 
   """Fine tunes the weigths and biases using backpropagation. """
   # TODO: actually fine tune the biases as well.
-  def fineTune(self, data):
-    # Define error function. Maybe a better error function than mean square error?
+  def fineTune(self, data, labels, miniBatch=1, epochs=100):
 
-     for d in data:
+  # TODO: maybe find a better way than this to find a stopping criteria
+  for epoch in xrange(epochs):
+
+    for i in xrange(data):
+      d = data[i]
+      # this is a list of layer activities
       layerValues = forwardPass(d)
+      # Compute all derivatives
+      backprop(self, layerValues, labels, )
 
     pass
 
@@ -115,17 +106,46 @@ class DBN(object):
 
     return layerValues
 
-
 def softmax(activation):
   expVec = np.vectorize(lambda x: math.exp(x), dtype=float)
   out = expVec(activation)
   return out / out.sum()
 
+# Could make small clases that jus tapply the function and also ge tthe derivatives for it
 def sigmoidDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
   return topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives
+
+""" Computes the derivatives of the top most layer given their output and the
+target labels. This is computed using the cross entropy function.
+See: http://en.wikipedia.org/wiki/Cross_entropy for the discrete case.
+Since it is used with a softmax unit for classification, the output of the unit
+represent a discrete probablity distribution and the expected values are
+composed of a base vector, with 1 for the correct class and 0 for all the rest.
+"""
+def outputDerivativesCrossEntropyErrorFunction(expected, actual):
+  return - expected * (1.0 / actual)
 
 def softmaxDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
   # write it as matrix multiplication
   d = - np.outer(topLayerActivations, topLayerActivations)
   d[np.np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
   return np.dot(topLayerDerivatives, d)
+
+
+"""
+Arguments:
+  weights: the weight matrix between the layers
+rename y
+"""
+def computeWeightDerivatives(weights, y, derivativesWrtLinearInputSum):
+  # vectorized derivative function
+  # IMPORTANT: this will not work as gor sigmoid you put y in
+  # does not work for softmax?
+  # maybe compute the derivatives for z in a different function and pass it here
+  bottomLayerDerivatives = np.dot(weights, derivativesWrtLinearInputSum)
+
+  # Matrix, same shape as weights
+  weightDerivatives = np.outer(y, derivativesForZ)
+  assert weights.shape == weightDerivatives.shape
+
+  return weightDerivatives, bottomLayerDerivatives
