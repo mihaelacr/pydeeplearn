@@ -152,19 +152,21 @@ def backprop(weights, layerValues, finalLayerErrors):
   for layer in xrange(nrLayers -1, -1, -1):
     dw, dbottom = derivativesForBottomLayer(weights[layer], layerValues[layer], deDz)
 
-    print "dbottom"
-    print dbottom.shape
+    # print "dbottom"
+    # print dbottom.shape
 
-    print "weights"
-    print weights[layer].shape
+    # print "weights"
+    # print weights[layer].shape
 
-    print "layer values"
-    print layerValues[layer - 1].shape
+    # print "layer values"
+    # print layerValues[layer - 1].shape
 
     if layer is not 0:
       deDz = sigmoidDerivativeForLinearSum(dbottom, layerValues[layer])
 
-    deDw += [dw]
+    # Iterating in decreasing order of layers, so we are required to
+    # append the weight derivatives at the front as we go along
+    deDw.insert(0, dw)
 
   return deDw
 
