@@ -122,13 +122,6 @@ class DBN(object):
       biases = self.biases[stage]
       fun = self.activationFunctions[stage]
 
-      # print "currentLayerValues"
-      # print currentLayerValues.shape
-
-      # print "np.dot(currentLayerValues, weights)"
-      # print np.dot(currentLayerValues, weights).shape
-      # print "biases"
-      # print biases.shape
       currentLayerValues = fun(np.dot(currentLayerValues, weights) + biases)
       layerValues += [currentLayerValues]
 
@@ -151,15 +144,6 @@ def backprop(weights, layerValues, finalLayerErrors):
 
   for layer in xrange(nrLayers -1, -1, -1):
     dw, dbottom = derivativesForBottomLayer(weights[layer], layerValues[layer], deDz)
-
-    # print "dbottom"
-    # print dbottom.shape
-
-    # print "weights"
-    # print weights[layer].shape
-
-    # print "layer values"
-    # print layerValues[layer - 1].shape
 
     if layer is not 0:
       deDz = sigmoidDerivativeForLinearSum(dbottom, layerValues[layer])
