@@ -1,0 +1,15 @@
+Done today:
+  mainly coding (few lines of report)
+  fixed the backpropagation and actually running some things
+
+  pretty sure some bugs will still be cracking around
+
+TODO:
+  a lot of clean up to do.
+  make more space for generalization
+  show the activation functions as classes to be easily implemented
+  check the measure on the MNIST data
+  implement mini-batch learning (so far everything is online)
+
+  add wake sleep algorithm to see if it performs better with wake sleep for
+  generative fine tuning and then backprop for discriminative?
