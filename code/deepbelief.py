@@ -111,7 +111,8 @@ class DBN(object):
 
 
   """Does a forward pass trought the network and computes the values of all the layers.
-     Required for backpropagation. """
+     Required for backpropagation and classification. """
+  # TODO: think if you can do it with matrix stuff
   def forwardPass(self, dataInstace):
     # You have to use the layer's activation function
     currentLayerValues = dataInstace

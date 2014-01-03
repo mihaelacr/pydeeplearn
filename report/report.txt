@@ -258,3 +258,14 @@ Note that we require the sum since the output of the neuron in the softmax unit 
   Quote other MNIST digits results, with different methods
 
   Say how you can make deep belieg nets learn even with a permutation of all pixels, but this would not work for convolutional neural nets, because they have hard wired information.
+
+# Implementation
+
+  Most experiments have been done on a machine with 12GB ram and an intel i5 processor.
+
+  * python version 2.7
+  * numpy
+  * pypy if I manage to get it to work now
+  * matrix operations (exploit and give some examples (both from RBM and backprop))
+
+# Conclusion
