@@ -26,6 +26,7 @@
 
 ### Computing the error derivative with respect to the weights
   TODO: put the derivation in here
+  Add the derivation with the  bias as well
 
 ### Using the error derivative
   Once we know how to compute the error derivatives with respect to the weights of the network, multiple issues arise:
