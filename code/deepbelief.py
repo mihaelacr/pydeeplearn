@@ -136,8 +136,7 @@ class DBN(object):
   # TODO: get more data instances
   def classify(self, dataInstace):
     lastLayerValues = self.forwardPass(dataInstace)[-1]
-    return lastLayerValues, indexOfMin(lastLayerValues)
-
+    return lastLayerValues, indexOfMax(lastLayerValues)
 
 """
 Arguments:

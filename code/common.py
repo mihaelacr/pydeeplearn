@@ -42,8 +42,8 @@ def labelsToVectors(labels, size):
 
   return result
 
-def indexOfMin(l):
-  return min(xrange(len(l)),key=l.__getitem__)
+def indexOfMax(l):
+  return max(xrange(len(l)),key=l.__getitem__)
 
 # can make the thing class methods
 # if I feel like I am hardcore, make this callable and replace value with
