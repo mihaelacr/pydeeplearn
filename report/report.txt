@@ -172,7 +172,7 @@
   In order to ensure that the sum of the output of the unit is 1 (required in order for it to represent a probablity distribution), the output of a unit does not only depend soley on it's but also on the input of the other elements of the unit.
   In the following, the input of one of the units (also called 'the logit') is denoted by $x_i$ and the output of the unit is denoted by $y_i$
 
-\begin{center} $y_i = \frac{e^{x_i}}{\sum{e^{x_j}}}$ \end{center}
+\begin{center} $y_i = \frac{e^{x_i}}{\sum\limits_{j=1}^n {e^{x_j}}}$ \end{center}
 
   The derivative of the softmax function is very similar to the one for the logistic function:
 
