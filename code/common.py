@@ -38,7 +38,7 @@ def softmaxDerivativeFromVal(valueFunction):
 def labelsToVectors(labels, size):
   result = np.zeros((len(labels), size), dtype=float)
   for index, label in enumerate(labels):
-    result[index, label] = 1
+    result[index, label] = 1.0
 
   return result
 

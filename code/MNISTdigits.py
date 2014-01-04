@@ -37,9 +37,10 @@ def visualizeWeights(weights, imgShape, tileShape):
 
 def rbmMain():
   trainImages, trainLabels =\
-      readmnist.read([2], dataset="training", path="MNIST")
+      readmnist.readNew(0, 100, bTrain=True, path="MNIST")
   testImages, testLabels =\
-      readmnist.read([2], dataset="testing", path="MNIST")
+      readmnist.readNew(0, 100, bTrain=False, path="MNIST")
+
   trainVectors = imagesToVectors(trainImages)
 
   # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
@@ -85,10 +86,15 @@ def rbmMain():
 
 
 def deepbeliefMain():
+  # trainImages, trainLabels =\
+  #     readmnist.read(range(10), dataset="training", path="MNIST")
+  # testImages, testLabels =\
+  #     readmnist.read(range(10), dataset="testing", path="MNIST")
+
   trainImages, trainLabels =\
-      readmnist.read(range(10), dataset="training", path="MNIST")
+      readmnist.readNew(0, 1000, bTrain=True, path="MNIST")
   testImages, testLabels =\
-      readmnist.read(range(10), dataset="testing", path="MNIST")
+      readmnist.readNew(0, 1000, bTrain=False, path="MNIST")
 
   trainVectors = imagesToVectors(trainImages)
 
@@ -101,12 +107,14 @@ def deepbeliefMain():
   vectorLabels = labelsToVectors(trainLabels, 10)
 
   # net = db.DBN(3, [784, 500, 500], [sigmoid, softmax])
-  net = db.DBN(3, [784, 5, 10], [Sigmoid(), Softmax()])
+  net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
 
   # TODO: think about what the network should do for 2 layers
   net.train(trainingScaledVectors, vectorLabels)
 
+
   print "in classify"
+  print "actual class " +  str(testLabels[0])
   print net.classify(trainVectors[0])
 
 

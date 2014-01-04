@@ -58,8 +58,8 @@ class DBN(object):
   def train(self, data, labels=None):
     # train the RBMS and set the weights
     # the weihghts can be stored as a list of numpy nd-arrays
-    if labels == None and self.discriminative == True:
-      raise Exception("need labels for discriminative training")
+    # if labels == None and self.discriminative == True:
+    #   raise Exception("need labels for discriminative training")
 
     nrRbms = self.nrLayers - 1 - self.discriminative
 
