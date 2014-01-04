@@ -112,10 +112,13 @@ def deepbeliefMain():
   # TODO: think about what the network should do for 2 layers
   net.train(trainingScaledVectors, vectorLabels)
 
-
   print "in classify"
   print "actual class " +  str(testLabels[0])
   print net.classify(trainVectors[0])
+
+  ## Save network
+  f = open("deepbelief.p", "wb")
+  pickle.dump(net, f)
 
 
 def main():
