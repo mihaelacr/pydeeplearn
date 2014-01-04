@@ -2,8 +2,9 @@
 http://g.sweyla.com/blog/2012/mnist-numpy/
 """
 import os, struct
+import numpy as np
+
 from array import array as pyarray
-from numpy import append, array, int8, uint8, zeros, float32
 
 def read(digits, dataset = "training", path = "."):
     """
@@ -12,10 +13,10 @@ def read(digits, dataset = "training", path = "."):
     Adapted from: http://abel.ee.ucla.edu/cvxopt/_downloads/mnist.py
     """
 
-    if dataset is "training":
+    if dataset == "training":
         fname_img = os.path.join(path, 'train-images-idx3-ubyte')
         fname_lbl = os.path.join(path, 'train-labels-idx1-ubyte')
-    elif dataset is "testing":
+    elif dataset == "testing":
         fname_img = os.path.join(path, 't10k-images-idx3-ubyte')
         fname_lbl = os.path.join(path, 't10k-labels-idx1-ubyte')
     else:
@@ -34,10 +35,10 @@ def read(digits, dataset = "training", path = "."):
     ind = [ k for k in xrange(size) if lbl[k] in digits ]
     N = len(ind)
 
-    images = zeros((N, rows, cols), dtype=float32)
-    labels = zeros((N, 1), dtype=int8)
+    images = np.zeros((N, rows, cols), dtype=np.float32)
+    labels = np.zeros((N, 1), dtype=np.int8)
     for i in xrange(len(ind)):
-        images[i] = array(img[ ind[i]*rows*cols : (ind[i]+1)*rows*cols ]).reshape((rows, cols))
+        images[i] = np.array(img[ ind[i]*rows*cols : (ind[i]+1)*rows*cols ]).reshape((rows, cols))
         labels[i] = lbl[ind[i]]
 
     return images, labels
