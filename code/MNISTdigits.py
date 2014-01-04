@@ -5,7 +5,7 @@ and the weights, to see what features we have learned"""
 
 # TODO: use cpikle instead of pikle
 import argparse
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import pickle
 import readmnist
@@ -113,7 +113,7 @@ def deepbeliefMain():
   net.train(trainingScaledVectors, vectorLabels)
 
   for i in xrange(10):
-    print net.classify(trainingScaledVectors[0])
+    print net.classify(trainingScaledVectors[i])
     print "actual"
     print trainLabels[i]
 
