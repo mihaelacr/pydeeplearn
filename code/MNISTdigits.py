@@ -3,8 +3,6 @@ on MNIST data and see how it behaves. It is not used for classification of
 handwritten digits, but rather as a way of visualizing the error of the RBM
 and the weights, to see what features we have learned"""
 
-
-# import numpypy
 # TODO: use cpikle instead of pikle
 import argparse
 # import matplotlib.pyplot as plt
