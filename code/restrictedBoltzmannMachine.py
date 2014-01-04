@@ -58,6 +58,9 @@ class RBM(object):
   def reconstruct(self, dataInstances):
     return reconstruct(self.biases, self.weights, dataInstances)
 
+  def hiddenRepresentation(self, dataInstances):
+    return updateLayer(Layer.HIDDEN, dataInstances, self.biases, self.weights, True)
+
   @classmethod
   def initializeWeights(cls, nrVisible, nrHidden):
     return np.random.normal(0, 0.01, (nrVisible, nrHidden))

@@ -72,7 +72,7 @@ class DBN(object):
       self.weights += [net.weights]
       self.biases += [net.biases[1]]
 
-      currentData = net.reconstruct(currentData)
+      currentData = net.hiddenRepresentation(currentData)
 
     # The last softmax unit also has weights and biases, but it;s not a RBM
     # CHECK THAT

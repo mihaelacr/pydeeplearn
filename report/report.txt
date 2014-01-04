@@ -274,4 +274,6 @@ Note that we require the sum since the output of the neuron in the softmax unit 
   * daily diaries
   * add nice chart with progress
 
+## Testing
+
 # Conclusion
