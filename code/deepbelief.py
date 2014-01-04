@@ -107,8 +107,9 @@ class DBN(object):
         finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i], layerValues[-1])
         # Compute all derivatives
         dWeights = backprop(self.weights, layerValues, finalLayerErrors, self.activationFunctions)
-        for w, dw in zip(self.weights, dWeights):
-          w = w - learningRate * dw
+        # Update the weights
+        for index, dw in enumerate(dWeights):
+          self.weights[index] -= learningRate * dw
 
 
   """Does a forward pass trought the network and computes the values of all the layers.
