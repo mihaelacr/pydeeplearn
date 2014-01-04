@@ -112,10 +112,11 @@ def deepbeliefMain():
   # TODO: think about what the network should do for 2 layers
   net.train(trainingScaledVectors, vectorLabels)
 
-  actual = testLabels[0:10]
-  found = net.classify(trainVectors[0:10])
-  for i in zip(actual, found):
-    print i
+  for i in xrange(10):
+    print net.classify(trainingScaledVectors[0])
+    print "actual"
+    print trainLabels[i]
+
 
   ## Save network
   f = open("deepbelief.p", "wb")

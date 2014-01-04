@@ -3,6 +3,7 @@ import numpy as np
 import restrictedBoltzmannMachine as rbm
 
 # TODO: use momentum for backpropagation
+# this is done in the exact same way as before
 # TODO: try tanh instead of the usual 1 /(1 + exp.(-x)) ?
 # Note that this requires also changes in output function
 # This function is also mentioned in bishop
@@ -94,7 +95,7 @@ class DBN(object):
   # TODO: actually fine tune the biases as well.
   # TODO: implement the minibatch business
   def fineTune(self, data, labels, miniBatch=1, epochs=100):
-    learningRate = 0.0001
+    learningRate = 0.001
 
     # TODO: maybe find a better way than this to find a stopping criteria
     for epoch in xrange(epochs):
