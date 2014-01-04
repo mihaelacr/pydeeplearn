@@ -58,7 +58,7 @@ class ActivationFunction(object):
   def derivativeFromValue(self, val):
     pass
 
-  def derivativeForLinearSum(topLayerDerivatives, topLayerActivations):
+  def derivativeForLinearSum(self, topLayerDerivatives, topLayerActivations):
     pass
 
 class Softmax(ActivationFunction):
@@ -71,7 +71,7 @@ class Softmax(ActivationFunction):
   def derivativeFromValue(self, value):
     return value * (1.0 - value)
 
-  def derivativeForLinearSum(topLayerDerivatives, topLayerActivations):
+  def derivativeForLinearSum(self, topLayerDerivatives, topLayerActivations):
     # write it as matrix multiplication
     d = - np.outer(topLayerActivations, topLayerActivations)
     d[np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
@@ -81,10 +81,10 @@ class Softmax(ActivationFunction):
 class Sigmoid(ActivationFunction):
 
   def value(self, inputVector):
-    return 1 / (1 + np.exp(-x))
+    return 1 / (1 + np.exp(-inputVector))
 
   def derivativeFromValue(self, value):
     return value * (1.0 - value)
 
-  def derivativeForLinearSum(topLayerDerivatives, topLayerActivations):
+  def derivativeForLinearSum(self, topLayerDerivatives, topLayerActivations):
     return topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives

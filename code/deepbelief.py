@@ -105,7 +105,7 @@ class DBN(object):
 
         finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i], layerValues[-1])
         # Compute all derivatives
-        dWeights = backprop(self.weights, layerValues, finalLayerErrors)
+        dWeights = backprop(self.weights, layerValues, finalLayerErrors, self.activationFunctions)
         for w, dw in zip(self.weights, dWeights):
           w = w - learningRate * dw
 
@@ -149,16 +149,21 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
 
   # assert deDz.shape == layerValues[-1].shape
 
-  nrLayers = len(weights)
+  nrLayers = len(weights) + 1
   deDw = []
 
-  for layer in xrange(nrLayers -1, -1, -1):
-    deDz = activationFunctions[layer].derivativeForLinearSum(finalLayerErrors, layerValues[layer])
-    dw, dbottom = derivativesForBottomLayer(weights[layer], layerValues[layer], deDz)
+  upperLayerErrors = finalLayerErrors
+
+  for layer in xrange(nrLayers - 1, 0, -1):
+    deDz = activationFunctions[layer - 1].derivativeForLinearSum(upperLayerErrors, layerValues[layer])
+    dw, dbottom = derivativesForBottomLayer(weights[layer - 1], layerValues[layer - 1], deDz)
+    upperLayerErrors = dbottom
 
     # Iterating in decreasing order of layers, so we are required to
     # append the weight derivatives at the front as we go along
     deDw.insert(0, dw)
+
+  assert len(deDw) == len(weights)
 
   return deDw
 
