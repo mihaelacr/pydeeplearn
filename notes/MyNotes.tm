@@ -1,6 +1,6 @@
 <TeXmacs|1.0.7.16>
 
-<style|generic>
+<style|<tuple|generic|compact-list>>
 
 <\body>
   <doc-data|<doc-title|Notes on individual
@@ -54,6 +54,30 @@
 
   <math|<frac|\<delta\> E|d w<rsub|i>>=<frac|\<delta\>E|d*y>*<frac|d y|d
   net>*<frac|d net|d w<rsub|i>>=-<around*|(|t-y|)>*y*<around*|(|1-y|)>*x<rsub|i>>
+
+  Backprop from hinton
+
+  <\itemize>
+    <item>instead of using the desired activities to train the hidden units,
+    use the error derivative with respect to the hidden units
+    activities<with|font-series|bold|>
+
+    <item>each hidden activity can affect many output units and then can
+    therefore have sperate efects on the overall error. These effects must be
+    combined (hence the error derivative that uses the chain rule)
+
+    <item>we can compute error deriavties for all the hidden units
+    efficiently at the same time
+
+    <item>Once we get the error derivatives with respect to the hidden units,
+    it's easy to get the error derivatives with respect to the weights going
+    into a hidden unit
+
+    <item>Core idea: compute the error activities with respect to the hidden
+    unit activities from the derivativies with the layer above
+  </itemize>
+
+  \;
 
   \;
 
@@ -133,8 +157,8 @@
 
   \;
 
-  Softmax: forcing the ouput of some neurons to represent a probability
-  distribution
+  <with|font-series|bold|Softmax: >forcing the ouput of some neurons to
+  represent a probability distribution
 
   \;
 
@@ -1570,7 +1594,7 @@
 
     <item>You also have the reverse connections, from down level hidden to
     the upper ones, but they are not used to generate data from the model
-    (they are just used the inerence and you set them as the transposed of
+    (they are just used the inference and you set them as the transposed of
     the generative models)
   </itemize>
 
@@ -1640,6 +1664,8 @@
 
   <with|font-series|bold|You do a 10 way softmax to be able to label the
   data.>
+
+  \;
 
   <subsubsection|SIMPLE PERMUTATION ON MNIST: works with deep belief nets,
   but not with convolution>
@@ -1900,7 +1926,7 @@
 
   http://metaoptimize.com/qa/questions/12592/monitoring-the-training-of-restricted-boltzmann-machines
 
-  \;
+  https://github.com/lmjohns3/py-rbm/blob/master/lmj/rbm.py
 
   \;
 
@@ -1957,10 +1983,16 @@
   possible library
 
   http://www.ais.uni-bonn.de/deep_learning/doc/html/index.html
+
+  Question? does mini-batch improve learning or does it just fast the
+  process? Understand this properly`
+
+  \;
 </body>
 
 <\initial>
   <\collection>
+    <associate|font|x-utopia>
     <associate|language|american>
     <associate|page-type|letter>
   </collection>
@@ -1968,34 +2000,35 @@
 
 <\references>
   <\collection>
-    <associate|auto-1|<tuple|1|?>>
-    <associate|auto-10|<tuple|2|?>>
-    <associate|auto-11|<tuple|2.0.1|?>>
-    <associate|auto-12|<tuple|2.1|?>>
-    <associate|auto-13|<tuple|3|?>>
-    <associate|auto-14|<tuple|3.1|?>>
-    <associate|auto-15|<tuple|4|?>>
-    <associate|auto-16|<tuple|4.1|?>>
-    <associate|auto-17|<tuple|4.2|?>>
-    <associate|auto-18|<tuple|4.2.1|?>>
-    <associate|auto-19|<tuple|4.3|?>>
-    <associate|auto-2|<tuple|1.1|?>>
-    <associate|auto-20|<tuple|4.3.1|?>>
-    <associate|auto-21|<tuple|4.4|?>>
-    <associate|auto-22|<tuple|4.5|?>>
-    <associate|auto-23|<tuple|4.6|?>>
-    <associate|auto-24|<tuple|5|?>>
-    <associate|auto-25|<tuple|5.1|?>>
-    <associate|auto-26|<tuple|6|?>>
-    <associate|auto-27|<tuple|7|?>>
-    <associate|auto-28|<tuple|7.1|?>>
-    <associate|auto-3|<tuple|1.2|?>>
-    <associate|auto-4|<tuple|1.3|?>>
-    <associate|auto-5|<tuple|1.4|?>>
-    <associate|auto-6|<tuple|1.5|?>>
-    <associate|auto-7|<tuple|1.6|?>>
-    <associate|auto-8|<tuple|1.6.1|?>>
-    <associate|auto-9|<tuple|1.7|?>>
+    <associate|auto-1|<tuple|1|1>>
+    <associate|auto-10|<tuple|2|8>>
+    <associate|auto-11|<tuple|2.0.1|9>>
+    <associate|auto-12|<tuple|2.1|11>>
+    <associate|auto-13|<tuple|3|11>>
+    <associate|auto-14|<tuple|3.1|16>>
+    <associate|auto-15|<tuple|4|17>>
+    <associate|auto-16|<tuple|4.1|17>>
+    <associate|auto-17|<tuple|4.2|19>>
+    <associate|auto-18|<tuple|4.2.1|19>>
+    <associate|auto-19|<tuple|4.3|20>>
+    <associate|auto-2|<tuple|1.1|1>>
+    <associate|auto-20|<tuple|4.3.1|21>>
+    <associate|auto-21|<tuple|4.4|21>>
+    <associate|auto-22|<tuple|4.5|22>>
+    <associate|auto-23|<tuple|4.6|22>>
+    <associate|auto-24|<tuple|5|22>>
+    <associate|auto-25|<tuple|5.1|23>>
+    <associate|auto-26|<tuple|6|23>>
+    <associate|auto-27|<tuple|7|23>>
+    <associate|auto-28|<tuple|7.1|25>>
+    <associate|auto-29|<tuple|7.1|?>>
+    <associate|auto-3|<tuple|1.2|2>>
+    <associate|auto-4|<tuple|1.3|3>>
+    <associate|auto-5|<tuple|1.4|3>>
+    <associate|auto-6|<tuple|1.5|5>>
+    <associate|auto-7|<tuple|1.6|7>>
+    <associate|auto-8|<tuple|1.6.1|8>>
+    <associate|auto-9|<tuple|1.7|8>>
   </collection>
 </references>
 
@@ -2050,13 +2083,75 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-12>>
 
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Lecture
+      11:Hopfield> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-13><vspace|0.5fn>
+
+      <with|par-left|<quote|1.5fn>|IMPORTANT: the hidden units of the RBM are
+      conditionally independent given the visible units of the visible vector
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-14>>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Lecture
+      13: the ups and downs of backpropagation>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-15><vspace|0.5fn>
+
+      <with|par-left|<quote|1.5fn>|<with|font-series|<quote|bold>|Belief
+      nets> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-16>>
+
+      <with|par-left|<quote|1.5fn>|Stakcing RBM for learning: deep belief
+      networks <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-17>>
+
+      <with|par-left|<quote|3fn>|How to train a deep belief network
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-18>>
+
+      <with|par-left|<quote|1.5fn>|Discriminative fine tuning: backprop on
+      stack RBMS <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-19>>
+
+      <with|par-left|<quote|3fn>|SIMPLE PERMUTATION ON MNIST: works with deep
+      belief nets, but not with convolution
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-20>>
+
+      <with|par-left|<quote|1.5fn>|Model real valued data using RBM
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-21>>
+
+      <with|par-left|<quote|1.5fn>|See RBMS as infinite sigmoid belief nets
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-22>>
+
+      <with|par-left|<quote|1.5fn>|Important: because you have pre traning
+      (generative pretraning) you can increase the number of layers and get
+      better results, and you get the opposite with no pre trainig
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-23>>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Lecture
+      15:PCA and autoencoders> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-24><vspace|0.5fn>
+
+      <with|par-left|<quote|1.5fn>|PRETRAINING: CONCLUSION
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-25>>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|From
       Andrew Ng's talk> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-13><vspace|0.5fn>
+      <no-break><pageref|auto-26><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Suggestions>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-14><vspace|0.5fn>
+      <no-break><pageref|auto-27><vspace|0.5fn>
+
+      <with|par-left|<quote|1.5fn>|IDea for project: why not use
+      discrimination with labelling for emtion instead of getting another
+      picture with an attractor? <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-28>>
     </associate>
   </collection>
 </auxiliary>
