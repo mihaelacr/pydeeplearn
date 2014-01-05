@@ -50,15 +50,15 @@ def indexOfMax(l):
 class ActivationFunction(object):
 
   def value(self, input):
-    pass
+    raise NotImplementedError("subclasses must implement method \"value\"")
 
   # why is this not used anywhere? should be  unless it is used explicitely in the
   # functions below
   def derivativeFromValue(self, val):
-    pass
+    raise NotImplementedError("subclasses must implement method \"derivativeFromValue\"")
 
   def derivativeForLinearSum(self, topLayerDerivatives, topLayerActivations):
-    pass
+    raise NotImplementedError("subclasses must implement method \"derivativeForLinearSum\"")
 
 class Softmax(ActivationFunction):
 
