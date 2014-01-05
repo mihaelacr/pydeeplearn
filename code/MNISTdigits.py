@@ -15,7 +15,8 @@ import utils
 
 from common import *
 
-NETWORK_FILE = "weights.p"
+NETWORK_FILE = "rbm.p"
+DEEP_BELIEF_FILE = 'deepbelief.p'
 
 # Get the arguments of the program
 parser = argparse.ArgumentParser(description='RBM for digit recognition')
@@ -79,7 +80,7 @@ def rbmMain():
   # TODO: add pickle behaviour to RBM
   # is this needd?
   if args.save:
-    f = open("NETWORK_FILE.p", "wb")
+    f = open(NETWORK_FILE, "wb")
     pickle.dump(t, f)
     pickle.dump(net, f)
 
@@ -100,10 +101,10 @@ def deepbeliefMain():
   trainVectors = imagesToVectors(trainImages)
 
   # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
-  trainingScaledVectors = trainVectors
+  trainingScaledVectors = trainVectors / 255.0
 
   # testingVectors = imagesToVectors(testImages)
-  # testingScaledVectors = testingVectors
+  testingScaledVectors = testingVectors / 255.0
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
@@ -115,7 +116,7 @@ def deepbeliefMain():
     net.train(trainingScaledVectors, vectorLabels)
   else:
     # Take the saved network and use that for reconstructions
-    f = open("deepbelief.p", "rb")
+    f = open(DEEP_BELIEF_FILE, "rb")
     net = pickle.load(f)
 
   for i in xrange(10):
@@ -129,14 +130,16 @@ def deepbeliefMain():
   for b in net.biases:
     print b
 
-  # t = visualizeWeights(net.weights[0].T, trainImages[0].shape, (10,10))
+
+  # t = visualizeWeights(net.weights[0].T, trainImages[0].(28, 28), (10,10))
   # plt.imshow(t, cmap=plt.cm.gray)
   # plt.show()
   # print "done"
 
   ## Save network
-  f = open("deepbelief.p", "wb")
+  f = open(DEEP_BELIEF_FILE, "wb")
   pickle.dump(net, f)
+  f.close()
 
 
 def main():

@@ -79,7 +79,7 @@ def readNew(startExample, howMany, bTrain=True, path="."):
         x = []
         for i in range(0, rowsIm*colsIm):
             val = struct.unpack('>B',fImages.read(1))[0]
-            x.append(val/255.0)
+            x.append(val)
 
         inputVectors.append(np.array(x))
 
