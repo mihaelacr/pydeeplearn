@@ -75,7 +75,6 @@ class DBN(object):
 
       currentData = net.hiddenRepresentation(currentData)
 
-    # The last softmax unit also has weights and biases, but it;s not a RBM
     # CHECK THAT
     self.weights += [np.random.normal(0, 0.01, (self.layerSizes[-2], self.layerSizes[-1]))]
 
@@ -90,10 +89,12 @@ class DBN(object):
   """Fine tunes the weigths and biases using backpropagation.
 
     Arguments:
-      labels: A matrix, not a vector. Each label should be transformed into a binary b
+      data: The data used for traning and fine tuning
+      labels: A numpy nd array. Each label should be transformed into a binary
         base vector before passed into this function.
+      miniBatch: The number of instances to be used in a miniBatch
+      epochs: The number of epochs to use for fine tuning
   """
-  # TODO: actually fine tune the biases as well.
   # TODO: implement the minibatch business
   def fineTune(self, data, labels, miniBatch=1, epochs=100):
     learningRate = 0.01
@@ -108,7 +109,8 @@ class DBN(object):
         finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i], layerValues[-1])
 
         # Compute all derivatives
-        dWeights, dBias = backprop(self.weights, layerValues, finalLayerErrors, self.activationFunctions)
+        dWeights, dBias = backprop(self.weights, layerValues,
+                            finalLayerErrors, self.activationFunctions)
         # Update the weights
         for index, dw in enumerate(dWeights):
           # One of the problems is that the dw for the first layer is always 0
@@ -120,9 +122,14 @@ class DBN(object):
           self.biases[index] -= learningRate * dBias
 
 
-  """Does a forward pass trought the network and computes the values of all the layers.
-     Required for backpropagation and classification. """
-  # TODO: think if you can do it with matrix stuff
+  """Does a forward pass trought the network and computes the values of the
+    neurons in all the layers.
+    Required for backpropagation and classification.
+
+    Arguments:
+      dataInstace: The instance to be classified.
+
+    """
   def forwardPass(self, dataInstace):
     currentLayerValues = dataInstace
     layerValues = [currentLayerValues]
@@ -132,7 +139,8 @@ class DBN(object):
       biases = self.biases[stage]
       activation = self.activationFunctions[stage]
 
-      currentLayerValues = activation.value(np.dot(currentLayerValues, weights) + biases)
+      linearSum = np.dot(currentLayerValues, weights) + biases
+      currentLayerValues = activation.value(linearSum)
       layerValues += [currentLayerValues]
 
     return layerValues
