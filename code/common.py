@@ -97,8 +97,8 @@ class Tanh(ActivationFunction):
     return np.tanh(inputVector)
 
   def derivativeFromValue(self, value):
-    return value * (1.0 - value)
+    return 1.0 - value * value
 
   def derivativeForLinearSum(self, topLayerDerivatives, topLayerActivations):
-    return topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives
+    return (1.0 - topLayerActivations * topLayerActivations) * topLayerDerivatives
 
