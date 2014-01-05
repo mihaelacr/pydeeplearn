@@ -92,7 +92,7 @@ def deepbeliefMain():
   #     readmnist.read(range(10), dataset="testing", path="MNIST")
 
   trainImages, trainLabels =\
-      readmnist.readNew(0, 1000, bTrain=True, path="MNIST")
+      readmnist.readNew(0, 10000, bTrain=True, path="MNIST")
   # testImages, testLabels =\
   #     readmnist.readNew(0, 1000, bTrain=False, path="MNIST")
 

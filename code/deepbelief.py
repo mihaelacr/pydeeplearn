@@ -83,6 +83,7 @@ class DBN(object):
     self.biases += [np.random.normal(0, 0.01, self.layerSizes[-1])]
 
     assert len(self.weights) == self.nrLayers - 1
+    assert len(self.biases) == self.nrLayers - 1
     # Does backprop or wake sleep?
     self.fineTune(data, labels)
 
@@ -95,7 +96,7 @@ class DBN(object):
   # TODO: actually fine tune the biases as well.
   # TODO: implement the minibatch business
   def fineTune(self, data, labels, miniBatch=1, epochs=10):
-    learningRate = 0.001
+    learningRate = 0.01
 
     # TODO: maybe find a better way than this to find a stopping criteria
     for epoch in xrange(epochs):
