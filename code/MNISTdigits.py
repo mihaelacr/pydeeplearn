@@ -95,14 +95,15 @@ def deepbeliefMain():
       readmnist.readNew(0, 10000, bTrain=True, path="MNIST")
   # testImages, testLabels =\
   #     readmnist.readNew(0, 1000, bTrain=False, path="MNIST")
+  print trainImages[0].shape
 
   trainVectors = imagesToVectors(trainImages)
 
   # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
-  trainingScaledVectors = trainVectors / 256
+  trainingScaledVectors = trainVectors
 
   # testingVectors = imagesToVectors(testImages)
-  # testingScaledVectors = testingVectors / 256
+  # testingScaledVectors = testingVectors
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
@@ -122,6 +123,16 @@ def deepbeliefMain():
     print "actual"
     print trainLabels[i]
 
+  for w in net.weights:
+    print w
+
+  for b in net.biases:
+    print b
+
+  # t = visualizeWeights(net.weights[0].T, trainImages[0].shape, (10,10))
+  # plt.imshow(t, cmap=plt.cm.gray)
+  # plt.show()
+  # print "done"
 
   ## Save network
   f = open("deepbelief.p", "wb")
