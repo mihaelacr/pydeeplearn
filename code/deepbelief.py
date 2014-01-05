@@ -174,7 +174,8 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   upperLayerErrors = finalLayerErrors
 
   for layer in xrange(nrLayers - 1, 0, -1):
-    deDz = activationFunctions[layer - 1].derivativeForLinearSum(upperLayerErrors, layerValues[layer])
+    deDz = activationFunctions[layer - 1].derivativeForLinearSum(
+                            upperLayerErrors, layerValues[layer])
     dw, dbottom, dbias =\
       derivativesForBottomLayer(weights[layer - 1], layerValues[layer - 1], deDz)
     upperLayerErrors = dbottom

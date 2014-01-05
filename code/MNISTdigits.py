@@ -26,7 +26,7 @@ parser.add_argument('--save',
                     help="if true, the network is serialized and saved")
 parser.add_argument('--train',
                     type=bool,
-                    default=True,
+                    default=False,
                     help="if true, the network is trained from scratch from the traning data")
 args = parser.parse_args()
 
@@ -94,8 +94,8 @@ def deepbeliefMain():
 
   trainImages, trainLabels =\
       readmnist.readNew(0, 10000, bTrain=True, path="MNIST")
-  # testImages, testLabels =\
-  #     readmnist.readNew(0, 1000, bTrain=False, path="MNIST")
+  testImages, testLabels =\
+      readmnist.readNew(0, 1000, bTrain=False, path="MNIST")
   print trainImages[0].shape
 
   trainVectors = imagesToVectors(trainImages)
@@ -104,7 +104,7 @@ def deepbeliefMain():
   trainingScaledVectors = trainVectors / 255.0
 
   # testingVectors = imagesToVectors(testImages)
-  testingScaledVectors = testingVectors / 255.0
+  testingScaledVectors = testImages / 255.0
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
@@ -119,16 +119,24 @@ def deepbeliefMain():
     f = open(DEEP_BELIEF_FILE, "rb")
     net = pickle.load(f)
 
-  for i in xrange(10):
-    print net.classify(trainingScaledVectors[i])
+  correct = 0
+  for i in xrange(100):
+    print "predicted"
+    predicted = net.classify(testingScaledVectors[i])[1]
+    print predicted
     print "actual"
-    print trainLabels[i]
+    actual = testLabels[i]
+    print actual
+    correct += predicted == actual
 
-  for w in net.weights:
-    print w
+  print correct
 
-  for b in net.biases:
-    print b
+
+  # for w in net.weights:
+  #   print w
+
+  # for b in net.biases:
+  #   print b
 
 
   # t = visualizeWeights(net.weights[0].T, trainImages[0].(28, 28), (10,10))
