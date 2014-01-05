@@ -95,7 +95,7 @@ class DBN(object):
   """
   # TODO: actually fine tune the biases as well.
   # TODO: implement the minibatch business
-  def fineTune(self, data, labels, miniBatch=1, epochs=10):
+  def fineTune(self, data, labels, miniBatch=1, epochs=100):
     learningRate = 0.01
 
     # TODO: maybe find a better way than this to find a stopping criteria
