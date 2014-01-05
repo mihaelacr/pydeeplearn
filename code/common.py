@@ -60,9 +60,12 @@ class ActivationFunction(object):
   def derivativeForLinearSum(self, topLayerDerivatives, topLayerActivations):
     raise NotImplementedError("subclasses must implement method \"derivativeForLinearSum\"")
 
+""" Implementation of the softmax activation function.
+    Used for classification (represents a probablity distribution)
+"""
 class Softmax(ActivationFunction):
 
-  def value(self, inputVector):
+ def value(self, inputVector):
     out = np.exp(inputVector)
     return out / out.sum()
 
@@ -75,7 +78,7 @@ class Softmax(ActivationFunction):
     d[np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
     return np.dot(topLayerDerivatives, d)
 
-
+""" Implementation of the sigmoid activation function."""
 class Sigmoid(ActivationFunction):
 
   def value(self, inputVector):
@@ -86,3 +89,16 @@ class Sigmoid(ActivationFunction):
 
   def derivativeForLinearSum(self, topLayerDerivatives, topLayerActivations):
     return topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives
+
+""" Implementation of the tanh activation function."""
+class Tanh(ActivationFunction):
+
+  def value(self, inputVector):
+    return np.tanh(inputVector)
+
+  def derivativeFromValue(self, value):
+    return value * (1.0 - value)
+
+  def derivativeForLinearSum(self, topLayerDerivatives, topLayerActivations):
+    return topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives
+
