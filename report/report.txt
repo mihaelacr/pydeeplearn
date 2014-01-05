@@ -17,6 +17,11 @@
 
  Why deep nets did not work before. Talk about how with the pre trained nets you have the guarantte to get better results
   than you got beore
+### Activation functions
+
+### Sigmoid
+
+### Tanh
 
 ## Backpropagation and gradient descent methods
   introduction bla bla
