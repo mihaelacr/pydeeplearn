@@ -185,10 +185,6 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   return deDw, deDbias
 
 
-# Could make small clases that jus tapply the function and also ge tthe derivatives for it
-def sigmoidDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
-  return topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives
-
 """ Computes the derivatives of the top most layer given their output and the
 target labels. This is computed using the cross entropy function.
 See: http://en.wikipedia.org/wiki/Cross_entropy for the discrete case.
@@ -197,15 +193,8 @@ represent a discrete probablity distribution and the expected values are
 composed of a base vector, with 1 for the correct class and 0 for all the rest.
 """
 def outputDerivativesCrossEntropyErrorFunction(expected, actual):
-  # avoid dividing by 0
+  # avoid dividing by 0 by adding a small number
   return - expected * (1.0 / (actual + 0.00000008))
-
-def softmaxDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
-  # write it as matrix multiplication
-  d = - np.outer(topLayerActivations, topLayerActivations)
-  d[np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
-  return np.dot(topLayerDerivatives, d)
-
 
 """
 Arguments:
