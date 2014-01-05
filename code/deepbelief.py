@@ -10,31 +10,33 @@ import restrictedBoltzmannMachine as rbm
 
 # TODO: use conjugate gradient for  backpropagation instead of stepeest descent
 
-"""In all the above topLayer does not mean the uppo """
+"""In all the above topLayer does not mean the top most layer, but rather the
+layer above the current one."""
 
 from common import *
 
-
 """ Class that implements a deep blief network, for classifcation """
-
 class DBN(object):
 
   """
-    Arguments:
-      nrLayers: the number of layers of the network. In case of discriminative
-        traning, also contains the classifcation layer (ie the last softmax layer)
+  Arguments:
+    nrLayers: the number of layers of the network. In case of discriminative
+        traning, also contains the classifcation layer
+        (the last softmax layer)
         type: integer
-      layerSizes: the sizes of the individual layers.
+    layerSizes: the sizes of the individual layers.
         type: list of integers of size nrLayers
-      activationFunctions: the functions that are used to transform
+    activationFunctions: the functions that are used to transform
         the input of a neuron into its output. The functions should be
         vectorized (as per numpy) to be able to apply them for an entire
         layer.
         type: list of objects of type ActivationFunction
-      discriminative: if the network is discriminative, then the last
-        layer is required to be a softmax, in order to output the class probablities
+    discriminative: if the network is discriminative, then the last
+        layer is required to be a softmax, in order to output the class
+        probablities
   """
-  def __init__(self, nrLayers, layerSizes, activationFunctions, discriminative=True):
+  def __init__(self, nrLayers, layerSizes, activationFunctions,
+               discriminative=True):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
     # Note that for the first one the activatiom function does not matter
@@ -52,8 +54,8 @@ class DBN(object):
     TODO:
     If labels = None, only does the generative training
       with fine tuning for generation, not for discrimintaiton
-      TODO: what happens if you do both? do the fine tuning for generation and then
-      do backprop for discrimintaiton
+      TODO: what happens if you do both? do the fine tuning for generation and
+      then do backprop for discrimintaiton
     """
 
   def train(self, data, labels=None):
@@ -68,7 +70,8 @@ class DBN(object):
     self.biases = []
     currentData = data
     for i in xrange(nrRbms):
-      net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1], rbm.contrastiveDivergence)
+      net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
+                    rbm.contrastiveDivergence)
       net.train(currentData)
       self.weights += [net.weights]
       self.biases += [net.biases[1]]
@@ -76,7 +79,8 @@ class DBN(object):
       currentData = net.hiddenRepresentation(currentData)
 
     # CHECK THAT
-    self.weights += [np.random.normal(0, 0.01, (self.layerSizes[-2], self.layerSizes[-1]))]
+    self.weights += [np.random.normal(0, 0.01,
+                                 (self.layerSizes[-2], self.layerSizes[-1]))]
 
     # Think of this
     self.biases += [np.random.normal(0, 0.01, self.layerSizes[-1])]
@@ -91,7 +95,7 @@ class DBN(object):
     Arguments:
       data: The data used for traning and fine tuning
       labels: A numpy nd array. Each label should be transformed into a binary
-        base vector before passed into this function.
+          base vector before passed into this function.
       miniBatch: The number of instances to be used in a miniBatch
       epochs: The number of epochs to use for fine tuning
   """
@@ -106,7 +110,8 @@ class DBN(object):
         # this is a list of layer activities
         layerValues = self.forwardPass(d)
 
-        finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i], layerValues[-1])
+        finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i],
+            layerValues[-1])
 
         # Compute all derivatives
         dWeights, dBias = backprop(self.weights, layerValues,
@@ -145,8 +150,6 @@ class DBN(object):
 
     return layerValues
 
-  # Do not support this if not discriminative, but I think that makes no sense to implement
-  # to be honest
   # implementing wake and sleep and backprop could be something
   # Do wake and sleep first nd then backprop: improve weights for generation
   # and then improve them for classification
@@ -158,10 +161,11 @@ class DBN(object):
 """
 Arguments:
   weights: list of numpy nd-arrays
-  layerValues: list of numpy arrays, each array representing the values of the neurons
-    obtained during a forward pass of the network
-  finalLayerErrors: errors on the final layer, they depend on the error function chosen
-    For softmax activation function on the last layer, use cross entropy as an error function.
+  layerValues: list of numpy arrays, each array representing the values of the
+      neurons obtained during a forward pass of the network
+  finalLayerErrors: errors on the final layer, they depend on the error function
+      chosen. For softmax activation function on the last layer, use cross
+      entropy as an error function.
 """
 def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   nrLayers = len(weights) + 1
@@ -198,10 +202,13 @@ def outputDerivativesCrossEntropyErrorFunction(expected, actual):
 
 """
 Arguments:
-  weights: the weight matrix between the layers for which the derivatives are computed
-  derivativesWrtLinearInputSum: the derivatives with respect to the linear sum for the
-    layer above (from which we backpropagate)
-rename y and make it very clear that it uses the the activations from the current layer
+  weights: the weight matrix between the layers for which the derivatives are
+      computed
+  derivativesWrtLinearInputSum: the derivatives with respect to the linear
+      sum for the layer above (from which we backpropagate)
+  layerActivations: The activations for the layer for which we are computing
+      the error derivatives.
+      These were obtained by doing a forward pass in the network.
 """
 def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
   bottomLayerDerivatives = np.dot(layerWeights, derivativesWrtLinearInputSum)
