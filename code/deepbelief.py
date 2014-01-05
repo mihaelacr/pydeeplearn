@@ -143,8 +143,6 @@ class DBN(object):
 
         # Update the weights using gradient descent
         for index, dw in enumerate(dWeights):
-          # One of the problems is that the dw for the first layer is always 0
-          # so nothing gets fine tuned
           self.weights[index] -= learningRate * dw
 
         # Update the biases using gradient descent
