@@ -145,7 +145,8 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=10):
         print "reconstructionError"
         print reconstructionError(biases, weights, data)
 
-    weightsDiff, visibleBiasDiff, hiddenBiasDiff = modelAndDataSampleDiffs(batchData, biases, weights)
+    weightsDiff, visibleBiasDiff, hiddenBiasDiff =\
+            modelAndDataSampleDiffs(batchData, biases, weights)
     # Update the weights
     # data - model
     # Positive phase - negative

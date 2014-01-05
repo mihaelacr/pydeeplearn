@@ -9,6 +9,7 @@ import restrictedBoltzmannMachine as rbm
 # This function is also mentioned in bishop
 
 # TODO: use conjugate gradient for  backpropagation instead of stepeest descent
+# TODO: add weight decay in back prop
 
 """In all the above topLayer does not mean the top most layer, but rather the
 layer above the current one."""
@@ -48,7 +49,6 @@ class DBN(object):
     # Simple checks
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
-
 
     """
     TODO:
@@ -103,8 +103,22 @@ class DBN(object):
   def fineTune(self, data, labels, miniBatch=1, epochs=100):
     learningRate = 0.01
 
+    oldDWeights = []
+    for i in xrange(len(self.weights)):
+      oldDWeights += [np.zeros(self.weights[i].shape)]
+
+    oldDBias = []
+    for i in xrange(len(self.biases)):
+      oldDBias += [np.zeros(self.biases[i].shape)]
+
+
     # TODO: maybe find a better way than this to find a stopping criteria
     for epoch in xrange(epochs):
+
+      if epoch < 10:
+        momentum = 0.5
+      else:
+        momentum = 0.9
 
       for i, d in enumerate(data):
         # this is a list of layer activities
@@ -116,13 +130,24 @@ class DBN(object):
         # Compute all derivatives
         dWeights, dBias = backprop(self.weights, layerValues,
                             finalLayerErrors, self.activationFunctions)
-        # Update the weights
+
+        # Momentum updates
+        for index, dw in enumerate(dWeights):
+          dWeights[index] = momentum * oldDWeights[index] + dw
+
+        for index, db in enumerate(dBias):
+          dBias[index] = momentum * oldDBias[index] + db
+
+        oldDWeights = dWeights
+        oldDBias = dBias
+
+        # Update the weights using gradient descent
         for index, dw in enumerate(dWeights):
           # One of the problems is that the dw for the first layer is always 0
           # so nothing gets fine tuned
           self.weights[index] -= learningRate * dw
 
-        # Update the biases as well
+        # Update the biases using gradient descent
         for index, dBias in enumerate(dBias):
           self.biases[index] -= learningRate * dBias
 

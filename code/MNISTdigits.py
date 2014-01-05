@@ -16,7 +16,7 @@ import utils
 from common import *
 
 NETWORK_FILE = "rbm.p"
-DEEP_BELIEF_FILE = 'deepbelief.p'
+DEEP_BELIEF_FILE = 'deepbelief_momentum.p'
 
 # Get the arguments of the program
 parser = argparse.ArgumentParser(description='RBM for digit recognition')
@@ -26,7 +26,7 @@ parser.add_argument('--save',
                     help="if true, the network is serialized and saved")
 parser.add_argument('--train',
                     type=bool,
-                    default=False,
+                    default=True,
                     help="if true, the network is trained from scratch from the traning data")
 args = parser.parse_args()
 
