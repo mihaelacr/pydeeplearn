@@ -94,7 +94,7 @@ class DBN(object):
   """
   # TODO: actually fine tune the biases as well.
   # TODO: implement the minibatch business
-  def fineTune(self, data, labels, miniBatch=1, epochs=100):
+  def fineTune(self, data, labels, miniBatch=1, epochs=10):
     learningRate = 0.001
 
     # TODO: maybe find a better way than this to find a stopping criteria
@@ -105,6 +105,7 @@ class DBN(object):
         layerValues = self.forwardPass(d)
 
         finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i], layerValues[-1])
+
         # Compute all derivatives
         dWeights = backprop(self.weights, layerValues, finalLayerErrors, self.activationFunctions)
         # Update the weights
@@ -142,17 +143,15 @@ class DBN(object):
 """
 Arguments:
   weights: list of numpy nd-arrays
-  layerValues: list of numpy nd-arrays
+  layerValues: list of numpy arrays, each array representing the values of the neurons
+    obtained during a forward pass of the network
   finalLayerErrors: errors on the final layer, they depend on the error function chosen
+    For softmax activation function on the last layer, use cross entropy as an error function.
 """
 def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
-  # Compute the last layer derivatives for the softmax
-
-  # assert deDz.shape == layerValues[-1].shape
-
+  assert deDz.shape == layerValues[-1].shape
   nrLayers = len(weights) + 1
   deDw = []
-
   upperLayerErrors = finalLayerErrors
 
   for layer in xrange(nrLayers - 1, 0, -1):
@@ -181,7 +180,8 @@ represent a discrete probablity distribution and the expected values are
 composed of a base vector, with 1 for the correct class and 0 for all the rest.
 """
 def outputDerivativesCrossEntropyErrorFunction(expected, actual):
-  return - expected * (1.0 / actual)
+  # avoid dividing by 0
+  return - expected * (1.0 / (actual + 0.00000008))
 
 def softmaxDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
   # write it as matrix multiplication
@@ -193,13 +193,11 @@ def softmaxDerivativeForLinearSum(topLayerDerivatives, topLayerActivations):
 """
 Arguments:
   weights: the weight matrix between the layers for which the derivatives are computed
-rename y
+  derivativesWrtLinearInputSum: the derivatives with respect to the linear sum for the
+    layer above (from which we backpropagate)
+rename y and make it very clear that it uses the the activations from the current layer
 """
 def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
-  # vectorized derivative function
-  # IMPORTANT: this will not work as gor sigmoid you put y in
-  # does not work for softmax?
-  # maybe compute the derivatives for z in a different function and pass it here
   bottomLayerDerivatives = np.dot(layerWeights, derivativesWrtLinearInputSum)
 
   # Matrix, same shape as layerWeights

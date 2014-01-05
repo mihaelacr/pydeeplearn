@@ -26,8 +26,7 @@ def sigmoid(x):
   return 1 / (1 + np.exp(-x))
 
 def softmax(activation):
-  expVec = np.vectorize(lambda x: np.exp(x), otypes=[np.float])
-  out = expVec(activation)
+  out = np.exp(activation)
   return out / out.sum()
 
 # Takes the value of the sigmoid function and returns the derivative
@@ -64,8 +63,7 @@ class ActivationFunction(object):
 class Softmax(ActivationFunction):
 
   def value(self, inputVector):
-    expVec = np.vectorize(lambda x: np.exp(x), otypes=[np.float])
-    out = expVec(inputVector)
+    out = np.exp(inputVector)
     return out / out.sum()
 
   def derivativeFromValue(self, value):
