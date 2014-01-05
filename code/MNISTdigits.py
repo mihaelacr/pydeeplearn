@@ -93,16 +93,16 @@ def deepbeliefMain():
 
   trainImages, trainLabels =\
       readmnist.readNew(0, 1000, bTrain=True, path="MNIST")
-  testImages, testLabels =\
-      readmnist.readNew(0, 1000, bTrain=False, path="MNIST")
+  # testImages, testLabels =\
+  #     readmnist.readNew(0, 1000, bTrain=False, path="MNIST")
 
   trainVectors = imagesToVectors(trainImages)
 
   # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
   trainingScaledVectors = trainVectors / 256
 
-  testingVectors = imagesToVectors(testImages)
-  testingScaledVectors = testingVectors / 256
+  # testingVectors = imagesToVectors(testImages)
+  # testingScaledVectors = testingVectors / 256
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 

@@ -149,7 +149,6 @@ Arguments:
     For softmax activation function on the last layer, use cross entropy as an error function.
 """
 def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
-  assert deDz.shape == layerValues[-1].shape
   nrLayers = len(weights) + 1
   deDw = []
   upperLayerErrors = finalLayerErrors
