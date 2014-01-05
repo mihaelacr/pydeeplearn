@@ -107,10 +107,16 @@ class DBN(object):
         finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i], layerValues[-1])
 
         # Compute all derivatives
-        dWeights = backprop(self.weights, layerValues, finalLayerErrors, self.activationFunctions)
+        dWeights, dBias = backprop(self.weights, layerValues, finalLayerErrors, self.activationFunctions)
         # Update the weights
         for index, dw in enumerate(dWeights):
+          # One of the problems is that the dw for the first layer is always 0
+          # so nothing gets fine tuned
           self.weights[index] -= learningRate * dw
+
+        # Update the biases as well
+        for index, dBias in enumerate(dBias):
+          self.biases[index] -= learningRate * dBias
 
 
   """Does a forward pass trought the network and computes the values of all the layers.
@@ -151,20 +157,23 @@ Arguments:
 def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   nrLayers = len(weights) + 1
   deDw = []
+  deDbias = []
   upperLayerErrors = finalLayerErrors
 
   for layer in xrange(nrLayers - 1, 0, -1):
     deDz = activationFunctions[layer - 1].derivativeForLinearSum(upperLayerErrors, layerValues[layer])
-    dw, dbottom = derivativesForBottomLayer(weights[layer - 1], layerValues[layer - 1], deDz)
+    dw, dbottom, dbias =\
+      derivativesForBottomLayer(weights[layer - 1], layerValues[layer - 1], deDz)
     upperLayerErrors = dbottom
 
     # Iterating in decreasing order of layers, so we are required to
     # append the weight derivatives at the front as we go along
     deDw.insert(0, dw)
+    deDbias.insert(0, dbias)
 
   assert len(deDw) == len(weights)
 
-  return deDw
+  return deDw, deDbias
 
 
 # Could make small clases that jus tapply the function and also ge tthe derivatives for it
@@ -199,8 +208,7 @@ rename y and make it very clear that it uses the the activations from the curren
 def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
   bottomLayerDerivatives = np.dot(layerWeights, derivativesWrtLinearInputSum)
 
-  # Matrix, same shape as layerWeights
   weightDerivatives = np.outer(y, derivativesWrtLinearInputSum)
   assert layerWeights.shape == weightDerivatives.shape
 
-  return weightDerivatives, bottomLayerDerivatives
+  return weightDerivatives, bottomLayerDerivatives, derivativesWrtLinearInputSum
