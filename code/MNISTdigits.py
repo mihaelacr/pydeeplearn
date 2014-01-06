@@ -127,8 +127,9 @@ def deepbeliefMain():
     print "actual"
     actual = testLabels[i]
     print actual
-    correct += predicted == actual
+    correct += (predicted == actual)
 
+  print "correct"
   print correct
 
 
@@ -145,9 +146,9 @@ def deepbeliefMain():
   # print "done"
 
   ## Save network
-  f = open(DEEP_BELIEF_FILE, "wb")
-  pickle.dump(net, f)
-  f.close()
+  # f = open(DEEP_BELIEF_FILE, "wb")
+  # pickle.dump(net, f)
+  # f.close()
 
 
 def main():

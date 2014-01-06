@@ -125,18 +125,18 @@ class DBN(object):
         layerValues = self.forwardPass(d)
 
         finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i],
-            layerValues[-1])
+                                            layerValues[-1])
 
         # Compute all derivatives
         dWeights, dBias = backprop(self.weights, layerValues,
                             finalLayerErrors, self.activationFunctions)
 
         # Momentum updates
-        for index, dw in enumerate(dWeights):
-          dWeights[index] = momentum * oldDWeights[index] + dw
+        for index in xrange(len(dWeights)):
+          dWeights[index] += momentum * oldDWeights[index]
 
-        for index, db in enumerate(dBias):
-          dBias[index] = momentum * oldDBias[index] + db
+        for index in xrange(len(dBias)):
+          dBias[index] += momentum * oldDBias[index]
 
         oldDWeights = dWeights
         oldDBias = dBias
@@ -208,7 +208,7 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
     deDw.insert(0, dw)
     deDbias.insert(0, dbias)
 
-  assert len(deDw) == len(weights)
+  # assert len(deDw) == len(weights)
 
   return deDw, deDbias
 
@@ -238,6 +238,6 @@ def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
   bottomLayerDerivatives = np.dot(layerWeights, derivativesWrtLinearInputSum)
 
   weightDerivatives = np.outer(y, derivativesWrtLinearInputSum)
-  assert layerWeights.shape == weightDerivatives.shape
+  # assert layerWeights.shape == weightDerivatives.shape
 
   return weightDerivatives, bottomLayerDerivatives, derivativesWrtLinearInputSum

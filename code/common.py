@@ -65,7 +65,7 @@ class ActivationFunction(object):
 """
 class Softmax(ActivationFunction):
 
- def value(self, inputVector):
+  def value(self, inputVector):
     out = np.exp(inputVector)
     return out / out.sum()
 
