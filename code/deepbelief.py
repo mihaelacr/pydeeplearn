@@ -100,17 +100,16 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   # TODO: implement the minibatch business
-  def fineTune(self, data, labels, miniBatch=1, epochs=100):
+  def fineTune(self, data, labels, miniBatchSize=1, epochs=100):
     learningRate = 0.01
+    batchLearningRate = learningRate / miniBatchSize
 
-    oldDWeights = []
-    for i in xrange(len(self.weights)):
-      oldDWeights += [np.zeros(self.weights[i].shape)]
+    nrMiniBatches = len(data) / miniBatchSize
 
-    oldDBias = []
-    for i in xrange(len(self.biases)):
-      oldDBias += [np.zeros(self.biases[i].shape)]
+    oldDWeights = zerosFromShape(self.weights)
+    oldDBias = zerosFromShape(self.biases)
 
+    nrWeightMatrices = len(self.weights)
 
     # TODO: maybe find a better way than this to find a stopping criteria
     for epoch in xrange(epochs):
@@ -120,34 +119,49 @@ class DBN(object):
       else:
         momentum = 0.9
 
-      for i, d in enumerate(data):
-        # this is a list of layer activities
-        layerValues = self.forwardPass(d)
+      for batch in xrange(nrMiniBatches):
+        start = batch * miniBatchSize
+        end = (batch + 1) * miniBatchSize
 
-        finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i],
-                                            layerValues[-1])
+        # TODO: thinnk of doing this with matrix multiplication
+        # for all the data instances in a batch
+        # now that the weights do not chaneg you can do it
+        batchWeights = zerosFromShape(self.weights)
+        batchBiases = zerosFromShape(self.biases)
+        for i in xrange(start, end):
+          d = data[i]
 
-        # Compute all derivatives
-        dWeights, dBias = backprop(self.weights, layerValues,
-                            finalLayerErrors, self.activationFunctions)
+          # this is a list of layer activities
+          layerValues = self.forwardPass(d)
+
+          finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i],
+                                              layerValues[-1])
+
+          # Compute all derivatives
+          dWeights, dBias = backprop(self.weights, layerValues,
+                              finalLayerErrors, self.activationFunctions)
+          # might be better to compute the sum here
+          batchWeights = [i + j for i,j in zip(batchWeights, dWeights)]
+          batchBiases =  [i + j for i,j in zip(batchBiases, dBias)]
 
         # Momentum updates
-        for index in xrange(len(dWeights)):
-          dWeights[index] += momentum * oldDWeights[index]
+        for index in xrange(nrWeightMatrices):
+          batchWeights[index] += momentum * oldDWeights[index]
 
-        for index in xrange(len(dBias)):
-          dBias[index] += momentum * oldDBias[index]
+        for index in xrange(nrWeightMatrices):
+          batchBiases[index] += momentum * oldDBias[index]
 
-        oldDWeights = dWeights
-        oldDBias = dBias
+        # Update the oldweights
+        oldDWeights = batchWeights
+        oldDBias = batchBiases
 
         # Update the weights using gradient descent
         for index, dw in enumerate(dWeights):
-          self.weights[index] -= learningRate * dw
+          self.weights[index] -= batchLearningRate * dw
 
         # Update the biases using gradient descent
         for index, dBias in enumerate(dBias):
-          self.biases[index] -= learningRate * dBias
+          self.biases[index] -= batchLearningRate * dBias
 
 
   """Does a forward pass trought the network and computes the values of the
@@ -207,8 +221,6 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
     # append the weight derivatives at the front as we go along
     deDw.insert(0, dw)
     deDbias.insert(0, dbias)
-
-  # assert len(deDw) == len(weights)
 
   return deDw, deDbias
 

@@ -2,8 +2,6 @@
 % Deep learning and other machine learning cool stuff
 % 1 Jan 2014
 
-# List of figures (TODO: see how to generate)
-
 # Introduction
   The aim of the project.
 
