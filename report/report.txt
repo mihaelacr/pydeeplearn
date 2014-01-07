@@ -9,14 +9,22 @@
 # Background
 
 ## History of machine learning and progresses
+ Properly define a machine learning model?
 
-## Neural networks
+## Artificial neural networks
+
+  Artifical neural networks (ANNs) are machine learning models biologically inspired from the animal brain in the hope that they can be used to reverse engineer how animals learn to perfrom certain tasks.
+
+  They are a simple abstraction of the real neural networks.
+  In the following, when we refer to a neural network we will be meaning artificial neural network (ANN).
 
  City some semnficant results and their decay
  Quote Hinton in the reasons that neural nets were abandoned (lack of CPU, too much backprop, not enough labeled data)
 
  Why deep nets did not work before. Talk about how with the pre trained nets you have the guarantte to get better results
   than you got beore
+
+ neural nets have thirved since Hinton has (quote here) has shown that restricted boltzmann machines can be combined together and be used both as generative and discriminative models.
 
 ### Activation functions
 
@@ -272,6 +280,13 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
 # Implementation
 
+## Why python
+  * highly used in the scientific comunity
+  * numpy: a good library fro array operations
+  * increased coding speed
+
+## Setup
+
   Most experiments have been done on a machine with 12GB ram and an intel i5 processor.
 
   * python version 2.7
@@ -279,6 +294,7 @@ Note that we require the sum since the output of the neuron in the softmax unit 
   * pypy if I manage to get it to work now (in case you do, talk about the issues and so on encountered)
     does not really work with numpy so discuss this
   * matrix operations (exploit and give some examples (both from RBM and backprop))
+  * profiling code
 
 # Project management
   * version control
