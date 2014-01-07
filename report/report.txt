@@ -257,7 +257,11 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
 ## Comparison between deep belief nets and convolutional nets
 
+# Reinforcement learning
 
+## Q learning
+
+### Results (quote zhen project)
 
 # Experiments
 
