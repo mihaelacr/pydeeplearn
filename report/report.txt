@@ -14,17 +14,16 @@
 
   Artifical neural networks (ANNs) are machine learning models biologically inspired from the animal brain in the hope that they can be used to reverse engineer how animals learn to perfrom certain tasks.
 
-  Even though ANNs are inspired by biological neural networks, they are not at all biologically reslistic, as the building block of an ANN is an
-  extremely simplifcated version of the
+  Even though ANNs are inspired by biological neural networks, they are far from being biologically realistic, as the building block of an ANN is an extremely simplifcated version of the neuron.
 
-  Despite this drawback, artificial neural nets have proven to be succesful in a variety of taks, such as image and speech recognition.
+  Despite this drawback, artificial neural nets have proven to be succesful in a variety of applications, such as image and speech recognition.
+
+  In the following, when we refer to a neural network we will be meaning artificial neural network (ANN).
+
 
 ### Definition and structure
 
-  They are a simple abstraction of the real neural networks.
-  In the following, when we refer to a neural network we will be meaning artificial neural network (ANN).
-
- City some semnficant results and their decay
+ Cite some semnficant results and their decay
  Quote Hinton in the reasons that neural nets were abandoned (lack of CPU, too much backprop, not enough labeled data)
 
  Why deep nets did not work before. Talk about how with the pre trained nets you have the guarantte to get better results
@@ -38,6 +37,7 @@
 
 ### Tanh
 
+## Learning in neural networks
 ## Backpropagation and gradient descent methods
   introduction bla bla
 
@@ -90,7 +90,11 @@
     * Dropout (mention this)
     * Generative pre traning (discussed later in the report)
 
-## Hopfield networks
+
+# Restricted Boltzman machines
+
+
+## Hopfield networks (MAYBE NOT DO THIS? it is kind of unrelated)
   Add nice pics.
 
   Do not talk much about them
@@ -138,7 +142,10 @@
 ### Non binary units
   Gaussian units and why they are harder to train
 
-## Sigmoid belief nets
+
+# Deep belief networks
+
+## History: Sigmoid belief nets
   Graphical models, hard to learn them etc
 
 ## Pre training
@@ -152,7 +159,7 @@
   Add a image with the stuff and the images and the labels that Hinton had.
 
 
-## Deep belief networks: sigmoid belief nets from stacking RBM
+## Sigmoid belief nets from stacking RBM
   Discovered by Geoff Hinton in 2006, deep belief networks are graphical models which use the principle of greedy layer wise traning, in which each of the layers is trained separetely, after which the weights of the entire network are fine tuned either to maximize the log likelihood of the generative model, or to minimize the error with respect to a classification criteria.
 
   It works because backpropagation does not need to learn new features of the data.
@@ -180,10 +187,6 @@
   TODO: picture
 
   This is not easy to achieve with a logit neuron, because ...
-
-
-
-
 
   The simple and elegant way to solve the above problems is by using a softmax group. A softmax group can be seen as a continous version of the maximum function.
 
@@ -263,13 +266,17 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 \begin{center} $\frac {dC}{d {z_i}} = - \sum{{t_j} (1 - {y_j})} = {t_i} (1 - {y_i}) = {t_i} - {y_i}$ \end{center}
 
 
-
-
-
-
   Due to the above, in all the classification models discuss further, we will use a softmax unit as the top layer of the neural network.
 
+## Classification using deep belief nets
+  Fine tuning with backpropagation
+
+## Better generative models using deep belief nets
+  Wake sleep algorithm
+
 ## Comparison between deep belief nets and convolutional nets
+
+
 
 # Reinforcement learning
 
