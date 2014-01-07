@@ -2,9 +2,6 @@
 % Deep learning and other machine learning cool stuff
 % 1 Jan 2014
 
-
-# Table of contents (TODO: see how to generate)
-
 # List of figures (TODO: see how to generate)
 
 # Introduction
