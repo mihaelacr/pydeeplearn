@@ -93,7 +93,7 @@ def deepbeliefMain():
   #     readmnist.read(range(10), dataset="testing", path="MNIST")
 
   trainImages, trainLabels =\
-      readmnist.readNew(0, 10000, bTrain=True, path="MNIST")
+      readmnist.readNew(0, 60000, bTrain=True, path="MNIST")
   testImages, testLabels =\
       readmnist.readNew(0, 1000, bTrain=False, path="MNIST")
   print trainImages[0].shape
@@ -120,7 +120,7 @@ def deepbeliefMain():
     net = pickle.load(f)
 
   correct = 0
-  for i in xrange(100):
+  for i in xrange(1000):
     print "predicted"
     predicted = net.classify(testingScaledVectors[i])[1]
     print predicted
@@ -145,10 +145,10 @@ def deepbeliefMain():
   # plt.show()
   # print "done"
 
-  ## Save network
-  # f = open(DEEP_BELIEF_FILE, "wb")
-  # pickle.dump(net, f)
-  # f.close()
+  if args.save:
+    f = open(DEEP_BELIEF_FILE, "wb")
+    pickle.dump(net, f)
+    f.close()
 
 
 def main():
