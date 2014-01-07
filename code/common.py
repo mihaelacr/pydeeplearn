@@ -44,6 +44,10 @@ def labelsToVectors(labels, size):
 def indexOfMax(l):
   return max(xrange(len(l)),key=l.__getitem__)
 
+
+def zerosFromShape(l):
+  return map(lambda x: np.zeros(x.shape), l)
+
 # can make the thing class methods
 # if I feel like I am hardcore, make this callable and replace value with
 # the call
