@@ -2,9 +2,13 @@
 % Deep learning and other machine learning cool stuff
 % 1 Jan 2014
 
+
+# Table of contents (TODO: see how to generate)
+
+# List of figures (TODO: see how to generate)
+
 # Introduction
   The aim of the project.
-  clarify this iwth abbas
 
 # Background
 
@@ -14,6 +18,13 @@
 ## Artificial neural networks
 
   Artifical neural networks (ANNs) are machine learning models biologically inspired from the animal brain in the hope that they can be used to reverse engineer how animals learn to perfrom certain tasks.
+
+  Even though ANNs are inspired by biological neural networks, they are not at all biologically reslistic, as the building block of an ANN is an
+  extremely simplifcated version of the
+
+  Despite this drawback, artificial neural nets have proven to be succesful in a variety of taks, such as image and speech recognition.
+
+### Definition and structure
 
   They are a simple abstraction of the real neural networks.
   In the following, when we refer to a neural network we will be meaning artificial neural network (ANN).
