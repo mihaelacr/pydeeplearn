@@ -128,12 +128,14 @@ class DBN(object):
         # now that the weights do not chaneg you can do it
         batchWeights = zerosFromShape(self.weights)
         batchBiases = zerosFromShape(self.biases)
+
+        # batchData = data[start:end]
+
         for i in xrange(start, end):
           d = data[i]
 
           # this is a list of layer activities
           layerValues = self.forwardPass(d)
-
           finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i],
                                               layerValues[-1])
 
@@ -145,6 +147,7 @@ class DBN(object):
           batchBiases =  [i + j for i,j in zip(batchBiases, dBias)]
 
         # Momentum updates
+        # 1 - momentunm thing?
         for index in xrange(nrWeightMatrices):
           batchWeights[index] += momentum * oldDWeights[index]
 
