@@ -156,20 +156,41 @@ class DBN(object):
       dataInstace: The instance to be classified.
 
     """
-  def forwardPass(self, dataInstace):
-    currentLayerValues = dataInstace
+  def forwardPass(self, dataInstaces):
+    currentLayerValues = dataInstaces
     layerValues = [currentLayerValues]
+
+    # TODO: think about doing this better
+    if len(dataInstaces.shape) == 2:
+      size = dataInstaces.shape[0]
+    else:
+      size = 1
 
     for stage in xrange(self.nrLayers - 1):
       weights = self.weights[stage]
-      biases = self.biases[stage]
+      bias = self.biases[stage]
       activation = self.activationFunctions[stage]
 
-      linearSum = np.dot(currentLayerValues, weights) + biases
+      linearSum = np.dot(currentLayerValues, weights) + np.tile(bias, (size, 1))
       currentLayerValues = activation.value(linearSum)
       layerValues += [currentLayerValues]
 
     return layerValues
+
+  # def forwardPass(self, dataInstace):
+  #   currentLayerValues = dataInstace
+  #   layerValues = [currentLayerValues]
+
+  #   for stage in xrange(self.nrLayers - 1):
+  #     weights = self.weights[stage]
+  #     biases = self.biases[stage]
+  #     activation = self.activationFunctions[stage]
+
+  #     linearSum = np.dot(currentLayerValues, weights) + biases
+  #     currentLayerValues = activation.value(linearSum)
+  #     layerValues += [currentLayerValues]
+
+  #   return layerValues
 
   # implementing wake and sleep and backprop could be something
   # Do wake and sleep first nd then backprop: improve weights for generation
