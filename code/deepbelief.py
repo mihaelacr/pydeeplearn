@@ -139,13 +139,12 @@ class DBN(object):
           batchBiases =  [i + j for i,j in zip(batchBiases, dBias)]
 
         # Update the weights and biases using gradient descent
+        # Also update the old weights
         for index in xrange(stages):
-          self.weights[index] -=  momentum * oldDWeights[index] + batchLearningRate * batchWeights[index]
-          self.biases[index] -= momentum * oldDBias[index] + batchLearningRate * batchBiases[index]
-
-        # Update the oldweights
-        oldDWeights = batchWeights
-        oldDBias = batchBiases
+          oldDWeights[index] = momentum * oldDWeights[index] + batchLearningRate * batchWeights[index]
+          oldDBias[index] = momentum * oldDBias[index] + batchLearningRate * batchBiases[index]
+          self.weights[index] -= oldDWeights[index]
+          self.biases[index] -= oldDBias[index]
 
 
 
