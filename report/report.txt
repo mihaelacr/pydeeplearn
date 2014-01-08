@@ -87,7 +87,7 @@
 ### Efficiency of backprop
   Quote bishop 5.3.3
 
-## Overfitting
+## Overfitting: add this to what I used?
   The aim of a neural network is to learn the regularities from the mapping to input to output. (TODO: nice picture here ). Due to the limited amount of data presented to the network, there will also be accidental regularities found in the traning cases. Those accidental regularities result in **sampling error**, potientally making the network not generalize well to unseen testing data. It is impossible for a network to distinguish between real regularities that we aim to learn and the accidental regularities in the data it sees. This is an important issue that arises when using machine learning technquie, and it is generally referred to as overfitting.
 
   TODO: overfitting example!!! (Hinton gives the poligon one, I should give a different one)

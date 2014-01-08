@@ -449,7 +449,9 @@
     w><around*|(|t|)>
   </equation*>
 
-  So the current iteration update of the weight depends on previous updates
+  So the current iteration update of the weight depends on previous
+  updatesmomentum * oldDWeights[index] + batchLearningRate *
+  batchWeights[index]
 
   <math|\<alpha\>=0.9> usually (has to be close to 1) <math|\<alpha\>> is
   called the momemntum
