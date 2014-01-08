@@ -100,7 +100,7 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   # TODO: implement the minibatch business
-  def fineTune(self, data, labels, miniBatchSize=1, epochs=100):
+  def fineTune(self, data, labels, miniBatchSize=10, epochs=100):
     learningRate = 0.01
     batchLearningRate = learningRate / miniBatchSize
 
@@ -109,7 +109,7 @@ class DBN(object):
     oldDWeights = zerosFromShape(self.weights)
     oldDBias = zerosFromShape(self.biases)
 
-    nrWeightMatrices = len(self.weights)
+    stages = len(self.weights)
 
     # TODO: maybe find a better way than this to find a stopping criteria
     for epoch in xrange(epochs):
@@ -148,23 +148,18 @@ class DBN(object):
 
         # Momentum updates
         # 1 - momentunm thing?
-        for index in xrange(nrWeightMatrices):
+        for index in xrange(stages):
           batchWeights[index] += momentum * oldDWeights[index]
-
-        for index in xrange(nrWeightMatrices):
           batchBiases[index] += momentum * oldDBias[index]
 
         # Update the oldweights
         oldDWeights = batchWeights
         oldDBias = batchBiases
 
-        # Update the weights using gradient descent
-        for index, dw in enumerate(dWeights):
-          self.weights[index] -= batchLearningRate * dw
-
-        # Update the biases using gradient descent
-        for index, dBias in enumerate(dBias):
-          self.biases[index] -= batchLearningRate * dBias
+        # Update the weights and biases using gradient descent
+        for index in xrange(stages):
+          self.weights[index] -= batchLearningRate * batchWeights[index]
+          self.biases[index] -= batchLearningRate * batchBiases[index]
 
 
   """Does a forward pass trought the network and computes the values of the
