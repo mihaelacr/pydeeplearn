@@ -117,11 +117,9 @@ class DBN(object):
       if epoch < 10:
         momentum = 0.5
       else:
-        momentum = 0.9
+        momentum = 0.95
 
       for batch in xrange(nrMiniBatches):
-        start = batch * miniBatchSize
-        end = (batch + 1) * miniBatchSize
 
         # TODO: thinnk of doing this with matrix multiplication
         # for all the data instances in a batch
@@ -129,11 +127,11 @@ class DBN(object):
         batchWeights = zerosFromShape(self.weights)
         batchBiases = zerosFromShape(self.biases)
 
-        # batchData = data[start:end]
-
-        for i in xrange(start, end):
+        for i in xrange(batch * miniBatchSize, (batch + 1) * miniBatchSize):
           d = data[i]
 
+          # TODO
+          # think more about vecotrizing this
           # this is a list of layer activities
           layerValues = self.forwardPass(d)
           finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i],
@@ -146,20 +144,15 @@ class DBN(object):
           batchWeights = [i + j for i,j in zip(batchWeights, dWeights)]
           batchBiases =  [i + j for i,j in zip(batchBiases, dBias)]
 
-        # Momentum updates
-        # 1 - momentunm thing?
+        # Update the weights and biases using gradient descent
         for index in xrange(stages):
-          batchWeights[index] += momentum * oldDWeights[index]
-          batchBiases[index] += momentum * oldDBias[index]
+          self.weights[index] -=  momentum * oldDWeights[index] + batchLearningRate * batchWeights[index]
+          self.biases[index] -= momentum * oldDBias[index] + batchLearningRate * batchBiases[index]
 
         # Update the oldweights
         oldDWeights = batchWeights
         oldDBias = batchBiases
 
-        # Update the weights and biases using gradient descent
-        for index in xrange(stages):
-          self.weights[index] -= batchLearningRate * batchWeights[index]
-          self.biases[index] -= batchLearningRate * batchBiases[index]
 
 
   """Does a forward pass trought the network and computes the values of the
