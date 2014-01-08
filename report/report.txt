@@ -41,6 +41,9 @@
 ## Backpropagation and gradient descent methods
   introduction bla bla
 
+  uote this
+  http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
+
 ### Error function
   Talk about it's importance in backprop and mention MSE and Gaussian assumption
 
@@ -65,7 +68,16 @@
 
 #### Parameters for backpropagation
   * Learning rate
+      During learning, monitor the error on a validation set.
+      If the error is steadily decreasing, then increase the learning rate.
+      If the error is increasing, then decrease the learning rate.
+
+      Towards the end of learning, decrease the learning rate. You can do that once the
+      error stops decreasing steadily. This helps removing the fluctuations in the values of the weights between mini batches, and helps towards keeping a steady set of weights for the final ones.
+
+
   * momentum? dropout etc here (not sure if here: momentum should be here though)
+    Nesterov method for momentum
 
   TODO: quote bishop here as well
 

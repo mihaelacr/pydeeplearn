@@ -2,12 +2,6 @@ import numpy as np
 
 import restrictedBoltzmannMachine as rbm
 
-# TODO: use momentum for backpropagation
-# this is done in the exact same way as before
-# TODO: try tanh instead of the usual 1 /(1 + exp.(-x)) ?
-# Note that this requires also changes in output function
-# This function is also mentioned in bishop
-
 # TODO: use conjugate gradient for  backpropagation instead of stepeest descent
 # TODO: add weight decay in back prop
 
