@@ -85,6 +85,12 @@ def rbmMain():
     pickle.dump(net, f)
 
 
+def shuffle(data, labels):
+  indexShuffle = np.random.permutation(len(data))
+  shuffledData = np.array([data[i] for i in indexShuffle])
+  shuffledLabels = np.array([labels[i] for i in indexShuffle])
+
+  return shuffledData, shuffledLabels
 
 def deepbeliefMain():
   # trainImages, trainLabels =\
@@ -98,7 +104,8 @@ def deepbeliefMain():
       readmnist.readNew(0, 100, bTrain=False, path="MNIST")
   print trainImages[0].shape
 
-  trainVectors = imagesToVectors(trainImages)
+  # trainVectors = imagesToVectors(trainImages)
+  trainImages, trainLabels = shuffle(trainImages, trainLabels)
 
   # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
   trainingScaledVectors = trainVectors / 255.0
