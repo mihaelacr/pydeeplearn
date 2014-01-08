@@ -105,7 +105,7 @@ def deepbeliefMain():
   print trainImages[0].shape
 
   # trainVectors = imagesToVectors(trainImages)
-  trainImages, trainLabels = shuffle(trainImages, trainLabels)
+  trainVectors, trainLabels = shuffle(trainImages, trainLabels)
 
   # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
   trainingScaledVectors = trainVectors / 255.0
