@@ -194,11 +194,23 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   deDbias = []
   upperLayerErrors = finalLayerErrors
 
+  # important note
   for layer in xrange(nrLayers - 1, 0, -1):
     deDz = activationFunctions[layer - 1].derivativeForLinearSum(
                             upperLayerErrors, layerValues[layer])
-    dw, dbottom, dbias =\
-      derivativesForBottomLayer(weights[layer - 1], layerValues[layer - 1], deDz)
+
+    dbottom = np.dot(weights[layer - 1], deDz)
+
+    # important note: you never need dw and dbias except in the
+    # mini batch sum
+    # search on how to do it faster with numpy
+    dw = np.outer(layerValues[layer - 1], deDz)
+
+    # same with dbias
+    dbias = deDz
+
+    # dw, dbottom, dbias =\
+    #   derivativesForBottomLayer(weights[layer - 1], layerValues[layer - 1], deDz)
     upperLayerErrors = dbottom
 
     # Iterating in decreasing order of layers, so we are required to
@@ -234,6 +246,5 @@ def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
   bottomLayerDerivatives = np.dot(layerWeights, derivativesWrtLinearInputSum)
 
   weightDerivatives = np.outer(y, derivativesWrtLinearInputSum)
-  # assert layerWeights.shape == weightDerivatives.shape
 
   return weightDerivatives, bottomLayerDerivatives, derivativesWrtLinearInputSum
