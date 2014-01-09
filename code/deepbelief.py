@@ -95,7 +95,7 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   # TODO: implement the minibatch business
-  def fineTune(self, data, labels, miniBatchSize=1, epochs=100):
+  def fineTune(self, data, labels, miniBatchSize=8, epochs=100):
     learningRate = 0.01
     batchLearningRate = learningRate / miniBatchSize
 
@@ -115,15 +115,10 @@ class DBN(object):
         momentum = 0.95
 
       for batch in xrange(nrMiniBatches):
-
-        # TODO: thinnk of doing this with matrix multiplication
-        # for all the data instances in a batch
-        # now that the weights do not chaneg you can do it
         start = batch * miniBatchSize
         end = (batch + 1) * miniBatchSize
         batchData = data[start: end]
 
-        # think more about vecotrizing this
         # this is a list of layer activities
         layerValues = self.forwardPass(batchData)
         finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[start:end],
@@ -177,9 +172,11 @@ class DBN(object):
   # Do wake and sleep first nd then backprop: improve weights for generation
   # and then improve them for classification
   # TODO: get more data instances
+  # make this to work with them
+
   def classify(self, dataInstace):
     lastLayerValues = self.forwardPass(dataInstace)[-1]
-    return lastLayerValues, indexOfMax(lastLayerValues)
+    return lastLayerValues, indexOfMax(lastLayerValues[0])
 
 """
 Arguments:
@@ -196,25 +193,28 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   deDbias = []
   upperLayerErrors = finalLayerErrors
 
-  # important note
   for layer in xrange(nrLayers - 1, 0, -1):
     deDz = activationFunctions[layer - 1].derivativeForLinearSum(
                             upperLayerErrors, layerValues[layer])
-
     dbottom = np.dot(deDz, weights[layer - 1].T)
+    # dbottom = []
+    # for l in xrange(len(deDz)):
+    #   dbottom+= [np.dot(weights[layer - 1], deDz[l])]
 
-    # print dbottom
-    # important note: you never need dw and dbias except in the
-    # mini batch sum
-    # search on how to do it faster with numpy
+    # dbottom = np.array(dbottom)
 
     # dw = np.outer(layerValues[layer - 1], deDz)
     # print layerValues[layer - 1].shape
     dw = np.einsum('ij,ik->jk', layerValues[layer - 1], deDz)
+
+    # dw = np.zeros(weights[layer -1].shape)
+    # for l in xrange(len(deDz)):
+    #   dw += np.outer(layerValues[layer -1][l], deDz[l])
     # print dw
 
     # same with dbias
     dbias = deDz.sum(axis=0)
+    # dbias = np.zeros(deDz.shape[1])
 
     # dw, dbottom, dbias =\
     #   derivativesForBottomLayer(weights[layer - 1], layerValues[layer - 1], deDz)

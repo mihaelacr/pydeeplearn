@@ -293,6 +293,7 @@ def PCD():
 
 """ general unitily functions"""
 
+# TODO: move this to common.py
 def sample(p):
   return np.random.uniform() < p
 
