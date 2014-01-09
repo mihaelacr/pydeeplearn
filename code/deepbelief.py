@@ -4,6 +4,7 @@ import restrictedBoltzmannMachine as rbm
 
 # TODO: use conjugate gradient for  backpropagation instead of stepeest descent
 # TODO: add weight decay in back prop
+# TODO: implement dropout: it has been shown to imporove learning
 
 """In all the above topLayer does not mean the top most layer, but rather the
 layer above the current one."""

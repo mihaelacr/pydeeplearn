@@ -79,6 +79,11 @@
   * momentum? dropout etc here (not sure if here: momentum should be here though)
     Nesterov method for momentum
 
+    Quote this:
+      http://www.cs.toronto.edu/~hinton/absps/georgerectified.pdf
+      Note that in the dropout section it mentions to other papers that showed it is efficient so
+      just limit yourself to quoting them and describe droput.
+
   TODO: quote bishop here as well
 
 ### Issues with backpropagation
