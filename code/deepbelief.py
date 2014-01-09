@@ -95,7 +95,7 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   # TODO: implement the minibatch business
-  def fineTune(self, data, labels, miniBatchSize=10, epochs=100):
+  def fineTune(self, data, labels, miniBatchSize=1, epochs=100):
     learningRate = 0.01
     batchLearningRate = learningRate / miniBatchSize
 
@@ -119,31 +119,27 @@ class DBN(object):
         # TODO: thinnk of doing this with matrix multiplication
         # for all the data instances in a batch
         # now that the weights do not chaneg you can do it
-        batchWeights = zerosFromShape(self.weights)
-        batchBiases = zerosFromShape(self.biases)
+        start = batch * miniBatchSize
+        end = (batch + 1) * miniBatchSize
+        batchData = data[start: end]
 
-        for i in xrange(batch * miniBatchSize, (batch + 1) * miniBatchSize):
-          d = data[i]
-
-          # TODO
-          # think more about vecotrizing this
-          # this is a list of layer activities
-          layerValues = self.forwardPass(d)
-          finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[i],
+        # TODO
+        # think more about vecotrizing this
+        # this is a list of layer activities
+        layerValues = self.forwardPass(batchData)
+        finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[start:end],
                                               layerValues[-1])
 
-          # Compute all derivatives
-          dWeights, dBias = backprop(self.weights, layerValues,
-                              finalLayerErrors, self.activationFunctions)
-          # might be better to compute the sum here
-          batchWeights = [i + j for i,j in zip(batchWeights, dWeights)]
-          batchBiases =  [i + j for i,j in zip(batchBiases, dBias)]
+        # Compute all derivatives
+        dWeights, dBias = backprop(self.weights, layerValues,
+                            finalLayerErrors, self.activationFunctions)
 
         # Update the weights and biases using gradient descent
         # Also update the old weights
         for index in xrange(stages):
-          oldDWeights[index] = momentum * oldDWeights[index] + batchLearningRate * batchWeights[index]
-          oldDBias[index] = momentum * oldDBias[index] + batchLearningRate * batchBiases[index]
+          # TOOD: after speedup, try this with (1 - momentum and see if you get any improvement)
+          oldDWeights[index] = momentum * oldDWeights[index] + batchLearningRate * dWeights[index]
+          oldDBias[index] = momentum * oldDBias[index] + batchLearningRate * dBias[index]
           self.weights[index] -= oldDWeights[index]
           self.biases[index] -= oldDBias[index]
 
@@ -221,15 +217,18 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
     deDz = activationFunctions[layer - 1].derivativeForLinearSum(
                             upperLayerErrors, layerValues[layer])
 
-    dbottom = np.dot(weights[layer - 1], deDz)
+    dbottom = np.dot(deDz, weights[layer - 1].T)
 
     # important note: you never need dw and dbias except in the
     # mini batch sum
     # search on how to do it faster with numpy
-    dw = np.outer(layerValues[layer - 1], deDz)
+
+    # dw = np.outer(layerValues[layer - 1], deDz)
+    print layerValues[layer - 1].shape
+    dw = np.einsum('ij,ik->jk', layerValues[layer - 1], deDz)
 
     # same with dbias
-    dbias = deDz
+    dbias = deDz.sum(axis=0)
 
     # dw, dbottom, dbias =\
     #   derivativesForBottomLayer(weights[layer - 1], layerValues[layer - 1], deDz)

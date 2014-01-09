@@ -146,7 +146,11 @@
   Rough approximation of likelihood, does not use one term from KL divergence masure,
   but works well in practice (and fast enough)
 
-### PCD
+### PCD: only mention brielfy as other tipe of traning.
+  Do not implement it as it was shown to not be as good.
+  Only do it if you have time.
+  Just mention the convergence paper that says that it is better using CD.
+
 
 ### Other tricks: they should not be here, they are general, so move them up
 
@@ -157,8 +161,19 @@
 
 
 ### Non binary units
+  Say  that you want to capture more intofrmation from the image that you cannot get by simply normalizing the pixel values and that you want to capture similarities between pictures.
+
+  Binomial units can be used to model noisy integer values (Teh & Hinton 2001) add to bib.
   Gaussian units and why they are harder to train
 
+  Rectified linear units: max(0, x) invalidate the probabilistic assumptions
+  http://www.cs.toronto.edu/~hinton/absps/georgerectified.pdf
+
+  Gaussian ReLu
+  $f(x) = max(0, x + N(0, \sigma(x)))$
+
+  As shown by Hinton they have been proved to be better.
+  Mention weight sharing here.
 
 # Deep belief networks
 
