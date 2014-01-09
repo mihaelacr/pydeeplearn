@@ -197,27 +197,10 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
     deDz = activationFunctions[layer - 1].derivativeForLinearSum(
                             upperLayerErrors, layerValues[layer])
     dbottom = np.dot(deDz, weights[layer - 1].T)
-    # dbottom = []
-    # for l in xrange(len(deDz)):
-    #   dbottom+= [np.dot(weights[layer - 1], deDz[l])]
 
-    # dbottom = np.array(dbottom)
-
-    # dw = np.outer(layerValues[layer - 1], deDz)
-    # print layerValues[layer - 1].shape
     dw = np.einsum('ij,ik->jk', layerValues[layer - 1], deDz)
 
-    # dw = np.zeros(weights[layer -1].shape)
-    # for l in xrange(len(deDz)):
-    #   dw += np.outer(layerValues[layer -1][l], deDz[l])
-    # print dw
-
-    # same with dbias
     dbias = deDz.sum(axis=0)
-    # dbias = np.zeros(deDz.shape[1])
-
-    # dw, dbottom, dbias =\
-    #   derivativesForBottomLayer(weights[layer - 1], layerValues[layer - 1], deDz)
     upperLayerErrors = dbottom
 
     # Iterating in decreasing order of layers, so we are required to
@@ -239,19 +222,3 @@ def outputDerivativesCrossEntropyErrorFunction(expected, actual):
   # avoid dividing by 0 by adding a small number
   return - expected * (1.0 / (actual + 0.00000008))
 
-"""
-Arguments:
-  weights: the weight matrix between the layers for which the derivatives are
-      computed
-  derivativesWrtLinearInputSum: the derivatives with respect to the linear
-      sum for the layer above (from which we backpropagate)
-  layerActivations: The activations for the layer for which we are computing
-      the error derivatives.
-      These were obtained by doing a forward pass in the network.
-"""
-def derivativesForBottomLayer(layerWeights, y, derivativesWrtLinearInputSum):
-  bottomLayerDerivatives = np.dot(layerWeights, derivativesWrtLinearInputSum)
-
-  weightDerivatives = np.outer(y, derivativesWrtLinearInputSum)
-
-  return weightDerivatives, bottomLayerDerivatives, derivativesWrtLinearInputSum
