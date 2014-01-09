@@ -79,14 +79,21 @@ class Softmax(ActivationFunction):
   # there is still no need for this to result  in a 3d matrix
   def derivativeForLinearSum(self, topLayerDerivatives, topLayerActivations):
     # write it as matrix multiplication
-    d = - topLayerActivations[:, :, np.newaxis] * topLayerActivations[:, np.newaxis, :]
+    # d = - topLayerActivations[:, :, np.newaxis] * topLayerActivations[:, np.newaxis, :]
 
-    # TODO: check this properly
-    # print d.shape
-    vals = topLayerActivations * (1 - topLayerActivations)
-    # d[np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
-    res = (d * topLayerDerivatives[..., : np.newaxis]).sum(axis=2)
-    return res
+    # vals = topLayerActivations * (1 - topLayerActivations)
+    # for index in xrange(len(d)):
+    #   d[index][np.diag_indices_from(d[index])] = vals[index]
+
+    # res = (d * topLayerDerivatives[:, np.newaxis, :]).sum(axis=1)
+    res = []
+    for l in xrange(len(topLayerActivations)):
+      vals = topLayerActivations[l] * (1 - topLayerActivations[l])
+      d = np.outer(topLayerActivations[l], topLayerActivations[l])
+      d[np.diag_indices_from(d)] = vals
+      res.append(np.dot(topLayerDerivatives[l], d))
+
+    return np.array(res)
 
 """ Implementation of the sigmoid activation function."""
 class Sigmoid(ActivationFunction):

@@ -321,6 +321,8 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 ## MNIST digits
   Quote other MNIST digits results, with different methods
 
+  visualise the weights
+
   Say how you can make deep belieg nets learn even with a permutation of all pixels, but this would not work for convolutional neural nets, because they have hard wired information.
 
 # Implementation

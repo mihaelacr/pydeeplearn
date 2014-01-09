@@ -95,7 +95,7 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   # TODO: implement the minibatch business
-  def fineTune(self, data, labels, miniBatchSize=10, epochs=100):
+  def fineTune(self, data, labels, miniBatchSize=1, epochs=100):
     learningRate = 0.01
     batchLearningRate = learningRate / miniBatchSize
 
@@ -123,7 +123,6 @@ class DBN(object):
         end = (batch + 1) * miniBatchSize
         batchData = data[start: end]
 
-        # TODO
         # think more about vecotrizing this
         # this is a list of layer activities
         layerValues = self.forwardPass(batchData)
@@ -174,21 +173,6 @@ class DBN(object):
 
     return layerValues
 
-  # def forwardPass(self, dataInstace):
-  #   currentLayerValues = dataInstace
-  #   layerValues = [currentLayerValues]
-
-  #   for stage in xrange(self.nrLayers - 1):
-  #     weights = self.weights[stage]
-  #     biases = self.biases[stage]
-  #     activation = self.activationFunctions[stage]
-
-  #     linearSum = np.dot(currentLayerValues, weights) + biases
-  #     currentLayerValues = activation.value(linearSum)
-  #     layerValues += [currentLayerValues]
-
-  #   return layerValues
-
   # implementing wake and sleep and backprop could be something
   # Do wake and sleep first nd then backprop: improve weights for generation
   # and then improve them for classification
@@ -219,6 +203,7 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
 
     dbottom = np.dot(deDz, weights[layer - 1].T)
 
+    # print dbottom
     # important note: you never need dw and dbias except in the
     # mini batch sum
     # search on how to do it faster with numpy
@@ -226,6 +211,7 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
     # dw = np.outer(layerValues[layer - 1], deDz)
     # print layerValues[layer - 1].shape
     dw = np.einsum('ij,ik->jk', layerValues[layer - 1], deDz)
+    # print dw
 
     # same with dbias
     dbias = deDz.sum(axis=0)
