@@ -83,9 +83,9 @@ class Softmax(ActivationFunction):
 
     # TODO: check this properly
     # print d.shape
+    vals = topLayerActivations * (1 - topLayerActivations)
     # d[np.diag_indices_from(d)] = topLayerActivations * (1 - topLayerActivations)
     res = (d * topLayerDerivatives[..., : np.newaxis]).sum(axis=2)
-    print res.shape
     return res
 
 """ Implementation of the sigmoid activation function."""

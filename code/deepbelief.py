@@ -95,7 +95,7 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   # TODO: implement the minibatch business
-  def fineTune(self, data, labels, miniBatchSize=1, epochs=100):
+  def fineTune(self, data, labels, miniBatchSize=10, epochs=100):
     learningRate = 0.01
     batchLearningRate = learningRate / miniBatchSize
 
@@ -224,7 +224,7 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
     # search on how to do it faster with numpy
 
     # dw = np.outer(layerValues[layer - 1], deDz)
-    print layerValues[layer - 1].shape
+    # print layerValues[layer - 1].shape
     dw = np.einsum('ij,ik->jk', layerValues[layer - 1], deDz)
 
     # same with dbias
