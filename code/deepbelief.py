@@ -221,4 +221,3 @@ composed of a base vector, with 1 for the correct class and 0 for all the rest.
 def outputDerivativesCrossEntropyErrorFunction(expected, actual):
   # avoid dividing by 0 by adding a small number
   return - expected * (1.0 / (actual + 0.00000008))
-
