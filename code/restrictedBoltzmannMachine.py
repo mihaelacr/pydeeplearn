@@ -7,7 +7,6 @@ This allows you to deal with real valued unit
 do updates in parallel using multiprocessing.pool
 
 TODO: monitor overfitting
-TODO: weight decay (to control overfitting and other things)
 TODO: mean filed and dumped mean field
 TODO: dropout
 
