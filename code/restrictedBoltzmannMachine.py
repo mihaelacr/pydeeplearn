@@ -9,6 +9,7 @@ do updates in parallel using multiprocessing.pool
 TODO: monitor overfitting
 TODO: mean filed and dumped mean field
 TODO: dropout
+TODO: force sparse hidden weights
 
 """
 import numpy as np
