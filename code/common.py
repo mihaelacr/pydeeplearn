@@ -71,7 +71,7 @@ class Softmax(ActivationFunction):
 
   def value(self, inputVector):
     out = np.exp(inputVector)
-    return out / out.sum()
+    return out / out.sum(axis=0)
 
   def derivativeFromValue(self, value):
     return value * (1.0 - value)
