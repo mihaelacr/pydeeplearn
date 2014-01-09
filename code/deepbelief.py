@@ -4,7 +4,7 @@ import restrictedBoltzmannMachine as rbm
 
 # TODO: use conjugate gradient for  backpropagation instead of stepeest descent
 # TODO: add weight decay in back prop
-# TODO: implement dropout: it has been shown to imporove learning
+# TODO: implement dropout: it has been shown to improve learning
 
 """In all the above topLayer does not mean the top most layer, but rather the
 layer above the current one."""
@@ -137,8 +137,6 @@ class DBN(object):
           self.weights[index] -= oldDWeights[index]
           self.biases[index] -= oldDBias[index]
 
-
-
   """Does a forward pass trought the network and computes the values of the
     neurons in all the layers.
     Required for backpropagation and classification.
@@ -152,6 +150,7 @@ class DBN(object):
     layerValues = [currentLayerValues]
 
     # TODO: think about doing this better
+    # TODO: remove this completely
     if len(dataInstaces.shape) == 2:
       size = dataInstaces.shape[0]
     else:
@@ -174,9 +173,9 @@ class DBN(object):
   # TODO: get more data instances
   # make this to work with them
 
-  def classify(self, dataInstace):
-    lastLayerValues = self.forwardPass(dataInstace)[-1]
-    return lastLayerValues, indexOfMax(lastLayerValues[0])
+  def classify(self, dataInstaces):
+    lastLayerValues = self.forwardPass(dataInstaces)[-1]
+    return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
 """
 Arguments:

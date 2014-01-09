@@ -97,11 +97,14 @@ def deepbeliefMain():
   #     readmnist.read(range(10), dataset="training", path="MNIST")
   # testImages, testLabels =\
   #     readmnist.read(range(10), dataset="testing", path="MNIST")
+  # TODO: make these flags
+  training = 1000
+  testing = 100
 
   trainImages, trainLabels =\
-      readmnist.readNew(0, 1000, bTrain=True, path="MNIST")
+      readmnist.readNew(0, training, bTrain=True, path="MNIST")
   testImages, testLabels =\
-      readmnist.readNew(0, 100, bTrain=False, path="MNIST")
+      readmnist.readNew(0, testing, bTrain=False, path="MNIST")
   print trainImages[0].shape
 
   # trainVectors = imagesToVectors(trainImages)
@@ -126,17 +129,18 @@ def deepbeliefMain():
     f = open(DEEP_BELIEF_FILE, "rb")
     net = pickle.load(f)
 
+
+  probs, predicted = net.classify(testingScaledVectors[0: testing])
   correct = 0
-  for i in xrange(100):
+  for i in xrange(testing):
     print "predicted"
-    probs, predicted = net.classify(testingScaledVectors[i])
     print "probs"
-    print probs
-    print predicted
+    print probs[i]
+    print predicted[i]
     print "actual"
     actual = testLabels[i]
     print actual
-    correct += (predicted == actual)
+    correct += (predicted[i] == actual)
 
   print "correct"
   print correct

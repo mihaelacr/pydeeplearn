@@ -65,10 +65,6 @@ def labelsToVectors(labels, size):
 
   return result
 
-def indexOfMax(l):
-  return max(xrange(len(l)),key=l.__getitem__)
-
-
 def zerosFromShape(l):
   return map(lambda x: np.zeros(x.shape), l)
 
@@ -111,6 +107,7 @@ class Softmax(ActivationFunction):
 
     res = (topLayerDerivatives[:, :, np.newaxis] * d).sum(axis=1)
     return res
+
 
 """ Implementation of the sigmoid activation function."""
 class Sigmoid(ActivationFunction):
