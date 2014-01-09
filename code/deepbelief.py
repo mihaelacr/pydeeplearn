@@ -148,6 +148,7 @@ class DBN(object):
   def forwardPass(self, dataInstaces):
     currentLayerValues = dataInstaces
     layerValues = [currentLayerValues]
+    size = dataInstaces.shape[0]
 
     for stage in xrange(self.nrLayers - 1):
       weights = self.weights[stage]
