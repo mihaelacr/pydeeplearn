@@ -289,32 +289,3 @@ def activationSum(weights, bias, otherLayerValues):
 # This is what Hinton said but it is not OK due to NIPS paper
 def PCD():
   pass
-
-
-""" general unitily functions"""
-
-# TODO: move this to common.py
-def sample(p):
-  return np.random.uniform() < p
-
-def sampleAll(probs):
-  return np.random.uniform(size=probs.shape) < probs
-
-def enum(**enums):
-  return type('Enum', (), enums)
-
-# Create an enum for visible and hidden, for
-Layer = enum(VISIBLE=0, HIDDEN=1)
-
-def rmse(prediction, actual):
-  return np.linalg.norm(prediction - actual) / np.sqrt(len(prediction))
-
-def safeLogFraction(p):
-  assert p >=0 and p <= 1
-  # TODO: think about this a bit better
-  # you should not set them to be equal, on the contrary,
-  # they should be opposites
-  if p * (1 - p) == 0:
-    return 0
-  return np.log(p / (1 -p))
-
