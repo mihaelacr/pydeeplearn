@@ -149,13 +149,6 @@ class DBN(object):
     currentLayerValues = dataInstaces
     layerValues = [currentLayerValues]
 
-    # TODO: think about doing this better
-    # TODO: remove this completely
-    if len(dataInstaces.shape) == 2:
-      size = dataInstaces.shape[0]
-    else:
-      size = 1
-
     for stage in xrange(self.nrLayers - 1):
       weights = self.weights[stage]
       bias = self.biases[stage]
@@ -219,4 +212,4 @@ composed of a base vector, with 1 for the correct class and 0 for all the rest.
 """
 def outputDerivativesCrossEntropyErrorFunction(expected, actual):
   # avoid dividing by 0 by adding a small number
-  return - expected * (1.0 / (actual + 0.00000008))
+  return - expected * (1.0 / actual)

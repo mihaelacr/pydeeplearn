@@ -119,6 +119,10 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=10):
   weightDecay = True
   reconstructionStep = 100
 
+  oldDeltaWeights = np.zeros(weights.shape)
+  oldDeltaVisible = np.zeros(biases[0].shape)
+  oldDeltaHidden = np.zeros(biases[1].shape)
+
   batchLearningRate = epsilon / miniBatchSize
   print "batchLearningRate"
   print batchLearningRate
@@ -158,14 +162,9 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=10):
     deltaVisible = batchLearningRate * visibleBiasDiff
     deltaHidden  = batchLearningRate * hiddenBiasDiff
 
-    # if momentum:
-      # this is not required: it is not in Hinton's thing
-      # and an if statement might make it considerably shorted in
-      # uses in Deep belief networks when we have to train multiple
-    if epoch > 1:
-      deltaWeights = momentum * oldDeltaWeights + deltaWeights
-      deltaVisible = momentum * oldDeltaVisible + deltaVisible
-      deltaWeights = momentum * oldDeltaHidden + deltaHidden
+    deltaWeights = momentum * oldDeltaWeights + deltaWeights
+    deltaVisible = momentum * oldDeltaVisible + deltaVisible
+    deltaWeights = momentum * oldDeltaHidden + deltaHidden
 
     oldDeltaWeights = deltaWeights
     oldDeltaVisible = deltaVisible
