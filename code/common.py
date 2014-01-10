@@ -115,6 +115,8 @@ class Sigmoid(ActivationFunction):
 
 """ Implementation of the tanh activation function."""
 
+# TODO: I think better use this when you do not have the 0,1 binary constraints
+# anymore (but then you use the noisy rectified linear unit)
 class Tanh(ActivationFunction):
 
   @staticmethod
