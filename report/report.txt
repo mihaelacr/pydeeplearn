@@ -137,6 +137,8 @@
 
   Talk about the reconstruction error and how it is not a good measure for the log likelihood
 
+  Mention deep botzmann machines as in the Hinton paper. Not implemented here.
+
 ### Training an RBM
 
 #### Neals algorithm (could be presented in BM learning)
@@ -347,6 +349,8 @@ Note that we require the sum since the output of the neuron in the softmax unit 
   * version control
   * daily diaries
   * add nice chart with progress
+
+# System design
 
 ## Testing
 
