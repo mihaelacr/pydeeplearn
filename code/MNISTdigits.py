@@ -120,7 +120,7 @@ def deepbeliefMain():
 
   if args.train:
     # net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
-    net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
+    net = db.DBN(4, [784, 500, 500, 10], [Tanh, Tanh, Softmax])
 
     # TODO: think about what the network should do for 2 layers
     net.train(trainingScaledVectors, vectorLabels)
