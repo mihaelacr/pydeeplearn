@@ -114,17 +114,20 @@ class Sigmoid(ActivationFunction):
     return topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives
 
 """ Implementation of the tanh activation function."""
+
 class Tanh(ActivationFunction):
 
   @staticmethod
   def value(inputVector):
-    return np.tanh(inputVector)
+    return (np.tanh(inputVector) + 1) / 2
 
   @staticmethod
   def derivativeFromValue(value):
-    return 1.0 - value * value
+    # return (1.0 - value * value) / 2
+    return 2 * value * (1 - value)
 
   @staticmethod
   def derivativeForLinearSum(topLayerDerivatives, topLayerActivations):
-    return (1.0 - topLayerActivations * topLayerActivations) * topLayerDerivatives
+    return 2 * topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives
+    # return ((1.0 - topLayerActivations * topLayerActivations) * topLayerDerivatives) / 2
 
