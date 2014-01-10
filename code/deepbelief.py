@@ -124,7 +124,7 @@ class DBN(object):
 
         # this is a list of layer activities
         layerValues = self.forwardPass(batchData)
-        finalLayerErrors = outputDerivativesCrossEntropyErrorFunction(labels[start:end],
+        finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
                                               layerValues[-1])
 
         # Compute all derivatives
@@ -205,6 +205,6 @@ Since it is used with a softmax unit for classification, the output of the unit
 represent a discrete probablity distribution and the expected values are
 composed of a base vector, with 1 for the correct class and 0 for all the rest.
 """
-def outputDerivativesCrossEntropyErrorFunction(expected, actual):
+def derivativesCrossEntropyError(expected, actual):
   # avoid dividing by 0 by adding a small number
   return - expected * (1.0 / actual)
