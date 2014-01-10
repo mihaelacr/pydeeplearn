@@ -59,7 +59,8 @@ class RBM(object):
     return reconstruct(self.biases, self.weights, dataInstances)
 
   def hiddenRepresentation(self, dataInstances):
-    return updateLayer(Layer.HIDDEN, dataInstances, self.biases, self.weights, True)
+    return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
+                       self.weights, self.activationFun, True)
 
   @classmethod
   def initializeWeights(cls, nrVisible, nrHidden):
@@ -108,7 +109,7 @@ Defaults the mini batch size 1, so normal learning
 # optimize the code but also make it easier to change them
 # rather than have a function  that you pass in for every batch
 # if nice and easy refactoring can be seen then you can do that
-def contrastiveDivergence(data, biases, weights, activationFun=sigmoid, miniBatchSize=10):
+def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10):
   N = len(data)
 
   epochs = N / miniBatchSize
@@ -180,26 +181,22 @@ def contrastiveDivergence(data, biases, weights, activationFun=sigmoid, miniBatc
 
   return biases, weights
 
-def modelAndDataSampleDiffs(batchData, biases, weights, activationFun=sigmoid,cdSteps=1):
+def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,cdSteps=1):
   # Reconstruct the hidden weigs from the data
-  hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, True)
+  hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun, True)
   hiddenReconstruction = hidden
 
   for i in xrange(cdSteps - 1):
     visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                        biases, weights, binary=False,
-                                        activationFun=activationFun)
+                                        biases, weights, activationFun, binary=False)
     hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                       biases, weights, inary=True,
-                                       activationFun=activationFun)
+                                       biases, weights, activationFun, binary=True)
 
   # Do the last reconstruction from the probabilities in the last phase
   visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                      biases, weights, binary=False,
-                                      activationFun=activationFun)
+                                      biases, weights, activationFun, binary=False)
   hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                     biases, weights, binary=False,
-                                     activationFun=activationFun)
+                                     biases, weights, activationFun, binary=False)
 
   weightsDiff = np.dot(batchData.T, hidden) - np.dot(visibleReconstruction.T, hiddenReconstruction)
   assert weightsDiff.shape == weights.shape
@@ -222,7 +219,7 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun=sigmoid,cd
     Can even take multiple values of the layer, each of them given as rows
     Uses matrix operations.
 """
-def updateLayer(layer, otherLayerValues, biases, weights, binary=False, activationFun=sigmoid):
+def updateLayer(layer, otherLayerValues, biases, weights, activationFun, binary=False):
   bias = biases[layer]
 
   # TODO: think about doing this better

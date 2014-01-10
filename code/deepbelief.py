@@ -69,7 +69,7 @@ class DBN(object):
     currentData = data
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                    rbm.contrastiveDivergence)
+                    rbm.contrastiveDivergence, self.activationFunctions[i].value)
       net.train(currentData)
       self.weights += [net.weights]
       self.biases += [net.biases[1]]
