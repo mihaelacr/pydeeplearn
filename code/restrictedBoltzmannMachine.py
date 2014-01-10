@@ -152,7 +152,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
 
     weightsDiff, visibleBiasDiff, hiddenBiasDiff =\
             modelAndDataSampleDiffs(batchData, biases, weights,
-            activationFun=activationFun)
+            activationFun)
     # Update the weights
     # data - model
     # Positive phase - negative
