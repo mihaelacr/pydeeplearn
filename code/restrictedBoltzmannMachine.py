@@ -7,9 +7,10 @@ This allows you to deal with real valued unit
 do updates in parallel using multiprocessing.pool
 
 TODO: monitor overfitting
-TODO: mean filed and dumped mean field
+TODO: mean filed and dumped mean field (also not really needed because we will move to
+  non binary units soon so no point in wasting some time with that)
 TODO: dropout
-TODO: force sparse hidden weights
+TODO: force sparse hidden weights: not needed
 
 """
 import numpy as np

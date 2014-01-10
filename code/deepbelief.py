@@ -30,19 +30,15 @@ class DBN(object):
         vectorized (as per numpy) to be able to apply them for an entire
         layer.
         type: list of objects of type ActivationFunction
-    discriminative: if the network is discriminative, then the last
-        layer is required to be a softmax, in order to output the class
-        probablities
   """
-  def __init__(self, nrLayers, layerSizes, activationFunctions,
-               discriminative=True):
+  def __init__(self, nrLayers, layerSizes, activationFunctions):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
     # Note that for the first one the activatiom function does not matter
     # So for that one there is no need to pass in an activation function
     self.activationFunctions = activationFunctions
     self.initialized = False
-    self.discriminative = True
+    self.dropout = 0.5
 
     # Simple checks
     assert len(layerSizes) == nrLayers
@@ -57,12 +53,7 @@ class DBN(object):
     """
 
   def train(self, data, labels=None):
-    # train the RBMS and set the weights
-    # the weihghts can be stored as a list of numpy nd-arrays
-    # if labels == None and self.discriminative == True:
-    #   raise Exception("need labels for discriminative training")
-
-    nrRbms = self.nrLayers - 1 - self.discriminative
+    nrRbms = self.nrLayers - 2
 
     self.weights = []
     self.biases = []
@@ -87,6 +78,8 @@ class DBN(object):
     assert len(self.biases) == self.nrLayers - 1
     # Does backprop or wake sleep?
     self.fineTune(data, labels)
+    self.classifcationWeights = map(lambda x: x / self.dropout, self.weights)
+    self.classifcationBiases = map(lambda x: x / self.dropout, self.biases)
 
   """Fine tunes the weigths and biases using backpropagation.
 
@@ -97,8 +90,7 @@ class DBN(object):
       miniBatch: The number of instances to be used in a miniBatch
       epochs: The number of epochs to use for fine tuning
   """
-  # TODO: implement the minibatch business
-  def fineTune(self, data, labels, miniBatchSize=8, epochs=100):
+  def fineTune(self, data, labels, miniBatchSize=10, epochs=100):
     learningRate = 0.01
     batchLearningRate = learningRate / miniBatchSize
 
@@ -123,7 +115,7 @@ class DBN(object):
         batchData = data[start: end]
 
         # this is a list of layer activities
-        layerValues = self.forwardPass(batchData)
+        layerValues = forwardPass(self.weights, self.biases, self.activationFunctions, batchData)
         finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
                                               layerValues[-1])
 
@@ -139,31 +131,12 @@ class DBN(object):
           self.weights[index] -= oldDWeights[index]
           self.biases[index] -= oldDBias[index]
 
-  """Does a forward pass trought the network and computes the values of the
-    neurons in all the layers.
-    Required for backpropagation and classification.
-
-    Arguments:
-      dataInstaces: The instances to be run trough the network.
-    """
-  def forwardPass(self, dataInstaces):
-    currentLayerValues = dataInstaces
-    layerValues = [currentLayerValues]
-    size = dataInstaces.shape[0]
-
-    for stage in xrange(self.nrLayers - 1):
-      weights = self.weights[stage]
-      bias = self.biases[stage]
-      activation = self.activationFunctions[stage]
-
-      linearSum = np.dot(currentLayerValues, weights) + np.tile(bias, (size, 1))
-      currentLayerValues = activation.value(linearSum)
-      layerValues += [currentLayerValues]
-
-    return layerValues
 
   def classify(self, dataInstaces):
-    lastLayerValues = self.forwardPass(dataInstaces)[-1]
+    lastLayerValues = forwardPass(self.classifcationWeights,
+                                  self.classifcationBiases,
+                                  self.activationFunctions,
+                                  dataInstaces, dropout=1)[-1]
     return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
 """
@@ -196,6 +169,35 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
     deDbias.insert(0, dbias)
 
   return deDw, deDbias
+
+
+
+"""Does a forward pass trought the network and computes the values of the
+    neurons in all the layers.
+    Required for backpropagation and classification.
+
+    Arguments:
+      dataInstaces: The instances to be run trough the network.
+    """
+def forwardPass(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
+  # TODO: consider adding dropout here as well
+  # 20%
+  currentLayerValues = dataInstaces
+  layerValues = [currentLayerValues]
+  size = dataInstaces.shape[0]
+
+  for stage in xrange(len(weights)):
+    w = weights[stage]
+    b = biases[stage]
+    activation = activationFunctions[stage]
+
+    # on = sample(dropout, currentLayerValues.shape)
+    # thinnedValues = on * currentLayerValues
+    linearSum = np.dot(currentLayerValues, w) + np.tile(b, (size, 1))
+    currentLayerValues = activation.value(linearSum)
+    layerValues += [currentLayerValues]
+
+  return layerValues
 
 
 """ Computes the derivatives of the top most layer given their output and the

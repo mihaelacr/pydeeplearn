@@ -153,13 +153,18 @@
   Only do it if you have time.
   Just mention the convergence paper that says that it is better using CD.
 
+### Sparse hidden units
+
+  It has been shown that sparse hidden units can improve learning in case of binary hidden units [quote hinton]. In [Improving Neural Networks with Dropout] it has been shown that dropout can also encourage sparse units. Since dropout was used in our implementation of restricted botlzmann machines and since binary features are not used in the emotion recognition tasks in this paper, it is not in the implementation
+
+  write how to force sparse lhidden features (it is a paragraph only)
 
 ### Other tricks: they should not be here, they are general, so move them up
 
   1. Weight decay: same as gaussian something, discuss that (maybe picture)
   2. Momentum
   3. Dumped mean field
-  4. Drop out
+  4. Dropout
 
 
 ### Non binary units
@@ -332,7 +337,9 @@ Note that we require the sum since the output of the neuron in the softmax unit 
   Hinton came up with the 500 500 2000 10 approach.
   I should try andrew's one as well and do the pCA
 
-  Say how you can make deep belieg nets learn even with a permutation of all pixels, but this would not work for convolutional neural nets, because they have hard wired information.
+  Say how you can make deep belief nets learn even with a permutation of all pixels, but this would not work for convolutional neural nets, because they have hard wired information.
+
+  Make a nice table with comparisons between
 
 # Implementation
 
