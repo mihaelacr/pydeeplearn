@@ -28,11 +28,12 @@ sparsity = 0.1
 """
 class RBM(object):
 
-  def __init__(self, nrVisible, nrHidden, trainingFunction):
+  def __init__(self, nrVisible, nrHidden, trainingFunction, activationFun=sigmoid):
     # Initialize weights to random
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
     self.trainingFunction = trainingFunction
+    self.activationFun = activationFun
     self.initialized = False
 
   def train(self, data):
@@ -47,14 +48,10 @@ class RBM(object):
 
     self.biases, self.weights = self.trainingFunction(data,
                                                       self.biases,
-                                                      self.weights)
-    assert self.weights.shape == (self.nrVisible, self.nrHidden)
-    print self.biases[0].shape
-    print "nrVisible" + str(self.nrVisible)
+                                                      self.weights,
+                                                      self.activationFun)
+    # assert self.weights.shape == (self.nrVisible, self.nrHidden)
     # assert self.biases[0].shape == self.nrVisible
-
-    print self.biases[1].shape
-    print "nrHidden" + str(self.nrHidden)
     # assert self.biases[1].shape == self.nrHidden
 
   """ Reconstructs the data given using this boltzmann machine."""
@@ -111,7 +108,7 @@ Defaults the mini batch size 1, so normal learning
 # optimize the code but also make it easier to change them
 # rather than have a function  that you pass in for every batch
 # if nice and easy refactoring can be seen then you can do that
-def contrastiveDivergence(data, biases, weights, miniBatchSize=10):
+def contrastiveDivergence(data, biases, weights, activationFun=sigmoid, miniBatchSize=10):
   N = len(data)
 
   epochs = N / miniBatchSize
@@ -153,7 +150,8 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=10):
         print reconstructionError(biases, weights, data)
 
     weightsDiff, visibleBiasDiff, hiddenBiasDiff =\
-            modelAndDataSampleDiffs(batchData, biases, weights)
+            modelAndDataSampleDiffs(batchData, biases, weights,
+            activationFun=activationFun)
     # Update the weights
     # data - model
     # Positive phase - negative
@@ -182,22 +180,26 @@ def contrastiveDivergence(data, biases, weights, miniBatchSize=10):
 
   return biases, weights
 
-def modelAndDataSampleDiffs(batchData, biases, weights, cdSteps=1):
+def modelAndDataSampleDiffs(batchData, biases, weights, activationFun=sigmoid,cdSteps=1):
   # Reconstruct the hidden weigs from the data
   hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, True)
   hiddenReconstruction = hidden
 
   for i in xrange(cdSteps - 1):
     visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                        biases, weights, False)
+                                        biases, weights, binary=False,
+                                        activationFun=activationFun)
     hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                       biases, weights, True)
+                                       biases, weights, inary=True,
+                                       activationFun=activationFun)
 
   # Do the last reconstruction from the probabilities in the last phase
   visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                      biases, weights, False)
+                                      biases, weights, binary=False,
+                                      activationFun=activationFun)
   hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                     biases, weights, False)
+                                     biases, weights, binary=False,
+                                     activationFun=activationFun)
 
   weightsDiff = np.dot(batchData.T, hidden) - np.dot(visibleReconstruction.T, hiddenReconstruction)
   assert weightsDiff.shape == weights.shape
@@ -220,10 +222,12 @@ def modelAndDataSampleDiffs(batchData, biases, weights, cdSteps=1):
     Can even take multiple values of the layer, each of them given as rows
     Uses matrix operations.
 """
-def updateLayer(layer, otherLayerValues, biases, weights, binary=False):
+def updateLayer(layer, otherLayerValues, biases, weights, binary=False, activationFun=sigmoid):
   bias = biases[layer]
 
   # TODO: think about doing this better
+  # better: remove it like in the deepbelief, do not support version for single one
+  # in reconstruction
   if len(otherLayerValues.shape) == 2:
     size = otherLayerValues.shape[0]
   else:
@@ -234,7 +238,7 @@ def updateLayer(layer, otherLayerValues, biases, weights, binary=False):
   else:
     activation = np.dot(otherLayerValues, weights)
 
-  probs = sigmoid(np.tile(bias, (size, 1)) + activation)
+  probs = activationFun(np.tile(bias, (size, 1)) + activation)
 
   if binary:
     # Sample from the distributions
