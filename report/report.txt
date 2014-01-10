@@ -325,6 +325,11 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
   visualise the weights
 
+  do pca on the data. On a paper [Sparse deep belief net model for visual area V2]
+  it is shown that you can even lower it to 69 dimensions.
+
+  Try this out and see how you change the layers then.
+
   Say how you can make deep belieg nets learn even with a permutation of all pixels, but this would not work for convolutional neural nets, because they have hard wired information.
 
 # Implementation
