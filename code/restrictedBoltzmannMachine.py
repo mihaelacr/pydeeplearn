@@ -216,27 +216,6 @@ def modelAndDataSampleDiffs(batchData, biases, weights, cdSteps=1):
 # not probabilities
 
 """ Updates an entire layer. This procedure can be used both in training
-    and in testing. Does not use matrix multiplication, so it is slower then
-    the updateLayer method.
-"""
-def updateLayerSingle(layer, otherLayerValues, biases, weightMatrix, binary=False):
-  bias = biases[layer]
-
-  def activation(x):
-    w = weightVectorForNeuron(layer, weightMatrix, x)
-    return activationProbability(w, bias[x], otherLayerValues)
-
-  # He said we can update these in parallel but when doing the multibatch that cannot be anymore
-  probs = map(activation, xrange(weightMatrix.shape[layer]))
-  probs = np.array(probs)
-
-  if binary:
-    # Sample from the distributions
-    return sampleAll(probs)
-
-  return probs
-
-""" Updates an entire layer. This procedure can be used both in training
     and in testing.
     Can even take multiple values of the layer, each of them given as rows
     Uses matrix operations.
@@ -262,29 +241,6 @@ def updateLayer(layer, otherLayerValues, biases, weights, binary=False):
     return sampleAll(probs)
 
   return probs
-
-"""Function kept in case we go back to trying to make things in parallel
-and not with matrix stuff. """
-def weightVectorForNeuron(layer, weightMatrix, neuronNumber):
-  if layer == Layer.VISIBLE:
-    return weightMatrix[neuronNumber, :]
-  # else layer == Layer.HIDDEN
-  return weightMatrix[:, neuronNumber]
-
-# Made in one function to increase speed
-def activationProbability(weights, bias, otherLayerValues):
-  return sigmoid(bias + np.dot(weights, otherLayerValues))
-
-def activationSum(weights, bias, otherLayerValues):
-  return bias + np.dot(weights, otherLayerValues)
-
-""" Gets the activation sums for all the units in one layer.
-    Assumesthat the dimensions of the weihgt matrix and biases
-    are given correctly. It will throw an exception otherwise.
-"""
-
-# def activationProbability(activationSum):
-#   return sigmoid(activationSum)
 
 # Another training algorithm. Slower than Contrastive divergence, but
 # gives better results. Not used in practice as it is too slow.
