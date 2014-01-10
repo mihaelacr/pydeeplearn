@@ -5,6 +5,9 @@ import restrictedBoltzmannMachine as rbm
 # TODO: use conjugate gradient for  backpropagation instead of stepeest descent
 # TODO: add weight decay in back prop
 # TODO: implement dropout: it has been shown to improve learning
+# TODO: monitor the changes in erorr and change the learning rate according
+# to that
+# TODO: wake sleep for improving generation
 
 """In all the above topLayer does not mean the top most layer, but rather the
 layer above the current one."""
@@ -141,8 +144,7 @@ class DBN(object):
     Required for backpropagation and classification.
 
     Arguments:
-      dataInstace: The instance to be classified.
-
+      dataInstaces: The instances to be run trough the network.
     """
   def forwardPass(self, dataInstaces):
     currentLayerValues = dataInstaces
@@ -159,12 +161,6 @@ class DBN(object):
       layerValues += [currentLayerValues]
 
     return layerValues
-
-  # implementing wake and sleep and backprop could be something
-  # Do wake and sleep first nd then backprop: improve weights for generation
-  # and then improve them for classification
-  # TODO: get more data instances
-  # make this to work with them
 
   def classify(self, dataInstaces):
     lastLayerValues = self.forwardPass(dataInstaces)[-1]
@@ -188,12 +184,11 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   for layer in xrange(nrLayers - 1, 0, -1):
     deDz = activationFunctions[layer - 1].derivativeForLinearSum(
                             upperLayerErrors, layerValues[layer])
-    dbottom = np.dot(deDz, weights[layer - 1].T)
+    upperLayerErrors = np.dot(deDz, weights[layer - 1].T)
 
     dw = np.einsum('ij,ik->jk', layerValues[layer - 1], deDz)
 
     dbias = deDz.sum(axis=0)
-    upperLayerErrors = dbottom
 
     # Iterating in decreasing order of layers, so we are required to
     # append the weight derivatives at the front as we go along
