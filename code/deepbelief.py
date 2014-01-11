@@ -197,6 +197,11 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces, dropout=0.5)
     currentLayerValues = activation.value(linearSum)
     on = sample(dropout, currentLayerValues.shape)
     thinnedValues = on * currentLayerValues
+    # just doing this is not really OK because
+    # you will be updating in backprop the weights that did not
+    # infulence the decision.
+    # you need to tell the network what are the thinned values
+    # and remove the zeros somehow
     layerValues += [currentLayerValues]
 
   return layerValues
