@@ -96,6 +96,8 @@
     Dropout also has a biological explanation and can be viewed from an evolutionary perspectiv: in order for an individual to be fit, its genes have to be well coadapted together. However, during reproduction half of the genes of each individual get lost (this is a coarse model of what is actually happening) and the offspring does not benefit of the coadapted genes. For a long time, it was not understood why can be a desired outcome in the evolution of a species. Recent papers [A mixability theory for the role of sex in evolution
     and Sex, mixability, and modularity by Papadimitriu and Livnat] have shown that in the long term this process leads to individuals that are more adapted to change, as genes learn to not depend on eachother and form smaller coadaptations that can perform different vital functions.
 
+    Dropout has also been shown to achieve sparse hidden units. (see the master thesis )
+
     Biblo: https://www.youtube.com/watch?v=DleXA5ADG78
 
   TODO: quote bishop here as well

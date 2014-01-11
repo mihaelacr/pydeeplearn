@@ -107,6 +107,10 @@ class DBN(object):
     # TODO: maybe find a better way than this to find a stopping criteria
     for epoch in xrange(epochs):
 
+      # From the internet: this might work better
+      # mom = ifelse(epoch < 500,
+      #      0.5*(1. - epoch/500.) + 0.99*(epoch/500.),
+      #      0.99)
       if epoch < 10:
         momentum = 0.5
       else:
@@ -195,14 +199,23 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces, dropout=0.5)
 
     linearSum = np.dot(thinnedValues, w) + np.tile(b, (size, 1))
     currentLayerValues = activation.value(linearSum)
-    on = sample(dropout, currentLayerValues.shape)
-    thinnedValues = on * currentLayerValues
     # just doing this is not really OK because
     # you will be updating in backprop the weights that did not
     # infulence the decision.
     # you need to tell the network what are the thinned values
     # and remove the zeros somehow
-    layerValues += [currentLayerValues]
+    # this is the way to do it, because of how backprop works the wij
+    # will cancel out if the unit on the layer is non active
+    # de/ dw_i_j = de / d_z_j * d_z_j / d_w_i_j = de / d_z_j * y_i
+    # so if we set a unit as non active here (and we have to because
+    # of this exact same reason and of ow we backpropagate)
+    if stage != len(weights) - 1:
+
+      on = sample(dropout, currentLayerValues.shape)
+      thinnedValues = on * currentLayerValues
+      layerValues += [thinnedValues]
+    else:
+      layerValues += [currentLayerValues]
 
   return layerValues
 
