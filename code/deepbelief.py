@@ -122,7 +122,7 @@ class DBN(object):
         batchData = data[start: end]
 
         # this is a list of layer activities
-        layerValues = forwardPass(self.weights, self.biases, self.activationFunctions, batchData)
+        layerValues = forwardPassDropout(self.weights, self.biases, self.activationFunctions, batchData)
         finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
                                               layerValues[-1])
 
@@ -143,8 +143,7 @@ class DBN(object):
     lastLayerValues = forwardPass(self.classifcationWeights,
                                   self.classifcationBiases,
                                   self.activationFunctions,
-                                  # important to keep drouput = 1 for classification
-                                  dataInstaces, dropout=1)[-1]
+                                  dataInstaces)[-1]
     return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
 """
@@ -178,6 +177,27 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
 
   return deDw, deDbias
 
+""" Does not do dropout. Used for classification. """
+""" TODO: if yo uactually only use it for *only* classification you do not
+ need to rememeber all the layer values, but just the end ones"""
+def forwardPass(weights, biases, activationFunctions, dataInstaces):
+  currentLayerValues = dataInstaces
+  layerValues = [currentLayerValues]
+  size = dataInstaces.shape[0]
+
+  for stage in xrange(len(weights)):
+    w = weights[stage]
+    b = biases[stage]
+    activation = activationFunctions[stage]
+
+    linearSum = np.dot(currentLayerValues, w) + np.tile(b, (size, 1))
+    currentLayerValues = activation.value(linearSum)
+    layerValues += [currentLayerValues]
+
+  return layerValues
+
+
+
 """Does a forward pass trought the network and computes the values of the
     neurons in all the layers.
     Required for backpropagation and classification.
@@ -185,7 +205,7 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
     Arguments:
       dataInstaces: The instances to be run trough the network.
     """
-def forwardPass(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
+def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
   # TODO: consider adding dropout here as well
   # 20%
   thinnedValues = dataInstaces
