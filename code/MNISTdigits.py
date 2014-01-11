@@ -95,7 +95,16 @@ def shuffle(data, labels):
 
 def pcaOnMnist(training, dimension=700):
   res = PCA.pca(training, dimension)
-  return PCA.reduce(res, training)
+  low, same = PCA.reduce(res, training)
+
+  image2DInitial = vectorToImage(training[0], (28,28))
+  image2D = vectorToImage(same[0], (28,28))
+
+  plt.imshow(image2DInitial, cmap=plt.cm.gray)
+  plt.show()
+  plt.imshow(image2D, cmap=plt.cm.gray)
+  plt.show()
+  print "done"
 
 def deepbeliefMain():
   # trainImages, trainLabels =\
@@ -164,7 +173,7 @@ def deepbeliefMain():
     f.close()
 
 def pcaMain():
-  training = 10000
+  training = 1000
   testing = 100
 
   # print args.train
