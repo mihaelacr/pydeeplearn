@@ -182,7 +182,7 @@ def pcaMain():
   testVectors, testLabels =\
       readmnist.readNew(0, testing, bTrain=False, path="MNIST")
   print train[0].shape
-  pcaOnMnist(train)
+  pcaOnMnist(train, dimension=100)
 
 def main():
   pcaMain()
