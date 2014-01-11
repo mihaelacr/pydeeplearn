@@ -84,6 +84,9 @@
       Note that in the dropout section it mentions to other papers that showed it is efficient so
       just limit yourself to quoting them and describe droput.
 
+    Say how it is inspired by evolution and reproduction, first minutes of this talk
+    https://www.youtube.com/watch?v=DleXA5ADG78
+
   TODO: quote bishop here as well
 
 ### Issues with backpropagation
