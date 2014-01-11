@@ -189,13 +189,36 @@ Returns:
       eigen faces. This is kept for optimization reasons.
 """
 def getEigenFaces(pcaMethod, images, dimension=None):
+
   imgSize = images[0].shape;
+  # this call should not be here: the code should assume that the images have
+  # been transofrmed to vectors before
   imgs = imagesToVectors(images)
 
   vectors = pcaMethod(imgs, dimension)
   eigenFaces = map(lambda x: vectorToImage(x, imgSize), vectors)
 
   return (eigenFaces, vectors)
+
+
+def reduce(principalComponents, vectors):
+  assert len(principalComponents) > 0
+
+  print principalComponents[0].shape
+
+  principalComponents = np.array(principalComponents)
+
+  lowDimRepresentation  = np.dot(vectors, principalComponents.T)
+  # lowDimRepresentation = map(lambda x : vectors.dot(x), principalComponents)
+  # sameDimRepresentation = \
+  #   sum([ x * y for x, y in zip(principalComponents, lowDimRepresentation)])
+  # TODO: do this with einsum
+  sameDimRepresentation = lowDimRepresentation[:, np.newaxis] * principalComponents.T
+  sameDimRepresentation = sameDimRepresentation.sum(axis=2)
+  # TODO: create the proper thing here so that you can
+  # easily see what the ouput is
+  return  (lowDimRepresentation, sameDimRepresentation)
+
 
 """
  Reduces a 2D image represented by a numpy 2D array of integer values(pixels)

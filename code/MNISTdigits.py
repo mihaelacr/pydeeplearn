@@ -12,6 +12,7 @@ import readmnist
 import restrictedBoltzmannMachine as rbm
 import deepbelief as db
 import utils
+import PCA
 
 from common import *
 
@@ -91,6 +92,11 @@ def shuffle(data, labels):
 
   return shuffledData, shuffledLabels
 
+
+def pcaOnMnist(training, dimension=700):
+  res = PCA.pca(training, dimension)
+  return PCA.reduce(res, training)
+
 def deepbeliefMain():
   # trainImages, trainLabels =\
   #     readmnist.read(range(10), dataset="training", path="MNIST")
@@ -101,20 +107,16 @@ def deepbeliefMain():
   testing = 100
 
   # print args.train
-  trainImages, trainLabels =\
+  trainVectors, trainLabels =\
       readmnist.readNew(0, training, bTrain=True, path="MNIST")
-  testImages, testLabels =\
+  testVectors, testLabels =\
       readmnist.readNew(0, testing, bTrain=False, path="MNIST")
-  print trainImages[0].shape
+  print trainVectors[0].shape
 
-  # trainVectors = imagesToVectors(trainImages)
-  trainVectors, trainLabels = shuffle(trainImages, trainLabels)
+  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
-  # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
   trainingScaledVectors = trainVectors / 255.0
-
-  # testingVectors = imagesToVectors(testImages)
-  testingScaledVectors = testImages / 255.0
+  testingScaledVectors = testVectors / 255.0
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
@@ -161,9 +163,20 @@ def deepbeliefMain():
     pickle.dump(net, f)
     f.close()
 
+def pcaMain():
+  training = 10000
+  testing = 100
+
+  # print args.train
+  train, trainLabels =\
+      readmnist.readNew(0, training, bTrain=True, path="MNIST")
+  testVectors, testLabels =\
+      readmnist.readNew(0, testing, bTrain=False, path="MNIST")
+  print train[0].shape
+  pcaOnMnist(train)
 
 def main():
-  deepbeliefMain()
+  pcaMain()
 
 
 if __name__ == '__main__':
