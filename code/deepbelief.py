@@ -62,24 +62,26 @@ class DBN(object):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     rbm.contrastiveDivergence, self.activationFunctions[i].value)
       net.train(currentData)
-      self.weights += [net.weights]
-      self.biases += [net.biases[1]]
+      self.weights += [net.weights / self.dropout]
+      self.biases += [net.biases[1] / self.dropout]
 
       currentData = net.hiddenRepresentation(currentData)
 
     # CHECK THAT
-    self.weights += [np.random.normal(0, 0.01,
-                                 (self.layerSizes[-2], self.layerSizes[-1]))]
+    # self.weights += [np.random.normal(0, 0.01,
+    #                              (self.layerSizes[-2], self.layerSizes[-1]))]
+    self.weights += [np.zeros((self.layerSizes[-2], self.layerSizes[-1]))]
 
     # Think of this
-    self.biases += [np.random.normal(0, 0.01, self.layerSizes[-1])]
+    # self.biases += [np.random.normal(0, 0.01, self.layerSizes[-1])]
+    self.biases += [np.zeros(self.layerSizes[-1])]
 
     assert len(self.weights) == self.nrLayers - 1
     assert len(self.biases) == self.nrLayers - 1
     # Does backprop or wake sleep?
     self.fineTune(data, labels)
-    self.classifcationWeights = map(lambda x: x / self.dropout, self.weights)
-    self.classifcationBiases = map(lambda x: x / self.dropout, self.biases)
+    self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
+    self.classifcationBiases = map(lambda x: x * self.dropout, self.biases)
 
   """Fine tunes the weigths and biases using backpropagation.
 
@@ -136,6 +138,7 @@ class DBN(object):
     lastLayerValues = forwardPass(self.classifcationWeights,
                                   self.classifcationBiases,
                                   self.activationFunctions,
+                                  # important to keep drouput = 1 for classification
                                   dataInstaces, dropout=1)[-1]
     return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
@@ -170,8 +173,6 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
 
   return deDw, deDbias
 
-
-
 """Does a forward pass trought the network and computes the values of the
     neurons in all the layers.
     Required for backpropagation and classification.
@@ -182,8 +183,8 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
 def forwardPass(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
   # TODO: consider adding dropout here as well
   # 20%
-  currentLayerValues = dataInstaces
-  layerValues = [currentLayerValues]
+  thinnedValues = dataInstaces
+  layerValues = [thinnedValues]
   size = dataInstaces.shape[0]
 
   for stage in xrange(len(weights)):
@@ -191,10 +192,10 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces, dropout=0.5)
     b = biases[stage]
     activation = activationFunctions[stage]
 
-    # on = sample(dropout, currentLayerValues.shape)
-    # thinnedValues = on * currentLayerValues
-    linearSum = np.dot(currentLayerValues, w) + np.tile(b, (size, 1))
+    linearSum = np.dot(thinnedValues, w) + np.tile(b, (size, 1))
     currentLayerValues = activation.value(linearSum)
+    on = sample(dropout, currentLayerValues.shape)
+    thinnedValues = on * currentLayerValues
     layerValues += [currentLayerValues]
 
   return layerValues

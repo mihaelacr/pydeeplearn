@@ -21,8 +21,6 @@ from common import *
 
 EXPENSIVE_CHECKS_ON = False
 
-sparsity = 0.1
-
 # TODO: different learning rates for weights and biases
 """
  Represents a RBM

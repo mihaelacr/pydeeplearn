@@ -35,7 +35,6 @@ def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,
                                   tileShape, tile_spacing=(1, 1))
 
-
 def rbmMain():
   trainImages, trainLabels =\
       readmnist.readNew(0, 100, bTrain=True, path="MNIST")
@@ -98,9 +97,10 @@ def deepbeliefMain():
   # testImages, testLabels =\
   #     readmnist.read(range(10), dataset="testing", path="MNIST")
   # TODO: make these flags
-  training = 1000
+  training = 10000
   testing = 100
 
+  # print args.train
   trainImages, trainLabels =\
       readmnist.readNew(0, training, bTrain=True, path="MNIST")
   testImages, testLabels =\
@@ -120,8 +120,7 @@ def deepbeliefMain():
 
   if args.train:
     # net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
-    net = db.DBN(4, [784, 500, 500, 10], [Tanh, Tanh, Softmax])
-
+    net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
     # TODO: think about what the network should do for 2 layers
     net.train(trainingScaledVectors, vectorLabels)
   else:
@@ -144,7 +143,6 @@ def deepbeliefMain():
 
   print "correct"
   print correct
-
 
   # for w in net.weights:
   #   print w
