@@ -84,12 +84,12 @@
       Note that in the dropout section it mentions to other papers that showed it is efficient so
       just limit yourself to quoting them and describe droput.
 
-    It has been shown that for various tasks averaging different machine learning models tends to give better results than just using one model (quote here). Dropout can be seen as a form of model averaging:
+    It has been shown that for various tasks averaging different machine learning models tends to give better results than just using one model (quote here, winners of netflix competition). Dropout can be seen as a form of model averaging:
     we define a new neural network for each of the data instances in the traning set, by omiting certain features in each of the hidden layers.
     It can be shown [quote] that for a network with one hidden layer and a softmax output unit dropout is equivalent to averaging the $2^H$ models that can be obtained by probabilisticly excluding hidden units by computing the geometric mean of the outputs of the softmax units.
 
     Dropout also has a biological explanation and can be viewed from an evolutionary perspectiv: in order for an individual to be fit, its genes have to be well coadapted together. However, during reproduction half of the genes of each individual get lost (this is a coarse model of what is actually happening) and the offspring does not benefit of the coadapted genes. For a long time, it was not understood why can be a desired outcome in the evolution of a species. Recent papers [A mixability theory for the role of sex in evolution
-    and Sex, mixability, and modularity by Papadimitriu and Livnat] have shown that in the long term this process leads to individuals that are more adapted to change, as genes learn to not depend on eachother.
+    and Sex, mixability, and modularity by Papadimitriu and Livnat] have shown that in the long term this process leads to individuals that are more adapted to change, as genes learn to not depend on eachother and form smaller coadaptations that can perform different vital functions.
 
     Biblo: https://www.youtube.com/watch?v=DleXA5ADG78
 
