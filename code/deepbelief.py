@@ -8,6 +8,7 @@ import restrictedBoltzmannMachine as rbm
 # TODO: monitor the changes in erorr and change the learning rate according
 # to that
 # TODO: wake sleep for improving generation
+# TODO: nesterov method for momentum
 
 """In all the above topLayer does not mean the top most layer, but rather the
 layer above the current one."""
