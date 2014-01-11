@@ -79,10 +79,15 @@
     Nesterov method for momentum? Think about it and implement it
 #### Dropout
 
+  What is dropout? Using only
     Quote this:
       http://www.cs.toronto.edu/~hinton/absps/georgerectified.pdf
       Note that in the dropout section it mentions to other papers that showed it is efficient so
       just limit yourself to quoting them and describe droput.
+
+    Quote the master thesis on dropout and how it has been shown it improves everything (various tasks)
+
+    It has been shown that it works best with contraints on each incoming weights L2 (L2 penalty on each connection)
 
     It has been shown that for various tasks averaging different machine learning models tends to give better results than just using one model (quote here, winners of netflix competition). Dropout can be seen as a form of model averaging:
     we define a new neural network for each of the data instances in the traning set, by omiting certain features in each of the hidden layers.
