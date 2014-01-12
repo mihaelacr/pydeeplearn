@@ -1,0 +1,18 @@
+TODO:
+  fix the problem with introducting multiple layers
+  wake sleep for generation
+  fix the learning rate
+  play around with the learning rate for RBMs and the momentum
+
+  make all these possible parameters as arguments to the script and check if they work
+
+  implement and perform cross validation
+
+  implement dropouts for rbms
+
+  actually urn the MNIST with pca and then train
+  fix the mnist memory problem when you have too many things
+
+  learning rate for dbn should be 0.1
+
+  think of implementing early stopping for the net
