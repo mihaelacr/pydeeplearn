@@ -112,7 +112,7 @@ def deepbeliefMain():
   # testImages, testLabels =\
   #     readmnist.read(range(10), dataset="testing", path="MNIST")
   # TODO: make these flags
-  training = 10000
+  training = 1000
   testing = 100
 
   # print args.train
@@ -131,16 +131,18 @@ def deepbeliefMain():
 
   if args.train:
     # net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
-    net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
+    # net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
+    net = db.DBN(5, [784, 500, 500, 500, 10], [Sigmoid, Sigmoid, Sigmoid, Softmax])
     # TODO: think about what the network should do for 2 layers
     net.train(trainingScaledVectors, vectorLabels)
   else:
     # Take the saved network and use that for reconstructions
     f = open(DEEP_BELIEF_FILE, "rb")
     net = pickle.load(f)
+    f.close()
 
 
-  probs, predicted = net.classify(testingScaledVectors[0: testing])
+  probs, predicted = net.classify(testingScaledVectors)
   correct = 0
   for i in xrange(testing):
     print "predicted"
@@ -172,6 +174,8 @@ def deepbeliefMain():
     pickle.dump(net, f)
     f.close()
 
+
+# think of normalizing them to 0.1 for pca as well
 def pcaMain():
   training = 1000
   testing = 100
@@ -185,7 +189,7 @@ def pcaMain():
   pcaOnMnist(train, dimension=100)
 
 def main():
-  pcaMain()
+  deepbeliefMain()
 
 
 if __name__ == '__main__':

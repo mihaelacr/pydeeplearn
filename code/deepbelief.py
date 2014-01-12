@@ -207,7 +207,7 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces):
     """
 def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
   # TODO: consider adding dropout here as well
-  # 20%
+  # 20% on the visible units
   thinnedValues = dataInstaces
   layerValues = [thinnedValues]
   size = dataInstaces.shape[0]
