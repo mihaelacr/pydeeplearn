@@ -30,10 +30,10 @@ def softmax(activation):
   return out / out.sum()
 
 def sample(p, size):
-  return np.random.uniform(size=size) < p
+  return np.random.uniform(size=size) <= p
 
 def sampleAll(probs):
-  return np.random.uniform(size=probs.shape) < probs
+  return np.random.uniform(size=probs.shape) <= probs
 
 def enum(**enums):
   return type('Enum', (), enums)
