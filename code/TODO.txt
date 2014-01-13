@@ -2,7 +2,8 @@ TODO:
   wake sleep for generation: this is important because I can then use
     more unlabelled data for the emotion recognition task
   fix the learning rate
-  play around with the learning rate for RBMs and the momentum
+
+  play around with the learning rate for RBMs and the momentum: best way to do this is via crossvalidation
 
   make all these possible parameters as arguments to the script and check if they work
 
