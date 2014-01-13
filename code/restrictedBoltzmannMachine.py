@@ -132,7 +132,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
     batchData = data[epoch * miniBatchSize: (epoch + 1) * miniBatchSize, :]
     # TODO: change this and make it proportional to the data
     # like the CD-n
-    if epoch < 10:
+    if epoch < epochs/100:
       momentum = 0.5
     else:
       momentum = 0.9
