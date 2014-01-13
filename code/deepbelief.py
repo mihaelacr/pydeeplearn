@@ -207,8 +207,8 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces):
     """
 def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
   # TODO: consider adding dropout here as well
-  # 20% on the visible units
-  thinnedValues = dataInstaces
+  # 20% on the visible units are turned off during traning
+  thinnedValues = sample(0.8, dataInstaces)
   layerValues = [thinnedValues]
   size = dataInstaces.shape[0]
 
@@ -231,7 +231,7 @@ def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropo
     # of this exact same reason and of ow we backpropagate)
     if stage != len(weights) - 1:
 
-      on = sample(dropout, currentLayerValues.shape)
+      on = sample(1 - dropout, currentLayerValues.shape)
       thinnedValues = on * currentLayerValues
       layerValues += [thinnedValues]
     else:
