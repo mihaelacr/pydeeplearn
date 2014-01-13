@@ -7,9 +7,10 @@ This allows you to deal with real valued unit
 do updates in parallel using multiprocessing.pool
 
 TODO: monitor overfitting
-TODO: mean filed and dumped mean field
+TODO: mean filed and dumped mean field (also not really needed because we will move to
+  non binary units soon so no point in wasting some time with that)
 TODO: dropout
-TODO: force sparse hidden weights
+TODO: force sparse hidden weights: not needed
 
 """
 import numpy as np
@@ -19,8 +20,6 @@ import multiprocessing
 from common import *
 
 EXPENSIVE_CHECKS_ON = False
-
-sparsity = 0.1
 
 # TODO: different learning rates for weights and biases
 """
@@ -133,10 +132,10 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
     batchData = data[epoch * miniBatchSize: (epoch + 1) * miniBatchSize, :]
     # TODO: change this and make it proportional to the data
     # like the CD-n
-    if epoch < 5:
+    if epoch < epochs/100:
       momentum = 0.5
     else:
-      momentum = 0.9
+      momentum = 0.95
 
     if epoch < (N/7) * 10:
       cdSteps = 1

@@ -41,8 +41,7 @@
 ## Backpropagation and gradient descent methods
   introduction bla bla
 
-  uote this
-  http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf
+  quote this [@LeCun1998]
 
 ### Error function
   Talk about it's importance in backprop and mention MSE and Gaussian assumption
@@ -75,14 +74,35 @@
       Towards the end of learning, decrease the learning rate. You can do that once the
       error stops decreasing steadily. This helps removing the fluctuations in the values of the weights between mini batches, and helps towards keeping a steady set of weights for the final ones.
 
+  * momentum
+    Nesterov method for momentum? Think about it and implement it
 
-  * momentum? dropout etc here (not sure if here: momentum should be here though)
-    Nesterov method for momentum
 
-    Quote this:
-      http://www.cs.toronto.edu/~hinton/absps/georgerectified.pdf
-      Note that in the dropout section it mentions to other papers that showed it is efficient so
-      just limit yourself to quoting them and describe droput.
+#### Dropout
+
+  What is dropout? Using only
+  Quote this:
+  http://www.cs.toronto.edu/~hinton/absps/georgerectified.pdf
+  Note that in the dropout section it mentions to other papers that showed it is efficient so
+  just limit yourself to quoting them and describe droput.
+
+  Dropout and how it has been shown it improves error rates in  various tasks, making neural networks 'beat' other machine learning tecqniques (See
+  Srivastava2013)
+
+  It has been shown that it works best with contraints on each incoming weights L2 (L2 penalty on each connection)
+
+  It has been shown that for various tasks averaging different machine learning models tends to give better results than just using one model (quote here, winners of netflix competition). Dropout can be seen as a form of model averaging:
+  we define a new neural network for each of the data instances in the traning set, by omiting certain features in each of the hidden layers.
+  It can be shown [quote] that for a network with one hidden layer and a softmax output unit dropout is equivalent to averaging the $2^H$ models that can be obtained by probabilisticly excluding hidden units by computing the geometric mean of the outputs of the softmax units.
+
+  Dropout also has a biological explanation and can be viewed from an evolutionary perspectiv: in order for an individual to be fit, its genes have to be well coadapted together. However, during reproduction half of the genes of each individual get lost (this is a coarse model of what is actually happening) and the offspring does not benefit of the coadapted genes. For a long time, it was not understood why can be a desired outcome in the evolution of a species. Recent papers [A mixability theory for the role of sex in evolution
+  and Sex, mixability, and modularity by Papadimitriu and Livnat] have shown that in the long term this process leads to individuals that are more adapted to change, as genes learn to not depend on eachother and form smaller coadaptations that can perform different vital functions.
+
+  Dropout has also been shown to achieve sparse hidden units. (see the master thesis )
+
+  As dropout is a techinque used to mainly avoid overfititng, it's effects can be seen especially on deep networks.
+
+  Biblo: https://www.youtube.com/watch?v=DleXA5ADG78
 
   TODO: quote bishop here as well
 
@@ -153,13 +173,18 @@
   Only do it if you have time.
   Just mention the convergence paper that says that it is better using CD.
 
+### Sparse hidden units
+
+  It has been shown that sparse hidden units can improve learning in case of binary hidden units [quote hinton]. In [Improving Neural Networks with Dropout] it has been shown that dropout can also encourage sparse units. Since dropout was used in our implementation of restricted botlzmann machines and since binary features are not used in the emotion recognition tasks in this paper, it is not in the implementation
+
+  write how to force sparse lhidden features (it is a paragraph only)
 
 ### Other tricks: they should not be here, they are general, so move them up
 
   1. Weight decay: same as gaussian something, discuss that (maybe picture)
   2. Momentum
   3. Dumped mean field
-  4. Drop out
+  4. Dropout
 
 
 ### Non binary units
@@ -332,7 +357,9 @@ Note that we require the sum since the output of the neuron in the softmax unit 
   Hinton came up with the 500 500 2000 10 approach.
   I should try andrew's one as well and do the pCA
 
-  Say how you can make deep belieg nets learn even with a permutation of all pixels, but this would not work for convolutional neural nets, because they have hard wired information.
+  Say how you can make deep belief nets learn even with a permutation of all pixels, but this would not work for convolutional neural nets, because they have hard wired information.
+
+  Make a nice table with comparisons between
 
 # Implementation
 
@@ -362,3 +389,4 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 ## Testing
 
 # Conclusion
+

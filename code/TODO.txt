@@ -1,4 +1,11 @@
 TODO:
+  do some experiments with the momentum changing more to 0.9 when you get closer
+  do CD-5 experiments
+
+   try to increase the momentum in the RBM class
+
+
+
   wake sleep for generation: this is important because I can then use
     more unlabelled data for the emotion recognition task
   fix the learning rate
@@ -19,4 +26,10 @@ TODO:
   think of implementing early stopping for the net
 
   especially important: implement chanign on the learning rate by monitoring the error
-    I think there is something like this in the guide
+  I think there is something like this in the guide
+
+  implement the l2 norm update for dropout as suggested
+
+runnign experiments:
+  edge02 with 20% off visible units
+  edge03 with 20% off and change into rbm momentum

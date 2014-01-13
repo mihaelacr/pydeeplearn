@@ -8,6 +8,7 @@ import restrictedBoltzmannMachine as rbm
 # TODO: monitor the changes in erorr and change the learning rate according
 # to that
 # TODO: wake sleep for improving generation
+# TODO: nesterov method for momentum
 
 """In all the above topLayer does not mean the top most layer, but rather the
 layer above the current one."""
@@ -30,19 +31,15 @@ class DBN(object):
         vectorized (as per numpy) to be able to apply them for an entire
         layer.
         type: list of objects of type ActivationFunction
-    discriminative: if the network is discriminative, then the last
-        layer is required to be a softmax, in order to output the class
-        probablities
   """
-  def __init__(self, nrLayers, layerSizes, activationFunctions,
-               discriminative=True):
+  def __init__(self, nrLayers, layerSizes, activationFunctions):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
     # Note that for the first one the activatiom function does not matter
     # So for that one there is no need to pass in an activation function
     self.activationFunctions = activationFunctions
     self.initialized = False
-    self.discriminative = True
+    self.dropout = 0.5
 
     # Simple checks
     assert len(layerSizes) == nrLayers
@@ -57,12 +54,7 @@ class DBN(object):
     """
 
   def train(self, data, labels=None):
-    # train the RBMS and set the weights
-    # the weihghts can be stored as a list of numpy nd-arrays
-    # if labels == None and self.discriminative == True:
-    #   raise Exception("need labels for discriminative training")
-
-    nrRbms = self.nrLayers - 1 - self.discriminative
+    nrRbms = self.nrLayers - 2
 
     self.weights = []
     self.biases = []
@@ -71,22 +63,26 @@ class DBN(object):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     rbm.contrastiveDivergence, self.activationFunctions[i].value)
       net.train(currentData)
-      self.weights += [net.weights]
-      self.biases += [net.biases[1]]
+      self.weights += [net.weights / self.dropout]
+      self.biases += [net.biases[1] / self.dropout]
 
       currentData = net.hiddenRepresentation(currentData)
 
     # CHECK THAT
-    self.weights += [np.random.normal(0, 0.01,
-                                 (self.layerSizes[-2], self.layerSizes[-1]))]
+    # self.weights += [np.random.normal(0, 0.01,
+    #                              (self.layerSizes[-2], self.layerSizes[-1]))]
+    self.weights += [np.zeros((self.layerSizes[-2], self.layerSizes[-1]))]
 
     # Think of this
-    self.biases += [np.random.normal(0, 0.01, self.layerSizes[-1])]
+    # self.biases += [np.random.normal(0, 0.01, self.layerSizes[-1])]
+    self.biases += [np.zeros(self.layerSizes[-1])]
 
     assert len(self.weights) == self.nrLayers - 1
     assert len(self.biases) == self.nrLayers - 1
     # Does backprop or wake sleep?
     self.fineTune(data, labels)
+    self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
+    self.classifcationBiases = map(lambda x: x * self.dropout, self.biases)
 
   """Fine tunes the weigths and biases using backpropagation.
 
@@ -97,8 +93,7 @@ class DBN(object):
       miniBatch: The number of instances to be used in a miniBatch
       epochs: The number of epochs to use for fine tuning
   """
-  # TODO: implement the minibatch business
-  def fineTune(self, data, labels, miniBatchSize=8, epochs=100):
+  def fineTune(self, data, labels, miniBatchSize=10, epochs=100):
     learningRate = 0.01
     batchLearningRate = learningRate / miniBatchSize
 
@@ -112,6 +107,10 @@ class DBN(object):
     # TODO: maybe find a better way than this to find a stopping criteria
     for epoch in xrange(epochs):
 
+      # From the internet: this might work better
+      # mom = ifelse(epoch < 500,
+      #      0.5*(1. - epoch/500.) + 0.99*(epoch/500.),
+      #      0.99)
       if epoch < 10:
         momentum = 0.5
       else:
@@ -123,7 +122,7 @@ class DBN(object):
         batchData = data[start: end]
 
         # this is a list of layer activities
-        layerValues = self.forwardPass(batchData)
+        layerValues = forwardPassDropout(self.weights, self.biases, self.activationFunctions, batchData)
         finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
                                               layerValues[-1])
 
@@ -139,31 +138,12 @@ class DBN(object):
           self.weights[index] -= oldDWeights[index]
           self.biases[index] -= oldDBias[index]
 
-  """Does a forward pass trought the network and computes the values of the
-    neurons in all the layers.
-    Required for backpropagation and classification.
-
-    Arguments:
-      dataInstaces: The instances to be run trough the network.
-    """
-  def forwardPass(self, dataInstaces):
-    currentLayerValues = dataInstaces
-    layerValues = [currentLayerValues]
-    size = dataInstaces.shape[0]
-
-    for stage in xrange(self.nrLayers - 1):
-      weights = self.weights[stage]
-      bias = self.biases[stage]
-      activation = self.activationFunctions[stage]
-
-      linearSum = np.dot(currentLayerValues, weights) + np.tile(bias, (size, 1))
-      currentLayerValues = activation.value(linearSum)
-      layerValues += [currentLayerValues]
-
-    return layerValues
 
   def classify(self, dataInstaces):
-    lastLayerValues = self.forwardPass(dataInstaces)[-1]
+    lastLayerValues = forwardPass(self.classifcationWeights,
+                                  self.classifcationBiases,
+                                  self.activationFunctions,
+                                  dataInstaces)[-1]
     return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
 """
@@ -196,6 +176,68 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
     deDbias.insert(0, dbias)
 
   return deDw, deDbias
+
+""" Does not do dropout. Used for classification. """
+""" TODO: if yo uactually only use it for *only* classification you do not
+ need to rememeber all the layer values, but just the end ones"""
+def forwardPass(weights, biases, activationFunctions, dataInstaces):
+  currentLayerValues = dataInstaces
+  layerValues = [currentLayerValues]
+  size = dataInstaces.shape[0]
+
+  for stage in xrange(len(weights)):
+    w = weights[stage]
+    b = biases[stage]
+    activation = activationFunctions[stage]
+
+    linearSum = np.dot(currentLayerValues, w) + np.tile(b, (size, 1))
+    currentLayerValues = activation.value(linearSum)
+    layerValues += [currentLayerValues]
+
+  return layerValues
+
+
+
+"""Does a forward pass trought the network and computes the values of the
+    neurons in all the layers.
+    Required for backpropagation and classification.
+
+    Arguments:
+      dataInstaces: The instances to be run trough the network.
+    """
+def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
+  # TODO: consider adding dropout here as well
+  # 20% on the visible units are turned off during traning
+  thinnedValues = sample(0.8, dataInstaces.shape)
+  layerValues = [thinnedValues]
+  size = dataInstaces.shape[0]
+
+  for stage in xrange(len(weights)):
+    w = weights[stage]
+    b = biases[stage]
+    activation = activationFunctions[stage]
+
+    linearSum = np.dot(thinnedValues, w) + np.tile(b, (size, 1))
+    currentLayerValues = activation.value(linearSum)
+    # just doing this is not really OK because
+    # you will be updating in backprop the weights that did not
+    # infulence the decision.
+    # you need to tell the network what are the thinned values
+    # and remove the zeros somehow
+    # this is the way to do it, because of how backprop works the wij
+    # will cancel out if the unit on the layer is non active
+    # de/ dw_i_j = de / d_z_j * d_z_j / d_w_i_j = de / d_z_j * y_i
+    # so if we set a unit as non active here (and we have to because
+    # of this exact same reason and of ow we backpropagate)
+    if stage != len(weights) - 1:
+
+      on = sample(1 - dropout, currentLayerValues.shape)
+      thinnedValues = on * currentLayerValues
+      layerValues += [thinnedValues]
+    else:
+      layerValues += [currentLayerValues]
+
+  return layerValues
 
 
 """ Computes the derivatives of the top most layer given their output and the

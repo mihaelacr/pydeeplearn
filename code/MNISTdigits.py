@@ -12,6 +12,7 @@ import readmnist
 import restrictedBoltzmannMachine as rbm
 import deepbelief as db
 import utils
+import PCA
 
 from common import *
 
@@ -34,7 +35,6 @@ args = parser.parse_args()
 def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,
                                   tileShape, tile_spacing=(1, 1))
-
 
 def rbmMain():
   trainImages, trainLabels =\
@@ -92,6 +92,24 @@ def shuffle(data, labels):
 
   return shuffledData, shuffledLabels
 
+
+def pcaOnMnist(training, dimension=700):
+  res = PCA.pca(training, dimension)
+  low, same = PCA.reduce(res, training)
+  print "low.shape"
+  print low.shape
+  print same.shape
+
+  image2DInitial = vectorToImage(training[0], (28,28))
+  print same[0].shape
+  image2D = vectorToImage(same[0], (28,28))
+
+  plt.imshow(image2DInitial, cmap=plt.cm.gray)
+  plt.show()
+  plt.imshow(image2D, cmap=plt.cm.gray)
+  plt.show()
+  print "done"
+
 def deepbeliefMain():
   # trainImages, trainLabels =\
   #     readmnist.read(range(10), dataset="training", path="MNIST")
@@ -101,36 +119,35 @@ def deepbeliefMain():
   training = 1000
   testing = 100
 
-  trainImages, trainLabels =\
+  # print args.train
+  trainVectors, trainLabels =\
       readmnist.readNew(0, training, bTrain=True, path="MNIST")
-  testImages, testLabels =\
+  testVectors, testLabels =\
       readmnist.readNew(0, testing, bTrain=False, path="MNIST")
-  print trainImages[0].shape
+  print trainVectors[0].shape
 
-  # trainVectors = imagesToVectors(trainImages)
-  trainVectors, trainLabels = shuffle(trainImages, trainLabels)
+  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
-  # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
   trainingScaledVectors = trainVectors / 255.0
-
-  # testingVectors = imagesToVectors(testImages)
-  testingScaledVectors = testImages / 255.0
+  testingScaledVectors = testVectors / 255.0
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
   if args.train:
     # net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
-    net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
+    # net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
 
+    net = db.DBN(5, [784, 500, 500, 500, 10], [Sigmoid, Sigmoid, Sigmoid, Softmax])
     # TODO: think about what the network should do for 2 layers
     net.train(trainingScaledVectors, vectorLabels)
   else:
     # Take the saved network and use that for reconstructions
     f = open(DEEP_BELIEF_FILE, "rb")
     net = pickle.load(f)
+    f.close()
 
 
-  probs, predicted = net.classify(testingScaledVectors[0: testing])
+  probs, predicted = net.classify(testingScaledVectors)
   correct = 0
   for i in xrange(testing):
     print "predicted"
@@ -144,7 +161,6 @@ def deepbeliefMain():
 
   print "correct"
   print correct
-
 
   # for w in net.weights:
   #   print w
@@ -164,8 +180,23 @@ def deepbeliefMain():
     f.close()
 
 
+# think of normalizing them to 0.1 for pca as well
+def pcaMain():
+  training = 10000
+  testing = 100
+
+  # print args.train
+  train, trainLabels =\
+      readmnist.readNew(0, training, bTrain=True, path="MNIST")
+  testVectors, testLabels =\
+      readmnist.readNew(0, testing, bTrain=False, path="MNIST")
+  print train[0].shape
+
+  pcaOnMnist(train, dimension=100)
+
 def main():
-  deepbeliefMain()
+  # deepbeliefMain()
+  pcaMain()
 
 
 if __name__ == '__main__':
