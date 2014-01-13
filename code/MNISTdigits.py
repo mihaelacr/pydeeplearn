@@ -96,8 +96,12 @@ def shuffle(data, labels):
 def pcaOnMnist(training, dimension=700):
   res = PCA.pca(training, dimension)
   low, same = PCA.reduce(res, training)
+  print "low.shape"
+  print low.shape
+  print same.shape
 
   image2DInitial = vectorToImage(training[0], (28,28))
+  print same[0].shape
   image2D = vectorToImage(same[0], (28,28))
 
   plt.imshow(image2DInitial, cmap=plt.cm.gray)
@@ -186,10 +190,12 @@ def pcaMain():
   testVectors, testLabels =\
       readmnist.readNew(0, testing, bTrain=False, path="MNIST")
   print train[0].shape
+
   pcaOnMnist(train, dimension=100)
 
 def main():
-  deepbeliefMain()
+  # deepbeliefMain()
+  pcaMain()
 
 
 if __name__ == '__main__':
