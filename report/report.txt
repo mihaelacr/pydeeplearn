@@ -100,6 +100,8 @@
 
   Dropout has also been shown to achieve sparse hidden units. (see the master thesis )
 
+  As dropout is a techinque used to mainly avoid overfititng, it's effects can be seen especially on deep networks.
+
   Biblo: https://www.youtube.com/watch?v=DleXA5ADG78
 
   TODO: quote bishop here as well
