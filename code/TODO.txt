@@ -1,6 +1,6 @@
 TODO:
-  fix the problem with introducting multiple layers
-  wake sleep for generation
+  wake sleep for generation: this is important because I can then use
+    more unlabelled data for the emotion recognition task
   fix the learning rate
   play around with the learning rate for RBMs and the momentum
 
