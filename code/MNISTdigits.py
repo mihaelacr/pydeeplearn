@@ -181,7 +181,7 @@ def deepbeliefMain():
 
 # think of normalizing them to 0.1 for pca as well
 def pcaMain():
-  training = 1000
+  training = 10000
   testing = 100
 
   # print args.train
