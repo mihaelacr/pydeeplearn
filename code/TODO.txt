@@ -4,7 +4,7 @@ TODO:
 
    try to increase the momentum in the RBM class
 
-
+   rettry tanh at some point
 
   wake sleep for generation: this is important because I can then use
     more unlabelled data for the emotion recognition task

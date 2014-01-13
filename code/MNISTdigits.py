@@ -195,8 +195,8 @@ def pcaMain():
   pcaOnMnist(train, dimension=100)
 
 def main():
-  # deepbeliefMain()
-  pcaMain()
+  deepbeliefMain()
+  #pcaMain()
 
 
 if __name__ == '__main__':

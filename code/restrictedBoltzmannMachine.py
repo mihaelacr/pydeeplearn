@@ -28,7 +28,7 @@ EXPENSIVE_CHECKS_ON = False
 class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, trainingFunction, activationFun=sigmoid):
-    # Initialize weights to random
+    self.dropout = 0.5
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
     self.trainingFunction = trainingFunction
@@ -49,17 +49,18 @@ class RBM(object):
                                                       self.biases,
                                                       self.weights,
                                                       self.activationFun)
+    self.testWeights = self.weights / self.dropout
     # assert self.weights.shape == (self.nrVisible, self.nrHidden)
     # assert self.biases[0].shape == self.nrVisible
     # assert self.biases[1].shape == self.nrHidden
 
   """ Reconstructs the data given using this boltzmann machine."""
   def reconstruct(self, dataInstances):
-    return reconstruct(self.biases, self.weights, dataInstances)
+    return reconstruct(self.biases, self.testWeights, dataInstances)
 
   def hiddenRepresentation(self, dataInstances):
     return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
-                       self.weights, self.activationFun, True)
+                       self.testWeights, self.activationFun, True)
 
   @classmethod
   def initializeWeights(cls, nrVisible, nrHidden):
@@ -73,7 +74,6 @@ class RBM(object):
     vectorized = np.vectorize(safeLogFraction, otypes=[np.float])
     visibleBiases = vectorized(percentages)
 
-    # TODO: if sparse hiddeen weights, use that information
     hiddenBiases = np.zeros(nrHidden)
     return np.array([visibleBiases, hiddenBiases])
 
@@ -179,23 +179,34 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
     biases[1] += deltaHidden
 
   return biases, weights
-
-def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,cdSteps=1):
+# here is where you need to integrate the momentum
+# you sample once from the mini btach and form then anwards
+# you keep ignoring the zero ones after the reconstruction
+def modelAndDataSampleDiffs(batchData, biases, weights, activationFun, dropout = 0.2, cdSteps=1):
   # Reconstruct the hidden weigs from the data
   hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun, True)
-  hiddenReconstruction = hidden
+
+  # Chose the units to be active at this point
+  # different sets for each element in the mini batches
+  on = sample(1 - dropout, hidden.shape)
+
+  hiddenReconstruction = hidden * on
 
   for i in xrange(cdSteps - 1):
     visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
                                         biases, weights, activationFun, binary=False)
     hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
                                        biases, weights, activationFun, binary=True)
+    # use momentum to sample the hidden units active
+    hiddenReconstruction = hiddenReconstruction * on
 
   # Do the last reconstruction from the probabilities in the last phase
   visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
                                       biases, weights, activationFun, binary=False)
   hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
                                      biases, weights, activationFun, binary=False)
+
+  hiddenReconstruction = hiddenReconstruction * on
 
   weightsDiff = np.dot(batchData.T, hidden) - np.dot(visibleReconstruction.T, hiddenReconstruction)
   assert weightsDiff.shape == weights.shape
