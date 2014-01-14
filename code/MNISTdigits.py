@@ -121,9 +121,9 @@ def deepbeliefMain():
   testing = args.testSize
 
   trainVectors, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path="MNIST")
+      readmnist.readNew(0, training, [], bTrain=True, path="MNIST")
   testVectors, testLabels =\
-      readmnist.read(0, testing, bTrain=False, path="MNIST")
+      readmnist.readNew(0, testing, [], bTrain=False, path="MNIST")
   print trainVectors[0].shape
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
@@ -137,7 +137,7 @@ def deepbeliefMain():
     # net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
     # net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
 
-    net = db.DBN(5, [784, 500, 500, 500, 10], [Sigmoid, Sigmoid, Sigmoid, Softmax])
+    net = db.DBN(5, [784, 500, 500, 1000, 10], [Sigmoid, Sigmoid, Sigmoid, Softmax])
     # TODO: think about what the network should do for 2 layers
     net.train(trainingScaledVectors, vectorLabels)
   else:
