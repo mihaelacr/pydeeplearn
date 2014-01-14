@@ -117,12 +117,9 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
   print batchLearningRate
 
   for epoch in xrange(epochs):
-    # TODO: you are missing the last part of the data if you
-    #
+
     batchData = data[epoch * miniBatchSize: (epoch + 1) * miniBatchSize, :]
-    # TODO: change this and make it proportional to the data
-    # like the CD-n
-    if epoch < epochs/100:
+    if epoch < epochs / 100:
       momentum = 0.5
     else:
       momentum = 0.95
