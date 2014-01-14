@@ -4,7 +4,7 @@ rbm implementations on MNIST"""
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
-import cPickle as pikle
+import cPickle as pickle
 import readmnist
 import restrictedBoltzmannMachine as rbm
 import deepbelief as db
@@ -42,12 +42,11 @@ def visualizeWeights(weights, imgShape, tileShape):
                                   tileShape, tile_spacing=(1, 1))
 
 def rbmMain():
-  trainImages, trainLabels =\
+  trainVectors, trainLabels =\
       readmnist.readNew(0, args.trainSize, bTrain=True, path="MNIST")
-  testImages, testLabels =\
-      readmnist.readNew(0, args.testSize, bTrain=False, path="MNIST")
+  testingVectors, testLabels =\
+      readmnist.readNew(0, args.trainSize, bTrain=False, path="MNIST")
 
-  trainVectors = imagesToVectors(trainImages)
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -61,7 +60,7 @@ def rbmMain():
     nrHidden = 500
     net = rbm.RBM(nrVisible, nrHidden, rbm.contrastiveDivergence)
     net.train(trainingScaledVectors)
-    t = visualizeWeights(net.weights.T, trainImages[0].shape, (10,10))
+    t = visualizeWeights(net.weights.T, (28,28), (10,10))
   else:
     # Take the saved network and use that for reconstructions
     f = open(args.netFile, "rb")
@@ -70,8 +69,12 @@ def rbmMain():
 
 
   # Reconstruct a training image and see that it actually looks like a digit
-  recon = net.reconstruct(testingScaledVectors[0,:])
-  plt.imshow(vectorToImage(recon, trainImages[0,:].shape), cmap=plt.cm.gray)
+  test = testingScaledVectors[0,:]
+  print test.shape
+  print test.reshape(test.shape[0], 1)
+  recon = net.reconstruct(test.reshape(1, test.shape[0]))
+  print recon.shape
+  plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
   plt.show()
 
   # Show the weights and their form in a tile fashion

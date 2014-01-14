@@ -46,7 +46,8 @@ class RBM(object):
 
   """ Reconstructs the data given using this boltzmann machine."""
   def reconstruct(self, dataInstances):
-    return reconstruct(self.biases, self.testWeights, dataInstances)
+    return reconstruct(self.biases, self.testWeights, dataInstances,
+                       self.activationFun)
 
   def hiddenRepresentation(self, dataInstances):
     return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
@@ -67,19 +68,19 @@ class RBM(object):
     hiddenBiases = np.zeros(nrHidden)
     return np.array([visibleBiases, hiddenBiases])
 
-def reconstruct(biases, weights, dataInstances):
-  hidden = updateLayer(Layer.HIDDEN, dataInstances, biases, weights, True)
+def reconstruct(biases, weights, dataInstances, activationFun):
+  hidden = updateLayer(Layer.HIDDEN, dataInstances, biases, weights,
+                       activationFun, True)
 
   visibleReconstructions = updateLayer(Layer.VISIBLE, hidden,
-                                      biases, weights, False)
-
+                                      biases, weights, activationFun, False)
   return visibleReconstructions
 
-def reconstructionError(biases, weights, data):
+def reconstructionError(biases, weights, data, activationFun):
     # Returns the rmse of the reconstruction of the data
     # Good to keep track of it, should decrease trough training
     # Initially faster, and then slower
-    recFunc = lambda x: reconstruct(biases, weights, x)
+    recFunc = lambda x: reconstruct(biases, weights, x, activationFun)
     return rmse(np.array(map(recFunc, data)), data)
 
 """ Training functions."""
