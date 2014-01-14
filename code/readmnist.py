@@ -43,8 +43,9 @@ def read(startExample, count, digits = None, bTrain=True, path="."):
     # get the correct label from the labels file.
     val = struct.unpack('>B',fLabels.read(1))[0]
     # Only keep the digitis we are interested in
-    if val not in digits:
-     continue
+    # This does not work
+    # if val not in digits:
+    #  continue
 
     labels.append(val)
 
@@ -52,6 +53,11 @@ def read(startExample, count, digits = None, bTrain=True, path="."):
     vec = map(lambda x: struct.unpack('>B',fImages.read(1))[0],
               range(rowsIm*colsIm))
     inputVectors.append(np.array(vec))
+
+  ind = [k for k in xrange(len(labels)) if labels[k] in digits ]
+
+  labels = map(lambda x: labels[x], ind)
+  inputVectors = map(lambda x: inputVectors[x], ind)
 
   fImages.close()
   fLabels.close()
