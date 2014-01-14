@@ -35,7 +35,7 @@ parser.add_argument('netFile', help="file where the serialized network should be
 
 # Get the arguments of the program
 args = parser.parse_args()
-
+print args.netFile
 
 def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,
