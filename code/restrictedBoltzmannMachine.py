@@ -200,7 +200,8 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
                                      binary=False)
 
   # hiddenReconstruction = hiddenReconstruction * on
-
+  # here it should be hidden * on - hiddenreconstruction
+  # also below in the hidden bias
   weightsDiff = np.dot(batchData.T, hidden) -\
                 np.dot(visibleReconstruction.T, hiddenReconstruction)
   assert weightsDiff.shape == weights.shape
