@@ -171,16 +171,16 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
   return biases, weights
 
 def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
-                            dropout = 0, cdSteps=1):
+                            dropout = 0.2, cdSteps=1):
   # Reconstruct the hidden weigs from the data
   hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun,
                        binary=True)
 
   # Chose the units to be active at this point
   # different sets for each element in the mini batches
-  # on = sample(1 - dropout, hidden.shape)
-
-  hiddenReconstruction = hidden
+  on = sample(1 - dropout, hidden.shape)
+  dropoutHidden = on * hidden
+  hiddenReconstruction = dropoutHidden
 
   for i in xrange(cdSteps - 1):
     visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
@@ -190,7 +190,7 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
                                        biases, weights, activationFun,
                                        binary=True)
     # sample the hidden units active (for dropout)
-    # hiddenReconstruction = hiddenReconstruction * on
+    hiddenReconstruction = hiddenReconstruction * on
 
   # Do the last reconstruction from the probabilities in the last phase
   visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
@@ -200,17 +200,17 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
                                      biases, weights, activationFun,
                                      binary=False)
 
-  # hiddenReconstruction = hiddenReconstruction * on
+  hiddenReconstruction = hiddenReconstruction * on
   # here it should be hidden * on - hiddenreconstruction
   # also below in the hidden bias
-  weightsDiff = np.dot(batchData.T, hidden) -\
+  weightsDiff = np.dot(batchData.T, dropoutHidden) -\
                 np.dot(visibleReconstruction.T, hiddenReconstruction)
   assert weightsDiff.shape == weights.shape
 
   visibleBiasDiff = np.sum(batchData - visibleReconstruction, axis=0)
   assert visibleBiasDiff.shape == biases[0].shape
 
-  hiddenBiasDiff = np.sum(hidden - hiddenReconstruction, axis=0)
+  hiddenBiasDiff = np.sum(dropoutHidden - hiddenReconstruction, axis=0)
   assert hiddenBiasDiff.shape == biases[1].shape
 
   return weightsDiff, visibleBiasDiff, hiddenBiasDiff
