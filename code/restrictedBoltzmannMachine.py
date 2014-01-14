@@ -108,7 +108,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
   epsilon = 0.01
   decayFactor = 0.0002
   weightDecay = True
-  reconstructionStep = 100
+  reconstructionStep = 50
 
   oldDeltaWeights = np.zeros(weights.shape)
   oldDeltaVisible = np.zeros(biases[0].shape)
@@ -167,6 +167,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
     # Update the hidden biases
     biases[1] += deltaHidden
 
+  print reconstructionError(biases, weights, data, activationFun)
   return biases, weights
 
 def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
