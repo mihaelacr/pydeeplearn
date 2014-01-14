@@ -8,7 +8,7 @@ TODO: monitor overfitting
 import numpy as np
 from common import *
 
-EXPENSIVE_CHECKS_ON = False
+EXPENSIVE_CHECKS_ON = True
 
 # TODO: different learning rates for weights and biases
 """
@@ -81,8 +81,8 @@ def reconstructionError(biases, weights, data, activationFun):
     # Returns the rmse of the reconstruction of the data
     # Good to keep track of it, should decrease trough training
     # Initially faster, and then slower
-    recFunc = lambda x: reconstruct(biases, weights, x, activationFun)
-    return rmse(np.array(map(recFunc, data)), data)
+    reconstructions = reconstruct(biases, weights, data, activationFun)
+    return rmse(reconstructions, data)
 
 """ Training functions."""
 
@@ -136,7 +136,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
     if EXPENSIVE_CHECKS_ON:
       if epoch % reconstructionStep == 0:
         print "reconstructionError"
-        print reconstructionError(biases, weights, data)
+        print reconstructionError(biases, weights, data, activationFun)
 
     weightsDiff, visibleBiasDiff, hiddenBiasDiff =\
             modelAndDataSampleDiffs(batchData, biases, weights,
