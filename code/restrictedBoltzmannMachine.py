@@ -105,7 +105,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
 
   epochs = N / miniBatchSize
 
-  epsilon = 0.05
+  epsilon = 0.01
   decayFactor = 0.0002
   weightDecay = True
   reconstructionStep = 100
