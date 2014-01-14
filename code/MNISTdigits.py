@@ -43,9 +43,9 @@ def visualizeWeights(weights, imgShape, tileShape):
 
 def rbmMain():
   trainVectors, trainLabels =\
-      readmnist.readNew(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
   testingVectors, testLabels =\
-      readmnist.readNew(0, args.trainSize, digits=[2],bTrain=False, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=[2],bTrain=False, path="MNIST")
 
   print trainLabels
 
@@ -115,9 +115,9 @@ def deepbeliefMain():
   testing = args.testSize
 
   trainVectors, trainLabels =\
-      readmnist.readNew(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path="MNIST")
   testVectors, testLabels =\
-      readmnist.readNew(0, testing, bTrain=False, path="MNIST")
+      readmnist.read(0, testing, bTrain=False, path="MNIST")
   print trainVectors[0].shape
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
@@ -180,9 +180,9 @@ def pcaMain():
   testing = args.testSize
 
   train, trainLabels =\
-      readmnist.readNew(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path="MNIST")
   testVectors, testLabels =\
-      readmnist.readNew(0, testing, bTrain=False, path="MNIST")
+      readmnist.read(0, testing, bTrain=False, path="MNIST")
   print train[0].shape
 
   pcaOnMnist(train, dimension=100)
