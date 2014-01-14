@@ -1,0 +1,14 @@
+Done today:
+  running the net with tanh instead of sigmoid: does not give as good results!
+  reading more of LeCun's paper on how to train a net with backprop
+  decided not to implement implement sparse features for RBM:
+    this is covered by dropout so no need for that
+  looked a bit at dropout and started implementing itz
+
+
+
+TODO:
+  read this:
+  http://richardweiss.org/blog/?p=75
+  implement free enegry function
+  zhen article
