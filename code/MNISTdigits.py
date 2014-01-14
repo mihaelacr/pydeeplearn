@@ -45,7 +45,7 @@ def rbmMain():
   trainVectors, trainLabels =\
       readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
   testingVectors, testLabels =\
-      readmnist.read(0, args.trainSize, digits=[2],bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=[2],bTrain=False, path="MNIST")
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -66,12 +66,14 @@ def rbmMain():
     t = pickle.load(f)
     net = pickle.load(f)
 
-
   # Reconstruct a training image and see that it actually looks like a digit
   test = testingScaledVectors[0,:]
-  print test.shape
+
+  # print test.reshape(1, test.shape[0])
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
-  print recon.shape
+  # print recon.shape
+  # print recon.sum()
+  # print recon
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
   plt.show()
 

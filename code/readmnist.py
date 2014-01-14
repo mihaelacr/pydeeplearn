@@ -39,7 +39,7 @@ def read(startExample, count, digits = None, bTrain=True, path="."):
   inputVectors = [] # list of (input, correct label) pairs
   labels = []
 
-  for c in range(0, count):
+  for c in range(count):
     # get the correct label from the labels file.
     val = struct.unpack('>B',fLabels.read(1))[0]
     # Only keep the digitis we are interested in

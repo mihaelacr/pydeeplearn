@@ -17,7 +17,7 @@ EXPENSIVE_CHECKS_ON = False
 class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, trainingFunction, activationFun=sigmoid):
-    self.dropout = 0.5
+    self.dropout = 0
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
     self.trainingFunction = trainingFunction
@@ -38,7 +38,8 @@ class RBM(object):
                                                       self.biases,
                                                       self.weights,
                                                       self.activationFun)
-    self.testWeights = self.weights / self.dropout
+    self.testWeights = self.weights
+    # self.testWeights = self.weights / self.dropout
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible
@@ -169,16 +170,16 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
   return biases, weights
 
 def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
-                            dropout = 0.2, cdSteps=1):
+                            dropout = 0, cdSteps=1):
   # Reconstruct the hidden weigs from the data
   hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun,
                        binary=True)
 
   # Chose the units to be active at this point
   # different sets for each element in the mini batches
-  on = sample(1 - dropout, hidden.shape)
+  # on = sample(1 - dropout, hidden.shape)
 
-  hiddenReconstruction = hidden * on
+  hiddenReconstruction = hidden
 
   for i in xrange(cdSteps - 1):
     visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
@@ -188,7 +189,7 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
                                        biases, weights, activationFun,
                                        binary=True)
     # sample the hidden units active (for dropout)
-    hiddenReconstruction = hiddenReconstruction * on
+    # hiddenReconstruction = hiddenReconstruction * on
 
   # Do the last reconstruction from the probabilities in the last phase
   visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
@@ -198,7 +199,7 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
                                      biases, weights, activationFun,
                                      binary=False)
 
-  hiddenReconstruction = hiddenReconstruction * on
+  # hiddenReconstruction = hiddenReconstruction * on
 
   weightsDiff = np.dot(batchData.T, hidden) -\
                 np.dot(visibleReconstruction.T, hiddenReconstruction)
