@@ -16,10 +16,6 @@ import PCA
 
 from common import *
 
-# TODO: make these flags
-NETWORK_FILE = "rbm.p"
-DEEP_BELIEF_FILE = 'deepbelief_momentum.p'
-
 parser = argparse.ArgumentParser(description='RBM for digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,
                     help="if true, the network is serialized and saved")
@@ -33,6 +29,12 @@ parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
 parser.add_argument('--db', dest='db',action='store_true', default=False,
                     help=("if true, the code for traning a deepbelief net on the"
                           "data is run"))
+parser.add_argument('netFile', help="file where the serialized network should be saved")
+parser.add_argument('--trainSize', type=int, default=10000,
+                    help='the number of tranining cases to be considered')
+parser.add_argument('--testSize', type=int, default=1000,
+                    help='the number of testing cases to be considered')
+
 
 # Get the arguments of the program
 args = parser.parse_args()
@@ -44,9 +46,9 @@ def visualizeWeights(weights, imgShape, tileShape):
 
 def rbmMain():
   trainImages, trainLabels =\
-      readmnist.readNew(0, 100, bTrain=True, path="MNIST")
+      readmnist.readNew(0, args.trainSize, bTrain=True, path="MNIST")
   testImages, testLabels =\
-      readmnist.readNew(0, 100, bTrain=False, path="MNIST")
+      readmnist.readNew(0, args.testSize, bTrain=False, path="MNIST")
 
   trainVectors = imagesToVectors(trainImages)
 
@@ -65,7 +67,7 @@ def rbmMain():
     t = visualizeWeights(net.weights.T, trainImages[0].shape, (10,10))
   else:
     # Take the saved network and use that for reconstructions
-    f = open(NETWORK_FILE, "rb")
+    f = open(args.netFile, "rb")
     t = pickle.load(f)
     net = pickle.load(f)
 
@@ -80,10 +82,8 @@ def rbmMain():
   plt.show()
   print "done"
 
-  # TODO: add pickle behaviour to RBM
-  # is this needd?
   if args.save:
-    f = open(NETWORK_FILE, "wb")
+    f = open(args.netFile, "wb")
     pickle.dump(t, f)
     pickle.dump(net, f)
 
@@ -99,9 +99,6 @@ def shuffle(data, labels):
 def pcaOnMnist(training, dimension=700):
   res = PCA.pca(training, dimension)
   low, same = PCA.reduce(res, training)
-  print "low.shape"
-  print low.shape
-  print same.shape
 
   image2DInitial = vectorToImage(training[0], (28,28))
   print same[0].shape
@@ -114,9 +111,8 @@ def pcaOnMnist(training, dimension=700):
   print "done"
 
 def deepbeliefMain():
-  # TODO: make these flags
-  training = 1000
-  testing = 100
+  training = args.trainSize
+  testing = args.testSize
 
   trainVectors, trainLabels =\
       readmnist.readNew(0, training, bTrain=True, path="MNIST")
@@ -140,7 +136,7 @@ def deepbeliefMain():
     net.train(trainingScaledVectors, vectorLabels)
   else:
     # Take the saved network and use that for reconstructions
-    f = open(DEEP_BELIEF_FILE, "rb")
+    f = open(args.netFile, "rb")
     net = pickle.load(f)
     f.close()
 
@@ -173,17 +169,16 @@ def deepbeliefMain():
   # print "done"
 
   if args.save:
-    f = open(DEEP_BELIEF_FILE, "wb")
+    f = open(args.netFile, "wb")
     pickle.dump(net, f)
     f.close()
 
 
 # think of normalizing them to 0.1 for pca as well
 def pcaMain():
-  training = 10000
-  testing = 100
+  training = args.trainSize
+  testing = args.testSize
 
-  # print args.train
   train, trainLabels =\
       readmnist.readNew(0, training, bTrain=True, path="MNIST")
   testVectors, testLabels =\
