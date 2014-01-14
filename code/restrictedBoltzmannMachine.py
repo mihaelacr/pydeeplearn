@@ -223,13 +223,7 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
 def updateLayer(layer, otherLayerValues, biases, weights, activationFun, binary=False):
   bias = biases[layer]
 
-  # TODO: think about doing this better
-  # better: remove it like in the deepbelief, do not support version for single one
-  # in reconstruction
-  if len(otherLayerValues.shape) == 2:
-    size = otherLayerValues.shape[0]
-  else:
-    size = 1
+  size = otherLayerValues.shape[0]
 
   if layer == Layer.VISIBLE:
     activation = np.dot(otherLayerValues, weights.T)
