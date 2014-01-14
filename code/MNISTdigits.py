@@ -43,10 +43,11 @@ def visualizeWeights(weights, imgShape, tileShape):
 
 def rbmMain():
   trainVectors, trainLabels =\
-      readmnist.readNew(0, args.trainSize, bTrain=True, path="MNIST")
+      readmnist.readNew(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
   testingVectors, testLabels =\
-      readmnist.readNew(0, args.trainSize, bTrain=False, path="MNIST")
+      readmnist.readNew(0, args.trainSize, digits=[2],bTrain=False, path="MNIST")
 
+  print trainLabels
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -71,7 +72,6 @@ def rbmMain():
   # Reconstruct a training image and see that it actually looks like a digit
   test = testingScaledVectors[0,:]
   print test.shape
-  print test.reshape(test.shape[0], 1)
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   print recon.shape
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)

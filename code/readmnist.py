@@ -44,7 +44,9 @@ def read(digits, dataset = "training", path = "."):
     return images, labels
 
 
-def readNew(startExample, howMany, bTrain=True, path="."):
+def readNew(startExample, howMany, digits = None, bTrain=True, path="."):
+    if digits == None:
+        digits = range(0, 10)
 
     if bTrain:
         fname_img = os.path.join(path, 'train-images-idx3-ubyte')
@@ -74,18 +76,26 @@ def readNew(startExample, howMany, bTrain=True, path="."):
     inputVectors = [] # list of (input, correct label) pairs
     labels = []
 
-    for blah in range(0, howMany):
+    for count in range(0, howMany):
+        # get the correct label from the labels file.
+        val = struct.unpack('>B',fLabels.read(1))[0]
+        # Only keep the digitis we are interested in
+        if val not in digits:
+            continue
+
+        labels.append(val)
+
         # get the input from the image file
+        # TODO: try this instead of x
+        vec = map(lambda x: struct.unpack('>B',fImages.read(1))[0],
+                  range(rowsIm*colsIm))
         x = []
-        for i in range(0, rowsIm*colsIm):
+        for i in range(rowsIm*colsIm):
             val = struct.unpack('>B',fImages.read(1))[0]
             x.append(val)
 
         inputVectors.append(np.array(x))
 
-        # get the correct label from the labels file.
-        val = struct.unpack('>B',fLabels.read(1))[0]
-        labels.append(val)
 
     fImages.close()
     fLabels.close()
