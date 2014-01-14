@@ -203,8 +203,8 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
 
   hiddenReconstruction = hiddenReconstruction * on
 
-  weightsDiff = np.dot(batchData.T, hidden)
-                - np.dot(visibleReconstruction.T, hiddenReconstruction)
+  weightsDiff = np.dot(batchData.T, hidden) -\
+                np.dot(visibleReconstruction.T, hiddenReconstruction)
   assert weightsDiff.shape == weights.shape
 
   visibleBiasDiff = np.sum(batchData - visibleReconstruction, axis=0)
