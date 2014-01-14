@@ -176,7 +176,8 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
 def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
                             dropout = 0.2, cdSteps=1):
   # Reconstruct the hidden weigs from the data
-  hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun, True)
+  hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun,
+                       binary=True)
 
   # Chose the units to be active at this point
   # different sets for each element in the mini batches
@@ -221,9 +222,10 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
     Can even take multiple values of the layer, each of them given as rows
     Uses matrix operations.
 """
-def updateLayer(layer, otherLayerValues, biases, weights, activationFun, binary=False):
-  bias = biases[layer]
+def updateLayer(layer, otherLayerValues, biases, weights, activationFun,
+                binary=False):
 
+  bias = biases[layer]
   size = otherLayerValues.shape[0]
 
   if layer == Layer.VISIBLE:
