@@ -208,7 +208,8 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces):
 def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
   # TODO: consider adding dropout here as well
   # 20% on the visible units are turned off during traning
-  thinnedValues = sample(0.8, dataInstaces.shape)
+  visibleOn = sample(0.8, dataInstaces.shape)
+  thinnedValues = dataInstaces * visibleOn
   layerValues = [thinnedValues]
   size = dataInstaces.shape[0]
 
