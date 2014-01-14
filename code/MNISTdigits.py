@@ -30,7 +30,7 @@ parser.add_argument('--pca', dest='pca',action='store_true', default=False,
                     help=("if true, the code for running PCA on the data is run"))
 parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
                     help=("if true, the code for traning an rbm on the data is run"))
-parser.add_argument('--db', dest='deepbelief',action='store_true', default=False,
+parser.add_argument('--db', dest='db',action='store_true', default=False,
                     help=("if true, the code for traning a deepbelief net on the"
                           "data is run"))
 
