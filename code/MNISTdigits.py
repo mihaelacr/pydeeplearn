@@ -16,15 +16,25 @@ import PCA
 
 from common import *
 
+# TODO: make these flags
 NETWORK_FILE = "rbm.p"
 DEEP_BELIEF_FILE = 'deepbelief_momentum.p'
 
-# Get the arguments of the program
 parser = argparse.ArgumentParser(description='RBM for digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,
                     help="if true, the network is serialized and saved")
 parser.add_argument('--train',dest='train',action='store_true', default=False,
-                    help="if true, the network is trained from scratch from the traning data")
+                    help=("if true, the network is trained from scratch from the"
+                          "traning data"))
+parser.add_argument('--pca', dest='pca',action='store_true', default=False,
+                    help=("if true, the code for running PCA on the data is run"))
+parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
+                    help=("if true, the code for traning an rbm on the data is run"))
+parser.add_argument('--db', dest='deepbelief',action='store_true', default=False,
+                    help=("if true, the code for traning a deepbelief net on the"
+                          "data is run"))
+
+# Get the arguments of the program
 args = parser.parse_args()
 
 
@@ -40,11 +50,8 @@ def rbmMain():
 
   trainVectors = imagesToVectors(trainImages)
 
-  # trainingScaledVectors = utils.scale_to_unit_interval(vectors)
-  trainingScaledVectors = trainVectors / 256
-
-  testingVectors = imagesToVectors(testImages)
-  testingScaledVectors = testingVectors / 256
+  trainingScaledVectors = trainVectors / 255.0
+  testingScaledVectors = testingVectors / 255.0
 
   # Train the network
   if args.train:
@@ -107,15 +114,10 @@ def pcaOnMnist(training, dimension=700):
   print "done"
 
 def deepbeliefMain():
-  # trainImages, trainLabels =\
-  #     readmnist.read(range(10), dataset="training", path="MNIST")
-  # testImages, testLabels =\
-  #     readmnist.read(range(10), dataset="testing", path="MNIST")
   # TODO: make these flags
   training = 1000
   testing = 100
 
-  # print args.train
   trainVectors, trainLabels =\
       readmnist.readNew(0, training, bTrain=True, path="MNIST")
   testVectors, testLabels =\
