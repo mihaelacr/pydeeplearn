@@ -3,7 +3,8 @@ import numpy as np
 import restrictedBoltzmannMachine as rbm
 
 # TODO: use conjugate gradient for  backpropagation instead of stepeest descent
-# TODO: add weight decay in back prop
+# TODO: add weight decay in back prop but especially with the constraint
+# on the weightrs
 # TODO: monitor the changes in erorr and change the learning rate according
 # to that
 # TODO: wake sleep for improving generation
@@ -81,7 +82,6 @@ class DBN(object):
     self.classifcationBiases = map(lambda x: x * self.dropout, self.biases)
 
   """Fine tunes the weigths and biases using backpropagation.
-
     Arguments:
       data: The data used for traning and fine tuning
       labels: A numpy nd array. Each label should be transformed into a binary
@@ -103,11 +103,7 @@ class DBN(object):
     # TODO: maybe find a better way than this to find a stopping criteria
     for epoch in xrange(epochs):
 
-      # From the internet: this might work better
-      # mom = ifelse(epoch < 500,
-      #      0.5*(1. - epoch/500.) + 0.99*(epoch/500.),
-      #      0.99)
-      if epoch < 10:
+      if epoch < epochs / 10:
         momentum = 0.5
       else:
         momentum = 0.95
@@ -245,5 +241,4 @@ represent a discrete probablity distribution and the expected values are
 composed of a base vector, with 1 for the correct class and 0 for all the rest.
 """
 def derivativesCrossEntropyError(expected, actual):
-  # avoid dividing by 0 by adding a small number
   return - expected * (1.0 / actual)
