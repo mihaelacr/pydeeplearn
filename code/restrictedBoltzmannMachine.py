@@ -42,9 +42,10 @@ class RBM(object):
                                                       self.weights,
                                                       self.activationFun)
     self.testWeights = self.weights / self.dropout
+
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
-    assert self.biases[0].shape == self.nrVisible
-    assert self.biases[1].shape == self.nrHidden
+    assert self.biases[0].shape[0] == self.nrVisible
+    assert self.biases[1].shape[0] == self.nrHidden
 
   """ Reconstructs the data given using this boltzmann machine."""
   def reconstruct(self, dataInstances):
