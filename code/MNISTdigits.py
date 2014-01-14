@@ -193,8 +193,15 @@ def pcaMain():
   pcaOnMnist(train, dimension=100)
 
 def main():
-  deepbeliefMain()
-  #pcaMain()
+  if args.db + args.pca + args.rbm != 1:
+    raise Exception("You decide on one main method to run")
+
+  if args.db:
+    deepbeliefMain()
+  if args.pca:
+    pcaMain()
+  if args.rbm:
+    rbmMain()
 
 
 if __name__ == '__main__':
