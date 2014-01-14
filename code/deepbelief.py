@@ -212,11 +212,6 @@ def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropo
 
     linearSum = np.dot(thinnedValues, w) + np.tile(b, (size, 1))
     currentLayerValues = activation.value(linearSum)
-    # just doing this is not really OK because
-    # you will be updating in backprop the weights that did not
-    # infulence the decision.
-    # you need to tell the network what are the thinned values
-    # and remove the zeros somehow
     # this is the way to do it, because of how backprop works the wij
     # will cancel out if the unit on the layer is non active
     # de/ dw_i_j = de / d_z_j * d_z_j / d_w_i_j = de / d_z_j * y_i
