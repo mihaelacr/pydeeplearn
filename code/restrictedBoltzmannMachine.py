@@ -1,17 +1,9 @@
 """Implementation of restricted boltzmann machine
 
 You need to be able to deal with different energy functions
-
-This allows you to deal with real valued unit
-
-do updates in parallel using multiprocessing.pool
+This allows you to deal with real valued units.
 
 TODO: monitor overfitting
-TODO: mean filed and dumped mean field (also not really needed because we will move to
-  non binary units soon so no point in wasting some time with that)
-TODO: dropout
-TODO: force sparse hidden weights: not needed
-
 """
 import numpy as np
 # TODO: work out if you can use this somehow
@@ -50,9 +42,9 @@ class RBM(object):
                                                       self.weights,
                                                       self.activationFun)
     self.testWeights = self.weights / self.dropout
-    # assert self.weights.shape == (self.nrVisible, self.nrHidden)
-    # assert self.biases[0].shape == self.nrVisible
-    # assert self.biases[1].shape == self.nrHidden
+    assert self.weights.shape == (self.nrVisible, self.nrHidden)
+    assert self.biases[0].shape == self.nrVisible
+    assert self.biases[1].shape == self.nrHidden
 
   """ Reconstructs the data given using this boltzmann machine."""
   def reconstruct(self, dataInstances):
@@ -179,10 +171,9 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
     biases[1] += deltaHidden
 
   return biases, weights
-# here is where you need to integrate the momentum
-# you sample once from the mini btach and form then anwards
-# you keep ignoring the zero ones after the reconstruction
-def modelAndDataSampleDiffs(batchData, biases, weights, activationFun, dropout = 0.2, cdSteps=1):
+
+def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
+                            dropout = 0.2, cdSteps=1):
   # Reconstruct the hidden weigs from the data
   hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun, True)
 
@@ -194,35 +185,35 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun, dropout =
 
   for i in xrange(cdSteps - 1):
     visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                        biases, weights, activationFun, binary=False)
+                                        biases, weights, activationFun,
+                                        binary=False)
     hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                       biases, weights, activationFun, binary=True)
-    # use momentum to sample the hidden units active
+                                       biases, weights, activationFun,
+                                       binary=True)
+    # sample the hidden units active (for dropout)
     hiddenReconstruction = hiddenReconstruction * on
 
   # Do the last reconstruction from the probabilities in the last phase
   visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                      biases, weights, activationFun, binary=False)
+                                      biases, weights, activationFun,
+                                      binary=False)
   hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                     biases, weights, activationFun, binary=False)
+                                     biases, weights, activationFun,
+                                     binary=False)
 
   hiddenReconstruction = hiddenReconstruction * on
 
-  weightsDiff = np.dot(batchData.T, hidden) - np.dot(visibleReconstruction.T, hiddenReconstruction)
+  weightsDiff = np.dot(batchData.T, hidden)
+                - np.dot(visibleReconstruction.T, hiddenReconstruction)
   assert weightsDiff.shape == weights.shape
-  visibleBiasDiff = np.sum(batchData - visibleReconstruction, axis=0)
 
+  visibleBiasDiff = np.sum(batchData - visibleReconstruction, axis=0)
   assert visibleBiasDiff.shape == biases[0].shape
+
   hiddenBiasDiff = np.sum(hidden - hiddenReconstruction, axis=0)
   assert hiddenBiasDiff.shape == biases[1].shape
 
   return weightsDiff, visibleBiasDiff, hiddenBiasDiff
-
-# Makes a step in the contrastiveDivergence algorithm
-# online or with mini-bathces?
-# you have multiple choices about how to implement this
-# It is importaant that the hidden values from the data are binary,
-# not probabilities
 
 """ Updates an entire layer. This procedure can be used both in training
     and in testing.

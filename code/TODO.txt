@@ -31,6 +31,4 @@ TODO:
   implement the l2 norm update for dropout as suggested
 
 runnign experiments:
-  edge02 with 20% off visible units
-  edge03 with 20% off and change into rbm momentum
-  edge05 with all of the above and 20% off rbm hidden units
+  edge05 with 20% fixed but only with 10.000 to see that stuff is working

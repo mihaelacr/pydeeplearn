@@ -4,7 +4,6 @@ import restrictedBoltzmannMachine as rbm
 
 # TODO: use conjugate gradient for  backpropagation instead of stepeest descent
 # TODO: add weight decay in back prop
-# TODO: implement dropout: it has been shown to improve learning
 # TODO: monitor the changes in erorr and change the learning rate according
 # to that
 # TODO: wake sleep for improving generation
@@ -41,7 +40,6 @@ class DBN(object):
     self.initialized = False
     self.dropout = 0.5
 
-    # Simple checks
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
 
@@ -54,6 +52,7 @@ class DBN(object):
     """
 
   def train(self, data, labels=None):
+    # This depends if you have generative or not
     nrRbms = self.nrLayers - 2
 
     self.weights = []
@@ -68,13 +67,10 @@ class DBN(object):
 
       currentData = net.hiddenRepresentation(currentData)
 
-    # CHECK THAT
-    # self.weights += [np.random.normal(0, 0.01,
-    #                              (self.layerSizes[-2], self.layerSizes[-1]))]
+    # This depends if you have generative or not
+    # Initialize the last layer of weights to zero if you have
+    # a discriminative net
     self.weights += [np.zeros((self.layerSizes[-2], self.layerSizes[-1]))]
-
-    # Think of this
-    # self.biases += [np.random.normal(0, 0.01, self.layerSizes[-1])]
     self.biases += [np.zeros(self.layerSizes[-1])]
 
     assert len(self.weights) == self.nrLayers - 1
@@ -122,7 +118,8 @@ class DBN(object):
         batchData = data[start: end]
 
         # this is a list of layer activities
-        layerValues = forwardPassDropout(self.weights, self.biases, self.activationFunctions, batchData)
+        layerValues = forwardPassDropout(self.weights, self.biases,
+                                        self.activationFunctions, batchData)
         finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
                                               layerValues[-1])
 
@@ -206,8 +203,7 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces):
       dataInstaces: The instances to be run trough the network.
     """
 def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
-  # TODO: consider adding dropout here as well
-  # 20% on the visible units are turned off during traning
+  # dropout of 20% on the visible units
   visibleOn = sample(0.8, dataInstaces.shape)
   thinnedValues = dataInstaces * visibleOn
   layerValues = [thinnedValues]
