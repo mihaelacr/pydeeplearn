@@ -33,3 +33,4 @@ TODO:
 runnign experiments:
   edge02 with 20% off visible units
   edge03 with 20% off and change into rbm momentum
+  edge05 with all of the above and 20% off rbm hidden units

@@ -21,14 +21,12 @@ DEEP_BELIEF_FILE = 'deepbelief_momentum.p'
 
 # Get the arguments of the program
 parser = argparse.ArgumentParser(description='RBM for digit recognition')
-parser.add_argument('--save',
-                    type=bool,
-                    default=True,
+parser.add_argument('--save',dest='save',action='store_true',
                     help="if true, the network is serialized and saved")
-parser.add_argument('--train',
-                    type=bool,
-                    default=True,
+parser.add_argument('--train',dest='train',action='store_true',
                     help="if true, the network is trained from scratch from the traning data")
+parser.set_defaults(save=True)
+parser.set_defaults(train=True)
 args = parser.parse_args()
 
 
