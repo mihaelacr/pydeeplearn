@@ -38,9 +38,9 @@ def visualizeWeights(weights, imgShape, tileShape):
 
 def rbmMain():
   trainImages, trainLabels =\
-      readmnist.readNew(0, 100, bTrain=True, path="MNIST")
+      readmnist.read([2], dataset="training", path="MNIST")
   testImages, testLabels =\
-      readmnist.readNew(0, 100, bTrain=False, path="MNIST")
+      readmnist.read([2], dataset="testing", path="MNIST")
 
   trainVectors = imagesToVectors(trainImages)
 
@@ -196,7 +196,8 @@ def pcaMain():
 
 def main():
   # deepbeliefMain()
-  pcaMain()
+  # pcaMain()
+  rbmMain()
 
 
 if __name__ == '__main__':
