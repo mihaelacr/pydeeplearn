@@ -47,8 +47,6 @@ def rbmMain():
   testingVectors, testLabels =\
       readmnist.read(0, args.trainSize, digits=[2],bTrain=False, path="MNIST")
 
-  print trainLabels
-
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
 
