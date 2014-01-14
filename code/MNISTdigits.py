@@ -7,7 +7,7 @@ and the weights, to see what features we have learned"""
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
-import pickle
+import cPickle as pikle
 import readmnist
 import restrictedBoltzmannMachine as rbm
 import deepbelief as db
