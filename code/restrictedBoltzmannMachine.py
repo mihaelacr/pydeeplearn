@@ -6,9 +6,6 @@ This allows you to deal with real valued units.
 TODO: monitor overfitting
 """
 import numpy as np
-# TODO: work out if you can use this somehow
-import multiprocessing
-
 from common import *
 
 EXPENSIVE_CHECKS_ON = False
