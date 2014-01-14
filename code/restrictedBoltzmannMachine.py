@@ -127,9 +127,9 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
       momentum = 0.95
 
     if epoch < (N/7) * 10:
-      cdSteps = 1
-    elif epoch < (N/9) * 10:
       cdSteps = 3
+    elif epoch < (N/9) * 10:
+      cdSteps = 5
     else:
       cdSteps = 10
 
