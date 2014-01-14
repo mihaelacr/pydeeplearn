@@ -90,7 +90,7 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   def fineTune(self, data, labels, miniBatchSize=10, epochs=100):
-    learningRate = 0.01
+    learningRate = 0.1
     batchLearningRate = learningRate / miniBatchSize
 
     nrMiniBatches = len(data) / miniBatchSize
