@@ -42,16 +42,11 @@ def read(startExample, count, digits = None, bTrain=True, path="."):
   for c in range(count):
     # get the correct label from the labels file.
     val = struct.unpack('>B',fLabels.read(1))[0]
-    # Only keep the digitis we are interested in
-    # This does not work
-    # if val not in digits:
-    #  continue
-
     labels.append(val)
 
-    # get the input from the image file
     vec = map(lambda x: struct.unpack('>B',fImages.read(1))[0],
               range(rowsIm*colsIm))
+    # get the input from the image file
     inputVectors.append(np.array(vec))
 
   ind = [k for k in xrange(len(labels)) if labels[k] in digits ]
