@@ -18,7 +18,7 @@ class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, trainingFunction, dropout,
               activationFun=sigmoid):
-    # dropout = 1 means no dropout
+    # dropout = 1 means no dropout, keep all the weights
     self.dropout = dropout
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible

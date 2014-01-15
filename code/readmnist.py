@@ -7,6 +7,11 @@ import numpy as np
 
 from array import array as pyarray
 
+"""
+Arguments:
+
+Returns:
+"""
 def read(startExample, count, digits = None, bTrain=True, path="."):
   if digits == None:
     digits = range(0, 10)
@@ -49,8 +54,9 @@ def read(startExample, count, digits = None, bTrain=True, path="."):
     # get the input from the image file
     inputVectors.append(np.array(vec))
 
-  ind = [k for k in xrange(len(labels)) if labels[k] in digits ]
 
+  # Filter out the unwanted digits
+  ind = [k for k in xrange(len(labels)) if labels[k] in digits ]
   labels = map(lambda x: labels[x], ind)
   inputVectors = map(lambda x: inputVectors[x], ind)
 

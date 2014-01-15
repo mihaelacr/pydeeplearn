@@ -1,4 +1,5 @@
 TODO:
+
   do some experiments with the momentum changing more to 0.9 when you get closer
   do CD-5 experiments
 
