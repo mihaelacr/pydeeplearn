@@ -32,15 +32,16 @@ class DBN(object):
         layer.
         type: list of objects of type ActivationFunction
   """
-  def __init__(self, nrLayers, layerSizes, activationFunctions):
+  def __init__(self, nrLayers, layerSizes, activationFunctions,
+               dropout, rbmDropout):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
     # Note that for the first one the activatiom function does not matter
     # So for that one there is no need to pass in an activation function
     self.activationFunctions = activationFunctions
     self.initialized = False
-    self.dropout = 0.5
-    self.rbmDropout = 0.8
+    self.dropout = dropout
+    self.rbmDropout = rbmDropout
 
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
