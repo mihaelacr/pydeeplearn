@@ -398,8 +398,6 @@ To generate the nice weights that have the twos in
 
 you have to do this:
 
-set the momentum to 0
-
 set the epsilon = 0.0001 and the
 minibatch = 1
 
