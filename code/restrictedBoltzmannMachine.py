@@ -17,7 +17,7 @@ EXPENSIVE_CHECKS_ON = True
 class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, trainingFunction, activationFun=sigmoid):
-    self.dropout = 0
+    self.dropout = 0.2
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
     self.trainingFunction = trainingFunction
@@ -37,9 +37,9 @@ class RBM(object):
     self.biases, self.weights = self.trainingFunction(data,
                                                       self.biases,
                                                       self.weights,
-                                                      self.activationFun)
-    self.testWeights = self.weights
-    # self.testWeights = self.weights / self.dropout
+                                                      self.activationFun,
+                                                      self.dropout)
+    self.testWeights = self.weights / self.dropout
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible
@@ -100,7 +100,7 @@ Defaults the mini batch size 1, so normal learning
 # optimize the code but also make it easier to change them
 # rather than have a function  that you pass in for every batch
 # if nice and easy refactoring can be seen then you can do that
-def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10):
+def contrastiveDivergence(data, biases, weights, activationFun, dropout, miniBatchSize=10):
   N = len(data)
 
   epochs = N / miniBatchSize
@@ -140,7 +140,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
 
     weightsDiff, visibleBiasDiff, hiddenBiasDiff =\
             modelAndDataSampleDiffs(batchData, biases, weights,
-            activationFun)
+            activationFun, dropout, cdSteps)
     # Update the weights
     # data - model
     # Positive phase - negative
@@ -171,7 +171,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
   return biases, weights
 
 def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
-                            dropout = 0.2, cdSteps=1):
+                            dropout, cdSteps):
   # Reconstruct the hidden weigs from the data
   hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun,
                        binary=True)
