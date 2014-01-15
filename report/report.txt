@@ -390,3 +390,19 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
 # Conclusion
 
+
+
+---
+
+To generate the nice weights that have the twos in
+
+you have to do this:
+
+set the momentum to 0
+
+set the epsilon = 0.0001 and the
+minibatch = 1
+
+and for very proeminent 2 makes the bias to be an integer
+
+Just checkout the branch: goodnicew
