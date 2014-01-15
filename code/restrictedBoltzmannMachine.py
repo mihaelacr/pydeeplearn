@@ -16,9 +16,10 @@ EXPENSIVE_CHECKS_ON = False
 """
 class RBM(object):
 
-  def __init__(self, nrVisible, nrHidden, trainingFunction, activationFun=sigmoid):
+  def __init__(self, nrVisible, nrHidden, trainingFunction, dropout,
+              activationFun=sigmoid):
     # dropout = 1 means no dropout
-    self.dropout = 0.8
+    self.dropout = dropout
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
     self.trainingFunction = trainingFunction
@@ -152,9 +153,9 @@ def contrastiveDivergence(data, biases, weights, activationFun, dropout, miniBat
     deltaVisible = batchLearningRate * visibleBiasDiff
     deltaHidden  = batchLearningRate * hiddenBiasDiff
 
-    deltaWeights = momentum * oldDeltaWeights + deltaWeights
-    deltaVisible = momentum * oldDeltaVisible + deltaVisible
-    deltaWeights = momentum * oldDeltaHidden + deltaHidden
+    deltaWeights += momentum * oldDeltaWeights
+    deltaVisible += momentum * oldDeltaVisible
+    deltaHidden += momentum * oldDeltaHidden
 
     oldDeltaWeights = deltaWeights
     oldDeltaVisible = deltaVisible

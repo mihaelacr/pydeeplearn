@@ -40,6 +40,7 @@ class DBN(object):
     self.activationFunctions = activationFunctions
     self.initialized = False
     self.dropout = 0.5
+    self.rbmDropout = 0.8
 
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
@@ -61,7 +62,9 @@ class DBN(object):
     currentData = data
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                    rbm.contrastiveDivergence, self.activationFunctions[i].value)
+                    rbm.contrastiveDivergence,
+                    self.rbmDropout,
+                    self.activationFunctions[i].value)
       net.train(currentData)
       self.weights += [net.weights / self.dropout]
       self.biases += [net.biases[1] / self.dropout]

@@ -57,7 +57,8 @@ def rbmMain():
     # presented to the network
     nrVisible = len(trainingScaledVectors[0])
     nrHidden = 500
-    net = rbm.RBM(nrVisible, nrHidden, rbm.contrastiveDivergence)
+    # use 1 dropout to test the rbm for now
+    net = rbm.RBM(nrVisible, nrHidden, rbm.contrastiveDivergence, 1)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
   else:
