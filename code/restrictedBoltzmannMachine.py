@@ -148,7 +148,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, dropout,
     # Positive phase - negative
     # Weight decay factor
     deltaWeights = (batchLearningRate * weightsDiff
-                    - epsilon * weightDecay * decayFactor *  weights)
+                    - epsilon * weightDecay * decayFactor * weights)
 
     deltaVisible = batchLearningRate * visibleBiasDiff
     deltaHidden  = batchLearningRate * hiddenBiasDiff

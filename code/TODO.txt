@@ -17,19 +17,18 @@ TODO:
 
   implement and perform cross validation
 
-  implement dropouts for rbms
-
   actually urn the MNIST with pca and then train
   fix the mnist memory problem when you have too many things
-
-  learning rate for dbn should be 0.1
 
   think of implementing early stopping for the net
 
   especially important: implement chanign on the learning rate by monitoring the error
   I think there is something like this in the guide
 
-  implement the l2 norm update for dropout as suggested
+  implement the l2 norm update for dropout as suggested: this will probably make
+    things a lot slower and adds a hyper paramter (to be left towards the end, after crossvalidation is implemented)
+
+
 
 runnign experiments:
   edge05 with 20% fixed but only with 10.000 to see that stuff is working
