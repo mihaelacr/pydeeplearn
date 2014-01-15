@@ -12,7 +12,7 @@ Arguments:
 
 Returns:
 """
-def read(startExample, count, digits = None, bTrain=True, path="."):
+def read(startExample, count, digits=None, bTrain=True, path="."):
   if digits == None:
     digits = range(0, 10)
 
