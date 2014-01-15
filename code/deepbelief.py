@@ -115,7 +115,8 @@ class DBN(object):
 
         # this is a list of layer activities
         layerValues = forwardPassDropout(self.weights, self.biases,
-                                        self.activationFunctions, batchData)
+                                        self.activationFunctions, batchData,
+                                        self.dropout)
         finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
                                               layerValues[-1])
 
@@ -198,7 +199,7 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces):
     Arguments:
       dataInstaces: The instances to be run trough the network.
     """
-def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
+def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropout):
   # dropout of 20% on the visible units
   visibleOn = sample(0.8, dataInstaces.shape)
   thinnedValues = dataInstaces * visibleOn
@@ -219,7 +220,7 @@ def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropo
     # of this exact same reason and of ow we backpropagate)
     if stage != len(weights) - 1:
 
-      on = sample(1 - dropout, currentLayerValues.shape)
+      on = sample(dropout, currentLayerValues.shape)
       thinnedValues = on * currentLayerValues
       layerValues += [thinnedValues]
     else:
