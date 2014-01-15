@@ -17,7 +17,8 @@ EXPENSIVE_CHECKS_ON = True
 class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, trainingFunction, activationFun=sigmoid):
-    self.dropout = 0.2
+    # dropout = 1 means no dropout
+    self.dropout = 0.8
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
     self.trainingFunction = trainingFunction
@@ -39,7 +40,7 @@ class RBM(object):
                                                       self.weights,
                                                       self.activationFun,
                                                       self.dropout)
-    self.testWeights = self.weights / self.dropout
+    self.testWeights = self.weights * self.dropout
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible
@@ -178,7 +179,7 @@ def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
 
   # Chose the units to be active at this point
   # different sets for each element in the mini batches
-  on = sample(1 - dropout, hidden.shape)
+  on = sample(dropout, hidden.shape)
   dropoutHidden = on * hidden
   hiddenReconstruction = dropoutHidden
 
