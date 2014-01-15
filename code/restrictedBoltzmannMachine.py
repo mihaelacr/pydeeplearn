@@ -8,7 +8,7 @@ TODO: monitor overfitting
 import numpy as np
 from common import *
 
-EXPENSIVE_CHECKS_ON = True
+EXPENSIVE_CHECKS_ON = False
 
 # TODO: different learning rates for weights and biases
 """
