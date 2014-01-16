@@ -176,8 +176,6 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   return deDw, deDbias
 
 """ Does not do dropout. Used for classification. """
-""" TODO: if yo uactually only use it for *only* classification you do not
- need to rememeber all the layer values, but just the end ones"""
 def forwardPass(weights, biases, activationFunctions, dataInstaces):
   currentLayerValues = dataInstaces
   layerValues = [currentLayerValues]
@@ -203,7 +201,8 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces):
     Arguments:
       dataInstaces: The instances to be run trough the network.
     """
-def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropout):
+def forwardPassDropout(weights, biases, activationFunctions,
+                       dataInstaces, dropout):
   # dropout of 20% on the visible units
   visibleOn = sample(0.8, dataInstaces.shape)
   thinnedValues = dataInstaces * visibleOn
