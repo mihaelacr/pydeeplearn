@@ -130,7 +130,7 @@ def deepbeliefMain():
     # net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
     # net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
 
-    net = db.DBN(5, [784, 500, 500, 500, 10],
+    net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                  [Sigmoid, Sigmoid, Sigmoid, Softmax],
                  0.5, 0.8)
     # TODO: think about what the network should do for 2 layers
