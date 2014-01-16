@@ -2,6 +2,8 @@ TODO:
 
   do some experiments with the momentum changing more to 0.9 when you get closer
 
+  implment NeRelu
+
    try to increase the momentum in the RBM class
 
    rettry tanh at some point

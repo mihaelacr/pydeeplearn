@@ -36,6 +36,7 @@ parser.add_argument('netFile', help="file where the serialized network should be
 # Get the arguments of the program
 args = parser.parse_args()
 print args.netFile
+print args.save
 
 def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,
@@ -66,6 +67,7 @@ def rbmMain():
     f = open(args.netFile, "rb")
     t = pickle.load(f)
     net = pickle.load(f)
+    f.close()
 
   # Reconstruct a training image and see that it actually looks like a digit
   test = testingScaledVectors[0,:]

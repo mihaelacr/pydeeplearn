@@ -242,3 +242,8 @@ composed of a base vector, with 1 for the correct class and 0 for all the rest.
 """
 def derivativesCrossEntropyError(expected, actual):
   return - expected * (1.0 / actual)
+
+# Only works with binary units
+def wakeSleep():
+  pass
+  # need to alternate between wake and sleep pahses
