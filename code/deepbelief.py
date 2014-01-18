@@ -65,6 +65,8 @@ class DBN(object):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     rbm.contrastiveDivergence,
                     self.rbmDropout,
+                    # use visible dropout of 0.8 for rbms
+                    0.8,
                     self.activationFunctions[i].value)
       net.train(currentData)
       self.weights += [net.weights / self.dropout]

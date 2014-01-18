@@ -17,9 +17,10 @@ EXPENSIVE_CHECKS_ON = False
 class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, trainingFunction, dropout,
-              activationFun=sigmoid):
+                visibleDropout, activationFun=sigmoid):
     # dropout = 1 means no dropout, keep all the weights
     self.dropout = dropout
+    self.visibleDropout = visibleDropout
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
     self.trainingFunction = trainingFunction
@@ -40,7 +41,8 @@ class RBM(object):
                                                       self.biases,
                                                       self.weights,
                                                       self.activationFun,
-                                                      self.dropout)
+                                                      self.dropout,
+                                                      self.visibleDropout)
     self.testWeights = self.weights * self.dropout
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
@@ -103,9 +105,14 @@ Defaults the mini batch size 1, so normal learning
 # rather than have a function  that you pass in for every batch
 # if nice and easy refactoring can be seen then you can do that
 def contrastiveDivergence(data, biases, weights, activationFun, dropout,
-                          miniBatchSize=10):
+                          visibleDropout, miniBatchSize=10):
   N = len(data)
   epochs = N / miniBatchSize
+
+  # sample the probabily distributions allow you to chose from the
+  # visible units for dropout
+  on = sample(visibleDropout, data.shape)
+  data = data * on
 
   epsilon = 0.01
   decayFactor = 0.0002
