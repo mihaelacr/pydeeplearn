@@ -10,6 +10,7 @@
 \hypersetup{linkcolor=black}
 \setcounter{tocdepth}{3}
 
+\raggedbottom
 % Margins
 % \addtolength{\oddsidemargin}{-.875in}
 % \addtolength{\evensidemargin}{-.875in}
@@ -17,9 +18,9 @@
 
 % \addtolength{\topmargin}{-.875in}
 % \addtolength{\textheight}{1.75in}
-\usepackage[hmargin=2cm,vmargin=2.5cm]{geometry}
+% \usepackage[hmargin=2cm,vmargin=2.5cm,hmarginratio=1:1]{geometry}
+\usepackage[hmargin=2cm,vmargin=2.5cm,hmarginratio=1:1]{geometry}
 \geometry{textwidth=390pt}
-\geometry{bindingoffset=1.5cm}
 
 % custom section
 \usepackage{titlesec}
@@ -222,13 +223,13 @@
   Only do it if you have time.
   Just mention the convergence paper that says that it is better using CD.
 
-\subsubsection{ Sparse hidden units}
+\subsubsection{Sparse hidden units}
 
   It has been shown that sparse hidden units can improve learning in case of binary hidden units [quote hinton]. In [Improving Neural Networks with Dropout] it has been shown that dropout can also encourage sparse units. Since dropout was used in our implementation of restricted botlzmann machines and since binary features are not used in the emotion recognition tasks in this paper, it is not in the implementation
 
   write how to force sparse lhidden features (it is a paragraph only)
 
-\subsubsection{ Other tricks: they should not be here, they are general, so move them up}
+\subsubsection{Other tricks: they should not be here, they are general, so move them up}
 
   Weight decay: same as gaussian something, discuss that (maybe picture)
   Momentum
@@ -236,7 +237,7 @@
   Dropout
 
 
-\subsubsection{ Non binary units}
+\subsubsection{Non binary units}
   Say  that you want to capture more intofrmation from the image that you cannot get by simply normalizing the pixel values and that you want to capture similarities between pictures.
 
   Binomial units can be used to model noisy integer values (Teh \& Hinton 2001) add to bib.
@@ -392,6 +393,7 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
 \subsection{Q learning}
 
+
 \section{Experiments}
 
 \subsection{MNIST digits}
@@ -444,6 +446,7 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
 \subsubsection{ Testing}
 
+
 \section{Conclusion}
 
 
@@ -461,5 +464,6 @@ and for very proeminent 2 makes the bias to be an integer
 
 Just checkout the branch: goodnicew
 
+\bibliography{library}
 
 \end{document}
