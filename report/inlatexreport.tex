@@ -1,0 +1,461 @@
+\documentclass[11pt, fleqn, twoside]{article}
+
+\title{Deep learning}
+\author{Mihaela Rosca}
+\date{January 2014}
+
+% Set content depth
+% \usepackage[unicode=true]{hyperref}
+\usepackage[unicode=true,hidelinks]{hyperref}
+\hypersetup{linkcolor=black}
+\setcounter{tocdepth}{3}
+
+% Margins
+\addtolength{\oddsidemargin}{-.875in}
+\addtolength{\evensidemargin}{-.875in}
+\addtolength{\textwidth}{1.75in}
+
+\addtolength{\topmargin}{-.875in}
+\addtolength{\textheight}{1.75in}
+
+% custom section
+\usepackage{titlesec}
+\usepackage{tipa}
+\titleformat{\section}
+{\normalfont\Large\bfseries}
+{\thesection\hskip 10pt\textpipe\hskip 10pt}
+{0pt}
+{}
+
+%%----------------------------------
+
+% begin the document
+\begin{document}
+\maketitle
+\tableofcontents
+\listoffigures
+
+\pagenumbering{arabic}
+\section{Introduction}
+  The aim of the project.
+
+\section{Background}
+
+\subsection{History of machine learning and progresses}
+ Properly define a machine learning model?
+
+\subsection{Artificial neural networks}
+
+  Artifical neural networks (ANNs) are machine learning models biologically inspired from the animal brain in the hope that they can be used to reverse engineer how animals learn to perfrom certain tasks.
+
+  Even though ANNs are inspired by biological neural networks, they are far from being biologically realistic, as the building block of an ANN is an extremely simplifcated version of the neuron.
+
+  Despite this drawback, artificial neural nets have proven to be succesful in a variety of applications, such as image and speech recognition.
+
+  In the following, when we refer to a neural network we will be meaning artificial neural network (ANN).
+
+
+\subsubsection {Definition and structure}
+
+ Cite some semnficant results and their decay
+ Quote Hinton in the reasons that neural nets were abandoned (lack of CPU, too much backprop, not enough labeled data)
+
+ Why deep nets did not work before. Talk about how with the pre trained nets you have the guarantte to get better results
+  than you got beore
+
+ neural nets have thirved since Hinton has (quote here) has shown that restricted boltzmann machines can be combined together and be used both as generative and discriminative models.
+
+\subsubsection{Activation functions}
+
+\subsubsection{Sigmoid}
+
+\subsubsection{Tanh}
+
+\subsection{Learning in neural networks}
+
+\subsection{Backpropagation and gradient descent methods}
+  introduction bla bla
+
+  quote this [@LeCun1998]
+
+\subsection{Error function}
+  Talk about it's importance in backprop and mention MSE and Gaussian assumption
+
+\subsubsection {Computing the error derivative with respect to the weights}
+  TODO: put the derivation in here
+  Add the derivation with the  bias as well
+
+\subsubsection {Using the error derivative}
+
+  Once we know how to compute the error derivatives with respect to the weights of the network, multiple issues arise:
+
+\begin{itemize}
+    \item When should we update the weights
+    \item By how much we should update the weights
+\end{itemize}
+
+\subsubsection{ Gradient descent}
+
+\subsubsection{ Types of learning}
+
+\begin{itemize}
+  \item online
+     Update the weights after each traning case. This means that the error function changes for each update, and hence the weight updates do not necessarily agree, and one training case can condratict another traning case
+  \item full-batch
+    Use the entire data set to compute the error function (which is them sum of all the errors on the individual cases) and then do the weight updates by using the gradient with respect to this error function (the gradient with respect to the weights will be the sum of the individiual error derivatives for each training case). The issue with this is that when we start off, we have very bad weights, and it will take significant amount of time until we improve the weights. A better approach is to use some traning case at the begining to asjust the weights to be sensitive, and then continue updating the weights. This leads to mini-batch learning.
+  \item mini-batch
+    Combine the above two approaches: update after a small sample of traning cases. This will make the weights oscilate less then online learning and will solve the issues of batch learning as well.
+\end{itemize}
+
+\subsubsection{ Parameters for backpropagation}
+
+  * Learning rate
+      During learning, monitor the error on a validation set.
+      If the error is steadily decreasing, then increase the learning rate.
+      If the error is increasing, then decrease the learning rate.
+
+      Towards the end of learning, decrease the learning rate. You can do that once the
+      error stops decreasing steadily. This helps removing the fluctuations in the values of the weights between mini batches, and helps towards keeping a steady set of weights for the final ones.
+
+  * momentum
+    Nesterov method for momentum? Think about it and implement it
+
+
+\subsubsection{Dropout}
+
+  What is dropout? Using only
+  Quote this:
+  http://www.cs.toronto.edu/~hinton/absps/georgerectified.pdf
+  Note that in the dropout section it mentions to other papers that showed it is efficient so
+  just limit yourself to quoting them and describe droput.
+
+  Dropout and how it has been shown it improves error rates in  various tasks, making neural networks 'beat' other machine learning tecqniques (See
+  Srivastava2013)
+
+  It has been shown that it works best with contraints on each incoming weights L2 (L2 penalty on each connection)
+
+  It has been shown that for various tasks averaging different machine learning models tends to give better results than just using one model (quote here, winners of netflix competition). Dropout can be seen as a form of model averaging:
+  we define a new neural network for each of the data instances in the traning set, by omiting certain features in each of the hidden layers.
+  It can be shown [quote] that for a network with one hidden layer and a softmax output unit dropout is equivalent to averaging the $2^H$ models that can be obtained by probabilisticly excluding hidden units by computing the geometric mean of the outputs of the softmax units.
+
+  Dropout also has a biological explanation and can be viewed from an evolutionary perspectiv: in order for an individual to be fit, its genes have to be well coadapted together. However, during reproduction half of the genes of each individual get lost (this is a coarse model of what is actually happening) and the offspring does not benefit of the coadapted genes. For a long time, it was not understood why can be a desired outcome in the evolution of a species. Recent papers [A mixability theory for the role of sex in evolution
+  and Sex, mixability, and modularity by Papadimitriu and Livnat] have shown that in the long term this process leads to individuals that are more adapted to change, as genes learn to not depend on eachother and form smaller coadaptations that can perform different vital functions.
+
+  Dropout has also been shown to achieve sparse hidden units. (see the master thesis )
+
+  As dropout is a techinque used to mainly avoid overfititng, it's effects can be seen especially on deep networks.
+
+  Biblo: https://www.youtube.com/watch?v=DleXA5ADG78
+
+
+\subsubsection{ Issues with backpropagation}
+  Write the wiki things
+
+\subsubsection{ Efficiency of backprop}
+  Quote bishop 5.3.3
+
+\subsection{Overfitting: add this to what I used?}
+
+  The aim of a neural network is to learn the regularities from the mapping to input to output. (TODO: nice picture here ). Due to the limited amount of data presented to the network, there will also be accidental regularities found in the traning cases. Those accidental regularities result in **sampling error**, potientally making the network not generalize well to unseen testing data. It is impossible for a network to distinguish between real regularities that we aim to learn and the accidental regularities in the data it sees. This is an important issue that arises when using machine learning technquie, and it is generally referred to as overfitting.
+
+  TODO: overfitting example!!! (Hinton gives the poligon one, I should give a different one)
+
+  How to stop overfitting:
+
+  * Cross validation
+  * Weight decay
+  * Weight sharing (maybe do not mention this)
+  * Early stopping
+  * Model averaging
+  * Dropout (mention this)
+  * Generative pre traning (discussed later in the report)
+
+
+\section{Restricted Boltzman machines}
+
+
+\subsubsection{ Hopfield networks (MAYBE NOT DO THIS? it is kind of unrelated)}
+  Add nice pics.
+
+  Do not talk much about them
+
+  * Energy
+  * Training
+  * Spirous minima
+  * Elizabeth Gardner's traning for Hopfield using perceptron trainig (just mention and quote it)
+
+
+\subsubsection{Boltzmann machines}
+  Stochastic hopfield nets
+  Talk about the issues with their training algorithms
+
+
+\subsubsection {Restricted Boltzmann machines}
+  Idea.
+  Why they are easier to train and understand than BM
+  Generative models
+  Free energy
+
+  Important, hidden units are conditionally independent due to the nature of the graph
+
+  Talk about the reconstruction error and how it is not a good measure for the log likelihood
+
+  Mention deep botzmann machines as in the Hinton paper. Not implemented here.
+
+\subsubsection {Training an RBM}
+
+% these should be subparts of the above
+\subsubsection {Neals algorithm (could be presented in BM learning)}
+    does not work well for online learning
+
+\subsubsection{ Contrastive divergence}
+  Rough approximation of likelihood, does not use one term from KL divergence masure,
+  but works well in practice (and fast enough)
+
+
+\subsubsection{ PCD: only mention brielfy as other tipe of traning.}
+  Do not implement it as it was shown to not be as good.
+  Only do it if you have time.
+  Just mention the convergence paper that says that it is better using CD.
+
+\subsubsection{ Sparse hidden units}
+
+  It has been shown that sparse hidden units can improve learning in case of binary hidden units [quote hinton]. In [Improving Neural Networks with Dropout] it has been shown that dropout can also encourage sparse units. Since dropout was used in our implementation of restricted botlzmann machines and since binary features are not used in the emotion recognition tasks in this paper, it is not in the implementation
+
+  write how to force sparse lhidden features (it is a paragraph only)
+
+\subsubsection{ Other tricks: they should not be here, they are general, so move them up}
+
+  Weight decay: same as gaussian something, discuss that (maybe picture)
+  Momentum
+  Dumped mean field
+  Dropout
+
+
+\subsubsection{ Non binary units}
+  Say  that you want to capture more intofrmation from the image that you cannot get by simply normalizing the pixel values and that you want to capture similarities between pictures.
+
+  Binomial units can be used to model noisy integer values (Teh \& Hinton 2001) add to bib.
+  Gaussian units and why they are harder to train
+
+  Rectified linear units: max(0, x) invalidate the probabilistic assumptions
+  http://www.cs.toronto.edu/~hinton/absps/georgerectified.pdf
+
+  Gaussian ReLu
+  $f(x) = max(0, x + N(0, \sigma(x)))$
+
+  As shown by Hinton they have been proved to be better.
+  Mention weight sharing here.
+
+\section{ Deep belief networks}
+
+\subsubsection{ History: Sigmoid belief nets}
+  Graphical models, hard to learn them etc
+
+\subsubsection{Pre training}
+  Less overfitting because the input vectors contain a lot more information than the data.
+
+  Using unsupervised learning for supervised learning
+  This is important and sketch the importance of learned features
+
+  Mention auto encoders and deep auto encoders vs PCA
+
+  Add a image with the stuff and the images and the labels that Hinton had.
+
+
+\subsubsection{ Sigmoid belief nets from stacking RBM}
+  Discovered by Geoff Hinton in 2006, deep belief networks are graphical models which use the principle of greedy layer wise traning, in which each of the layers is trained separetely, after which the weights of the entire network are fine tuned either to maximize the log likelihood of the generative model, or to minimize the error with respect to a classification criteria.
+
+  It works because backpropagation does not need to learn new features of the data.
+
+
+\subsubsection {Theoretical justification of the greedy learning}
+  http://deeplearning.net/tutorial/DBN.html
+
+  They are graphical models
+  Greedy traning
+  Only pre trained RBM
+
+  Remember to mention the transpose trick that Hinton uses when training the nets
+
+  Talk of how they are deep belief nets and they can be used for better generative models and also discriminative ones.
+
+
+\subsubsection {Softmax groups}
+
+\paragraph{Justification}
+
+  When we use a neural network for classification, we would like that the output of the network represents a probability distribution of the labels.
+
+
+  TODO: picture
+
+  This is not easy to achieve with a logit neuron, because ...
+
+  The simple and elegant way to solve the above problems is by using a softmax group. A softmax group can be seen as a continous version of the maximum function.
+
+  TODO: graph of softmax function and a nice picture of the
+
+  In order to ensure that the sum of the output of the unit is 1 (required in order for it to represent a probablity distribution), the output of a unit does not only depend soley on it's but also on the input of the other elements of the unit.
+  In the following, the input of one of the units (also called \'the logit\') is denoted by $x_i$ and the output of the unit is denoted by $y_i$
+
+\begin{center} $y_i = \frac{e^{x_i}}{\sum\limits_{j=1}^n {e^{x_j}}}$ \end{center}
+
+  The derivative of the softmax function is very similar to the one for the logistic function:
+
+  \begin{center} $\frac{d {y_i}}{d {x_i}} = {y_i} (1-{y_i})$ \end{center}
+
+  When using a softmax unit as the final layer in a neural network used for classification, the mean square error is not a very good measure.
+  In order to ilustrate this we will look at an example.
+    Why RMSE is not good.
+    -Example-
+
+  TODO: either say consider the function in an online case or say you consider one training case, also move this above and explain
+  it somehoe differently since this is about why RMSE and logistic is not good.
+
+  Consider the case when the desired output of a logistic neuron is 1 but when the output it produces is 0.000001. The neuron is very far off from the actual result, but there is almost no gradient to allow the logistic unit to change in the use of backpropagation.
+
+  As before (TODO, from the numbered equation above), let $E$ be the error we get by using the mean square error measure.
+  We now compute the error derivative on the last layer of the network:
+
+  \begin{center}$ \frac{d E} {d {w_{i,j}}} = \frac{d E} {d {z_j}} \frac{d {z_j}} {d w_{i,j}} = \frac{d E} {d {z_j}} {y_i} $\end{center}
+  Using the logistic function derivative TODO insert number here
+
+  \begin{center}$ \frac{d E} {d z_j} = \frac{d E} {d {y_j}} \frac{d {y_j}} {d z_j} = \frac{d E} {d {y_j}} {y_j} (1 - {y_j}) $\end{center}
+
+  Since $E$ is the mean square error
+    \begin{center}$ \frac{d E}{d {y_j}}= -({t_j} - {y_j})$\end{center}
+
+    \begin{center}$ \frac{d E} {d {z_j}} = -({t_j} - {y_j}) {y_j} (1 - {y_j})$\end{center}
+
+    When $t_j = 1$ $y_j = 0.000001$ (as per our example), then
+    \begin{center}$ \frac{d E} {d {z_j}} = - (1 -  0.000001) \cdot  0.000001  \cdot (1 -  0.000001) = 9.99998e-7 $\end{center}
+
+    TODO: clarify next sentence.
+    Hence the change in the weight derivative will be very small.
+
+
+
+  The best error function to use for a softmax unit is the cross entropy cost function:
+
+\begin{center} $C=- \sum{t_j \log{y_j}}$ where $t_j$ is the target value of the unit. \end{center}
+
+  This is equivalent to maximizing the log probability of the right answer, since for the labeled data $t_j$ will be 1 only for the class corresponding to the training instance (we assume distinct classes).
+
+  A softmax function has multiple properties which make it suitable for it's use in machine learning:
+
+\begin{itemize}
+  \item A softmax unit can be used to model the posterior of a probaility distribution, and can be used for discrimination
+  : classifying using softmax nodes
+
+  \item It is suitable for representing probablity distribution: it's output is between (0, 1)
+
+  \item Any discrete probability distribution can be presented using a softmax unit.
+
+  \item Has the property that it has a very big gradient when the correct answer is 1 and the network outputs a very small value (close to lower bound 0), and hence it is very suitable for gradient descent methods such as backpropagation, as it has a high impact on the weight changes.
+  This solves the problems which arise when using the mean square error measure.
+\end{itemize}
+
+  Taking the example before with the cross entropy error function, we see how the gradient will now change substantially.
+
+  Let $t_i = 1$ (hence $t_j = 1 \forall j \ne i$ ) and $y_i = 0.000001$
+
+\begin{center} $C=- \sum{t_j \log{y_j}}$ \end{center}
+
+\begin{center} $\frac {dC}{d {y_j}} = - {t_j} \frac {1} {y_j}$ \end{center}
+
+Using the chain rule:
+\begin{center} $\frac {dC}{d {z_i}} = \sum{ \frac{dC} {d{y_j}} \frac{d{y_j}}{d{z_i}} } $ \end{center}
+
+Note that we require the sum since the output of the neuron in the softmax unit depends on the activities of all other neurons in the unit (this is not required for the logistic neuron)
+\begin{center} $\frac {dC}{d {z_i}} = \sum{- {t_j} \frac {1} {y_j} \frac{d{y_j}}{d{z_i}} = - \sum{ {t_j} \frac {1} {y_j}  {y_j} (1 - {y_j})} } $\end{center}
+\begin{center} $\frac {dC}{d {z_i}} = - \sum{{t_j} (1 - {y_j})} = {t_i} (1 - {y_i}) = {t_i} - {y_i}$ \end{center}
+
+
+  Due to the above, in all the classification models discuss further, we will use a softmax unit as the top layer of the neural network.
+
+\subsection Classification using deep belief nets
+  Fine tuning with backpropagation
+
+\subsection Better generative models using deep belief nets
+  Wake sleep algorithm
+
+\subsection Comparison between deep belief nets and convolutional nets
+
+
+
+\section{Reinforcement learning}
+
+\subsection{Q learning}
+
+\section{Experiments}
+
+\subsection{MNIST digits}
+  Quote other MNIST digits results, with different methods
+
+  visualise the weights
+
+  do pca on the data. On a paper [Sparse deep belief net model for visual area V2]
+  it is shown that you can even lower it to 69 dimensions.
+
+  Try this out and see how you change the layers then.
+  Hinton came up with the 500 500 2000 10 approach.
+  I should try andrew's one as well and do the pCA
+
+  Say how you can make deep belief nets learn even with a permutation of all pixels, but this would not work for convolutional neural nets, because they have hard wired information.
+
+  Make a nice table with comparisons between
+
+\section{Implementation}
+
+\begin{itemize}
+  \item highly used in the scientific comunity
+  \item numpy: a good library fro array operations
+  \item increased coding speed
+\end{itemize}
+
+\subsubsection{Setup}
+
+  Most experiments have been done on a machine with 12GB ram and an intel i5 processor or on the lab machines at imperial.
+
+\begin{itemize}
+  \item python version 2.7
+  \item numpy
+  \item pypy if I manage to get it to work now (in case you do, talk about the issues and so on encountered)
+  \item does not really work with numpy so discuss this
+  \item matrix operations (exploit and give some examples (both from RBM and backprop))
+  \item profiling code
+\end{itemize}
+
+\subsubsection{Speed concerns}
+
+\section{ Project management}
+\begin{itemize}
+  \item version control
+  \item daily diaries
+  \item add nice chart with progress
+\end{itemize}
+
+\section{System design}
+
+\subsubsection{ Testing}
+
+\section{Conclusion}
+
+
+
+---
+
+To generate the nice weights that have the twos in
+
+you have to do this:
+
+set the epsilon = 0.0001 and the
+minibatch = 1
+
+and for very proeminent 2 makes the bias to be an integer
+
+Just checkout the branch: goodnicew
+
+
+\end{document}
