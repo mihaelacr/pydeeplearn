@@ -4,6 +4,11 @@
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
+
+
+\usepackage{titlesec}
+\usepackage{tipa}
+
 % use microtype if available
 \IfFileExists{microtype.sty}{\usepackage{microtype}}{}
 % use upquote if available, for straight quotes in verbatim environments
@@ -119,6 +124,15 @@ $endif$
 $for(header-includes)$
 $header-includes$
 $endfor$
+
+
+% Mihaela addition
+% custom section
+\titleformat{\section}
+{\normalfont\Large\bfseries}
+{\thesection\hskip 10pt\textpipe\hskip 10pt}
+{0pt}
+{}
 
 $if(title)$
 \title{$title$}

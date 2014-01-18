@@ -344,7 +344,6 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
 ## Q learning
 
-
 # Experiments
 
 ## MNIST digits
@@ -366,13 +365,14 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 # Implementation
 
 ## Why python
+
   * highly used in the scientific comunity
   * numpy: a good library fro array operations
   * increased coding speed
 
 ## Setup
 
-  Most experiments have been done on a machine with 12GB ram and an intel i5 processor.
+  Most experiments have been done on a machine with 12GB ram and an intel i5 processor or on the lab machines at imperial.
 
   * python version 2.7
   * numpy
@@ -380,6 +380,8 @@ Note that we require the sum since the output of the neuron in the softmax unit 
     does not really work with numpy so discuss this
   * matrix operations (exploit and give some examples (both from RBM and backprop))
   * profiling code
+
+### Speed concerns
 
 # Project management
   * version control

@@ -11,12 +11,15 @@
 \setcounter{tocdepth}{3}
 
 % Margins
-\addtolength{\oddsidemargin}{-.875in}
-\addtolength{\evensidemargin}{-.875in}
-\addtolength{\textwidth}{1.75in}
+% \addtolength{\oddsidemargin}{-.875in}
+% \addtolength{\evensidemargin}{-.875in}
+% \addtolength{\textwidth}{1.75in}
 
-\addtolength{\topmargin}{-.875in}
-\addtolength{\textheight}{1.75in}
+% \addtolength{\topmargin}{-.875in}
+% \addtolength{\textheight}{1.75in}
+\usepackage[hmargin=2cm,vmargin=2.5cm]{geometry}
+\geometry{textwidth=390pt}
+\geometry{bindingoffset=1.5cm}
 
 % custom section
 \usepackage{titlesec}
@@ -26,7 +29,8 @@
 {\thesection\hskip 10pt\textpipe\hskip 10pt}
 {0pt}
 {}
-
+% Continue on a new page after a section has finished
+\newcommand{\sectionbreak}{\clearpage}
 %%----------------------------------
 
 % begin the document
