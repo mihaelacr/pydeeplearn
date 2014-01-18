@@ -38,6 +38,7 @@
 ### Tanh
 
 ## Learning in neural networks
+
 ## Backpropagation and gradient descent methods
   introduction bla bla
 
@@ -51,7 +52,9 @@
   Add the derivation with the  bias as well
 
 ### Using the error derivative
+
   Once we know how to compute the error derivatives with respect to the weights of the network, multiple issues arise:
+
     * When should we update the weights
     * By how much we should update the weights
 
@@ -66,6 +69,7 @@
     Combine the above two approaches: update after a small sample of traning cases. This will make the weights oscilate less then online learning and will solve the issues of batch learning as well.
 
 #### Parameters for backpropagation
+
   * Learning rate
       During learning, monitor the error on a validation set.
       If the error is steadily decreasing, then increase the learning rate.
@@ -104,7 +108,6 @@
 
   Biblo: https://www.youtube.com/watch?v=DleXA5ADG78
 
-  TODO: quote bishop here as well
 
 ### Issues with backpropagation
   Write the wiki things
@@ -117,15 +120,15 @@
 
   TODO: overfitting example!!! (Hinton gives the poligon one, I should give a different one)
 
-
   How to stop overfitting:
-    * Cross validation
-    * Weight decay
-    * Weight sharing (maybe do not mention this)
-    * Early stopping
-    * Model averaging
-    * Dropout (mention this)
-    * Generative pre traning (discussed later in the report)
+
+  * Cross validation
+  * Weight decay
+  * Weight sharing (maybe do not mention this)
+  * Early stopping
+  * Model averaging
+  * Dropout (mention this)
+  * Generative pre traning (discussed later in the report)
 
 
 # Restricted Boltzman machines
@@ -341,7 +344,6 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
 ## Q learning
 
-### Results (quote zhen project)
 
 # Experiments
 
