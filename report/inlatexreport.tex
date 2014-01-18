@@ -43,6 +43,12 @@
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}
 
+
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
 % Bibliogrpahy style
 \usepackage[style=ieee]{biblatex}
 \bibliography{inlatexreport}
