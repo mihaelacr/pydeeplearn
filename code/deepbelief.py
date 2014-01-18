@@ -66,6 +66,7 @@ class DBN(object):
                     rbm.contrastiveDivergence,
                     self.rbmDropout,
                     # use visible dropout of 0.8 for rbms
+                    # TODO: make this another parameter
                     0.8,
                     self.activationFunctions[i].value)
       net.train(currentData)
