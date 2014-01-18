@@ -35,6 +35,14 @@
 % Continue on a new page after a section has finished
 \newcommand{\sectionbreak}{\clearpage}
 
+% Urls
+\urlstyle{same}  % don't use monospace font for urls
+
+% Paragraph
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}
+
 % Bibliogrpahy style
 \usepackage[style=ieee]{biblatex}
 \bibliography{inlatexreport}
@@ -70,7 +78,7 @@
 
   In the following, when we refer to a neural network we will be meaning artificial neural network (ANN).
 
-  http://en.wikipedia.org/wiki/Deep_learning#Deep_learning_in_artificial_neural_networks
+ \url{http://en.wikipedia.org/wiki/Deep_learning#Deep_learning_in_artificial_neural_networks}
   about the 'vanishing gradient'
 
 \subsubsection {Definition and structure}
@@ -238,9 +246,9 @@
 
 \subsubsection{Sparse hidden units}
 
-  It has been shown that sparse hidden units can improve learning in case of binary hidden units [quote hinton]. In [Improving Neural Networks with Dropout] it has been shown that dropout can also encourage sparse units. Since dropout was used in our implementation of restricted botlzmann machines and since binary features are not used in the emotion recognition tasks in this paper, it is not in the implementation
+  It has been shown that sparse hidden units can improve learning in case of binary hidden units [quote hinton]. In \cite{Srivastava2013} it has been shown that dropout can also encourage sparse units. Since dropout was used in our implementation of restricted botlzmann machines and since binary features are not used in the emotion recognition tasks in this paper, it is not in the implementation
 
-  write how to force sparse lhidden features (it is a paragraph only)
+  write how to force sparse hidden features (it is a paragraph only)
 
 \subsubsection{Other tricks: they should not be here, they are general, so move them up}
 
