@@ -34,8 +34,12 @@
 {}
 % Continue on a new page after a section has finished
 \newcommand{\sectionbreak}{\clearpage}
-%%----------------------------------
 
+% Bibliogrpahy style
+\usepackage[style=ieee]{biblatex}
+\bibliography{inlatexreport}
+
+%%----------------------------------
 % begin the document
 \begin{document}
 \maketitle
@@ -83,7 +87,7 @@
 \subsection{Backpropagation and gradient descent methods}
   introduction bla bla
 
-  quote this [@LeCun1998]
+  quote this \cite{LeCun1998}
 
 \subsection{Error function}
   Talk about it's importance in backprop and mention MSE and Gaussian assumption
@@ -136,8 +140,7 @@
   Note that in the dropout section it mentions to other papers that showed it is efficient so
   just limit yourself to quoting them and describe droput.
 
-  Dropout and how it has been shown it improves error rates in  various tasks, making neural networks 'beat' other machine learning tecqniques (See
-  Srivastava2013)
+  Dropout and how it has been shown it improves error rates in  various tasks, making neural networks 'beat' other machine learning tecqniques \cite{Srivastava2013}
 
   It has been shown that it works best with contraints on each incoming weights L2 (L2 penalty on each connection)
 
@@ -169,14 +172,15 @@
 
   How to stop overfitting:
 
-  * Cross validation
-  * Weight decay
-  * Weight sharing (maybe do not mention this)
-  * Early stopping
-  * Model averaging
-  * Dropout (mention this)
-  * Generative pre traning (discussed later in the report)
-
+\begin{itemize}
+  \item Cross validation
+  \item Weight decay
+  \item Weight sharing (maybe do not mention this)
+  \item Early stopping
+  \item Model averaging
+  \item Dropout (mention this)
+  \item Generative pre traning (discussed later in the report)
+\end{itemize}
 
 \section{Restricted Boltzman machines}
 
@@ -453,7 +457,6 @@ fdhs
 \section{Conclusion}
 
 
-
 ---
 
 To generate the nice weights that have the twos in
@@ -467,6 +470,8 @@ and for very proeminent 2 makes the bias to be an integer
 
 Just checkout the branch: goodnicew
 
-\bibliography{library}
+
+\newpage{}
+\printbibliography
 
 \end{document}
