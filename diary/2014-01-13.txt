@@ -1,0 +1,8 @@
+Done today:
+  Thought a bit about the reinforcement learning that zheng did and thought how to adapt some of that work to deep belief nets
+
+  got some papers on deep belief nets and reinforcement learning
+
+  implemented dropuots for visible units and for rbms
+
+  came up with an algorithm for reinforcement learning with db

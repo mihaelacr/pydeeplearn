@@ -1,10 +1,12 @@
 TODO:
+
   do some experiments with the momentum changing more to 0.9 when you get closer
-  do CD-5 experiments
+
+  implment NeRelu
 
    try to increase the momentum in the RBM class
 
-
+   rettry tanh at some point
 
   wake sleep for generation: this is important because I can then use
     more unlabelled data for the emotion recognition task
@@ -16,20 +18,20 @@ TODO:
 
   implement and perform cross validation
 
-  implement dropouts for rbms
-
   actually urn the MNIST with pca and then train
   fix the mnist memory problem when you have too many things
-
-  learning rate for dbn should be 0.1
 
   think of implementing early stopping for the net
 
   especially important: implement chanign on the learning rate by monitoring the error
   I think there is something like this in the guide
 
-  implement the l2 norm update for dropout as suggested
+  implement the l2 norm update for dropout as suggested: this will probably make
+    things a lot slower and adds a hyper paramter (to be left towards the end, after crossvalidation is implemented)
+
+
 
 runnign experiments:
-  edge02 with 20% off visible units
-  edge03 with 20% off and change into rbm momentum
+  edge05 with 20% fixed but only with 10.000 to see that stuff is working
+
+  edge02 with rbm dropout

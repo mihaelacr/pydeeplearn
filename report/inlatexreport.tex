@@ -1,74 +1,145 @@
-% Mihaela Rosca
-% Deep learning and other machine learning cool stuff
-% 1 Jan 2014
+\documentclass[11pt, fleqn, twoside]{article}
 
-# Introduction
-  The aim of the project.
+\title{Deep learning, emotion recognition and applications}
+\author{Mihaela Rosca}
+\date{January 2014}
 
-# Background
+% TODO: I need to make clear what my contribution is
 
-## History of machine learning and progresses
- Properly define a machine learning model?
+% Set content depth
+% \usepackage[unicode=true]{hyperref}
+\usepackage[unicode=true,hidelinks]{hyperref}
+\hypersetup{linkcolor=black}
+\setcounter{tocdepth}{3}
 
-## Artificial neural networks
+\raggedbottom
+% Margins
+% \addtolength{\oddsidemargin}{-.875in}
+% \addtolength{\evensidemargin}{-.875in}
+% \addtolength{\textwidth}{1.75in}
 
-  Artifical neural networks (ANNs) are machine learning models biologically inspired from the animal brain in the hope that they can be used to reverse engineer how animals learn to perfrom certain tasks.
+% \addtolength{\topmargin}{-.875in}
+% \addtolength{\textheight}{1.75in}
+% \usepackage[hmargin=2cm,vmargin=2.5cm,hmarginratio=1:1]{geometry}
+\usepackage[hmargin=2cm,vmargin=2.5cm,hmarginratio=1:1]{geometry}
+\geometry{textwidth=390pt}
 
-  Even though ANNs are inspired by biological neural networks, they are far from being biologically realistic, as the building block of an ANN is an extremely simplifcated version of the neuron.
+% custom section
+\usepackage{titlesec}
+\usepackage{tipa}
+\titleformat{\section}
+{\normalfont\Large\bfseries}
+{\thesection\hskip 10pt\textpipe\hskip 10pt}
+{0pt}
+{}
+% Continue on a new page after a section has finished
+\newcommand{\sectionbreak}{\clearpage}
 
-  Despite this drawback, artificial neural nets have proven to be succesful in a variety of applications, such as image and speech recognition.
+% Urls
+\urlstyle{same}  % don't use monospace font for urls
+
+% Paragraph
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}
+
+
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+% Bibliogrpahy style
+\usepackage[style=ieee]{biblatex}
+\bibliography{inlatexreport}
+
+%%----------------------------------
+% begin the document
+\begin{document}
+\maketitle
+\tableofcontents
+\listoffigures
+
+\pagenumbering{arabic}
+\section{Introduction}
+  In the last decade the progress made by machine learning is astounding, allowing it to grow in popularity both as a research field  and a commercial application.
+
+  Hard coded rules and rigid behaviour have been replaced with algorithms capable of generalization, leading to recent developments in speech recognition, computer vision, natural language processing as well as computational finance and medical diagnosis.
+
+  The presented work focuses on a specific sub domain of machine learning, namely deep belief networks.
+
+
+
+
+\section{Background}
+
+
+\subsection{Artificial neural networks}
+
+  Artificial neural networks (ANNs) are machine learning models biologically inspired from the animal brain in the hope that they can be used to reverse engineer how animals learn to perform certain tasks.
+
+  Even though ANNs are inspired by biological neural networks, they are far from being biologically realistic, as the building block of an ANN is an extremely simplified version of the neuron.
+
+  Despite this drawback, artificial neural nets have proven to be successful in a variety of applications, such as image and speech recognition.
 
   In the following, when we refer to a neural network we will be meaning artificial neural network (ANN).
 
+ \url{http://en.wikipedia.org/wiki/Deep_learning#Deep_learning_in_artificial_neural_networks}
+  about the 'vanishing gradient'
 
-### Definition and structure
+\subsubsection {Definition and structure}
 
  Cite some semnficant results and their decay
- Quote Hinton in the reasons that neural nets were abandoned (lack of CPU, too much backprop, not enough labeled data)
+ Quote Hinton in the reasons that neural nets were abandoned (lack of CPU, too much backprop, not enough labelled data)
 
  Why deep nets did not work before. Talk about how with the pre trained nets you have the guarantte to get better results
   than you got beore
 
  neural nets have thirved since Hinton has (quote here) has shown that restricted boltzmann machines can be combined together and be used both as generative and discriminative models.
 
-### Activation functions
+\subsubsection{Activation functions}
 
-### Sigmoid
+\subsubsection{Sigmoid}
 
-### Tanh
+\subsubsection{Tanh}
 
-## Learning in neural networks
+\subsection{Learning in neural networks}
 
-## Backpropagation and gradient descent methods
+\subsection{Backpropagation and gradient descent methods}
   introduction bla bla
 
-  quote this [@LeCun1998]
+  quote this \cite{LeCun1998}
 
-### Error function
+\subsection{Error function}
   Talk about it's importance in backprop and mention MSE and Gaussian assumption
 
-### Computing the error derivative with respect to the weights
+\subsubsection {Computing the error derivative with respect to the weights}
   TODO: put the derivation in here
   Add the derivation with the  bias as well
 
-### Using the error derivative
+\subsubsection {Using the error derivative}
 
   Once we know how to compute the error derivatives with respect to the weights of the network, multiple issues arise:
 
-    * When should we update the weights
-    * By how much we should update the weights
+\begin{itemize}
+    \item When should we update the weights
+    \item By how much we should update the weights
+\end{itemize}
 
-#### Gradient descent
+\subsubsection{ Gradient descent}
 
-#### Types of learning
-  * online
+\subsubsection{ Types of learning}
+
+\begin{itemize}
+  \item online
      Update the weights after each traning case. This means that the error function changes for each update, and hence the weight updates do not necessarily agree, and one training case can condratict another traning case
-  * full-batch
+  \item full-batch
     Use the entire data set to compute the error function (which is them sum of all the errors on the individual cases) and then do the weight updates by using the gradient with respect to this error function (the gradient with respect to the weights will be the sum of the individiual error derivatives for each training case). The issue with this is that when we start off, we have very bad weights, and it will take significant amount of time until we improve the weights. A better approach is to use some traning case at the begining to asjust the weights to be sensitive, and then continue updating the weights. This leads to mini-batch learning.
-  * mini-batch
+  \item mini-batch
     Combine the above two approaches: update after a small sample of traning cases. This will make the weights oscilate less then online learning and will solve the issues of batch learning as well.
+\end{itemize}
 
-#### Parameters for backpropagation
+\subsubsection{ Parameters for backpropagation}
 
   * Learning rate
       During learning, monitor the error on a validation set.
@@ -82,7 +153,7 @@
     Nesterov method for momentum? Think about it and implement it
 
 
-#### Dropout
+\subsubsection{Dropout}
 
   What is dropout? Using only
   Quote this:
@@ -90,8 +161,7 @@
   Note that in the dropout section it mentions to other papers that showed it is efficient so
   just limit yourself to quoting them and describe droput.
 
-  Dropout and how it has been shown it improves error rates in  various tasks, making neural networks 'beat' other machine learning tecqniques (See
-  Srivastava2013)
+  Dropout and how it has been shown it improves error rates in  various tasks, making neural networks 'beat' other machine learning tecqniques \cite{Srivastava2013}
 
   It has been shown that it works best with contraints on each incoming weights L2 (L2 penalty on each connection)
 
@@ -109,32 +179,34 @@
   Biblo: https://www.youtube.com/watch?v=DleXA5ADG78
 
 
-### Issues with backpropagation
+\subsubsection{ Issues with backpropagation}
   Write the wiki things
 
-### Efficiency of backprop
+\subsubsection{ Efficiency of backprop}
   Quote bishop 5.3.3
 
-## Overfitting: add this to what I used?
+\subsection{Overfitting: add this to what I used?}
+
   The aim of a neural network is to learn the regularities from the mapping to input to output. (TODO: nice picture here ). Due to the limited amount of data presented to the network, there will also be accidental regularities found in the traning cases. Those accidental regularities result in **sampling error**, potientally making the network not generalize well to unseen testing data. It is impossible for a network to distinguish between real regularities that we aim to learn and the accidental regularities in the data it sees. This is an important issue that arises when using machine learning technquie, and it is generally referred to as overfitting.
 
   TODO: overfitting example!!! (Hinton gives the poligon one, I should give a different one)
 
   How to stop overfitting:
 
-  * Cross validation
-  * Weight decay
-  * Weight sharing (maybe do not mention this)
-  * Early stopping
-  * Model averaging
-  * Dropout (mention this)
-  * Generative pre traning (discussed later in the report)
+\begin{itemize}
+  \item Cross validation
+  \item Weight decay
+  \item Weight sharing (maybe do not mention this)
+  \item Early stopping
+  \item Model averaging
+  \item Dropout (mention this)
+  \item Generative pre traning (discussed later in the report)
+\end{itemize}
+
+\section{Restricted Boltzman machines}
 
 
-# Restricted Boltzman machines
-
-
-## Hopfield networks (MAYBE NOT DO THIS? it is kind of unrelated)
+\subsubsection{ Hopfield networks (MAYBE NOT DO THIS? it is kind of unrelated)}
   Add nice pics.
 
   Do not talk much about them
@@ -145,12 +217,12 @@
   * Elizabeth Gardner's traning for Hopfield using perceptron trainig (just mention and quote it)
 
 
-## Boltzmann machines
+\subsubsection{Boltzmann machines}
   Stochastic hopfield nets
   Talk about the issues with their training algorithms
 
 
-## Restricted Boltzmann machines
+\subsubsection {Restricted Boltzmann machines}
   Idea.
   Why they are easier to train and understand than BM
   Generative models
@@ -162,38 +234,40 @@
 
   Mention deep botzmann machines as in the Hinton paper. Not implemented here.
 
-### Training an RBM
+\subsubsection {Training an RBM}
 
-#### Neals algorithm (could be presented in BM learning)
+% these should be subparts of the above
+\subsubsection {Neals algorithm (could be presented in BM learning)}
     does not work well for online learning
 
-#### Contrastive divergence
+\subsubsection{ Contrastive divergence}
   Rough approximation of likelihood, does not use one term from KL divergence masure,
   but works well in practice (and fast enough)
 
-### PCD: only mention brielfy as other tipe of traning.
+
+\subsubsection{ PCD: only mention brielfy as other tipe of traning.}
   Do not implement it as it was shown to not be as good.
   Only do it if you have time.
   Just mention the convergence paper that says that it is better using CD.
 
-### Sparse hidden units
+\subsubsection{Sparse hidden units}
 
-  It has been shown that sparse hidden units can improve learning in case of binary hidden units [quote hinton]. In [Improving Neural Networks with Dropout] it has been shown that dropout can also encourage sparse units. Since dropout was used in our implementation of restricted botlzmann machines and since binary features are not used in the emotion recognition tasks in this paper, it is not in the implementation
+  It has been shown that sparse hidden units can improve learning in case of binary hidden units [quote hinton]. In \cite{Srivastava2013} it has been shown that dropout can also encourage sparse units. Since dropout was used in our implementation of restricted botlzmann machines and since binary features are not used in the emotion recognition tasks in this paper, it is not in the implementation
 
-  write how to force sparse lhidden features (it is a paragraph only)
+  write how to force sparse hidden features (it is a paragraph only)
 
-### Other tricks: they should not be here, they are general, so move them up
+\subsubsection{Other tricks: they should not be here, they are general, so move them up}
 
-  1. Weight decay: same as gaussian something, discuss that (maybe picture)
-  2. Momentum
-  3. Dumped mean field
-  4. Dropout
+  Weight decay: same as gaussian something, discuss that (maybe picture)
+  Momentum
+  Dumped mean field
+  Dropout
 
 
-### Non binary units
+\subsubsection{Non binary units}
   Say  that you want to capture more intofrmation from the image that you cannot get by simply normalizing the pixel values and that you want to capture similarities between pictures.
 
-  Binomial units can be used to model noisy integer values (Teh & Hinton 2001) add to bib.
+  Binomial units can be used to model noisy integer values (Teh \& Hinton 2001) add to bib.
   Gaussian units and why they are harder to train
 
   Rectified linear units: max(0, x) invalidate the probabilistic assumptions
@@ -205,12 +279,12 @@
   As shown by Hinton they have been proved to be better.
   Mention weight sharing here.
 
-# Deep belief networks
+\section{ Deep belief networks}
 
-## History: Sigmoid belief nets
+\subsubsection{ History: Sigmoid belief nets}
   Graphical models, hard to learn them etc
 
-## Pre training
+\subsubsection{Pre training}
   Less overfitting because the input vectors contain a lot more information than the data.
 
   Using unsupervised learning for supervised learning
@@ -221,13 +295,13 @@
   Add a image with the stuff and the images and the labels that Hinton had.
 
 
-## Sigmoid belief nets from stacking RBM
+\subsubsection{ Sigmoid belief nets from stacking RBM}
   Discovered by Geoff Hinton in 2006, deep belief networks are graphical models which use the principle of greedy layer wise traning, in which each of the layers is trained separetely, after which the weights of the entire network are fine tuned either to maximize the log likelihood of the generative model, or to minimize the error with respect to a classification criteria.
 
   It works because backpropagation does not need to learn new features of the data.
 
 
-### Theoretical justification of the greedy learning
+\subsubsection {Theoretical justification of the greedy learning}
   http://deeplearning.net/tutorial/DBN.html
 
   They are graphical models
@@ -239,9 +313,9 @@
   Talk of how they are deep belief nets and they can be used for better generative models and also discriminative ones.
 
 
-### Softmax groups
+\subsubsection {Softmax groups}
 
-#### Justification
+\paragraph{Justification}
 
   When we use a neural network for classification, we would like that the output of the network represents a probability distribution of the labels.
 
@@ -255,7 +329,7 @@
   TODO: graph of softmax function and a nice picture of the
 
   In order to ensure that the sum of the output of the unit is 1 (required in order for it to represent a probablity distribution), the output of a unit does not only depend soley on it's but also on the input of the other elements of the unit.
-  In the following, the input of one of the units (also called 'the logit') is denoted by $x_i$ and the output of the unit is denoted by $y_i$
+  In the following, the input of one of the units (also called \'the logit\') is denoted by $x_i$ and the output of the unit is denoted by $y_i$
 
 \begin{center} $y_i = \frac{e^{x_i}}{\sum\limits_{j=1}^n {e^{x_j}}}$ \end{center}
 
@@ -302,15 +376,17 @@
 
   A softmax function has multiple properties which make it suitable for it's use in machine learning:
 
-  * A softmax unit can be used to model the posterior of a probaility distribution, and can be used for discrimination
+\begin{itemize}
+  \item A softmax unit can be used to model the posterior of a probaility distribution, and can be used for discrimination
   : classifying using softmax nodes
 
-  * It is suitable for representing probablity distribution: it's output is between (0, 1)
+  \item It is suitable for representing probablity distribution: it's output is between (0, 1)
 
-  * Any discrete probability distribution can be presented using a softmax unit.
+  \item Any discrete probability distribution can be presented using a softmax unit.
 
-  * Has the property that it has a very big gradient when the correct answer is 1 and the network outputs a very small value (close to lower bound 0), and hence it is very suitable for gradient descent methods such as backpropagation, as it has a high impact on the weight changes.
+  \item Has the property that it has a very big gradient when the correct answer is 1 and the network outputs a very small value (close to lower bound 0), and hence it is very suitable for gradient descent methods such as backpropagation, as it has a high impact on the weight changes.
   This solves the problems which arise when using the mean square error measure.
+\end{itemize}
 
   Taking the example before with the cross entropy error function, we see how the gradient will now change substantially.
 
@@ -330,23 +406,24 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
   Due to the above, in all the classification models discuss further, we will use a softmax unit as the top layer of the neural network.
 
-## Classification using deep belief nets
+\subsection{ Classification using deep belief nets}
   Fine tuning with backpropagation
 
-## Better generative models using deep belief nets
+\subsection{Better generative models using deep belief nets}
   Wake sleep algorithm
 
-## Comparison between deep belief nets and convolutional nets
+\subsection{Comparison between deep belief nets and convolutional nets}
+fdj
 
 
+\section{Reinforcement learning}
 
-# Reinforcement learning
+\subsection{Q learning}
+dfhsd
 
-## Q learning
+\section{Experiments}
 
-# Experiments
-
-## MNIST digits
+\subsection{MNIST digits}
   Quote other MNIST digits results, with different methods
 
   visualise the weights
@@ -362,49 +439,45 @@ Note that we require the sum since the output of the neuron in the softmax unit 
 
   Make a nice table with comparisons between
 
-# Implementation
+\section{Implementation}
 
-## Why python
+\begin{itemize}
+  \item highly used in the scientific comunity
+  \item numpy: a good library fro array operations
+  \item increased coding speed
+\end{itemize}
 
-  * highly used in the scientific comunity
-  * numpy: a good library fro array operations
-  * increased coding speed
-
-## Setup
+\subsubsection{Setup}
 
   Most experiments have been done on a machine with 12GB ram and an intel i5 processor or on the lab machines at imperial.
 
-  * python version 2.7
-  * numpy
-  * pypy if I manage to get it to work now (in case you do, talk about the issues and so on encountered)
-    does not really work with numpy so discuss this
-  * matrix operations (exploit and give some examples (both from RBM and backprop))
-  * profiling code
+\begin{itemize}
+  \item python version 2.7
+  \item numpy
+  \item pypy if I manage to get it to work now (in case you do, talk about the issues and so on encountered)
+  \item does not really work with numpy so discuss this
+  \item matrix operations (exploit and give some examples (both from RBM and backprop))
+  \item profiling code
+\end{itemize}
 
-### Speed concerns
+\subsubsection{Speed concerns}
+fdhj
 
-# Project management
-  * version control
-  * daily diaries
-  * add nice chart with progress
+\section{ Project management}
+\begin{itemize}
+  \item version control
+  \item daily diaries
+  \item add nice chart with progress
+\end{itemize}
 
-# System design
+\section{System design}
 
-## Testing
+\subsubsection{ Testing}
+fdhs
 
-# Conclusion
+\section{Conclusion}
 
+\newpage{}
+\printbibliography
 
-
----
-
-To generate the nice weights that have the twos in
-
-you have to do this:
-
-set the epsilon = 0.0001 and the
-minibatch = 1
-
-and for very proeminent 2 makes the bias to be an integer
-
-Just checkout the branch: goodnicew
+\end{document}

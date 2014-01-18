@@ -36,23 +36,16 @@ parser.add_argument('netFile', help="file where the serialized network should be
 # Get the arguments of the program
 args = parser.parse_args()
 
-
 def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,
                                   tileShape, tile_spacing=(1, 1))
 
 def rbmMain():
   trainVectors, trainLabels =\
-      readmnist.readNew(0,10000, [2], bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
   testingVectors, testLabels =\
-      readmnist.readNew(0,1000, [2], bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None,bTrain=False, path="MNIST")
 
-
-  plt.imshow(trainVectors[1].reshape(28,28), cmap=plt.cm.gray)
-  plt.show()
-
-  # trainVectors = imagesToVectors(trainVectors)
-  # testingVectors = imagesToVectors(testingVectors)
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
 
@@ -63,7 +56,8 @@ def rbmMain():
     # presented to the network
     nrVisible = len(trainingScaledVectors[0])
     nrHidden = 500
-    net = rbm.RBM(nrVisible, nrHidden, rbm.contrastiveDivergence)
+    # use 1 dropout to test the rbm for now
+    net = rbm.RBM(nrVisible, nrHidden, rbm.contrastiveDivergence, 1, 1)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
   else:
@@ -71,15 +65,12 @@ def rbmMain():
     f = open(args.netFile, "rb")
     t = pickle.load(f)
     net = pickle.load(f)
+    f.close()
 
   # Reconstruct a training image and see that it actually looks like a digit
   test = testingScaledVectors[0,:]
 
-  # print test.reshape(1, test.shape[0])
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
-  # print recon.shape
-  # print recon.sum()
-  # print recon
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
   plt.show()
 
@@ -121,9 +112,9 @@ def deepbeliefMain():
   testing = args.testSize
 
   trainVectors, trainLabels =\
-      readmnist.readNew(0, training, [], bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path="MNIST")
   testVectors, testLabels =\
-      readmnist.readNew(0, testing, [], bTrain=False, path="MNIST")
+      readmnist.read(0, testing, bTrain=False, path="MNIST")
   print trainVectors[0].shape
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
@@ -137,7 +128,9 @@ def deepbeliefMain():
     # net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
     # net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
 
-    net = db.DBN(5, [784, 500, 500, 1000, 10], [Sigmoid, Sigmoid, Sigmoid, Softmax])
+    net = db.DBN(5, [784, 1000, 1000, 1000, 10],
+                 [Sigmoid, Sigmoid, Sigmoid, Softmax],
+                 0.5, 0.8)
     # TODO: think about what the network should do for 2 layers
     net.train(trainingScaledVectors, vectorLabels)
   else:

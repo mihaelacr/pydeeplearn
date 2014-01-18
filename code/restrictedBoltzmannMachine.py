@@ -1,22 +1,11 @@
 """Implementation of restricted boltzmann machine
 
 You need to be able to deal with different energy functions
-
-This allows you to deal with real valued unit
-
-do updates in parallel using multiprocessing.pool
+This allows you to deal with real valued units.
 
 TODO: monitor overfitting
-TODO: mean filed and dumped mean field (also not really needed because we will move to
-  non binary units soon so no point in wasting some time with that)
-TODO: dropout
-TODO: force sparse hidden weights: not needed
-
 """
 import numpy as np
-# TODO: work out if you can use this somehow
-import multiprocessing
-
 from common import *
 
 EXPENSIVE_CHECKS_ON = False
@@ -27,8 +16,11 @@ EXPENSIVE_CHECKS_ON = False
 """
 class RBM(object):
 
-  def __init__(self, nrVisible, nrHidden, trainingFunction, activationFun=sigmoid):
-    # Initialize weights to random
+  def __init__(self, nrVisible, nrHidden, trainingFunction, dropout,
+                visibleDropout, activationFun=sigmoid):
+    # dropout = 1 means no dropout, keep all the weights
+    self.dropout = dropout
+    self.visibleDropout = visibleDropout
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
     self.trainingFunction = trainingFunction
@@ -48,18 +40,23 @@ class RBM(object):
     self.biases, self.weights = self.trainingFunction(data,
                                                       self.biases,
                                                       self.weights,
-                                                      self.activationFun)
-    # assert self.weights.shape == (self.nrVisible, self.nrHidden)
-    # assert self.biases[0].shape == self.nrVisible
-    # assert self.biases[1].shape == self.nrHidden
+                                                      self.activationFun,
+                                                      self.dropout,
+                                                      self.visibleDropout)
+    self.testWeights = self.weights * self.dropout
+
+    assert self.weights.shape == (self.nrVisible, self.nrHidden)
+    assert self.biases[0].shape[0] == self.nrVisible
+    assert self.biases[1].shape[0] == self.nrHidden
 
   """ Reconstructs the data given using this boltzmann machine."""
   def reconstruct(self, dataInstances):
-    return reconstruct(self.biases, self.weights, dataInstances, self.activationFun)
+    return reconstruct(self.biases, self.testWeights, dataInstances,
+                       self.activationFun)
 
   def hiddenRepresentation(self, dataInstances):
     return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
-                       self.weights, self.activationFun, True)
+                       self.testWeights, self.activationFun, True)
 
   @classmethod
   def initializeWeights(cls, nrVisible, nrHidden):
@@ -73,25 +70,23 @@ class RBM(object):
     vectorized = np.vectorize(safeLogFraction, otypes=[np.float])
     visibleBiases = vectorized(percentages)
 
-    # TODO: if sparse hiddeen weights, use that information
     hiddenBiases = np.zeros(nrHidden)
     return np.array([visibleBiases, hiddenBiases])
 
 def reconstruct(biases, weights, dataInstances, activationFun):
   hidden = updateLayer(Layer.HIDDEN, dataInstances, biases, weights,
-                      activationFun, True)
+                       activationFun, True)
 
   visibleReconstructions = updateLayer(Layer.VISIBLE, hidden,
                                       biases, weights, activationFun, False)
-
   return visibleReconstructions
 
 def reconstructionError(biases, weights, data, activationFun):
     # Returns the rmse of the reconstruction of the data
     # Good to keep track of it, should decrease trough training
     # Initially faster, and then slower
-    recFunc = lambda x: reconstruct(biases, weights, x, activationFun)
-    return rmse(np.array(map(recFunc, data)), data)
+    reconstructions = reconstruct(biases, weights, data, activationFun)
+    return rmse(reconstructions, data)
 
 """ Training functions."""
 
@@ -109,15 +104,20 @@ Defaults the mini batch size 1, so normal learning
 # optimize the code but also make it easier to change them
 # rather than have a function  that you pass in for every batch
 # if nice and easy refactoring can be seen then you can do that
-def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10):
+def contrastiveDivergence(data, biases, weights, activationFun, dropout,
+                          visibleDropout, miniBatchSize=10):
   N = len(data)
-
   epochs = N / miniBatchSize
+
+  # sample the probabily distributions allow you to chose from the
+  # visible units for dropout
+  on = sample(visibleDropout, data.shape)
+  data = data * on
 
   epsilon = 0.01
   decayFactor = 0.0002
   weightDecay = True
-  reconstructionStep = 100
+  reconstructionStep = 50
 
   oldDeltaWeights = np.zeros(weights.shape)
   oldDeltaVisible = np.zeros(biases[0].shape)
@@ -128,20 +128,17 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
   print batchLearningRate
 
   for epoch in xrange(epochs):
-    # TODO: you are missing the last part of the data if you
-    #
+
     batchData = data[epoch * miniBatchSize: (epoch + 1) * miniBatchSize, :]
-    # TODO: change this and make it proportional to the data
-    # like the CD-n
-    if epoch < epochs/100:
+    if epoch < epochs / 100:
       momentum = 0.5
     else:
       momentum = 0.95
 
     if epoch < (N/7) * 10:
-      cdSteps = 1
-    elif epoch < (N/9) * 10:
       cdSteps = 3
+    elif epoch < (N/9) * 10:
+      cdSteps = 5
     else:
       cdSteps = 10
 
@@ -152,20 +149,20 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
 
     weightsDiff, visibleBiasDiff, hiddenBiasDiff =\
             modelAndDataSampleDiffs(batchData, biases, weights,
-            activationFun)
+            activationFun, dropout, cdSteps)
     # Update the weights
     # data - model
     # Positive phase - negative
     # Weight decay factor
     deltaWeights = (batchLearningRate * weightsDiff
-                    - epsilon * weightDecay * decayFactor *  weights)
+                    - epsilon * weightDecay * decayFactor * weights)
 
     deltaVisible = batchLearningRate * visibleBiasDiff
     deltaHidden  = batchLearningRate * hiddenBiasDiff
 
-    deltaWeights = momentum * oldDeltaWeights + deltaWeights
-    deltaVisible = momentum * oldDeltaVisible + deltaVisible
-    deltaWeights = momentum * oldDeltaHidden + deltaHidden
+    deltaWeights += momentum * oldDeltaWeights
+    deltaVisible += momentum * oldDeltaVisible
+    deltaHidden += momentum * oldDeltaHidden
 
     oldDeltaWeights = deltaWeights
     oldDeltaVisible = deltaVisible
@@ -179,56 +176,64 @@ def contrastiveDivergence(data, biases, weights, activationFun, miniBatchSize=10
     # Update the hidden biases
     biases[1] += deltaHidden
 
+  print reconstructionError(biases, weights, data, activationFun)
   return biases, weights
 
-def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,cdSteps=1):
+def modelAndDataSampleDiffs(batchData, biases, weights, activationFun,
+                            dropout, cdSteps):
   # Reconstruct the hidden weigs from the data
-  hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun, True)
-  hiddenReconstruction = hidden
+  hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun,
+                       binary=True)
+
+  # Chose the units to be active at this point
+  # different sets for each element in the mini batches
+  on = sample(dropout, hidden.shape)
+  dropoutHidden = on * hidden
+  hiddenReconstruction = dropoutHidden
 
   for i in xrange(cdSteps - 1):
     visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                        biases, weights, activationFun, binary=False)
+                                        biases, weights, activationFun,
+                                        binary=False)
     hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                       biases, weights, activationFun, binary=True)
+                                       biases, weights, activationFun,
+                                       binary=True)
+    # sample the hidden units active (for dropout)
+    hiddenReconstruction = hiddenReconstruction * on
 
   # Do the last reconstruction from the probabilities in the last phase
   visibleReconstruction = updateLayer(Layer.VISIBLE, hiddenReconstruction,
-                                      biases, weights, activationFun, binary=False)
+                                      biases, weights, activationFun,
+                                      binary=False)
   hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
-                                     biases, weights, activationFun, binary=False)
+                                     biases, weights, activationFun,
+                                     binary=False)
 
-  weightsDiff = np.dot(batchData.T, hidden) - np.dot(visibleReconstruction.T, hiddenReconstruction)
+  hiddenReconstruction = hiddenReconstruction * on
+  # here it should be hidden * on - hiddenreconstruction
+  # also below in the hidden bias
+  weightsDiff = np.dot(batchData.T, dropoutHidden) -\
+                np.dot(visibleReconstruction.T, hiddenReconstruction)
   assert weightsDiff.shape == weights.shape
-  visibleBiasDiff = np.sum(batchData - visibleReconstruction, axis=0)
 
+  visibleBiasDiff = np.sum(batchData - visibleReconstruction, axis=0)
   assert visibleBiasDiff.shape == biases[0].shape
-  hiddenBiasDiff = np.sum(hidden - hiddenReconstruction, axis=0)
+
+  hiddenBiasDiff = np.sum(dropoutHidden - hiddenReconstruction, axis=0)
   assert hiddenBiasDiff.shape == biases[1].shape
 
   return weightsDiff, visibleBiasDiff, hiddenBiasDiff
-
-# Makes a step in the contrastiveDivergence algorithm
-# online or with mini-bathces?
-# you have multiple choices about how to implement this
-# It is importaant that the hidden values from the data are binary,
-# not probabilities
 
 """ Updates an entire layer. This procedure can be used both in training
     and in testing.
     Can even take multiple values of the layer, each of them given as rows
     Uses matrix operations.
 """
-def updateLayer(layer, otherLayerValues, biases, weights, activationFun, binary=False):
-  bias = biases[layer]
+def updateLayer(layer, otherLayerValues, biases, weights, activationFun,
+                binary=False):
 
-  # TODO: think about doing this better
-  # better: remove it like in the deepbelief, do not support version for single one
-  # in reconstruction
-  # if len(otherLayerValues.shape) == 2:
+  bias = biases[layer]
   size = otherLayerValues.shape[0]
-  # else:
-  #   size = 1
 
   if layer == Layer.VISIBLE:
     activation = np.dot(otherLayerValues, weights.T)

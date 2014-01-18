@@ -3,8 +3,8 @@ import numpy as np
 import restrictedBoltzmannMachine as rbm
 
 # TODO: use conjugate gradient for  backpropagation instead of stepeest descent
-# TODO: add weight decay in back prop
-# TODO: implement dropout: it has been shown to improve learning
+# TODO: add weight decay in back prop but especially with the constraint
+# on the weightrs
 # TODO: monitor the changes in erorr and change the learning rate according
 # to that
 # TODO: wake sleep for improving generation
@@ -32,16 +32,17 @@ class DBN(object):
         layer.
         type: list of objects of type ActivationFunction
   """
-  def __init__(self, nrLayers, layerSizes, activationFunctions):
+  def __init__(self, nrLayers, layerSizes, activationFunctions,
+               dropout, rbmDropout):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
     # Note that for the first one the activatiom function does not matter
     # So for that one there is no need to pass in an activation function
     self.activationFunctions = activationFunctions
     self.initialized = False
-    self.dropout = 0.5
+    self.dropout = dropout
+    self.rbmDropout = rbmDropout
 
-    # Simple checks
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
 
@@ -54,6 +55,7 @@ class DBN(object):
     """
 
   def train(self, data, labels=None):
+    # This depends if you have generative or not
     nrRbms = self.nrLayers - 2
 
     self.weights = []
@@ -61,20 +63,22 @@ class DBN(object):
     currentData = data
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                    rbm.contrastiveDivergence, self.activationFunctions[i].value)
+                    rbm.contrastiveDivergence,
+                    self.rbmDropout,
+                    # use visible dropout of 0.8 for rbms
+                    # TODO: make this another parameter
+                    0.8,
+                    self.activationFunctions[i].value)
       net.train(currentData)
       self.weights += [net.weights / self.dropout]
       self.biases += [net.biases[1] / self.dropout]
 
       currentData = net.hiddenRepresentation(currentData)
 
-    # CHECK THAT
-    # self.weights += [np.random.normal(0, 0.01,
-    #                              (self.layerSizes[-2], self.layerSizes[-1]))]
+    # This depends if you have generative or not
+    # Initialize the last layer of weights to zero if you have
+    # a discriminative net
     self.weights += [np.zeros((self.layerSizes[-2], self.layerSizes[-1]))]
-
-    # Think of this
-    # self.biases += [np.random.normal(0, 0.01, self.layerSizes[-1])]
     self.biases += [np.zeros(self.layerSizes[-1])]
 
     assert len(self.weights) == self.nrLayers - 1
@@ -85,7 +89,6 @@ class DBN(object):
     self.classifcationBiases = map(lambda x: x * self.dropout, self.biases)
 
   """Fine tunes the weigths and biases using backpropagation.
-
     Arguments:
       data: The data used for traning and fine tuning
       labels: A numpy nd array. Each label should be transformed into a binary
@@ -107,11 +110,7 @@ class DBN(object):
     # TODO: maybe find a better way than this to find a stopping criteria
     for epoch in xrange(epochs):
 
-      # From the internet: this might work better
-      # mom = ifelse(epoch < 500,
-      #      0.5*(1. - epoch/500.) + 0.99*(epoch/500.),
-      #      0.99)
-      if epoch < 10:
+      if epoch < epochs / 10:
         momentum = 0.5
       else:
         momentum = 0.95
@@ -122,7 +121,9 @@ class DBN(object):
         batchData = data[start: end]
 
         # this is a list of layer activities
-        layerValues = forwardPassDropout(self.weights, self.biases, self.activationFunctions, batchData)
+        layerValues = forwardPassDropout(self.weights, self.biases,
+                                        self.activationFunctions, batchData,
+                                        self.dropout)
         finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
                                               layerValues[-1])
 
@@ -178,8 +179,6 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   return deDw, deDbias
 
 """ Does not do dropout. Used for classification. """
-""" TODO: if yo uactually only use it for *only* classification you do not
- need to rememeber all the layer values, but just the end ones"""
 def forwardPass(weights, biases, activationFunctions, dataInstaces):
   currentLayerValues = dataInstaces
   layerValues = [currentLayerValues]
@@ -204,10 +203,11 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces):
     Arguments:
       dataInstaces: The instances to be run trough the network.
     """
-def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropout=0.5):
-  # TODO: consider adding dropout here as well
-  # 20% on the visible units are turned off during traning
-  thinnedValues = sample(0.8, dataInstaces.shape)
+def forwardPassDropout(weights, biases, activationFunctions,
+                       dataInstaces, dropout):
+  # dropout of 20% on the visible units
+  visibleOn = sample(0.8, dataInstaces.shape)
+  thinnedValues = dataInstaces * visibleOn
   layerValues = [thinnedValues]
   size = dataInstaces.shape[0]
 
@@ -218,11 +218,6 @@ def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropo
 
     linearSum = np.dot(thinnedValues, w) + np.tile(b, (size, 1))
     currentLayerValues = activation.value(linearSum)
-    # just doing this is not really OK because
-    # you will be updating in backprop the weights that did not
-    # infulence the decision.
-    # you need to tell the network what are the thinned values
-    # and remove the zeros somehow
     # this is the way to do it, because of how backprop works the wij
     # will cancel out if the unit on the layer is non active
     # de/ dw_i_j = de / d_z_j * d_z_j / d_w_i_j = de / d_z_j * y_i
@@ -230,7 +225,7 @@ def forwardPassDropout(weights, biases, activationFunctions, dataInstaces, dropo
     # of this exact same reason and of ow we backpropagate)
     if stage != len(weights) - 1:
 
-      on = sample(1 - dropout, currentLayerValues.shape)
+      on = sample(dropout, currentLayerValues.shape)
       thinnedValues = on * currentLayerValues
       layerValues += [thinnedValues]
     else:
@@ -247,5 +242,9 @@ represent a discrete probablity distribution and the expected values are
 composed of a base vector, with 1 for the correct class and 0 for all the rest.
 """
 def derivativesCrossEntropyError(expected, actual):
-  # avoid dividing by 0 by adding a small number
   return - expected * (1.0 / actual)
+
+# Only works with binary units
+def wakeSleep():
+  pass
+  # need to alternate between wake and sleep pahses
