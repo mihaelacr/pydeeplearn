@@ -2,10 +2,10 @@ import numpy as np
 
 import restrictedBoltzmannMachine as rbm
 
-# TODO: use conjugate gradient for  backpropagation instead of stepeest descent
+# TODO: use conjugate gradient for  backpropagation instead of steepest descent
 # TODO: add weight decay in back prop but especially with the constraint
-# on the weightrs
-# TODO: monitor the changes in erorr and change the learning rate according
+# on the weights
+# TODO: monitor the changes in error and change the learning rate according
 # to that
 # TODO: wake sleep for improving generation
 # TODO: nesterov method for momentum
@@ -15,7 +15,7 @@ layer above the current one."""
 
 from common import *
 
-""" Class that implements a deep blief network, for classifcation """
+""" Class that implements a deep belief network, for classification """
 class DBN(object):
 
   """
@@ -33,7 +33,7 @@ class DBN(object):
         type: list of objects of type ActivationFunction
   """
   def __init__(self, nrLayers, layerSizes, activationFunctions,
-               dropout, rbmDropout):
+               dropout=0.5, rbmDropout=0.5, visibleDropout=0.8, rbmVisibleDropout=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
     # Note that for the first one the activatiom function does not matter
@@ -42,6 +42,8 @@ class DBN(object):
     self.initialized = False
     self.dropout = dropout
     self.rbmDropout = rbmDropout
+    self.visibleDropout = visibleDropout
+    self.rbmVisibleDropout = rbmVisibleDropout
 
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
@@ -65,9 +67,7 @@ class DBN(object):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     rbm.contrastiveDivergence,
                     self.rbmDropout,
-                    # use visible dropout of 0.8 for rbms
-                    # TODO: make this another parameter
-                    0.8,
+                    self.rbmVisibleDropout,
                     self.activationFunctions[i].value)
       net.train(currentData)
       self.weights += [net.weights / self.dropout]
@@ -123,7 +123,7 @@ class DBN(object):
         # this is a list of layer activities
         layerValues = forwardPassDropout(self.weights, self.biases,
                                         self.activationFunctions, batchData,
-                                        self.dropout)
+                                        self.dropout, self.visibleDropout)
         finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
                                               layerValues[-1])
 
@@ -204,9 +204,10 @@ def forwardPass(weights, biases, activationFunctions, dataInstaces):
       dataInstaces: The instances to be run trough the network.
     """
 def forwardPassDropout(weights, biases, activationFunctions,
-                       dataInstaces, dropout):
-  # dropout of 20% on the visible units
-  visibleOn = sample(0.8, dataInstaces.shape)
+                       dataInstaces, dropout, visibleDropout):
+  # dropout on the visible units
+  # generally this is around 80%
+  visibleOn = sample(visibleDropout, dataInstaces.shape)
   thinnedValues = dataInstaces * visibleOn
   layerValues = [thinnedValues]
   size = dataInstaces.shape[0]

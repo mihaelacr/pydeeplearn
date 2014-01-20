@@ -20,6 +20,7 @@ class RBM(object):
                 visibleDropout, activationFun=sigmoid):
     # dropout = 1 means no dropout, keep all the weights
     self.dropout = dropout
+    # dropout = 1 means no dropout, keep all the weights
     self.visibleDropout = visibleDropout
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
@@ -112,7 +113,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, dropout,
   # sample the probabily distributions allow you to chose from the
   # visible units for dropout
   on = sample(visibleDropout, data.shape)
-  data = data * on
+  dropoutData = data * on
 
   epsilon = 0.01
   decayFactor = 0.0002
@@ -128,8 +129,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, dropout,
   print batchLearningRate
 
   for epoch in xrange(epochs):
-
-    batchData = data[epoch * miniBatchSize: (epoch + 1) * miniBatchSize, :]
+    batchData = dropoutData[epoch * miniBatchSize: (epoch + 1) * miniBatchSize, :]
     if epoch < epochs / 100:
       momentum = 0.5
     else:
