@@ -11,25 +11,17 @@ import time
 x = T.matrix('x', dtype=theano.config.floatX)
 y = T.matrix('y', dtype=theano.config.floatX)
 
-# z = x + y
-# f = function([x, y], z)
-# sc = shared(np.tile(0, 30, 30, dtype=theano.config.floatX), name='sc')
 sc = shared(np.zeros((10, 10), dtype = theano.config.floatX), name='sc')
 
-# sc = T.dot(x, y)
 mydot = function( [x,y], updates=( (sc, T.dot(x,y)), ))
 
-# a = np.random.random_integers(0, 100, (1000, 1000))
-# b = np.random.random_integers(0, 100, (1000, 1000))
-
 # We need to declare the variables shared to run on GPU
-a = np.tile(40.0, (1000, 1000))
-b = np.tile(23.0, (1000, 1000))
+a = np.ones((10000, 10000), dtype = theano.config.floatX) * 40.0
+b = np.ones((10000, 10000), dtype = theano.config.floatX) * 23.0
 print "go"
 
-before = time.time()
-c = mydot(a,b)
-print c.sum()
-print time.time() - before
+mydot(a,b)
+print sc.get_value().sum()
 
-# print f(np.array([[2,3]]), np.array([[4,5]]))
+before = time.time()
+print time.time() - before
