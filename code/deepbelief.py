@@ -3,6 +3,7 @@ import numpy as np
 import restrictedBoltzmannMachine as rbm
 
 # TODO: use conjugate gradient for  backpropagation instead of steepest descent
+# see here for a theano example http://deeplearning.net/tutorial/code/logistic_cg.py
 # TODO: add weight decay in back prop but especially with the constraint
 # on the weights
 # TODO: monitor the changes in error and change the learning rate according
@@ -165,7 +166,8 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   for layer in xrange(nrLayers - 1, 0, -1):
     deDz = activationFunctions[layer - 1].derivativeForLinearSum(
                             upperLayerErrors, layerValues[layer])
-    upperLayerErrors = np.dot(deDz, weights[layer - 1].T)
+    # upperLayerErrors = np.dot(deDz, weights[layer - 1].T)
+    upperLayerErrors = np.tensordot(deDz, weights[layer - 1].T, [[deDz.ndim - 1], [weights[layer - 1].T.ndim -2]])
 
     dw = np.einsum('ij,ik->jk', layerValues[layer - 1], deDz)
 
