@@ -20,8 +20,8 @@ a = np.ones((10000, 10000), dtype = theano.config.floatX) * 40.0
 b = np.ones((10000, 10000), dtype = theano.config.floatX) * 23.0
 print "go"
 
+before = time.time()
 mydot(a,b)
 print sc.get_value().sum()
 
-before = time.time()
 print time.time() - before
