@@ -16,12 +16,13 @@ sc = shared(np.zeros((10, 10), dtype = theano.config.floatX), name='sc')
 mydot = function( [x,y], updates=( (sc, T.dot(x,y)), ))
 
 # We need to declare the variables shared to run on GPU
-a = np.ones((10000, 10000), dtype = theano.config.floatX) * 40.0
-b = np.ones((10000, 10000), dtype = theano.config.floatX) * 23.0
+a = np.ones((20000, 20000), dtype = theano.config.floatX) * 40.0
+b = np.ones((20000, 20000), dtype = theano.config.floatX) * 23.0
 print "go"
 
 before = time.time()
 mydot(a,b)
+print time.time() - before
+
 print sc.get_value().sum()
 
-print time.time() - before
