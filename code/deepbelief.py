@@ -1,6 +1,7 @@
 import numpy as np
 
 import restrictedBoltzmannMachine as rbm
+from theano import tensor as T
 
 # TODO: use conjugate gradient for  backpropagation instead of steepest descent
 # see here for a theano example http://deeplearning.net/tutorial/code/logistic_cg.py
@@ -48,6 +49,12 @@ class DBN(object):
 
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
+    # you need a list of shared weights
+    # the params are the params of the rbms + the softmax layer
+
+    # This depends if you have generative or not
+    nrRbms = self.nrLayers - 2
+
 
     """
     TODO:
@@ -64,6 +71,7 @@ class DBN(object):
     self.weights = []
     self.biases = []
     currentData = data
+
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     rbm.contrastiveDivergence,
@@ -71,7 +79,12 @@ class DBN(object):
                     self.rbmVisibleDropout,
                     self.activationFunctions[i].value)
       net.train(currentData)
+      # you need to make the weights and biases shared and
+      # add them to params
+
       self.weights += [net.weights / self.dropout]
+      # this takes the biases from the hidden units
+      # the biases for the visible units are discarded.
       self.biases += [net.biases[1] / self.dropout]
 
       currentData = net.hiddenRepresentation(currentData)
@@ -84,8 +97,15 @@ class DBN(object):
 
     assert len(self.weights) == self.nrLayers - 1
     assert len(self.biases) == self.nrLayers - 1
+
+    # Set the parameters of the net
+    # According to them we will do backprop
+    self.params = self.weights + self.biases
+
     # Does backprop or wake sleep?
+    # Check if wake sleep works for real values
     self.fineTune(data, labels)
+    # Change the weights according to dropout rules
     self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
     self.classifcationBiases = map(lambda x: x * self.dropout, self.biases)
 
@@ -129,6 +149,9 @@ class DBN(object):
                                               layerValues[-1])
 
         # Compute all derivatives
+        # In the new version you just need to do an update of the shared variables
+        # but a clear way of seeing what are the parameters for everything would be good.
+        # the weights can be kept as a list
         dWeights, dBias = backprop(self.weights, layerValues,
                             finalLayerErrors, self.activationFunctions)
 
@@ -163,22 +186,24 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   deDbias = []
   upperLayerErrors = finalLayerErrors
 
-  for layer in xrange(nrLayers - 1, 0, -1):
-    deDz = activationFunctions[layer - 1].derivativeForLinearSum(
-                            upperLayerErrors, layerValues[layer])
-    # upperLayerErrors = np.dot(deDz, weights[layer - 1].T)
-    upperLayerErrors = np.tensordot(deDz, weights[layer - 1].T, [[deDz.ndim - 1], [weights[layer - 1].T.ndim -2]])
+  # change this to theano.scan in case it is needed
 
-    dw = np.einsum('ij,ik->jk', layerValues[layer - 1], deDz)
+  # for layer in xrange(nrLayers - 1, 0, -1):
+  #   deDz = activationFunctions[layer - 1].derivativeForLinearSum(
+  #                           upperLayerErrors, layerValues[layer])
+  #   upperLayerErrors = np.dot(deDz, weights[layer - 1].T)
 
-    dbias = deDz.sum(axis=0)
+  #   dw = np.einsum('ij,ik->jk', layerValues[layer - 1], deDz)
 
-    # Iterating in decreasing order of layers, so we are required to
-    # append the weight derivatives at the front as we go along
-    deDw.insert(0, dw)
-    deDbias.insert(0, dbias)
+  #   dbias = deDz.sum(axis=0)
 
-  return deDw, deDbias
+  #   # Iterating in decreasing order of layers, so we are required to
+  #   # append the weight derivatives at the front as we go along
+  #   deDw.insert(0, dw)
+  #   deDbias.insert(0, dbias)
+
+  # return deDw, deDbias
+  return None
 
 """ Does not do dropout. Used for classification. """
 def forwardPass(weights, biases, activationFunctions, dataInstaces):

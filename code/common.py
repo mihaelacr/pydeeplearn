@@ -1,4 +1,5 @@
 import numpy as np
+from theano import tensor as T
 
 """
 Arguments:
@@ -23,7 +24,7 @@ def imagesToVectors(images):
   return np.array(map(lambda x: x.reshape(-1), images))
 
 def sigmoid(x):
-  return 1 / (1 + np.exp(-x))
+  return T.nnet.sigmoid(x)
 
 def softmax(activation):
   out = np.exp(activation)
@@ -32,6 +33,7 @@ def softmax(activation):
 def sample(p, size):
   return np.random.uniform(size=size) <= p
 
+# this can be done with a binomial
 def sampleAll(probs):
   return np.random.uniform(size=probs.shape) <= probs
 
