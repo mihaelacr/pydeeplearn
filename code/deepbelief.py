@@ -44,7 +44,8 @@ class DBN(object):
     # Note that for the first one the activatiom function does not matter
     # So for that one there is no need to pass in an activation function
     self.activationFunctions = activationFunctions
-    self.initialized = False
+
+    # Do I need to initialize this to scalars
     self.dropout = dropout
     self.rbmDropout = rbmDropout
     self.visibleDropout = visibleDropout
@@ -67,6 +68,7 @@ class DBN(object):
       then do backprop for discrimintaiton
     """
 
+  # the data and labels need to be theano stuff
   def train(self, data, labels=None):
     # This depends if you have generative or not
     nrRbms = self.nrLayers - 2
@@ -276,7 +278,8 @@ def forwardPassDropout(weights, biases, activationFunctions,
 
     # for now use tensor.tile but it does not have a gradient so does not work
     # well with symblic differentiation
-    linearSum = T.dot(thinnedValues, w) + T.tile(b, [size, 1])
+    # tile does not work like this?
+    linearSum = T.dot(thinnedValues, w) + np.tile(b, [size, 1])
     currentLayerValues = activation.value(linearSum)
     # this is the way to do it, because of how backprop works the wij
     # will cancel out if the unit on the layer is non active
@@ -284,7 +287,6 @@ def forwardPassDropout(weights, biases, activationFunctions,
     # so if we set a unit as non active here (and we have to because
     # of this exact same reason and of ow we backpropagate)
     if stage != len(weights) - 1:
-
       on = sample(dropout, currentLayerValues.shape)
       thinnedValues = on * currentLayerValues
       layerValues += [thinnedValues]
