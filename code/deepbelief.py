@@ -180,6 +180,14 @@ class DBN(object):
         # In the new version you just need to do an update of the shared variables
         # but a clear way of seeing what are the parameters for everything would be good.
         # the weights can be kept as a list
+        # TODO: this is a list, you need a function as an error
+        # see:
+        # http://deeplearning.net/tutorial/code/mlp.py
+        # and
+        # http://deeplearning.net/tutorial/code/logistic_sgd.py
+        # maybe if we set layerValues[-1] as some parameter and then we
+        # take labels[start end then it will work]
+        # do the cost nicely
         error = T.nnet.categorical_crossentropy(layerValues[-1], labels[start:end])
         gparams = T.grad(self.params, error)
         dWeights, dBias = backprop(self.weights, layerValues,
@@ -241,14 +249,13 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
 def forwardPass(weights, biases, activationFunctions, dataInstaces):
   currentLayerValues = dataInstaces
   layerValues = [currentLayerValues]
-  size = dataInstaces.shape[0]
 
   for stage in xrange(len(weights)):
     w = weights[stage]
     b = biases[stage]
     activation = activationFunctions[stage]
 
-    linearSum = np.dot(currentLayerValues, w) + np.tile(b, (size, 1))
+    linearSum = np.dot(currentLayerValues, w) + b
     currentLayerValues = activation.value(linearSum)
     layerValues += [currentLayerValues]
 
@@ -269,7 +276,6 @@ def forwardPassDropout(weights, biases, activationFunctions,
   visibleOn = sample(visibleDropout, dataInstaces.shape)
   thinnedValues = dataInstaces * visibleOn
   layerValues = [thinnedValues]
-  size = dataInstaces.shape[0]
 
   for stage in xrange(len(weights)):
     w = weights[stage]
@@ -279,7 +285,8 @@ def forwardPassDropout(weights, biases, activationFunctions,
     # for now use tensor.tile but it does not have a gradient so does not work
     # well with symblic differentiation
     # tile does not work like this?
-    linearSum = T.dot(thinnedValues, w) + np.tile(b, [size, 1])
+    linearSum = np.dot(thinnedValues, w.get_value()) + b.get_value()
+    # np.exp(2)
     currentLayerValues = activation.value(linearSum)
     # this is the way to do it, because of how backprop works the wij
     # will cancel out if the unit on the layer is non active

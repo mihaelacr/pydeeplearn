@@ -105,6 +105,7 @@ class Sigmoid(ActivationFunction):
 
   @staticmethod
   def value(inputVector):
+    # return T.nnet.sigmoid(inputVector)
     return 1 / (1 + np.exp(-inputVector))
 
   @staticmethod
