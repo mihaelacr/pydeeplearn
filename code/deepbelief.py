@@ -11,6 +11,11 @@ layer above the current one."""
 
 from common import *
 
+
+class MiniBatchTrainer():
+  pass
+
+
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
 
@@ -52,6 +57,18 @@ class DBN(object):
 
     self.weights = []
     self.biases = []
+    # First step: let's make the data and the labels shared variables
+    # so that we can nicely work with them
+
+    # TODO: see if you have to use borrow here but probably not
+    # because it only has effect on CPU
+    sharedData = theano.shared(np.asarray(data,
+                                               dtype=theano.config.floatX))
+    # the cast might not be needed in my code because I do not think
+    # I use the labels as indices, but I need to check this
+    sharedLabels = T.cast(theano.shared(np.asarray(labels,
+                                               dtype=theano.config.floatX)),
+                          'int32')
     currentData = data
 
     for i in xrange(nrRbms):
@@ -109,9 +126,20 @@ class DBN(object):
                       name='layerVals')
       self.layerValues.append(layerVals)
 
-    # Does backprop or wake sleep?
-    # Check if wake sleep works for real values
-    self.fineTune(data, labels)
+    # I have to set this input somehow and this is most likely to be done
+    # with another class that has the batch stuff
+    currentLayerValues = self.inputs
+    self.layerValues[0] = currentLayerValues
+    for stage in xrange(len(self.weights)):
+      w = self.weights[stage]
+      b = self.biases[stage]
+      linearSum = T.dot(currentLayerValues, w) + b
+      currentLayerValues = T.nnet.sigmoid(linearSum)
+      # activation = self.activationFunctions[stage]
+      # currentLayerValues = activation.value(linearSum)
+      self.layerValues[stage + 1] = currentLayerValues
+
+    self.fineTune(sharedData, sharedLabels)
     # Change the weights according to dropout rules
     # make this shared maybe as well? so far they are definitely not
     # a problem so we will see later
@@ -119,6 +147,8 @@ class DBN(object):
     self.classifcationBiases = map(lambda x: x * self.dropout, self.biases)
 
   """Fine tunes the weigths and biases using backpropagation.
+    data and labels are shared
+
     Arguments:
       data: The data used for traning and fine tuning
         data has to be a theano variable for it to work in the current version
@@ -128,18 +158,6 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   def fineTune(self, data, labels, epochs=100):
-    # First step: let's make the data and the labels shared variables
-    # so that we can nicely work with them
-
-    # TODO: see if you have to use borrow here but probably not
-    # because it only has effect on CPU
-    sharedData = theano.shared(np.asarray(data,
-                                               dtype=theano.config.floatX))
-    # the cast might not be needed in my code because I do not think
-    # I use the labels as indices, but I need to check this
-    sharedLabels = T.cast(theano.shared(np.asarray(labels,
-                                               dtype=theano.config.floatX)),
-                          'int32')
     learningRate = 0.1
     batchLearningRate = learningRate / self.miniBatchSize
 
@@ -159,7 +177,12 @@ class DBN(object):
     # The labels, a vector
     y = T.ivector('y') # labels[start:end]
 
-    error = self.cost(y)
+    # here you need to do call forward pass,
+    # now you are not doing any computtaion
+
+    self.inputs = x
+    # the error is the sum of the individual errors
+    error = T.sum(self.cost(y))
 
     deltaParams = []
     # this is either a weight or a bias
@@ -176,8 +199,8 @@ class DBN(object):
     train_model = theano.function(inputs=[index], outputs=error,
             updates=updates,
             givens={
-                x: sharedData[index * self.miniBatchSize:(index + 1) * self.miniBatchSize],
-                y: sharedLabels[index * self.miniBatchSize:(index + 1) * self.miniBatchSize]})
+                x: data[index * self.miniBatchSize:(index + 1) * self.miniBatchSize],
+                y: labels[index * self.miniBatchSize:(index + 1) * self.miniBatchSize]})
 
     # TODO: early stopping
     for epoch in xrange(epochs):
@@ -185,25 +208,6 @@ class DBN(object):
       # so that you can see when you stop or not
       for batchNr in xrange(nrMiniBatches):
         train_model(batchNr)
-
-      # for all indices, call the functions defined above
-      # Do not confuse calling an epoch to an index
-
-      # for batch in xrange(nrMiniBatches):
-      #   # for them the minibatch is also symbolic
-      #   start = batch * self.miniBatchSize
-      #   end = (batch + 1) * self.miniBatchSize
-      #   batchData = data[start: end]
-
-      #   # Do a forward pass with the batch data
-      #   self.forwardPass(batchData)
-
-      #   print self.layerValues[-1]
-      #   print error
-      #   print type(error)
-      #   gparams = T.grad(self.params, error)
-      #   dWeights, dBias = backprop(self.weights, layerValues,
-      #                       finalLayerErrors, self.activationFunctions)
 
   def cost(self, y):
     return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
@@ -214,18 +218,3 @@ class DBN(object):
                                   self.activationFunctions,
                                   dataInstaces)[-1]
     return lastLayerValues, np.argmax(lastLayerValues, axis=1)
-
-  """ Does not do dropout. Used for classification. """
-  def forwardPass(self, dataInstaces):
-    currentLayerValues = dataInstaces
-    self.layerValues[0] = currentLayerValues
-    print type(self.layerValues[0])
-
-    for stage in xrange(len(self.weights)):
-      w = self.weights[stage]
-      b = self.biases[stage]
-      linearSum = T.dot(currentLayerValues, w) + b
-      currentLayerValues = T.nnet.sigmoid(linearSum)
-      # activation = self.activationFunctions[stage]
-      # currentLayerValues = activation.value(linearSum)
-      self.layerValues[stage + 1] = currentLayerValues
