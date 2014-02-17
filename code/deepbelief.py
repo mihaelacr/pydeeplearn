@@ -58,6 +58,7 @@ class DBN(object):
 
     # This depends if you have generative or not
     nrRbms = self.nrLayers - 2
+    self.miniBatchSize = 10
 
 
     """
@@ -126,6 +127,15 @@ class DBN(object):
     # According to them we will do backprop
     self.params = self.weights + self.biases
 
+    # Create layervalues as shared variables (and symbolic automatically)
+    self.layerValues = []
+    for i in xrange(self.nrLayers):
+      vals = np.zeros(shape=(self.miniBatchSize, self.layerSizes[i]),
+                                dtype=theanoFloat)
+      layerVals = theano.shared(value=vals,
+                      name='layerVals')
+      self.layerValues.append(layerVals)
+
     # Does backprop or wake sleep?
     # Check if wake sleep works for real values
     self.fineTune(data, labels)
@@ -143,11 +153,11 @@ class DBN(object):
       miniBatch: The number of instances to be used in a miniBatch
       epochs: The number of epochs to use for fine tuning
   """
-  def fineTune(self, data, labels, miniBatchSize=10, epochs=100):
+  def fineTune(self, data, labels, epochs=100):
     learningRate = 0.1
-    batchLearningRate = learningRate / miniBatchSize
+    batchLearningRate = learningRate / self.miniBatchSize
 
-    nrMiniBatches = len(data) / miniBatchSize
+    nrMiniBatches = len(data) / self.miniBatchSize
 
     # oldDWeights = zerosFromShape(self.weights)
     # oldDBias = zerosFromShape(self.biases)
@@ -164,12 +174,12 @@ class DBN(object):
         momentum = 0.95
 
       for batch in xrange(nrMiniBatches):
-        start = batch * miniBatchSize
-        end = (batch + 1) * miniBatchSize
+        start = batch * self.miniBatchSize
+        end = (batch + 1) * self.miniBatchSize
         batchData = data[start: end]
 
-        # this is a list of layer activities
-        layerValues = self.forwardPass(batchData)
+        # Do a forward pass with the batch data
+        self.forwardPass(batchData)
 
         # finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
         #                                       layerValues[-1])
@@ -186,7 +196,10 @@ class DBN(object):
         # maybe if we set layerValues[-1] as some parameter and then we
         # take labels[start end then it will work]
         # do the cost nicely
-        error = T.nnet.categorical_crossentropy(layerValues[-1], labels[start:end])
+        print self.layerValues[-1]
+        error = T.nnet.categorical_crossentropy(self.layerValues[-1], labels[start:end])
+        print error
+        print type(error)
         gparams = T.grad(self.params, error)
         dWeights, dBias = backprop(self.weights, layerValues,
                             finalLayerErrors, self.activationFunctions)
@@ -209,42 +222,11 @@ class DBN(object):
                                   dataInstaces)[-1]
     return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
-  def forwardPassDropout(self, dataInstaces):
-    # dropout on the visible units
-    # generally this is around 80%
-    visibleOn = sample(self.visibleDropout, dataInstaces.shape)
-    thinnedValues = dataInstaces * visibleOn
-    layerValues = [thinnedValues]
-
-    for stage in xrange(len(self.weights)):
-      w = self.weights[stage]
-      b = self.biases[stage]
-      activation = self.activationFunctions[stage]
-
-      # for now use tensor.tile but it does not have a gradient so does not work
-      # well with symblic differentiation
-      # tile does not work like this?
-      linearSum = np.dot(thinnedValues, w.get_value()) + b.get_value()
-      # np.exp(2)
-      currentLayerValues = activation.value(linearSum)
-      # this is the way to do it, because of how backprop works the wij
-      # will cancel out if the unit on the layer is non active
-      # de/ dw_i_j = de / d_z_j * d_z_j / d_w_i_j = de / d_z_j * y_i
-      # so if we set a unit as non active here (and we have to because
-      # of this exact same reason and of ow we backpropagate)
-      if stage != len(weights) - 1:
-        on = sample(self.dropout, currentLayerValues.shape)
-        thinnedValues = on * currentLayerValues
-        layerValues += [thinnedValues]
-      else:
-        layerValues += [currentLayerValues]
-
-    return layerValues
-
   """ Does not do dropout. Used for classification. """
   def forwardPass(self, dataInstaces):
     currentLayerValues = dataInstaces
-    layerValues = [currentLayerValues]
+    self.layerValues[0] = currentLayerValues
+    print type(self.layerValues[0])
 
     for stage in xrange(len(self.weights)):
       w = self.weights[stage]
@@ -253,98 +235,47 @@ class DBN(object):
       currentLayerValues = T.nnet.sigmoid(linearSum)
       # activation = self.activationFunctions[stage]
       # currentLayerValues = activation.value(linearSum)
-      layerValues += [currentLayerValues]
-    return layerValues
-
-
-"""
-Arguments:
-  weights: list of numpy nd-arrays
-  layerValues: list of numpy arrays, each array representing the values of the
-      neurons obtained during a forward pass of the network
-  finalLayerErrors: errors on the final layer, they depend on the error function
-      chosen. For softmax activation function on the last layer, use cross
-      entropy as an error function.
-"""
-def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
-  nrLayers = len(weights) + 1
-  deDw = []
-  deDbias = []
-  upperLayerErrors = finalLayerErrors
-
-  # change this to theano.scan in case it is needed
-
-  # for layer in xrange(nrLayers - 1, 0, -1):
-  #   deDz = activationFunctions[layer - 1].derivativeForLinearSum(
-  #                           upperLayerErrors, layerValues[layer])
-  #   upperLayerErrors = np.dot(deDz, weights[layer - 1].T)
-
-  #   dw = np.einsum('ij,ik->jk', layerValues[layer - 1], deDz)
-
-  #   dbias = deDz.sum(axis=0)
-
-  #   # Iterating in decreasing order of layers, so we are required to
-  #   # append the weight derivatives at the front as we go along
-  #   deDw.insert(0, dw)
-  #   deDbias.insert(0, dbias)
-
-  # return deDw, deDbias
-  return None
+      self.layerValues[stage + 1] = currentLayerValues
 
 
 
-"""Does a forward pass trought the network and computes the values of the
-    neurons in all the layers.
-    Required for backpropagation and classification.
+# """Does a forward pass trought the network and computes the values of the
+#     neurons in all the layers.
+#     Required for backpropagation and classification.
 
-    Arguments:
-      dataInstaces: The instances to be run trough the network.
-    """
-def forwardPassDropout(weights, biases, activationFunctions,
-                       dataInstaces, dropout, visibleDropout):
-  # dropout on the visible units
-  # generally this is around 80%
-  visibleOn = sample(visibleDropout, dataInstaces.shape)
-  thinnedValues = dataInstaces * visibleOn
-  layerValues = [thinnedValues]
+#     Arguments:
+#       dataInstaces: The instances to be run trough the network.
+#     """
+  # def forwardPassDropout(self, dataInstaces):
+  #   # dropout on the visible units
+  #   # generally this is around 80%
+  #   visibleOn = sample(self.visibleDropout, dataInstaces.shape)
+  #   thinnedValues = dataInstaces * visibleOn
+  #   layerValues = [thinnedValues]
 
-  for stage in xrange(len(weights)):
-    w = weights[stage]
-    b = biases[stage]
-    activation = activationFunctions[stage]
+  #   for stage in xrange(len(self.weights)):
+  #     w = self.weights[stage]
+  #     b = self.biases[stage]
+  #     activation = self.activationFunctions[stage]
 
-    # for now use tensor.tile but it does not have a gradient so does not work
-    # well with symblic differentiation
-    # tile does not work like this?
-    linearSum = np.dot(thinnedValues, w.get_value()) + b.get_value()
-    # np.exp(2)
-    currentLayerValues = activation.value(linearSum)
-    # this is the way to do it, because of how backprop works the wij
-    # will cancel out if the unit on the layer is non active
-    # de/ dw_i_j = de / d_z_j * d_z_j / d_w_i_j = de / d_z_j * y_i
-    # so if we set a unit as non active here (and we have to because
-    # of this exact same reason and of ow we backpropagate)
-    if stage != len(weights) - 1:
-      on = sample(dropout, currentLayerValues.shape)
-      thinnedValues = on * currentLayerValues
-      layerValues += [thinnedValues]
-    else:
-      layerValues += [currentLayerValues]
+  #     # for now use tensor.tile but it does not have a gradient so does not work
+  #     # well with symblic differentiation
+  #     # tile does not work like this?
+  #     linearSum = np.dot(thinnedValues, w.get_value()) + b.get_value()
+  #     # np.exp(2)
+  #     currentLayerValues = activation.value(linearSum)
+  #     # this is the way to do it, because of how backprop works the wij
+  #     # will cancel out if the unit on the layer is non active
+  #     # de/ dw_i_j = de / d_z_j * d_z_j / d_w_i_j = de / d_z_j * y_i
+  #     # so if we set a unit as non active here (and we have to because
+  #     # of this exact same reason and of ow we backpropagate)
+  #     if stage != len(weights) - 1:
+  #       on = sample(self.dropout, currentLayerValues.shape)
+  #       thinnedValues = on * currentLayerValues
+  #       layerValues += [thinnedValues]
+  #     else:
+  #       layerValues += [currentLayerValues]
 
-  return layerValues
+  #   return layerValues
 
 
-""" Computes the derivatives of the top most layer given their output and the
-target labels. This is computed using the cross entropy function.
-See: http://en.wikipedia.org/wiki/Cross_entropy for the discrete case.
-Since it is used with a softmax unit for classification, the output of the unit
-represent a discrete probablity distribution and the expected values are
-composed of a base vector, with 1 for the correct class and 0 for all the rest.
-"""
-def derivativesCrossEntropyError(expected, actual):
-  return - expected * (1.0 / actual)
-
-# Only works with binary units
-def wakeSleep():
-  pass
-  # need to alternate between wake and sleep pahses
