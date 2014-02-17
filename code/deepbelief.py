@@ -120,6 +120,7 @@ class DBN(object):
   """Fine tunes the weigths and biases using backpropagation.
     Arguments:
       data: The data used for traning and fine tuning
+        data has to be a theano variable for it to work in the current version
       labels: A numpy nd array. Each label should be transformed into a binary
           base vector before passed into this function.
       miniBatch: The number of instances to be used in a miniBatch
@@ -136,25 +137,63 @@ class DBN(object):
 
     stages = len(self.weights)
 
-    # TODO: maybe find a better way than this to find a stopping criteria
-    # maybe do this entire loop on the GPU?
+    # Let's build the symbolic graph which takes the data trough the network
+    # allocate symbolic variables for the data
+    # index of a mini-batch
+    miniBatchIndex = T.lscalar()
+    # The mini-batch data is a matrix
+    x = T.matrix('x')
+    # The labels, a vector
+    y = T.ivector('y') # labels[start:end]
+
+    error = self.cost(y)
+
+    deltaParams = []
+    # this is either a weight or a bias
+    for param in self.params:
+        delta = T.grad(cost, param)
+        deltaParams.append(delta)
+
+    # specify how to update the parameters of the model as a list of
+    # (variable, update expression) pairs
+    updates = []
+    for param, delta in zip(self.params, deltaParams):
+        updates.append((param, param - batchLearningRate * delta))
+
+    train_model = theano.function(inputs=[index], outputs=error,
+            updates=updates,
+            givens={
+                x: data[index * self.miniBatchSize:(index + 1) * self.miniBatchSize],
+                y: labels[index * self.miniBatchSize:(index + 1) * self.miniBatchSize]})
+
+    # TODO: early stopping
     for epoch in xrange(epochs):
+      # When you do early stopping you have to return the error on this batch
+      # so that you can see when you stop or not
+      for batchNr in xrange(nrMiniBatches):
+        train_model(batchNr)
 
-      for batch in xrange(nrMiniBatches):
-        start = batch * self.miniBatchSize
-        end = (batch + 1) * self.miniBatchSize
-        batchData = data[start: end]
+      # for all indices, call the functions defined above
+      # Do not confuse calling an epoch to an index
 
-        # Do a forward pass with the batch data
-        self.forwardPass(batchData)
+      # for batch in xrange(nrMiniBatches):
+      #   # for them the minibatch is also symbolic
+      #   start = batch * self.miniBatchSize
+      #   end = (batch + 1) * self.miniBatchSize
+      #   batchData = data[start: end]
 
-        print self.layerValues[-1]
-        error = T.nnet.categorical_crossentropy(self.layerValues[-1], labels[start:end])
-        print error
-        print type(error)
-        gparams = T.grad(self.params, error)
-        dWeights, dBias = backprop(self.weights, layerValues,
-                            finalLayerErrors, self.activationFunctions)
+      #   # Do a forward pass with the batch data
+      #   self.forwardPass(batchData)
+
+      #   print self.layerValues[-1]
+      #   print error
+      #   print type(error)
+      #   gparams = T.grad(self.params, error)
+      #   dWeights, dBias = backprop(self.weights, layerValues,
+      #                       finalLayerErrors, self.activationFunctions)
+
+  def cost(self, y):
+    return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
 
   def classify(self, dataInstaces):
     lastLayerValues = forwardPass(self.classifcationWeights,
