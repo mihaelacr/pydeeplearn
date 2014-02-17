@@ -6,15 +6,6 @@ from theano import tensor as T
 
 theanoFloat  = theano.config.floatX
 
-# TODO: use conjugate gradient for  backpropagation instead of steepest descent
-# see here for a theano example http://deeplearning.net/tutorial/code/logistic_cg.py
-# TODO: add weight decay in back prop but especially with the constraint
-# on the weights
-# TODO: monitor the changes in error and change the learning rate according
-# to that
-# TODO: wake sleep for improving generation
-# TODO: nesterov method for momentum
-
 """In all the above topLayer does not mean the top most layer, but rather the
 layer above the current one."""
 
@@ -45,29 +36,13 @@ class DBN(object):
     # So for that one there is no need to pass in an activation function
     self.activationFunctions = activationFunctions
 
-    # Do I need to initialize this to scalars
-    self.dropout = dropout
-    self.rbmDropout = rbmDropout
-    self.visibleDropout = visibleDropout
-    self.rbmVisibleDropout = rbmVisibleDropout
-
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
     # you need a list of shared weights
     # the params are the params of the rbms + the softmax layer
 
-    # This depends if you have generative or not
-    nrRbms = self.nrLayers - 2
     self.miniBatchSize = 10
 
-
-    """
-    TODO:
-    If labels = None, only does the generative training
-      with fine tuning for generation, not for discrimintaiton
-      TODO: what happens if you do both? do the fine tuning for generation and
-      then do backprop for discrimintaiton
-    """
 
   # the data and labels need to be theano stuff
   def train(self, data, labels=None):
@@ -81,8 +56,7 @@ class DBN(object):
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     rbm.contrastiveDivergence,
-                    self.rbmDropout,
-                    self.rbmVisibleDropout,
+                    1, 1,
                     self.activationFunctions[i].value)
       net.train(currentData)
       # you need to make the weights and biases shared and
@@ -91,8 +65,6 @@ class DBN(object):
                                          dtype=theanoFloat),
                         name='W')
       self.weights += [w]
-      # this takes the biases from the hidden units
-      # the biases for the visible units are discarded.
 
       # Store the biases on GPU and do not return it on CPU (borrow=True)
       b = theano.shared(value=np.asarray(net.biases[1] / self.dropout,
@@ -168,11 +140,6 @@ class DBN(object):
     # maybe do this entire loop on the GPU?
     for epoch in xrange(epochs):
 
-      if epoch < epochs / 10:
-        momentum = 0.5
-      else:
-        momentum = 0.95
-
       for batch in xrange(nrMiniBatches):
         start = batch * self.miniBatchSize
         end = (batch + 1) * self.miniBatchSize
@@ -181,21 +148,6 @@ class DBN(object):
         # Do a forward pass with the batch data
         self.forwardPass(batchData)
 
-        # finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
-        #                                       layerValues[-1])
-
-        # Compute all derivatives
-        # In the new version you just need to do an update of the shared variables
-        # but a clear way of seeing what are the parameters for everything would be good.
-        # the weights can be kept as a list
-        # TODO: this is a list, you need a function as an error
-        # see:
-        # http://deeplearning.net/tutorial/code/mlp.py
-        # and
-        # http://deeplearning.net/tutorial/code/logistic_sgd.py
-        # maybe if we set layerValues[-1] as some parameter and then we
-        # take labels[start end then it will work]
-        # do the cost nicely
         print self.layerValues[-1]
         error = T.nnet.categorical_crossentropy(self.layerValues[-1], labels[start:end])
         print error
@@ -203,17 +155,6 @@ class DBN(object):
         gparams = T.grad(self.params, error)
         dWeights, dBias = backprop(self.weights, layerValues,
                             finalLayerErrors, self.activationFunctions)
-
-        # apply the updates somehow
-
-        # Update the weights and biases using gradient descent
-        # Also update the old weights
-        # for index in xrange(stages):
-        #   oldDWeights[index] = momentum * oldDWeights[index] + batchLearningRate * dWeights[index]
-        #   oldDBias[index] = momentum * oldDBias[index] + batchLearningRate * dBias[index]
-        #   self.weights[index] -= oldDWeights[index]
-        #   self.biases[index] -= oldDBias[index]
-
 
   def classify(self, dataInstaces):
     lastLayerValues = forwardPass(self.classifcationWeights,
@@ -236,46 +177,3 @@ class DBN(object):
       # activation = self.activationFunctions[stage]
       # currentLayerValues = activation.value(linearSum)
       self.layerValues[stage + 1] = currentLayerValues
-
-
-
-# """Does a forward pass trought the network and computes the values of the
-#     neurons in all the layers.
-#     Required for backpropagation and classification.
-
-#     Arguments:
-#       dataInstaces: The instances to be run trough the network.
-#     """
-  # def forwardPassDropout(self, dataInstaces):
-  #   # dropout on the visible units
-  #   # generally this is around 80%
-  #   visibleOn = sample(self.visibleDropout, dataInstaces.shape)
-  #   thinnedValues = dataInstaces * visibleOn
-  #   layerValues = [thinnedValues]
-
-  #   for stage in xrange(len(self.weights)):
-  #     w = self.weights[stage]
-  #     b = self.biases[stage]
-  #     activation = self.activationFunctions[stage]
-
-  #     # for now use tensor.tile but it does not have a gradient so does not work
-  #     # well with symblic differentiation
-  #     # tile does not work like this?
-  #     linearSum = np.dot(thinnedValues, w.get_value()) + b.get_value()
-  #     # np.exp(2)
-  #     currentLayerValues = activation.value(linearSum)
-  #     # this is the way to do it, because of how backprop works the wij
-  #     # will cancel out if the unit on the layer is non active
-  #     # de/ dw_i_j = de / d_z_j * d_z_j / d_w_i_j = de / d_z_j * y_i
-  #     # so if we set a unit as non active here (and we have to because
-  #     # of this exact same reason and of ow we backpropagate)
-  #     if stage != len(weights) - 1:
-  #       on = sample(self.dropout, currentLayerValues.shape)
-  #       thinnedValues = on * currentLayerValues
-  #       layerValues += [thinnedValues]
-  #     else:
-  #       layerValues += [currentLayerValues]
-
-  #   return layerValues
-
-
