@@ -169,9 +169,7 @@ class DBN(object):
         batchData = data[start: end]
 
         # this is a list of layer activities
-        layerValues = forwardPassDropout(self.weights, self.biases,
-                                        self.activationFunctions, batchData,
-                                        self.dropout, self.visibleDropout)
+        layerValues = self.forwardPass(batchData)
 
         # finalLayerErrors = derivativesCrossEntropyError(labels[start:end],
         #                                       layerValues[-1])
@@ -211,6 +209,54 @@ class DBN(object):
                                   dataInstaces)[-1]
     return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
+  def forwardPassDropout(self, dataInstaces):
+    # dropout on the visible units
+    # generally this is around 80%
+    visibleOn = sample(self.visibleDropout, dataInstaces.shape)
+    thinnedValues = dataInstaces * visibleOn
+    layerValues = [thinnedValues]
+
+    for stage in xrange(len(self.weights)):
+      w = self.weights[stage]
+      b = self.biases[stage]
+      activation = self.activationFunctions[stage]
+
+      # for now use tensor.tile but it does not have a gradient so does not work
+      # well with symblic differentiation
+      # tile does not work like this?
+      linearSum = np.dot(thinnedValues, w.get_value()) + b.get_value()
+      # np.exp(2)
+      currentLayerValues = activation.value(linearSum)
+      # this is the way to do it, because of how backprop works the wij
+      # will cancel out if the unit on the layer is non active
+      # de/ dw_i_j = de / d_z_j * d_z_j / d_w_i_j = de / d_z_j * y_i
+      # so if we set a unit as non active here (and we have to because
+      # of this exact same reason and of ow we backpropagate)
+      if stage != len(weights) - 1:
+        on = sample(self.dropout, currentLayerValues.shape)
+        thinnedValues = on * currentLayerValues
+        layerValues += [thinnedValues]
+      else:
+        layerValues += [currentLayerValues]
+
+    return layerValues
+
+  """ Does not do dropout. Used for classification. """
+  def forwardPass(self, dataInstaces):
+    currentLayerValues = dataInstaces
+    layerValues = [currentLayerValues]
+
+    for stage in xrange(len(self.weights)):
+      w = self.weights[stage]
+      b = self.biases[stage]
+      linearSum = T.dot(currentLayerValues, w) + b
+      currentLayerValues = T.nnet.sigmoid(linearSum)
+      # activation = self.activationFunctions[stage]
+      # currentLayerValues = activation.value(linearSum)
+      layerValues += [currentLayerValues]
+    return layerValues
+
+
 """
 Arguments:
   weights: list of numpy nd-arrays
@@ -245,21 +291,6 @@ def backprop(weights, layerValues, finalLayerErrors, activationFunctions):
   # return deDw, deDbias
   return None
 
-""" Does not do dropout. Used for classification. """
-def forwardPass(weights, biases, activationFunctions, dataInstaces):
-  currentLayerValues = dataInstaces
-  layerValues = [currentLayerValues]
-
-  for stage in xrange(len(weights)):
-    w = weights[stage]
-    b = biases[stage]
-    activation = activationFunctions[stage]
-
-    linearSum = np.dot(currentLayerValues, w) + b
-    currentLayerValues = activation.value(linearSum)
-    layerValues += [currentLayerValues]
-
-  return layerValues
 
 
 """Does a forward pass trought the network and computes the values of the
