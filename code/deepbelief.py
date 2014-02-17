@@ -11,10 +11,50 @@ layer above the current one."""
 
 from common import *
 
+# This is a better logical unit
+# than having the dbn store the layer values
+# this is because the layer values
 
-class MiniBatchTrainer():
-  pass
+class MiniBatchTrainer(object):
 
+  def __init__(self, input, nrLayers, initialWeights, initialBiases):
+    self.input = input
+
+    # Let's initialize the fields
+    # The weights and biases, make them shared variables
+    self.weights = []
+    self.biases = []
+    for i in xrange(nrLayers):
+      # Do not forget to change this for dropout
+      w = theano.shared(value=np.asarray(initialWeights[i],
+                                         dtype=theanoFloat),
+                        name='W')
+      self.weights.append(w)
+
+      b = theano.shared(value=np.asarray(initialBiases[i],
+                                         dtype=theanoFloat),
+                        name='b')
+      self.biases.append(b)
+
+    currentLayerValues = self.inputs
+    self.layerValues[0] = currentLayerValues
+    for stage in xrange(len(self.weights)):
+      w = self.weights[stage]
+      b = self.biases[stage]
+      linearSum = T.dot(currentLayerValues, w) + b
+      currentLayerValues = T.nnet.sigmoid(linearSum)
+      # activation = self.activationFunctions[stage]
+      # currentLayerValues = activation.value(linearSum)
+      self.layerValues[stage + 1] = currentLayerValues
+
+    # Set the parameters of the object
+    # Do not set more than this, these will be used for differentiation in the
+    # gradient
+    self.params = self.weights + self.biases
+
+
+  def cost(self, y):
+    return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
@@ -46,12 +86,10 @@ class DBN(object):
     self.dropout = 1
     # you need a list of shared weights
     # the params are the params of the rbms + the softmax layer
-
     self.miniBatchSize = 10
 
-
-  # the data and labels need to be theano stuff
   def train(self, data, labels=None):
+
     # This depends if you have generative or not
     nrRbms = self.nrLayers - 2
 
@@ -97,6 +135,7 @@ class DBN(object):
     # a discriminative net
     lastLayerWeights = np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1]),
                                 dtype=theanoFloat)
+
     w = theano.shared(value=lastLayerWeights,
                       name='W')
                       # borrow=True)
@@ -128,16 +167,6 @@ class DBN(object):
 
     # I have to set this input somehow and this is most likely to be done
     # with another class that has the batch stuff
-    currentLayerValues = self.inputs
-    self.layerValues[0] = currentLayerValues
-    for stage in xrange(len(self.weights)):
-      w = self.weights[stage]
-      b = self.biases[stage]
-      linearSum = T.dot(currentLayerValues, w) + b
-      currentLayerValues = T.nnet.sigmoid(linearSum)
-      # activation = self.activationFunctions[stage]
-      # currentLayerValues = activation.value(linearSum)
-      self.layerValues[stage + 1] = currentLayerValues
 
     self.fineTune(sharedData, sharedLabels)
     # Change the weights according to dropout rules
@@ -167,7 +196,6 @@ class DBN(object):
     # oldDBias = zerosFromShape(self.biases)
 
     stages = len(self.weights)
-
     # Let's build the symbolic graph which takes the data trough the network
     # allocate symbolic variables for the data
     # index of a mini-batch
@@ -178,22 +206,26 @@ class DBN(object):
     y = T.ivector('y') # labels[start:end]
 
     # here you need to do call forward pass,
-    # now you are not doing any computtaion
+    # now you are not doing any computation
 
-    self.inputs = x
+    # here is where you can create the layered object
+    # the mdb and with it you associate the cost function
+    # and you update it's parameters
+    batchTrainer = MiniBatchTrainer()
+
     # the error is the sum of the individual errors
     error = T.sum(self.cost(y))
 
     deltaParams = []
     # this is either a weight or a bias
-    for param in self.params:
+    for param in batchTrainer.params:
         delta = T.grad(error, param)
         deltaParams.append(delta)
 
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
     updates = []
-    for param, delta in zip(self.params, deltaParams):
+    for param, delta in zip(batchTrainer.params, deltaParams):
         updates.append((param, param - batchLearningRate * delta))
 
     train_model = theano.function(inputs=[index], outputs=error,
@@ -209,8 +241,7 @@ class DBN(object):
       for batchNr in xrange(nrMiniBatches):
         train_model(batchNr)
 
-  def cost(self, y):
-    return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
+
 
   def classify(self, dataInstaces):
     lastLayerValues = forwardPass(self.classifcationWeights,
