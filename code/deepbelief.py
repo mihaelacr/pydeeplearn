@@ -135,40 +135,24 @@ class DBN(object):
     # This depends if you have generative or not
     # Initialize the last layer of weights to zero if you have
     # a discriminative net
-    lastLayerWeights = np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1]),
-                                dtype=theanoFloat)
+    lastLayerWeights = np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1]))
 
-    w = theano.shared(value=lastLayerWeights,
-                      name='W')
-                      # borrow=True)
+    lastLayerBiases = np.zeros(shape=(self.layerSizes[-1]))
 
-    lastLayerBiases = np.zeros(shape=(self.layerSizes[-1]),
-                                dtype=theanoFloat)
-    b = theano.shared(value=lastLayerBiases,
-                      name='b')
-                      # borrow=True)
-
-    self.weights += [w]
-    self.biases += [b]
+    self.weights += [lastLayerWeights]
+    self.biases += [lastLayerBiases]
 
     assert len(self.weights) == self.nrLayers - 1
     assert len(self.biases) == self.nrLayers - 1
 
-    # Set the parameters of the net
-    # According to them we will do backprop
-    self.params = self.weights + self.biases
-
-    # Create layervalues as shared variables (and symbolic automatically)
-
-    # I have to set this input somehow and this is most likely to be done
-    # with another class that has the batch stuff
-
     self.fineTune(sharedData, sharedLabels)
+
     # Change the weights according to dropout rules
     # make this shared maybe as well? so far they are definitely not
     # a problem so we will see later
+    # these probably need to be shared as well
     self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
-    self.classifcationBiases = map(lambda x: x * self.dropout, self.biases)
+    self.classifcationBiases = self.biases
 
   """Fine tunes the weigths and biases using backpropagation.
     data and labels are shared
@@ -230,8 +214,7 @@ class DBN(object):
       for batchNr in xrange(nrMiniBatches):
         train_model(batchNr)
 
-
-
+  # This probably does not work now
   def classify(self, dataInstaces):
     lastLayerValues = forwardPass(self.classifcationWeights,
                                   self.classifcationBiases,
