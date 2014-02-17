@@ -25,7 +25,6 @@ class MiniBatchTrainer(object):
     self.weights = []
     self.biases = []
     for i in xrange(nrLayers):
-      # Do not forget to change this for dropout
       w = theano.shared(value=np.asarray(initialWeights[i],
                                          dtype=theanoFloat),
                         name='W')
@@ -36,12 +35,21 @@ class MiniBatchTrainer(object):
                         name='b')
       self.biases.append(b)
 
+    # Is this needed?
+    # self.layerValues = []
+    # for i in xrange(self.nrLayers):
+    #   vals = np.zeros(shape=(self.miniBatchSize, self.layerSizes[i]),
+    #                             dtype=theanoFloat)
+    #   layerVals = theano.shared(value=vals,
+    #                   name='layerVals')
+    #   self.layerValues.append(layerVals)
     currentLayerValues = self.inputs
     self.layerValues[0] = currentLayerValues
     for stage in xrange(len(self.weights)):
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
+      # TODO: make this a function that you pass around
       currentLayerValues = T.nnet.sigmoid(linearSum)
       # activation = self.activationFunctions[stage]
       # currentLayerValues = activation.value(linearSum)
@@ -95,8 +103,6 @@ class DBN(object):
 
     self.weights = []
     self.biases = []
-    # First step: let's make the data and the labels shared variables
-    # so that we can nicely work with them
 
     # TODO: see if you have to use borrow here but probably not
     # because it only has effect on CPU
@@ -117,15 +123,11 @@ class DBN(object):
       net.train(currentData)
       # you need to make the weights and biases shared and
       # add them to params
-      w = theano.shared(value=np.asarray(net.weights / self.dropout,
-                                         dtype=theanoFloat),
-                        name='W')
+      w = net.weights / self.dropout
       self.weights += [w]
 
       # Store the biases on GPU and do not return it on CPU (borrow=True)
-      b = theano.shared(value=np.asarray(net.biases[1] / self.dropout,
-                                         dtype=theanoFloat),
-                        name='b')
+      b = net.biases[1]
       self.biases += [b]
 
       currentData = net.hiddenRepresentation(currentData)
@@ -157,13 +159,6 @@ class DBN(object):
     self.params = self.weights + self.biases
 
     # Create layervalues as shared variables (and symbolic automatically)
-    self.layerValues = []
-    for i in xrange(self.nrLayers):
-      vals = np.zeros(shape=(self.miniBatchSize, self.layerSizes[i]),
-                                dtype=theanoFloat)
-      layerVals = theano.shared(value=vals,
-                      name='layerVals')
-      self.layerValues.append(layerVals)
 
     # I have to set this input somehow and this is most likely to be done
     # with another class that has the batch stuff
@@ -192,9 +187,6 @@ class DBN(object):
 
     nrMiniBatches = len(data) / self.miniBatchSize
 
-    # oldDWeights = zerosFromShape(self.weights)
-    # oldDBias = zerosFromShape(self.biases)
-
     stages = len(self.weights)
     # Let's build the symbolic graph which takes the data trough the network
     # allocate symbolic variables for the data
@@ -204,9 +196,6 @@ class DBN(object):
     x = T.matrix('x')
     # The labels, a vector
     y = T.ivector('y') # labels[start:end]
-
-    # here you need to do call forward pass,
-    # now you are not doing any computation
 
     # here is where you can create the layered object
     # the mdb and with it you associate the cost function
