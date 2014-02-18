@@ -176,12 +176,11 @@ class DBN(object):
     batchLearningRate = learningRate / self.miniBatchSize
 
     nrMiniBatches = self.nrMiniBatches
-    stages = len(self.weights)
     # Let's build the symbolic graph which takes the data trough the network
     # allocate symbolic variables for the data
     # index of a mini-batch
     miniBatchIndex = T.lscalar()
-    momentum = T.lscalar()
+    momentum = T.dscalar()
 
     # The mini-batch data is a matrix
     x = T.matrix('x')
