@@ -35,14 +35,16 @@ class MiniBatchTrainer(object):
                         name='b')
       self.biases.append(b)
 
-    # Is this needed?
-    # self.layerValues = []
-    # for i in xrange(self.nrLayers):
-    #   vals = np.zeros(shape=(self.miniBatchSize, self.layerSizes[i]),
-    #                             dtype=theanoFloat)
-    #   layerVals = theano.shared(value=vals,
-    #                   name='layerVals')
-    #   self.layerValues.append(layerVals)
+    # The updates that were performed in the last batch
+    # Required for momentum
+    self.oldUpdates = []
+    for i in xrange(self.nrLayers):
+      vals = np.zeros(shape=(self.miniBatchSize, self.layerSizes[i]),
+                                dtype=theanoFloat)
+      update = theano.shared(value=vals,
+                      name='update')
+      self.oldUpdates.append(update)
+
     currentLayerValues = self.input
     self.layerValues = [0 for x in xrange(nrLayers)]
     self.layerValues[0] = currentLayerValues
@@ -173,6 +175,8 @@ class DBN(object):
     # allocate symbolic variables for the data
     # index of a mini-batch
     miniBatchIndex = T.lscalar()
+    momentum = T.lscalar()
+
     # The mini-batch data is a matrix
     x = T.matrix('x')
     # The labels, a vector
@@ -196,11 +200,16 @@ class DBN(object):
 
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
-    updates = []
-    for param, delta in zip(batchTrainer.params, deltaParams):
-        updates.append((param, param - batchLearningRate * delta))
+    updates = {}
+    for param, delta, oldUpdate in zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates):
+        # You have to do the momentum stuff here
+        paramUpdate = momentum * oldUpdate - batchLearningRate * delta
+        newParam = param + paramUpdate
+        updates[param] = newParam
+        updates[oldUpdate] = paramUpdate
 
-    train_model = theano.function(inputs=[miniBatchIndex],
+    train_model = theano.function(
+            inputs=[miniBatchIndex, momentum],
             outputs=error,
             updates=updates,
             givens={
@@ -212,8 +221,14 @@ class DBN(object):
       print "in if"
       # When you do early stopping you have to return the error on this batch
       # so that you can see when you stop or not
+      # you have to pass in the momentum here as well as a parameter for
+      # the trainmodel
       for batchNr in xrange(nrMiniBatches):
-        error = train_model(batchNr)
+        if epoch < epochs / 10:
+          momentum = 0.5
+        else:
+          momentum = 0.95
+        error = train_model(batchNr, momentum)
 
     # error is done
 
@@ -226,9 +241,8 @@ class DBN(object):
     for i in xrange(len(self.biases)):
       self.biases[i] = batchTrainer.biases[i].get_value()
 
-
-  # This probably does not work now
   def classify(self, dataInstaces):
+    # TODO: run it on the gpu according to the number of instances
     lastLayerValues = forwardPass(self.classifcationWeights,
                                   self.classifcationBiases,
                                   self.activationFunctions,
