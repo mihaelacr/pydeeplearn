@@ -147,11 +147,9 @@ class DBN(object):
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels)
 
-    # Change the weights according to dropout rules
-    # make this shared maybe as well? so far they are definitely not
-    # a problem so we will see later
-    # these probably need to be shared as well
-    self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
+    # TODO: put it back in with dropout
+    # self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
+    self.classifcationWeights =  self.weights
     self.classifcationBiases = self.biases
 
   """Fine tunes the weigths and biases using backpropagation.
