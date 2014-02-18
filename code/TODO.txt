@@ -35,3 +35,7 @@ runnign experiments:
   edge05 with 20% fixed but only with 10.000 to see that stuff is working
 
   edge02 with rbm dropout
+
+
+LINK THEANO TO OPEN BLAS
+CHECK WHY OPEN BLAS IS SLOWER

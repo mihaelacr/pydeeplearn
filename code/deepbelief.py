@@ -66,7 +66,12 @@ class MiniBatchTrainer(object):
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
       # TODO: make this a function that you pass around
-      currentLayerValues = T.nnet.sigmoid(linearSum)
+      # it is important to make the activation functions outside
+      if stage != len(self.weights) -1:
+        currentLayerValues = T.nnet.sigmoid(linearSum)
+      else:
+        currentLayerValues = T.nnet.softmax(linearSum)
+
       # activation = self.activationFunctions[stage]
       # currentLayerValues = activation.value(linearSum)
       self.layerValues[stage + 1] = currentLayerValues
