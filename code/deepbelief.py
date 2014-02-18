@@ -38,7 +38,7 @@ class MiniBatchTrainer(object):
     # The updates that were performed in the last batch
     # Required for momentum
     self.oldUpdates = []
-    for i in xrange(self.nrLayers):
+    for i in xrange(nrLayers - 1):
       vals = np.zeros(shape=(self.miniBatchSize, self.layerSizes[i]),
                                 dtype=theanoFloat)
       update = theano.shared(value=vals,
@@ -111,8 +111,7 @@ class DBN(object):
     # because it only has effect on CPU
     sharedData = theano.shared(np.asarray(data,
                                                dtype=theano.config.floatX))
-    print "labels"
-    print labels.shape
+
     sharedLabels = theano.shared(np.asarray(labels,
                                                dtype=theano.config.floatX))
     currentData = data
