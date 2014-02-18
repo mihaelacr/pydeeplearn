@@ -43,7 +43,8 @@ class MiniBatchTrainer(object):
     #   layerVals = theano.shared(value=vals,
     #                   name='layerVals')
     #   self.layerValues.append(layerVals)
-    currentLayerValues = self.inputs
+    currentLayerValues = self.input
+    self.layerValues = [0 for x in xrange(nrLayers)]
     self.layerValues[0] = currentLayerValues
     for stage in xrange(len(self.weights)):
       w = self.weights[stage]
@@ -108,11 +109,10 @@ class DBN(object):
     # because it only has effect on CPU
     sharedData = theano.shared(np.asarray(data,
                                                dtype=theano.config.floatX))
-    # the cast might not be needed in my code because I do not think
-    # I use the labels as indices, but I need to check this
-    sharedLabels = T.cast(theano.shared(np.asarray(labels,
-                                               dtype=theano.config.floatX)),
-                          'int32')
+    print "labels"
+    print labels.shape
+    sharedLabels = theano.shared(np.asarray(labels,
+                                               dtype=theano.config.floatX))
     currentData = data
 
     for i in xrange(nrRbms):
@@ -176,7 +176,7 @@ class DBN(object):
     # The mini-batch data is a matrix
     x = T.matrix('x')
     # The labels, a vector
-    y = T.ivector('y') # labels[start:end]
+    y = T.matrix('y') # labels[start:end] this needs to be a matrix because we output probabilities
 
     # here is where you can create the layered object
     # the mdb and with it you associate the cost function
@@ -200,11 +200,11 @@ class DBN(object):
     for param, delta in zip(batchTrainer.params, deltaParams):
         updates.append((param, param - batchLearningRate * delta))
 
-    train_model = theano.function(inputs=[index], outputs=error,
+    train_model = theano.function(inputs=[miniBatchIndex], outputs=error,
             updates=updates,
             givens={
-                x: data[index * self.miniBatchSize:(index + 1) * self.miniBatchSize],
-                y: labels[index * self.miniBatchSize:(index + 1) * self.miniBatchSize]})
+                x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
 
     # TODO: early stopping
     for epoch in xrange(epochs):
