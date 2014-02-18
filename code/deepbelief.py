@@ -143,6 +143,8 @@ class DBN(object):
     assert len(self.biases) == self.nrLayers - 1
 
     self.nrMiniBatches = len(data) / self.miniBatchSize
+
+    # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels)
 
     # Change the weights according to dropout rules
@@ -216,20 +218,29 @@ class DBN(object):
 
     # error is done
 
+    # Let's put the weights back in the dbn class as they are used for classification
+    # Note that if you leave it like this you od not have
+    # to deal with the random theano stuff
+    for i in xrange(len(self.weights)):
+      self.weights[i] = batchTrainer.weights[i].get_value()
+
+    for i in xrange(len(self.biases)):
+      self.biases[i] = batchTrainer.biases[i].get_value()
+
+
   # This probably does not work now
   def classify(self, dataInstaces):
-    # this definitely does not work now
-
-    # lastLayerValues = forwardPass(self.classifcationWeights,
-    #                               self.classifcationBiases,
-    #                               self.activationFunctions,
-    #                               dataInstaces)[-1]
-    # return lastLayerValues, np.argmax(lastLayerValues, axis=1)
-    pass
+    lastLayerValues = forwardPass(self.classifcationWeights,
+                                  self.classifcationBiases,
+                                  self.activationFunctions,
+                                  dataInstaces)[-1]
+    return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
 # This method is now kept only for classification
 # The training is done using theano and does not need this
 # I will see if I add this later to GPU as well
+# Since we now have the derivative there
+# is not need to have the more convoluted classes for activation functions
 def forwardPass(weights, biases, activationFunctions, dataInstaces):
   currentLayerValues = dataInstaces
   layerValues = [currentLayerValues]
