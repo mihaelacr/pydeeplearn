@@ -214,6 +214,8 @@ class DBN(object):
       for batchNr in xrange(nrMiniBatches):
         error = train_model(batchNr)
 
+    # error is done
+
   # This probably does not work now
   def classify(self, dataInstaces):
     # this definitely does not work now
@@ -224,3 +226,22 @@ class DBN(object):
     #                               dataInstaces)[-1]
     # return lastLayerValues, np.argmax(lastLayerValues, axis=1)
     pass
+
+# This method is now kept only for classification
+# The training is done using theano and does not need this
+# I will see if I add this later to GPU as well
+def forwardPass(weights, biases, activationFunctions, dataInstaces):
+  currentLayerValues = dataInstaces
+  layerValues = [currentLayerValues]
+  size = dataInstaces.shape[0]
+
+  for stage in xrange(len(weights)):
+    w = weights[stage]
+    b = biases[stage]
+    activation = activationFunctions[stage]
+
+    linearSum = np.dot(currentLayerValues, w) + np.tile(b, (size, 1))
+    currentLayerValues = activation.value(linearSum)
+    layerValues += [currentLayerValues]
+
+  return layerValues
