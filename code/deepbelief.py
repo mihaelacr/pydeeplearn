@@ -200,7 +200,8 @@ class DBN(object):
     for param, delta in zip(batchTrainer.params, deltaParams):
         updates.append((param, param - batchLearningRate * delta))
 
-    train_model = theano.function(inputs=[miniBatchIndex], outputs=error,
+    train_model = theano.function(inputs=[miniBatchIndex],
+            outputs=error,
             updates=updates,
             givens={
                 x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
@@ -211,11 +212,12 @@ class DBN(object):
       # When you do early stopping you have to return the error on this batch
       # so that you can see when you stop or not
       for batchNr in xrange(nrMiniBatches):
-        train_model(batchNr)
+        error = train_model(batchNr)
 
   # This probably does not work now
   def classify(self, dataInstaces):
     # this definitely does not work now
+
     # lastLayerValues = forwardPass(self.classifcationWeights,
     #                               self.classifcationBiases,
     #                               self.activationFunctions,
