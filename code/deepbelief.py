@@ -71,8 +71,6 @@ class MiniBatchTrainer(object):
       # currentLayerValues = activation.value(linearSum)
       self.layerValues[stage + 1] = currentLayerValues
 
-
-
   def cost(self, y):
     return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
 
@@ -208,13 +206,13 @@ class DBN(object):
 
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
-    updates = {}
+    updates = []
     for param, delta, oldUpdate in zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates):
         # You have to do the momentum stuff here
         paramUpdate = momentum * oldUpdate - batchLearningRate * delta
         newParam = param + paramUpdate
-        updates[param] = newParam
-        updates[oldUpdate] = paramUpdate
+        updates.append(param, newParam)
+        updates.append(oldUpdate, paramUpdate)
 
     train_model = theano.function(
             inputs=[miniBatchIndex, momentum],
