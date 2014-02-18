@@ -144,8 +144,9 @@ class DBN(object):
     # This depends if you have generative or not
     # Initialize the last layer of weights to zero if you have
     # a discriminative net
-    lastLayerWeights = np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1]))
-    lastLayerBiases = np.zeros(shape=(self.layerSizes[-1]))
+    lastLayerWeights = np.asarray(np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1])),
+                                          dtype=theano.config.floatX)
+    lastLayerBiases = np.asarray(np.zeros(shape=(self.layerSizes[-1])), dtype=theano.config.floatX)
 
     self.weights += [lastLayerWeights]
     self.biases += [lastLayerBiases]
@@ -160,6 +161,7 @@ class DBN(object):
 
     # TODO: put it back in with dropout
     # self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
+    # here this is float64, and it is composed
     self.classifcationWeights =  self.weights
     self.classifcationBiases = self.biases
 
