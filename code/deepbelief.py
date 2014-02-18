@@ -71,9 +71,6 @@ class MiniBatchTrainer(object):
         currentLayerValues = T.nnet.sigmoid(linearSum)
       else:
         currentLayerValues = T.nnet.softmax(linearSum)
-
-      # activation = self.activationFunctions[stage]
-      # currentLayerValues = activation.value(linearSum)
       self.layerValues[stage + 1] = currentLayerValues
 
   def cost(self, y):
