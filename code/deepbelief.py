@@ -211,8 +211,8 @@ class DBN(object):
         # You have to do the momentum stuff here
         paramUpdate = momentum * oldUpdate - batchLearningRate * delta
         newParam = param + paramUpdate
-        updates.append(param, newParam)
-        updates.append(oldUpdate, paramUpdate)
+        updates.append((param, newParam))
+        updates.append((oldUpdate, paramUpdate))
 
     train_model = theano.function(
             inputs=[miniBatchIndex, momentum],
