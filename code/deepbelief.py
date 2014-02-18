@@ -215,8 +215,10 @@ class DBN(object):
 
   # This probably does not work now
   def classify(self, dataInstaces):
-    lastLayerValues = forwardPass(self.classifcationWeights,
-                                  self.classifcationBiases,
-                                  self.activationFunctions,
-                                  dataInstaces)[-1]
-    return lastLayerValues, np.argmax(lastLayerValues, axis=1)
+    # this definitely does not work now
+    # lastLayerValues = forwardPass(self.classifcationWeights,
+    #                               self.classifcationBiases,
+    #                               self.activationFunctions,
+    #                               dataInstaces)[-1]
+    # return lastLayerValues, np.argmax(lastLayerValues, axis=1)
+    pass
