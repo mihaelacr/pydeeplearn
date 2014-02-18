@@ -24,7 +24,7 @@ class MiniBatchTrainer(object):
     # The weights and biases, make them shared variables
     self.weights = []
     self.biases = []
-    for i in xrange(nrLayers):
+    for i in xrange(nrLayers - 1):
       w = theano.shared(value=np.asarray(initialWeights[i],
                                          dtype=theanoFloat),
                         name='W')
@@ -121,22 +121,19 @@ class DBN(object):
                     1, 1,
                     self.activationFunctions[i].value)
       net.train(currentData)
-      # you need to make the weights and biases shared and
-      # add them to params
+
       w = net.weights / self.dropout
       self.weights += [w]
-
-      # Store the biases on GPU and do not return it on CPU (borrow=True)
       b = net.biases[1]
       self.biases += [b]
 
+      # Let's update the current representation given to the next RBM
       currentData = net.hiddenRepresentation(currentData)
 
     # This depends if you have generative or not
     # Initialize the last layer of weights to zero if you have
     # a discriminative net
     lastLayerWeights = np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1]))
-
     lastLayerBiases = np.zeros(shape=(self.layerSizes[-1]))
 
     self.weights += [lastLayerWeights]
@@ -145,6 +142,7 @@ class DBN(object):
     assert len(self.weights) == self.nrLayers - 1
     assert len(self.biases) == self.nrLayers - 1
 
+    self.nrMiniBatches = len(data) / self.miniBatchSize
     self.fineTune(sharedData, sharedLabels)
 
     # Change the weights according to dropout rules
@@ -169,8 +167,7 @@ class DBN(object):
     learningRate = 0.1
     batchLearningRate = learningRate / self.miniBatchSize
 
-    nrMiniBatches = len(data) / self.miniBatchSize
-
+    nrMiniBatches = self.nrMiniBatches
     stages = len(self.weights)
     # Let's build the symbolic graph which takes the data trough the network
     # allocate symbolic variables for the data
@@ -184,10 +181,12 @@ class DBN(object):
     # here is where you can create the layered object
     # the mdb and with it you associate the cost function
     # and you update it's parameters
-    batchTrainer = MiniBatchTrainer()
+    batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
+                                    initialWeights=self.weights,
+                                    initialBiases=self.biases)
 
     # the error is the sum of the individual errors
-    error = T.sum(self.cost(y))
+    error = T.sum(batchTrainer.cost(y))
 
     deltaParams = []
     # this is either a weight or a bias
