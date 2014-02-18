@@ -35,15 +35,28 @@ class MiniBatchTrainer(object):
                         name='b')
       self.biases.append(b)
 
+    # Set the parameters of the object
+    # Do not set more than this, these will be used for differentiation in the
+    # gradient
+    self.params = self.weights + self.biases
+
     # The updates that were performed in the last batch
     # Required for momentum
+    # It is important that the order in which
+    # we add the oldUpdates is the same as which we add the params
+    # TODO: add an assertion for this
     self.oldUpdates = []
     for i in xrange(nrLayers - 1):
-      vals = np.zeros(shape=(self.miniBatchSize, self.layerSizes[i]),
-                                dtype=theanoFloat)
-      update = theano.shared(value=vals,
-                      name='update')
-      self.oldUpdates.append(update)
+      oldDw = theano.shared(value=np.zeros(shape=initialWeights[i],
+                                         dtype=theanoFloat),
+                        name='oldDw')
+      self.oldUpdates.append(oldDw)
+
+    for i in xrange(nrLayers - 1):
+      oldDb = theano.shared(value=np.zeros(shape=initialBiases[i],
+                                         dtype=theanoFloat),
+                        name='oldDb')
+      self.oldUpdates.append(oldDb)
 
     currentLayerValues = self.input
     self.layerValues = [0 for x in xrange(nrLayers)]
@@ -58,10 +71,6 @@ class MiniBatchTrainer(object):
       # currentLayerValues = activation.value(linearSum)
       self.layerValues[stage + 1] = currentLayerValues
 
-    # Set the parameters of the object
-    # Do not set more than this, these will be used for differentiation in the
-    # gradient
-    self.params = self.weights + self.biases
 
 
   def cost(self, y):
