@@ -211,6 +211,7 @@ class DBN(object):
 
     # TODO: early stopping
     for epoch in xrange(epochs):
+      print "in if"
       # When you do early stopping you have to return the error on this batch
       # so that you can see when you stop or not
       for batchNr in xrange(nrMiniBatches):
