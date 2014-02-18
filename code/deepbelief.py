@@ -180,7 +180,7 @@ class DBN(object):
     # allocate symbolic variables for the data
     # index of a mini-batch
     miniBatchIndex = T.lscalar()
-    momentum = T.dscalar()
+    momentum = T.fscalar()
 
     # The mini-batch data is a matrix
     x = T.matrix('x')
