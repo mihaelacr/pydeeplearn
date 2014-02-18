@@ -72,6 +72,9 @@ class MiniBatchTrainer(object):
       self.layerValues[stage + 1] = currentLayerValues
 
   def cost(self, y):
+    # This might not be the same as the cross entropy
+    # but it probably is
+    # Getting 83 after 1000 is not really OK because it should be around 97
     return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
 
 """ Class that implements a deep belief network, for classification """
@@ -116,13 +119,11 @@ class DBN(object):
 
     # TODO: see if you have to use borrow here but probably not
     # because it only has effect on CPU
-    sharedData = theano.shared(np.asarray(data,
-                                               dtype=theano.config.floatX))
+    sharedData = theano.shared(np.asarray(data, dtype=theano.config.floatX))
 
-    sharedLabels = theano.shared(np.asarray(labels,
-                                               dtype=theano.config.floatX))
+    sharedLabels = theano.shared(np.asarray(labels, dtype=theano.config.floatX))
+
     currentData = data
-
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     rbm.contrastiveDivergence,
@@ -130,7 +131,7 @@ class DBN(object):
                     self.activationFunctions[i].value)
       net.train(currentData)
 
-      w = net.weights / self.dropout
+      w = net.weights
       self.weights += [w]
       b = net.biases[1]
       self.biases += [b]
