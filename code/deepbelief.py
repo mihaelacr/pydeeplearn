@@ -47,13 +47,13 @@ class MiniBatchTrainer(object):
     # TODO: add an assertion for this
     self.oldUpdates = []
     for i in xrange(nrLayers - 1):
-      oldDw = theano.shared(value=np.zeros(shape=initialWeights[i],
+      oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
                                          dtype=theanoFloat),
                         name='oldDw')
       self.oldUpdates.append(oldDw)
 
     for i in xrange(nrLayers - 1):
-      oldDb = theano.shared(value=np.zeros(shape=initialBiases[i],
+      oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
                                          dtype=theanoFloat),
                         name='oldDb')
       self.oldUpdates.append(oldDb)
