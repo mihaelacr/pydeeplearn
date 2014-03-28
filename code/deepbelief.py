@@ -227,6 +227,9 @@ class DBN(object):
         updates.append((param, newParam))
         updates.append((oldUpdate, paramUpdate))
 
+    mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
+    'local_elemwise_fusion', 'inplace')
+
     train_model = theano.function(
             inputs=[miniBatchIndex, momentum],
             outputs=error,
@@ -234,8 +237,7 @@ class DBN(object):
             givens={
                 x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
                 y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
-                mode=theano.compile.MonitorMode(post_func=detect_nan)
-                )
+                mode=mode)
 
     # TODO: early stopping
     for epoch in xrange(epochs):
