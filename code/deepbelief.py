@@ -21,6 +21,12 @@ def detect_nan(i, node, fn):
             print 'Outputs: %s' % [output[0] for output in fn.outputs]
             break
 
+def inspect_inputs(i, node, fn):
+    print i, node, "input(s) value(s):", [input[0] for input in fn.inputs],
+
+def inspect_outputs(i, node, fn):
+    print "output(s) value(s):", [output[0] for output in fn.outputs]
+
 # This is a better logical unit
 # than having the dbn store the layer values
 # this is because the layer values
@@ -81,6 +87,7 @@ class MiniBatchTrainer(object):
         currentLayerValues = T.nnet.sigmoid(linearSum)
       else:
         currentLayerValues = T.nnet.softmax(linearSum)
+
       self.layerValues[stage + 1] = currentLayerValues
 
   def cost(self, y):
@@ -132,7 +139,6 @@ class DBN(object):
     # TODO: see if you have to use borrow here but probably not
     # because it only has effect on CPU
     sharedData = theano.shared(np.asarray(data, dtype=theano.config.floatX))
-
     sharedLabels = theano.shared(np.asarray(labels, dtype=theano.config.floatX))
 
     currentData = data
@@ -227,7 +233,8 @@ class DBN(object):
         updates.append((param, newParam))
         updates.append((oldUpdate, paramUpdate))
 
-    mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
+    mode = theano.compile.MonitorMode(pre_func=inspect_inputs,
+      post_func=detect_nan).excluding(
     'local_elemwise_fusion', 'inplace')
 
     train_model = theano.function(
@@ -254,7 +261,6 @@ class DBN(object):
         error = train_model(batchNr, momentum)
 
     # error is done
-
     # Let's put the weights back in the dbn class as they are used for classification
     # Note that if you leave it like this you od not have
     # to deal with the random theano stuff
