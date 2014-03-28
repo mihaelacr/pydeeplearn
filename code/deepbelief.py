@@ -14,7 +14,7 @@ from common import *
 
 def detect_nan(i, node, fn):
     for output in fn.outputs:
-        if numpy.isnan(output[0]).any():
+        if np.isnan(output[0]).any():
             print '*** NaN detected ***'
             theano.printing.debugprint(node)
             print 'Inputs : %s' % [input[0] for input in fn.inputs]
