@@ -11,6 +11,16 @@ layer above the current one."""
 
 from common import *
 
+
+def detect_nan(i, node, fn):
+    for output in fn.outputs:
+        if numpy.isnan(output[0]).any():
+            print '*** NaN detected ***'
+            theano.printing.debugprint(node)
+            print 'Inputs : %s' % [input[0] for input in fn.inputs]
+            print 'Outputs: %s' % [output[0] for output in fn.outputs]
+            break
+
 # This is a better logical unit
 # than having the dbn store the layer values
 # this is because the layer values
@@ -144,9 +154,8 @@ class DBN(object):
     # This depends if you have generative or not
     # Initialize the last layer of weights to zero if you have
     # a discriminative net
-    lastLayerWeights = np.asarray(np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1])),
-                                          dtype=theano.config.floatX)
-    lastLayerBiases = np.asarray(np.zeros(shape=(self.layerSizes[-1])), dtype=theano.config.floatX)
+    lastLayerWeights = np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1]))
+    lastLayerBiases = np.zeros(shape=(self.layerSizes[-1]))
 
     self.weights += [lastLayerWeights]
     self.biases += [lastLayerBiases]
@@ -224,7 +233,9 @@ class DBN(object):
             updates=updates,
             givens={
                 x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
+                mode=theano.compile.MonitorMode(post_func=detect_nan)
+                )
 
     # TODO: early stopping
     for epoch in xrange(epochs):
@@ -253,6 +264,7 @@ class DBN(object):
 
   def classify(self, dataInstaces):
     # TODO: run it on the gpu according to the number of instances
+    # I think it is better to just run it on GPU
     lastLayerValues = forwardPass(self.classifcationWeights,
                                   self.classifcationBiases,
                                   self.activationFunctions,
@@ -264,7 +276,9 @@ class DBN(object):
 # I will see if I add this later to GPU as well
 # Since we now have the derivative there
 # is not need to have the more convoluted classes for activation functions
+# TODO: some of these things here are 64 bits, this can cause problems
 def forwardPass(weights, biases, activationFunctions, dataInstaces):
+  # TODO: data instances should be float32
   currentLayerValues = dataInstaces
   layerValues = [currentLayerValues]
   size = dataInstaces.shape[0]
