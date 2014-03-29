@@ -83,6 +83,8 @@ class MiniBatchTrainer(object):
       linearSum = T.dot(currentLayerValues, w) + b
       # TODO: make this a function that you pass around
       # it is important to make the activation functions outside
+      # Also check the stamford paper again to what they did to average out
+      # the results
       if stage != len(self.weights) -1:
         currentLayerValues = T.nnet.sigmoid(linearSum)
       else:
@@ -273,11 +275,26 @@ class DBN(object):
   def classify(self, dataInstaces):
     # TODO: run it on the gpu according to the number of instances
     # I think it is better to just run it on GPU
-    lastLayerValues = forwardPass(self.classifcationWeights,
-                                  self.classifcationBiases,
-                                  self.activationFunctions,
-                                  dataInstaces)[-1]
+    # The mini-batch data is a matrix
+    x = T.matrix('x')
+    batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
+                                    initialWeights=self.classifcationWeights,
+                                    initialBiases=self.classifcationBiases)
+    classify = theano.function(
+            inputs=[],
+            outputs=batchTrainer.layerValues[-1],
+            updates={},
+            givens={x: dataInstaces})
+
+    lastLayers = classify()
+
+    lastLayerValues = lastLayers.get_value()
     return lastLayerValues, np.argmax(lastLayerValues, axis=1)
+
+    # lastLayerValues = forwardPass(self.classifcationWeights,
+    #                               self.classifcationBiases,
+    #                               self.activationFunctions,
+    #                               dataInstaces)[-1]
 
 # This method is now kept only for classification
 # The training is done using theano and does not need this
