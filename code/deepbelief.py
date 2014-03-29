@@ -276,6 +276,8 @@ class DBN(object):
     # TODO: run it on the gpu according to the number of instances
     # I think it is better to just run it on GPU
     # The mini-batch data is a matrix
+    dataInstacesConverted = np.asarray(dataInstaces, dtype='float32')
+
     x = T.matrix('x')
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.classifcationWeights,
@@ -284,7 +286,7 @@ class DBN(object):
             inputs=[],
             outputs=batchTrainer.layerValues[-1],
             updates={},
-            givens={x: dataInstaces})
+            givens={x: dataInstacesConverted})
 
     lastLayers = classify()
 
