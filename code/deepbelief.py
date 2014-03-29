@@ -257,9 +257,9 @@ class DBN(object):
       # the trainmodel
       for batchNr in xrange(nrMiniBatches):
         if epoch < epochs / 10:
-          momentum = 0.5
+          momentum = np.float32(0.5)
         else:
-          momentum = 0.95
+          momentum = np.float32(0.95)
         error = train_model(batchNr, momentum)
 
     # error is done
@@ -291,12 +291,12 @@ class DBN(object):
     lastLayers = classify()
 
     lastLayerValues = lastLayers.get_value()
-    return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
     # lastLayerValues = forwardPass(self.classifcationWeights,
     #                               self.classifcationBiases,
     #                               self.activationFunctions,
     #                               dataInstaces)[-1]
+    return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
 # This method is now kept only for classification
 # The training is done using theano and does not need this
