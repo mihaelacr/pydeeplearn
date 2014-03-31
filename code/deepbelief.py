@@ -221,11 +221,8 @@ class DBN(object):
     # the error is the sum of the individual errors
     error = T.sum(batchTrainer.cost(y))
 
-    deltaParams = []
     # this is either a weight or a bias
-    for param in batchTrainer.params:
-        delta = T.grad(error, param)
-        deltaParams.append(delta)
+    deltaParams = T.grad(batchTrainer.params)
 
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
@@ -234,8 +231,6 @@ class DBN(object):
     parametersTuples = zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates)
     for param, delta, oldUpdate in parametersTuples:
         paramUpdate = momentum * oldUpdate - batchLearningRate * delta
-        print "type(paramUpdate)"
-        print type(paramUpdate.get_value())
         newParam = param + paramUpdate
         updates.append((param, newParam))
         updates.append((oldUpdate, paramUpdate))
