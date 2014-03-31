@@ -94,8 +94,8 @@ class MiniBatchTrainer(object):
   def cost(self, y):
     # This might not be the same as the cross entropy
     # but it probably is
-    # return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
-    return - T.sum(self.layerValues[-1] * T.log(y))
+    return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
+    # return - T.sum(self.layerValues[-1] * T.log(y))
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
