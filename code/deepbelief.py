@@ -95,7 +95,8 @@ class MiniBatchTrainer(object):
   def cost(self, y):
     # This might not be the same as the cross entropy
     # but it probably is
-    return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
+    # return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
+    return T.sum(y * T.log(self.layerValues[-1]))
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
@@ -280,7 +281,7 @@ class DBN(object):
     dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
 
     x = T.matrix('x', dtype=theanoFloat)
-    # TODO: move this to classification weigts when you have
+    # TODO: move this to classification weights when you have
     # dropout back in
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.weights,
@@ -299,7 +300,9 @@ class DBN(object):
     #                               self.classifcationBiases,
     #                               self.activationFunctions,
     #                               dataInstaces)[-1]
-    return lastLayerValues, np.argmax(lastLayerValues, axis=1)
+    return lastLayerValues, T.argmax(lastLayerValues, axis=1)
+
+# NO LONGER REALLY USED? REMOVE?
 
 # This method is now kept only for classification
 # The training is done using theano and does not need this
