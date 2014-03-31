@@ -163,9 +163,9 @@ class DBN(object):
     # Initialize the last layer of weights to zero if you have
     # a discriminative net
     lastLayerWeights = np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1]),
-                                dtype=theano.config.floatX)
+                                dtype=theanoFloat)
     lastLayerBiases = np.zeros(shape=(self.layerSizes[-1]),
-                               dtype=theano.config.floatX)
+                               dtype=theanoFloat)
 
     self.weights += [lastLayerWeights]
     self.biases += [lastLayerBiases]
@@ -234,6 +234,8 @@ class DBN(object):
     parametersTuples = zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates)
     for param, delta, oldUpdate in parametersTuples:
         paramUpdate = momentum * oldUpdate - batchLearningRate * delta
+        print "type(paramUpdate)"
+        print type(paramUpdate)
         newParam = param + paramUpdate
         updates.append((param, newParam))
         updates.append((oldUpdate, paramUpdate))
