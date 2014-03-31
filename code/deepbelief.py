@@ -207,9 +207,9 @@ class DBN(object):
     momentum = T.fscalar()
 
     # The mini-batch data is a matrix
-    x = T.matrix('x')
+    x = T.matrix('x', dtype=theanoFloat)
     # The labels, a vector
-    y = T.matrix('y') # labels[start:end] this needs to be a matrix because we output probabilities
+    y = T.matrix('y', dtype=theanoFloat) # labels[start:end] this needs to be a matrix because we output probabilities
 
     # here is where you can create the layered object
     # the mdb and with it you associate the cost function
@@ -278,7 +278,7 @@ class DBN(object):
     # The mini-batch data is a matrix
     dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
 
-    x = T.matrix('x')
+    x = T.matrix('x', dtype=theanoFloat)
     # TODO: move this to classification weigts when you have
     # dropout back in
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
