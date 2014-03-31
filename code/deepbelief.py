@@ -30,7 +30,6 @@ def inspect_outputs(i, node, fn):
 # This is a better logical unit
 # than having the dbn store the layer values
 # this is because the layer values
-
 class MiniBatchTrainer(object):
 
   def __init__(self, input, nrLayers, initialWeights, initialBiases):
@@ -96,7 +95,7 @@ class MiniBatchTrainer(object):
     # This might not be the same as the cross entropy
     # but it probably is
     # return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
-    return T.sum(y * T.log(self.layerValues[-1]))
+    return - T.sum(self.layerValues[-1] * T.log(y))
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
