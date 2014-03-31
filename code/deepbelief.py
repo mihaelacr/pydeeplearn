@@ -235,7 +235,8 @@ class DBN(object):
         updates.append((param, newParam))
         updates.append((oldUpdate, paramUpdate))
 
-    mode = theano.compile.MonitorMode(pre_func=inspect_inputs,
+    mode = theano.compile.MonitorMode(
+      # pre_func=inspect_inputs,
       post_func=detect_nan).excluding(
     'local_elemwise_fusion', 'inplace')
 
