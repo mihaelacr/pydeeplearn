@@ -235,7 +235,7 @@ class DBN(object):
     for param, delta, oldUpdate in parametersTuples:
         paramUpdate = momentum * oldUpdate - batchLearningRate * delta
         print "type(paramUpdate)"
-        print type(paramUpdate)
+        print type(paramUpdate.get_value())
         newParam = param + paramUpdate
         updates.append((param, newParam))
         updates.append((oldUpdate, paramUpdate))
