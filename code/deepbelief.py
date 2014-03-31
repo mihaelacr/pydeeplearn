@@ -64,13 +64,13 @@ class MiniBatchTrainer(object):
     self.oldUpdates = []
     for i in xrange(nrLayers - 1):
       oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
-                                         dtype=theanoFloat),
+                                           dtype=theanoFloat),
                         name='oldDw')
       self.oldUpdates.append(oldDw)
 
     for i in xrange(nrLayers - 1):
       oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
-                                         dtype=theanoFloat),
+                                           dtype=theanoFloat),
                         name='oldDb')
       self.oldUpdates.append(oldDb)
 
@@ -83,8 +83,8 @@ class MiniBatchTrainer(object):
       linearSum = T.dot(currentLayerValues, w) + b
       # TODO: make this a function that you pass around
       # it is important to make the activation functions outside
-      # Also check the stamford paper again to what they did to average out
-      # the results
+      # Also check the Stamford paper again to what they did to average out
+      # the results with softmax and regression layers?
       if stage != len(self.weights) -1:
         currentLayerValues = T.nnet.sigmoid(linearSum)
       else:
@@ -95,7 +95,6 @@ class MiniBatchTrainer(object):
   def cost(self, y):
     # This might not be the same as the cross entropy
     # but it probably is
-    # Getting 83 after 1000 is not really OK because it should be around 97
     return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
 
 """ Class that implements a deep belief network, for classification """
@@ -140,9 +139,10 @@ class DBN(object):
 
     # TODO: see if you have to use borrow here but probably not
     # because it only has effect on CPU
-    sharedData = theano.shared(np.asarray(data, dtype=theano.config.floatX))
-    sharedLabels = theano.shared(np.asarray(labels, dtype=theano.config.floatX))
+    sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
+    sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
+    # Train the restricted Boltzmann machines that form the network
     currentData = data
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
@@ -162,8 +162,10 @@ class DBN(object):
     # This depends if you have generative or not
     # Initialize the last layer of weights to zero if you have
     # a discriminative net
-    lastLayerWeights = np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1]))
-    lastLayerBiases = np.zeros(shape=(self.layerSizes[-1]))
+    lastLayerWeights = np.zeros(shape=(self.layerSizes[-2], self.layerSizes[-1]),
+                                dtype=theano.config.floatX)
+    lastLayerBiases = np.zeros(shape=(self.layerSizes[-1]),
+                               dtype=theano.config.floatX)
 
     self.weights += [lastLayerWeights]
     self.biases += [lastLayerBiases]
@@ -194,7 +196,7 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   def fineTune(self, data, labels, epochs=100):
-    learningRate = 0.1
+    learningRate = np.float32(0.1)
     batchLearningRate = learningRate / self.miniBatchSize
 
     nrMiniBatches = self.nrMiniBatches
@@ -228,8 +230,9 @@ class DBN(object):
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
     updates = []
-    for param, delta, oldUpdate in zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates):
-        # You have to do the momentum stuff here
+    # The parameters to be updated
+    parametersTuples = zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates)
+    for param, delta, oldUpdate in parametersTuples:
         paramUpdate = momentum * oldUpdate - batchLearningRate * delta
         newParam = param + paramUpdate
         updates.append((param, newParam))
@@ -263,7 +266,6 @@ class DBN(object):
           momentum = np.float32(0.95)
         error = train_model(batchNr, momentum)
 
-    # error is done
     # Let's put the weights back in the dbn class as they are used for classification
     # Note that if you leave it like this you od not have
     # to deal with the random theano stuff
@@ -277,12 +279,14 @@ class DBN(object):
     # TODO: run it on the gpu according to the number of instances
     # I think it is better to just run it on GPU
     # The mini-batch data is a matrix
-    dataInstacesConverted = np.asarray(dataInstaces, dtype='float32')
+    dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
 
     x = T.matrix('x')
+    # TODO: move this to classification weigts when you have
+    # dropout back in
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
-                                    initialWeights=self.classifcationWeights,
-                                    initialBiases=self.classifcationBiases)
+                                    initialWeights=self.weights,
+                                    initialBiases=self.biases)
     classify = theano.function(
             inputs=[],
             outputs=batchTrainer.layerValues[-1],
