@@ -110,8 +110,8 @@ def pcaOnMnist(training, dimension=700):
 def deepbeliefMain():
   import random
   print "FIXING RANDOMNESS"
-  random.seed(4)
-  np.random.seed(4)
+  random.seed(6)
+  np.random.seed(6)
 
   training = args.trainSize
   testing = args.testSize
