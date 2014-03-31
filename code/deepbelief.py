@@ -80,6 +80,7 @@ class MiniBatchTrainer(object):
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
+      print linearSum
       # TODO: make this a function that you pass around
       # it is important to make the activation functions outside
       # Also check the Stamford paper again to what they did to average out
