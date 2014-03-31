@@ -222,7 +222,7 @@ class DBN(object):
     error = T.sum(batchTrainer.cost(y))
 
     # this is either a weight or a bias
-    deltaParams = T.grad(batchTrainer.params)
+    deltaParams = T.grad(error, batchTrainer.params)
 
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
