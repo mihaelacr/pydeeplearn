@@ -291,7 +291,7 @@ class DBN(object):
 
     lastLayers = classify()
 
-    lastLayerValues = lastLayers.get_value()
+    lastLayerValues = lastLayers
 
     # lastLayerValues = forwardPass(self.classifcationWeights,
     #                               self.classifcationBiases,
