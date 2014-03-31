@@ -107,7 +107,7 @@ def pcaOnMnist(training, dimension=700):
   plt.show()
   print "done"
 
-def deepbeliefMain():
+def deepbeliefMNIST():
   import random
   print "FIXING RANDOMNESS"
   random.seed(6)
@@ -196,7 +196,7 @@ def main():
     raise Exception("You decide on one main method to run")
 
   if args.db:
-    deepbeliefMain()
+    deepbeliefMNIST()
   if args.pca:
     pcaMain()
   if args.rbm:
