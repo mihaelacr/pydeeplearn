@@ -126,7 +126,7 @@ class DBN(object):
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
     self.dropout = 1
-    self.miniBatchSize = 1
+    self.miniBatchSize = 10
 
   def train(self, data, labels=None):
 
