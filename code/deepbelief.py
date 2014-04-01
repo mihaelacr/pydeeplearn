@@ -136,8 +136,6 @@ class DBN(object):
     self.weights = []
     self.biases = []
 
-    # TODO: see if you have to use borrow here but probably not
-    # because it only has effect on CPU
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
@@ -196,8 +194,8 @@ class DBN(object):
   """
   def fineTune(self, data, labels, epochs=100):
     learningRate = 0.1
-    batchLearningRate = learningRate / self.miniBatchSize
-    batchLearningRate = np.float32(batchLearningRate)
+    # batchLearningRate = learningRate / self.miniBatchSize
+    batchLearningRate = np.float32(learningRate)
 
     nrMiniBatches = self.nrMiniBatches
     # Let's build the symbolic graph which takes the data trough the network
