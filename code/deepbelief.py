@@ -238,7 +238,8 @@ class DBN(object):
     'local_elemwise_fusion', 'inplace')
 
     train_model = theano.function(
-            inputs=[miniBatchIndex, momentum],
+            # inputs=[miniBatchIndex, momentum],
+            inputs=[miniBatchIndex],
             outputs=error,
             updates=updates,
             givens={
