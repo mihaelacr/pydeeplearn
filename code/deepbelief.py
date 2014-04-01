@@ -86,8 +86,8 @@ class MiniBatchTrainer(object):
       # the results with softmax and regression layers?
       if stage != len(self.weights) -1:
         # Try not to use sigmoid to avoid the 0
-        # currentLayerValues = T.nnet.sigmoid(linearSum)
-        currentLayerValues = 1.0 / (1.0 + T.exp(-linearSum))
+        currentLayerValues = T.nnet.sigmoid(linearSum)
+        # currentLayerValues = 1.0 / (1.0 + T.exp(-linearSum))
 
       else:
         currentLayerValues = T.nnet.softmax(linearSum)
@@ -95,8 +95,7 @@ class MiniBatchTrainer(object):
       self.layerValues[stage + 1] = currentLayerValues
 
   def cost(self, y):
-    return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
-    # return - T.sum(self.layerValues[-1] * T.log(y))
+    return T.nnet.categorical_crossentropy(self.layerValues[-1], y)
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
@@ -219,7 +218,6 @@ class DBN(object):
     # the error is the sum of the individual errors
     error = T.sum(batchTrainer.cost(y))
 
-    # this is either a weight or a bias
     deltaParams = T.grad(error, batchTrainer.params)
 
     # specify how to update the parameters of the model as a list of
@@ -228,7 +226,8 @@ class DBN(object):
     # The parameters to be updated
     parametersTuples = zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates)
     for param, delta, oldUpdate in parametersTuples:
-        paramUpdate = momentum * oldUpdate - batchLearningRate * delta
+        # paramUpdate = momentum * oldUpdate - batchLearningRate * delta
+        paramUpdate = -delta
         newParam = param + paramUpdate
         updates.append((param, newParam))
         updates.append((oldUpdate, paramUpdate))
