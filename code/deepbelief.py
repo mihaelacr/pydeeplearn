@@ -123,9 +123,7 @@ class DBN(object):
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
     self.dropout = 1
-    # you need a list of shared weights
-    # the params are the params of the rbms + the softmax layer
-    self.miniBatchSize = 10
+    self.miniBatchSize = 1
 
   def train(self, data, labels=None):
 
