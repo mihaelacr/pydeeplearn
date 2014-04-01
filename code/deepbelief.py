@@ -80,7 +80,6 @@ class MiniBatchTrainer(object):
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
-      print linearSum
       # TODO: make this a function that you pass around
       # it is important to make the activation functions outside
       # Also check the Stamford paper again to what they did to average out
@@ -93,8 +92,6 @@ class MiniBatchTrainer(object):
       self.layerValues[stage + 1] = currentLayerValues
 
   def cost(self, y):
-    # This might not be the same as the cross entropy
-    # but it probably is
     return  T.nnet.categorical_crossentropy(self.layerValues[-1], y)
     # return - T.sum(self.layerValues[-1] * T.log(y))
 
