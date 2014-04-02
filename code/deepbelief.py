@@ -296,7 +296,7 @@ class DBN(object):
     #                               self.classifcationBiases,
     #                               self.activationFunctions,
     #                               dataInstaces)[-1]
-    return lastLayerValues, T.argmax(lastLayerValues, axis=1)
+    return lastLayerValues, np.argmax(lastLayerValues, axis=1)
 
 # NO LONGER REALLY USED? REMOVE?
 
