@@ -85,12 +85,11 @@ class MiniBatchTrainer(object):
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
       if stage != len(self.weights) -1:
-        # Try not to use sigmoid to avoid the 0
         currentLayerValues = T.nnet.sigmoid(linearSum)
-        # currentLayerValues = 1.0 / (1.0 + T.exp(-linearSum))
-
       else:
-        currentLayerValues = T.nnet.softmax(linearSum)
+        e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
+        currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
+        # currentLayerValues = T.nnet.softmax(linearSum)
 
       self.layerValues[stage + 1] = currentLayerValues
 
