@@ -3,6 +3,7 @@ import numpy as np
 import restrictedBoltzmannMachine as rbm
 import theano
 from theano import tensor as T
+from theano.tensor.shared_randomstreams import RandomStreams
 
 theanoFloat  = theano.config.floatX
 
@@ -32,7 +33,8 @@ def inspect_outputs(i, node, fn):
 # this is because the layer values
 class MiniBatchTrainer(object):
 
-  def __init__(self, input, nrLayers, initialWeights, initialBiases):
+  # TODO: maybe creating the ring here might be better?
+  def __init__(self, input, nrLayers, initialWeights, initialBiases, theano_rng):
     self.input = input
 
     # Let's initialize the fields
@@ -75,13 +77,16 @@ class MiniBatchTrainer(object):
 
     currentLayerValues = self.input
     self.layerValues = [0 for x in xrange(nrLayers)]
+    # Sample from the visible layer:
+
     self.layerValues[0] = currentLayerValues
     for stage in xrange(len(self.weights)):
+      # Dropout: randomly select some weights to keep
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
       # TODO: make this a function that you pass around
-      # it is important to make theclassification activation functions outside
+      # it is important to make the classification activation functions outside
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
       if stage != len(self.weights) -1:
@@ -173,10 +178,8 @@ class DBN(object):
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels)
 
-    # TODO: put it back in with dropout
-    # self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
-    # here this is float64, and it is composed
-    self.classifcationWeights =  self.weights
+    # Dropout: Get the classification
+    self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
     self.classifcationBiases = self.biases
 
   """Fine tunes the weigths and biases using backpropagation.
@@ -207,9 +210,13 @@ class DBN(object):
     # The labels, a vector
     y = T.matrix('y', dtype=theanoFloat) # labels[start:end] this needs to be a matrix because we output probabilities
 
+    # Create a theano random number generator
+    theano_rng = RandomStreams(seed=np.random.randint(-1000, 1000))
+
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.weights,
-                                    initialBiases=self.biases)
+                                    initialBiases=self.biases,
+                                    theano_rng=theano_rng)
 
     # the error is the sum of the individual errors
     error = T.sum(batchTrainer.cost(y))
@@ -268,11 +275,11 @@ class DBN(object):
     dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
 
     x = T.matrix('x', dtype=theanoFloat)
-    # TODO: move this to classification weights when you have
-    # dropout back in
+
+    # Use the classification weights because now we have dropout
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
-                                    initialWeights=self.weights,
-                                    initialBiases=self.biases)
+                                    initialWeights=self.classifcationWeights,
+                                    initialBiases=self.classifcationBiases)
     classify = theano.function(
             inputs=[],
             outputs=batchTrainer.layerValues[-1],
