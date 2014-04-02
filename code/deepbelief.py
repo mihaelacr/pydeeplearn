@@ -81,7 +81,7 @@ class MiniBatchTrainer(object):
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
       # TODO: make this a function that you pass around
-      # it is important to make the activation functions outside
+      # it is important to make theclassification activation functions outside
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
       if stage != len(self.weights) -1:
@@ -207,26 +207,20 @@ class DBN(object):
     # The labels, a vector
     y = T.matrix('y', dtype=theanoFloat) # labels[start:end] this needs to be a matrix because we output probabilities
 
-    # here is where you can create the layered object
-    # the mdb and with it you associate the cost function
-    # and you update it's parameters
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.weights,
                                     initialBiases=self.biases)
 
     # the error is the sum of the individual errors
     error = T.sum(batchTrainer.cost(y))
-
     deltaParams = T.grad(error, batchTrainer.params)
 
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
     updates = []
-    # The parameters to be updated
     parametersTuples = zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates)
     for param, delta, oldUpdate in parametersTuples:
         paramUpdate = momentum * oldUpdate - batchLearningRate * delta
-        # paramUpdate = - np.float32(0.1) * delta
         newParam = param + paramUpdate
         updates.append((param, newParam))
         updates.append((oldUpdate, paramUpdate))
@@ -238,13 +232,11 @@ class DBN(object):
 
     train_model = theano.function(
             inputs=[miniBatchIndex, momentum],
-            # inputs=[miniBatchIndex],
             outputs=error,
             updates=updates,
             givens={
                 x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
                 y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
-                # mode=mode)
 
     # TODO: early stopping
     for epoch in xrange(epochs):
@@ -259,7 +251,6 @@ class DBN(object):
         else:
           momentum = np.float32(0.95)
         error = train_model(batchNr, momentum)
-        # error = train_model(batchNr)
 
     # Let's put the weights back in the dbn class as they are used for classification
     # Note that if you leave it like this you od not have
@@ -297,6 +288,7 @@ class DBN(object):
     #                               self.activationFunctions,
     #                               dataInstaces)[-1]
     return lastLayerValues, np.argmax(lastLayerValues, axis=1)
+
 
 # NO LONGER REALLY USED? REMOVE?
 
