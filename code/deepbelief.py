@@ -280,11 +280,14 @@ class DBN(object):
     dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
 
     x = T.matrix('x', dtype=theanoFloat)
+    theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
+
 
     # Use the classification weights because now we have dropout
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.classifcationWeights,
-                                    initialBiases=self.classifcationBiases)
+                                    initialBiases=self.classifcationBiases,
+                                    theano_rng)
     classify = theano.function(
             inputs=[],
             outputs=batchTrainer.layerValues[-1],
