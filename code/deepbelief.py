@@ -258,8 +258,8 @@ class DBN(object):
           momentum = np.float32(0.5)
         else:
           momentum = np.float32(0.95)
-        # error = train_model(batchNr, momentum)
-        error = train_model(batchNr)
+        error = train_model(batchNr, momentum)
+        # error = train_model(batchNr)
 
     # Let's put the weights back in the dbn class as they are used for classification
     # Note that if you leave it like this you od not have
