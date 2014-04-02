@@ -261,17 +261,17 @@ class DBN(object):
         else:
           momentum = np.float32(0.95)
         error = train_model(batchNr, momentum)
+        # Let's put the weights back in the dbn class as they are used for classification
+        # Note that if you leave it like this you od not have
+        # to deal with the random theano stuff
+        for i in xrange(len(self.weights)):
+          self.weights[i] = batchTrainer.weights[i].get_value()
+
+        for i in xrange(len(self.biases)):
+          self.biases[i] = batchTrainer.biases[i].get_value()
       print self.weights
       print self.biases
 
-    # Let's put the weights back in the dbn class as they are used for classification
-    # Note that if you leave it like this you od not have
-    # to deal with the random theano stuff
-    for i in xrange(len(self.weights)):
-      self.weights[i] = batchTrainer.weights[i].get_value()
-
-    for i in xrange(len(self.biases)):
-      self.biases[i] = batchTrainer.biases[i].get_value()
 
   def classify(self, dataInstaces):
     # TODO: run it on the gpu according to the number of instances
