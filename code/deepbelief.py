@@ -211,7 +211,7 @@ class DBN(object):
     y = T.matrix('y', dtype=theanoFloat) # labels[start:end] this needs to be a matrix because we output probabilities
 
     # Create a theano random number generator
-    theano_rng = RandomStreams(seed=np.random.randint(-1000, 1000))
+    theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
     # Check if this actually updates the weights
     # of the DBN o it does it at the end
