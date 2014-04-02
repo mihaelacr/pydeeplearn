@@ -213,6 +213,8 @@ class DBN(object):
     # Create a theano random number generator
     theano_rng = RandomStreams(seed=np.random.randint(-1000, 1000))
 
+    # Check if this actually updates the weights
+    # of the DBN o it does it at the end
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.weights,
                                     initialBiases=self.biases,
@@ -246,6 +248,7 @@ class DBN(object):
                 y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
 
     # TODO: early stopping
+    # TODO: do this loop in THEANO to increase speed
     for epoch in xrange(epochs):
       print "in if"
       # When you do early stopping you have to return the error on this batch
@@ -258,6 +261,8 @@ class DBN(object):
         else:
           momentum = np.float32(0.95)
         error = train_model(batchNr, momentum)
+      print self.weights
+      print self.biases
 
     # Let's put the weights back in the dbn class as they are used for classification
     # Note that if you leave it like this you od not have
