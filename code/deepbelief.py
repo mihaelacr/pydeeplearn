@@ -225,8 +225,8 @@ class DBN(object):
     # The parameters to be updated
     parametersTuples = zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates)
     for param, delta, oldUpdate in parametersTuples:
-        # paramUpdate = momentum * oldUpdate - batchLearningRate * delta
-        paramUpdate = - np.float32(0.1) * delta
+        paramUpdate = momentum * oldUpdate - batchLearningRate * delta
+        # paramUpdate = - np.float32(0.1) * delta
         newParam = param + paramUpdate
         updates.append((param, newParam))
         updates.append((oldUpdate, paramUpdate))
