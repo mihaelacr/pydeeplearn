@@ -287,7 +287,7 @@ class DBN(object):
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.classifcationWeights,
                                     initialBiases=self.classifcationBiases,
-                                    theano_rng)
+                                    theano_rng=theano_rng)
     classify = theano.function(
             inputs=[],
             outputs=batchTrainer.layerValues[-1],
