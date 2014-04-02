@@ -243,8 +243,8 @@ class DBN(object):
             updates=updates,
             givens={
                 x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
-                mode=mode)
+                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+                # mode=mode)
 
     # TODO: early stopping
     for epoch in xrange(epochs):
