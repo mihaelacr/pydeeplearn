@@ -192,8 +192,8 @@ class DBN(object):
   """
   def fineTune(self, data, labels, epochs=100):
     learningRate = 0.1
-    # batchLearningRate = learningRate / self.miniBatchSize
-    batchLearningRate = np.float32(learningRate)
+    batchLearningRate = learningRate / self.miniBatchSize
+    batchLearningRate = np.float32(batchLearningRate)
 
     nrMiniBatches = self.nrMiniBatches
     # Let's build the symbolic graph which takes the data trough the network
