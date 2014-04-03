@@ -84,6 +84,7 @@ class MiniBatchTrainer(object):
 
     # Sample from the visible layer
     # Get the mask that is used for the visible units
+    # TODO: fix the bias problem: check if it is also in rbm
     dropout_mask = self.theano_rng.binomial(n=1, p=visibleDropout,
                                             size=self.input.shape,
                                             dtype=theanoFloat)
@@ -142,7 +143,10 @@ class DBN(object):
 
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
-    self.dropout = 1
+    self.dropout = dropout
+    self.visibleDropout = visibleDropout
+    self.rbmDropout = rbmDropout
+    self.rbmVisibleDropout = rbmVisibleDropout
     self.miniBatchSize = 10
 
   def train(self, data, labels=None):
@@ -161,7 +165,7 @@ class DBN(object):
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     rbm.contrastiveDivergence,
-                    rbmDropout, rbmVisibleDropout,
+                    self.rbmDropout, self.rbmVisibleDropout,
                     self.activationFunctions[i].value)
       net.train(currentData)
 
@@ -221,8 +225,8 @@ class DBN(object):
 
     # The mini-batch data is a matrix
     x = T.matrix('x', dtype=theanoFloat)
-    # The labels, a vector
-    y = T.matrix('y', dtype=theanoFloat) # labels[start:end] this needs to be a matrix because we output probabilities
+    # labels[start:end] this needs to be a matrix because we output probabilities
+    y = T.matrix('y', dtype=theanoFloat)
 
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.weights,
