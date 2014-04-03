@@ -301,7 +301,7 @@ class DBN(object):
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       # This does it for the biases as well
       # TODO: I do not think you need it for the biases?
-      meanSquare = 0.9 * oldMeanSquare + 0.1 * delta
+      meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
       paramUpdate = momentum * oldUpdate - batchLearningRate * delta / meanSquare
       newParam = param + paramUpdate
       updates.append((param, newParam))
