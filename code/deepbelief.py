@@ -113,6 +113,8 @@ class MiniBatchTrainer(object):
       else:
         e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
         currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
+        # Do not use theano's softmax, it is numerically unstable
+        # and it causes Nans to appear
         # currentLayerValues = T.nnet.softmax(linearSum)
 
       self.layerValues[stage + 1] = currentLayerValues
