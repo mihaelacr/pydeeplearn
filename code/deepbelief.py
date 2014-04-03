@@ -28,13 +28,11 @@ def inspect_inputs(i, node, fn):
 def inspect_outputs(i, node, fn):
     print "output(s) value(s):", [output[0] for output in fn.outputs]
 
-# This is a better logical unit
-# than having the dbn store the layer values
-# this is because the layer values
 class MiniBatchTrainer(object):
 
   # TODO: maybe creating the ring here might be better?
-  def __init__(self, input, nrLayers, initialWeights, initialBiases, visibleDropout):
+  def __init__(self, input, nrLayers, initialWeights, initialBiases,
+               visibleDropout, hiddenDropout):
     self.input = input
 
     # Let's initialize the fields
@@ -86,8 +84,9 @@ class MiniBatchTrainer(object):
 
     # Sample from the visible layer
     # Get the mask that is used for the visible units
-    dropout_mask = self.theano_rng.binomial(n=1, p=visibleDropout, size=input.shape,
-                                      dtype=theanoFloat)
+    dropout_mask = self.theano_rng.binomial(n=1, p=visibleDropout,
+                                            size=self.input.shape,
+                                            dtype=theanoFloat)
     currentLayerValues = self.input * dropout_mask
 
     # TODO: remove this list: it is unneeded
@@ -107,7 +106,10 @@ class MiniBatchTrainer(object):
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
       if stage != len(self.weights) -1:
-        currentLayerValues = T.nnet.sigmoid(linearSum)
+        dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
+                                            size=self.input.shape,
+                                            dtype=theanoFloat)
+        currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
       else:
         e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
         currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
@@ -234,7 +236,8 @@ class DBN(object):
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.weights,
                                     initialBiases=self.biases,
-                                    visibleDropout=0.8)
+                                    visibleDropout=0.8,
+                                    hiddenDropout=0.5)
 
     # the error is the sum of the errors in the individual cases
     error = T.sum(batchTrainer.cost(y))
@@ -291,10 +294,13 @@ class DBN(object):
     x = T.matrix('x', dtype=theanoFloat)
 
     # Use the classification weights because now we have dropout
+    # Ensure that you have no dropout in classification
+    # TODO: are the variables still shared? or can we make a new one?
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.classifcationWeights,
                                     initialBiases=self.classifcationBiases,
-                                    visibleDropout=1)
+                                    visibleDropout=1,
+                                    hiddenDropout=1)
 
     classify = theano.function(
             inputs=[],
