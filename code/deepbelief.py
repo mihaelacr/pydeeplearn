@@ -34,7 +34,7 @@ def inspect_outputs(i, node, fn):
 class MiniBatchTrainer(object):
 
   # TODO: maybe creating the ring here might be better?
-  def __init__(self, input, nrLayers, initialWeights, initialBiases, theano_rng):
+  def __init__(self, input, nrLayers, initialWeights, initialBiases):
     self.input = input
 
     # Let's initialize the fields
@@ -74,6 +74,11 @@ class MiniBatchTrainer(object):
                                            dtype=theanoFloat),
                         name='oldDb')
       self.oldUpdates.append(oldDb)
+
+
+    # Create a theano random number generator
+    # Required to sample units for dropout
+    theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
     currentLayerValues = self.input
     self.layerValues = [0 for x in xrange(nrLayers)]
@@ -210,17 +215,15 @@ class DBN(object):
     # The labels, a vector
     y = T.matrix('y', dtype=theanoFloat) # labels[start:end] this needs to be a matrix because we output probabilities
 
-    # Create a theano random number generator
-    theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
+
 
     # Check if this actually updates the weights
     # of the DBN o it does it at the end
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.weights,
-                                    initialBiases=self.biases,
-                                    theano_rng=theano_rng)
+                                    initialBiases=self.biases)
 
-    # the error is the sum of the individual errors
+    # the error is the sum of the errors in the individual cases
     error = T.sum(batchTrainer.cost(y))
     deltaParams = T.grad(error, batchTrainer.params)
 
@@ -235,7 +238,6 @@ class DBN(object):
         updates.append((oldUpdate, paramUpdate))
 
     mode = theano.compile.MonitorMode(
-      # pre_func=inspect_inputs,
       post_func=detect_nan).excluding(
     'local_elemwise_fusion', 'inplace')
 
@@ -251,26 +253,19 @@ class DBN(object):
     # TODO: do this loop in THEANO to increase speed
     for epoch in xrange(epochs):
       print "in if"
-      # When you do early stopping you have to return the error on this batch
-      # so that you can see when you stop or not
-      # you have to pass in the momentum here as well as a parameter for
-      # the trainmodel
+
       for batchNr in xrange(nrMiniBatches):
         if epoch < epochs / 10:
           momentum = np.float32(0.5)
         else:
           momentum = np.float32(0.95)
         error = train_model(batchNr, momentum)
-        # Let's put the weights back in the dbn class as they are used for classification
-        # Note that if you leave it like this you od not have
-        # to deal with the random theano stuff
-        for i in xrange(len(self.weights)):
-          self.weights[i] = batchTrainer.weights[i].get_value()
 
-        for i in xrange(len(self.biases)):
-          self.biases[i] = batchTrainer.biases[i].get_value()
-      print self.weights
-      print self.biases
+      for i in xrange(len(self.weights)):
+        self.weights[i] = batchTrainer.weights[i].get_value()
+
+      for i in xrange(len(self.biases)):
+        self.biases[i] = batchTrainer.biases[i].get_value()
 
 
   def classify(self, dataInstaces):
@@ -282,12 +277,11 @@ class DBN(object):
     x = T.matrix('x', dtype=theanoFloat)
     theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
-
     # Use the classification weights because now we have dropout
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.classifcationWeights,
-                                    initialBiases=self.classifcationBiases,
-                                    theano_rng=theano_rng)
+                                    initialBiases=self.classifcationBiases)
+
     classify = theano.function(
             inputs=[],
             outputs=batchTrainer.layerValues[-1],
