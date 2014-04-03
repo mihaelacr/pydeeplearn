@@ -167,9 +167,9 @@ class DBN(object):
   """
   def train(self, data, labels, percentValidation=0.1):
     nrInstances = len(data)
-    validationIndices = np.random.sample(range(nrInstances),
+    validationIndices = np.random.choice(xrange(nrInstances),
                                          percentValidation * nrInstances)
-    trainingIndices = set(range(nrInstances)) - set(validationIndices)
+    trainingIndices = set(xrange(nrInstances)) - set(validationIndices)
     trainingData = data[trainingIndices, :]
     trainingLabels = labels[trainingIndices, :]
 
