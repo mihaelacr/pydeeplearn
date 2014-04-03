@@ -298,6 +298,9 @@ class DBN(object):
                            deltaParams,
                            batchTrainer.oldUpdates,
                            batchTrainer.oldMeanSquare)
+
+    # TODO: also try
+    # AdaDelta learning rule. seems to use something from rmsprop
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       # This does it for the biases as well
       # TODO: I do not think you need it for the biases?
