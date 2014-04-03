@@ -12,7 +12,6 @@ layer above the current one."""
 
 from common import *
 
-
 def detect_nan(i, node, fn):
     for output in fn.outputs:
         if np.isnan(output[0]).any():
@@ -88,6 +87,12 @@ class MiniBatchTrainer(object):
     dropout_mask = self.theano_rng.binomial(n=1, p=visibleDropout,
                                             size=self.input.shape,
                                             dtype=theanoFloat)
+    # Optimization: only update the mask when we actually sample
+    dropout_mask.rng.default_update =\
+            theano.ifelse(T.lt(visibleDropout, 1.0),
+                          dropout_mask.rng.default_update,
+                          dropout_mask.rng)
+
     currentLayerValues = self.input * dropout_mask
 
     for stage in xrange(len(self.weights)):
@@ -99,10 +104,16 @@ class MiniBatchTrainer(object):
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
       if stage != len(self.weights) -1:
-        # Use dropout: give the next layer only some of th
+        # Use dropout: give the next layer only some of the units
+        # from this layer
         dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
+        # Optimization: only update the mask when we actually sample
+        dropout_mask.rng.default_update =\
+            theano.ifelse(T.lt(hiddenDropout, 1.0),
+                          dropout_mask.rng.default_update,
+                          dropout_mask.rng)
         currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
       else:
         # Do not use theano's softmax, it is numerically unstable
