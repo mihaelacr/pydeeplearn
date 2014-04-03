@@ -161,7 +161,25 @@ class DBN(object):
     self.rbmVisibleDropout = rbmVisibleDropout
     self.miniBatchSize = 10
 
-  def train(self, data, labels, validationData, validationLabels):
+  """
+    Choose a percentage (percentValidation) of the data given to be
+    validation data, used for early stopping of the model.
+  """
+  def train(self, data, labels, percentValidation=0.1):
+    nrInstances = len(data)
+    validationIndices = np.random.sample(range(nrInstances),
+                                         percentValidation * nrInstances)
+    trainingIndices = set(range(nrInstances)) - set(validationIndices)
+    trainingData = data[trainingIndices, :]
+    trainingLabels = labels[trainingIndices, :]
+
+    validationData = data[validationIndices, :]
+    validationLabels = labels[validationIndices, :]
+
+    self.train(trainingData, trainingLabels, validationData, validationLabels)
+
+  def trainWithGivenValidationSet(self, data, labels,
+                                 validationData, validationLabels):
     nrRbms = self.nrLayers - 2
 
     self.weights = []
