@@ -55,8 +55,8 @@ class MiniBatchTrainer(object):
     # gradient
     self.params = self.weights + self.biases
 
-    # The updates that were performed in the last batch
     # Required for momentum
+    # The updates that were performed in the last batch
     # It is important that the order in which
     # we add the oldUpdates is the same as which we add the params
     # TODO: add an assertion for this
@@ -72,6 +72,26 @@ class MiniBatchTrainer(object):
                                            dtype=theanoFloat),
                         name='oldDb')
       self.oldUpdates.append(oldDb)
+
+    # Rmsprop
+    # The old mean that were performed in the last batch
+    # Required for momentum
+    # It is important that the order in which
+    # we add the oldUpdates is the same as which we add the params
+    # TODO: add an assertion for this
+    # TODO: maybe not zeros?
+    self.oldMeanSquare = []
+    for i in xrange(nrLayers - 1):
+      oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
+                                           dtype=theanoFloat),
+                        name='oldDw')
+      self.oldMeanSquare.append(oldDw)
+
+    for i in xrange(nrLayers - 1):
+      oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
+                                           dtype=theanoFloat),
+                        name='oldDb')
+      self.oldMeanSquare.append(oldDb)
 
 
     # Create a theano random number generator
@@ -274,12 +294,19 @@ class DBN(object):
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
     updates = []
-    parametersTuples = zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates)
-    for param, delta, oldUpdate in parametersTuples:
-        paramUpdate = momentum * oldUpdate - batchLearningRate * delta
-        newParam = param + paramUpdate
-        updates.append((param, newParam))
-        updates.append((oldUpdate, paramUpdate))
+    parametersTuples = zip(batchTrainer.params,
+                           deltaParams,
+                           batchTrainer.oldUpdates,
+                           batchTrainer.oldMeanSquare)
+    for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
+      # This does it for the biases as well
+      # TODO: I do not think you need it for the biases?
+      meanSquare = 0.9 * oldMeanSquare + 0.1 * delta
+      paramUpdate = momentum * oldUpdate - batchLearningRate * delta / meanSquare
+      newParam = param + paramUpdate
+      updates.append((param, newParam))
+      updates.append((oldUpdate, paramUpdate))
+      updates.append((oldMeanSquare, meanSquare))
 
     mode = theano.compile.MonitorMode(
       post_func=detect_nan).excluding(
