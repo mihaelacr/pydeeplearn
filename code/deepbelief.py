@@ -34,7 +34,7 @@ def inspect_outputs(i, node, fn):
 class MiniBatchTrainer(object):
 
   # TODO: maybe creating the ring here might be better?
-  def __init__(self, input, nrLayers, initialWeights, initialBiases):
+  def __init__(self, input, nrLayers, initialWeights, initialBiases, visibleDropout):
     self.input = input
 
     # Let's initialize the fields
@@ -84,13 +84,17 @@ class MiniBatchTrainer(object):
     # Note: do the optimization when you keep all of them:
     # this is required for classification
 
+    # Sample from the visible layer
     # Get the mask that is used for the visible units
+    dropout_mask = theano_rng.binomial(n=1, p=visibleDropout, size=input.shape,
+                                      dtype=float32)
+    currentLayerValues = self.input * dropout_mask
 
-    currentLayerValues = self.input
+    # TODO: remove this list: it is unneeded
+    # Just keep the output of the last layer
     self.layerValues = [0 for x in xrange(nrLayers)]
-    # Sample from the visible layer:
-
     self.layerValues[0] = currentLayerValues
+
     for stage in xrange(len(self.weights)):
       # Dropout: randomly select some weights to keep
       # Get the mask that is used to select which of
@@ -229,7 +233,8 @@ class DBN(object):
     # of the DBN o it does it at the end
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.weights,
-                                    initialBiases=self.biases)
+                                    initialBiases=self.biases,
+                                    visibleDropout=0.8)
 
     # the error is the sum of the errors in the individual cases
     error = T.sum(batchTrainer.cost(y))
@@ -284,12 +289,12 @@ class DBN(object):
     dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
 
     x = T.matrix('x', dtype=theanoFloat)
-    theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
     # Use the classification weights because now we have dropout
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.classifcationWeights,
-                                    initialBiases=self.classifcationBiases)
+                                    initialBiases=self.classifcationBiases,
+                                    visibleDropout=1)
 
     classify = theano.function(
             inputs=[],
