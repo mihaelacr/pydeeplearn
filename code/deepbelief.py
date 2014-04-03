@@ -95,9 +95,6 @@ class MiniBatchTrainer(object):
     self.layerValues[0] = currentLayerValues
 
     for stage in xrange(len(self.weights)):
-      # Dropout: randomly select some weights to keep
-      # Get the mask that is used to select which of
-      # these hidden units we keep
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
