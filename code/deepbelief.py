@@ -107,7 +107,7 @@ class MiniBatchTrainer(object):
       # the results with softmax and regression layers?
       if stage != len(self.weights) -1:
         dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
-                                            size=self.linearSum.shape,
+                                            size=linearSum.shape,
                                             dtype=theanoFloat)
         currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
       else:
