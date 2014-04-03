@@ -87,7 +87,7 @@ class MiniBatchTrainer(object):
     # Sample from the visible layer
     # Get the mask that is used for the visible units
     dropout_mask = self.theano_rng.binomial(n=1, p=visibleDropout, size=input.shape,
-                                      dtype=float32)
+                                      dtype=theanoFloat)
     currentLayerValues = self.input * dropout_mask
 
     # TODO: remove this list: it is unneeded
