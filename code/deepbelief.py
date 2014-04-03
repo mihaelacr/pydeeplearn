@@ -354,6 +354,7 @@ class DBN(object):
           count +=1
         else:
           count = 0
+        lastValidationError = meanValidation
 
       epoch +=1
 
