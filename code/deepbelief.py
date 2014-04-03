@@ -294,11 +294,10 @@ class DBN(object):
                 y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
 
     # Let's create the function that validates the model!
-    validate_model = theano.function(
+    validate_model = theano.function(inputs=[],
       outputs=error,
-      givens={
-        x: validationData,
-        y: validationLabels})
+      givens={x: validationData,
+              y: validationLabels})
 
     # TODO: early stopping
     # TODO: do this loop in THEANO to increase speed?
