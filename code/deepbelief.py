@@ -89,10 +89,10 @@ class MiniBatchTrainer(object):
                                             size=self.input.shape,
                                             dtype=theanoFloat)
     # Optimization: only update the mask when we actually sample
-    dropout_mask.rng.default_update =\
-            theanoifelse(T.lt(visibleDropout, 1.0),
-                          dropout_mask.rng.default_update,
-                          dropout_mask.rng)
+    # dropout_mask.rng.default_update =\
+    #         theanoifelse(T.lt(visibleDropout, 1.0),
+    #                       dropout_mask.rng.default_update,
+    #                       dropout_mask.rng)
 
     currentLayerValues = self.input * dropout_mask
 
@@ -111,10 +111,10 @@ class MiniBatchTrainer(object):
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
         # Optimization: only update the mask when we actually sample
-        dropout_mask.rng.default_update =\
-            theanoifelse(T.lt(hiddenDropout, 1.0),
-                          dropout_mask.rng.default_update,
-                          dropout_mask.rng)
+        # dropout_mask.rng.default_update =\
+        #     theanoifelse(T.lt(hiddenDropout, 1.0),
+        #                   dropout_mask.rng.default_update,
+        #                   dropout_mask.rng)
         currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
       else:
         # Do not use theano's softmax, it is numerically unstable
