@@ -161,9 +161,7 @@ class DBN(object):
     self.rbmVisibleDropout = rbmVisibleDropout
     self.miniBatchSize = 10
 
-  def train(self, data, labels=None):
-
-    # This depends if you have generative or not
+  def train(self, data, labels, validationData, validationLabels):
     nrRbms = self.nrLayers - 2
 
     self.weights = []
@@ -171,6 +169,9 @@ class DBN(object):
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
+
+    sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
+    sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
 
     # Train the restricted Boltzmann machines that form the network
     currentData = data
@@ -206,7 +207,8 @@ class DBN(object):
     self.nrMiniBatches = len(data) / self.miniBatchSize
 
     # Does backprop for the data and a the end sets the weights
-    self.fineTune(sharedData, sharedLabels)
+    self.fineTune(sharedData, sharedLabels,
+                  sharedValidationData, sharedValidationLabels)
 
     # Dropout: Get the classification
     self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
@@ -223,7 +225,7 @@ class DBN(object):
       miniBatch: The number of instances to be used in a miniBatch
       epochs: The number of epochs to use for fine tuning
   """
-  def fineTune(self, data, labels, epochs=100):
+  def fineTune(self, data, labels, validationData, validationLabels,maxEpochs=200):
     learningRate = 0.1
     batchLearningRate = learningRate / self.miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
@@ -272,17 +274,40 @@ class DBN(object):
                 x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
                 y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
 
+    # Let's create the function that validates the model!
+    validate_model = theano.function(
+      outputs=error,
+      givens={
+        x: validationData,
+        y: validationLabels})
+
     # TODO: early stopping
     # TODO: do this loop in THEANO to increase speed?
-    for epoch in xrange(epochs):
-      print "in if"
+    # smallestValidationError = np.inf
+    lastValidationError = np.inf
+    count = 0
+    epoch = 0
+    while epoch < maxEpochs and count < 6:
+      print "epoch"
 
       for batchNr in xrange(nrMiniBatches):
-        if epoch < epochs / 10:
+        # Maybe you can do this according to the validation error as well?
+        if epoch < maxEpochs / 10:
           momentum = np.float32(0.5)
         else:
           momentum = np.float32(0.95)
         error = train_model(batchNr, momentum)
+        errorValidation = validate_model()
+        meanValidation = np.mean(errorValidation, axis=0)
+        # if meanValidation < smallestValidationError:
+        #   smallestValidationError = meanValidation
+        #   iterationSmallestValidtion = epoch
+        if meanValidation > lastValidationError:
+          count +=1
+        else:
+          count = 0
+
+      epoch +=1
 
     # Set up the weights in the dbn object
     for i in xrange(len(self.weights)):
