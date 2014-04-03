@@ -3,6 +3,7 @@ import numpy as np
 import restrictedBoltzmannMachine as rbm
 import theano
 from theano import tensor as T
+from theano.ifelse import ifelse as theanoifelse
 from theano.tensor.shared_randomstreams import RandomStreams
 
 theanoFloat  = theano.config.floatX
@@ -89,7 +90,7 @@ class MiniBatchTrainer(object):
                                             dtype=theanoFloat)
     # Optimization: only update the mask when we actually sample
     dropout_mask.rng.default_update =\
-            theano.ifelse(T.lt(visibleDropout, 1.0),
+            theanoifelse(T.lt(visibleDropout, 1.0),
                           dropout_mask.rng.default_update,
                           dropout_mask.rng)
 
@@ -111,7 +112,7 @@ class MiniBatchTrainer(object):
                                             dtype=theanoFloat)
         # Optimization: only update the mask when we actually sample
         dropout_mask.rng.default_update =\
-            theano.ifelse(T.lt(hiddenDropout, 1.0),
+            theanoifelse(T.lt(hiddenDropout, 1.0),
                           dropout_mask.rng.default_update,
                           dropout_mask.rng)
         currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
