@@ -176,10 +176,11 @@ class DBN(object):
     validationData = data[validationIndices, :]
     validationLabels = labels[validationIndices, :]
 
-    self.train(trainingData, trainingLabels, validationData, validationLabels)
+    self.trainWithGivenValidationSet(trainingData, trainingLabels,
+                                     validationData, validationLabels)
 
   def trainWithGivenValidationSet(self, data, labels,
-                                 validationData, validationLabels):
+                                  validationData, validationLabels):
     nrRbms = self.nrLayers - 2
 
     self.weights = []
@@ -243,7 +244,7 @@ class DBN(object):
       miniBatch: The number of instances to be used in a miniBatch
       epochs: The number of epochs to use for fine tuning
   """
-  def fineTune(self, data, labels, validationData, validationLabels,maxEpochs=200):
+  def fineTune(self, data, labels, validationData, validationLabels, maxEpochs=200):
     learningRate = 0.1
     batchLearningRate = learningRate / self.miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
