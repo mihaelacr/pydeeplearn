@@ -333,6 +333,9 @@ class DBN(object):
     for i in xrange(len(self.biases)):
       self.biases[i] = batchTrainer.biases[i].get_value()
 
+    print "number of epochs"
+    print epoch
+
 
   def classify(self, dataInstaces):
     dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
