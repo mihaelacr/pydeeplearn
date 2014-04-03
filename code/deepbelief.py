@@ -82,13 +82,13 @@ class MiniBatchTrainer(object):
     # TODO: maybe not zeros?
     self.oldMeanSquare = []
     for i in xrange(nrLayers - 1):
-      oldDw = theano.shared(value=np.ones(shape=initialWeights[i].shape,
+      oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
                                            dtype=theanoFloat),
                         name='oldDw')
       self.oldMeanSquare.append(oldDw)
 
     for i in xrange(nrLayers - 1):
-      oldDb = theano.shared(value=np.ones(shape=initialBiases[i].shape,
+      oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
                                            dtype=theanoFloat),
                         name='oldDb')
       self.oldMeanSquare.append(oldDb)
