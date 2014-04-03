@@ -89,11 +89,6 @@ class MiniBatchTrainer(object):
                                             dtype=theanoFloat)
     currentLayerValues = self.input * dropout_mask
 
-    # TODO: remove this list: it is unneeded
-    # Just keep the output of the last layer
-    self.layerValues = [0 for x in xrange(nrLayers)]
-    self.layerValues[0] = currentLayerValues
-
     for stage in xrange(len(self.weights)):
       w = self.weights[stage]
       b = self.biases[stage]
@@ -103,21 +98,22 @@ class MiniBatchTrainer(object):
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
       if stage != len(self.weights) -1:
+        # Use dropout: give the next layer only some of th
         dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
         currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
       else:
-        e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
-        currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
         # Do not use theano's softmax, it is numerically unstable
         # and it causes Nans to appear
         # currentLayerValues = T.nnet.softmax(linearSum)
+        e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
+        currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
 
-      self.layerValues[stage + 1] = currentLayerValues
+    self.output = currentLayerValues
 
   def cost(self, y):
-    return T.nnet.categorical_crossentropy(self.layerValues[-1], y)
+    return T.nnet.categorical_crossentropy(self.output, y)
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
@@ -285,9 +281,6 @@ class DBN(object):
 
 
   def classify(self, dataInstaces):
-    # TODO: run it on the gpu according to the number of instances
-    # I think it is better to just run it on GPU
-    # The mini-batch data is a matrix
     dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
 
     x = T.matrix('x', dtype=theanoFloat)
@@ -303,42 +296,10 @@ class DBN(object):
 
     classify = theano.function(
             inputs=[],
-            outputs=batchTrainer.layerValues[-1],
+            outputs=batchTrainer.output,
             updates={},
             givens={x: dataInstacesConverted})
 
     lastLayers = classify()
 
-    lastLayerValues = lastLayers
-
-    # lastLayerValues = forwardPass(self.classifcationWeights,
-    #                               self.classifcationBiases,
-    #                               self.activationFunctions,
-    #                               dataInstaces)[-1]
-    return lastLayerValues, np.argmax(lastLayerValues, axis=1)
-
-
-# NO LONGER REALLY USED? REMOVE?
-
-# This method is now kept only for classification
-# The training is done using theano and does not need this
-# I will see if I add this later to GPU as well
-# Since we now have the derivative there
-# is not need to have the more convoluted classes for activation functions
-# TODO: some of these things here are 64 bits, this can cause problems
-def forwardPass(weights, biases, activationFunctions, dataInstaces):
-  # TODO: data instances should be float32
-  currentLayerValues = dataInstaces
-  layerValues = [currentLayerValues]
-  size = dataInstaces.shape[0]
-
-  for stage in xrange(len(weights)):
-    w = weights[stage]
-    b = biases[stage]
-    activation = activationFunctions[stage]
-
-    linearSum = np.dot(currentLayerValues, w) + np.tile(b, (size, 1))
-    currentLayerValues = activation.value(linearSum)
-    layerValues += [currentLayerValues]
-
-  return layerValues
+    return lastLayers, np.argmax(lastLayers, axis=1)
