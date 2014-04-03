@@ -78,7 +78,13 @@ class MiniBatchTrainer(object):
 
     # Create a theano random number generator
     # Required to sample units for dropout
-    theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
+    # If it is not shared, does it update when we do the
+    # when we go to another function call?
+    self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
+    # Note: do the optimization when you keep all of them:
+    # this is required for classification
+
+    # Get the mask that is used for the visible units
 
     currentLayerValues = self.input
     self.layerValues = [0 for x in xrange(nrLayers)]
@@ -87,6 +93,8 @@ class MiniBatchTrainer(object):
     self.layerValues[0] = currentLayerValues
     for stage in xrange(len(self.weights)):
       # Dropout: randomly select some weights to keep
+      # Get the mask that is used to select which of
+      # these hidden units we keep
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
@@ -250,7 +258,7 @@ class DBN(object):
                 y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
 
     # TODO: early stopping
-    # TODO: do this loop in THEANO to increase speed
+    # TODO: do this loop in THEANO to increase speed?
     for epoch in xrange(epochs):
       print "in if"
 
@@ -261,11 +269,12 @@ class DBN(object):
           momentum = np.float32(0.95)
         error = train_model(batchNr, momentum)
 
-      for i in xrange(len(self.weights)):
-        self.weights[i] = batchTrainer.weights[i].get_value()
+    # Set up the weights in the dbn object
+    for i in xrange(len(self.weights)):
+      self.weights[i] = batchTrainer.weights[i].get_value()
 
-      for i in xrange(len(self.biases)):
-        self.biases[i] = batchTrainer.biases[i].get_value()
+    for i in xrange(len(self.biases)):
+      self.biases[i] = batchTrainer.biases[i].get_value()
 
 
   def classify(self, dataInstaces):
