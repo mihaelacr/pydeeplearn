@@ -161,7 +161,7 @@ class DBN(object):
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     rbm.contrastiveDivergence,
-                    1, 1,
+                    rbmDropout, rbmVisibleDropout,
                     self.activationFunctions[i].value)
       net.train(currentData)
 
@@ -224,10 +224,6 @@ class DBN(object):
     # The labels, a vector
     y = T.matrix('y', dtype=theanoFloat) # labels[start:end] this needs to be a matrix because we output probabilities
 
-
-
-    # Check if this actually updates the weights
-    # of the DBN o it does it at the end
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.weights,
                                     initialBiases=self.biases,
