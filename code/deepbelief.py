@@ -299,11 +299,9 @@ class DBN(object):
                            batchTrainer.oldUpdates,
                            batchTrainer.oldMeanSquare)
 
-    # TODO: also try
-    # AdaDelta learning rule. seems to use something from rmsprop
+    # TODO: also try # AdaDelta learning rule.
+    # seems to use something from rmsprop
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
-      # This does it for the biases as well
-      # TODO: I do not think you need it for the biases?
       meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
       paramUpdate = momentum * oldUpdate - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
       newParam = param + paramUpdate
@@ -329,9 +327,6 @@ class DBN(object):
       givens={x: validationData,
               y: validationLabels})
 
-    # TODO: early stopping
-    # TODO: do this loop in THEANO to increase speed?
-    # smallestValidationError = np.inf
     lastValidationError = np.inf
     count = 0
     epoch = 0
@@ -345,10 +340,9 @@ class DBN(object):
         else:
           momentum = np.float32(0.95)
         error = train_model(batchNr, momentum)
+
       meanValidation = validate_model()
-      # if meanValidation < smallestValidationError:
-      #   smallestValidationError = meanValidation
-      #   iterationSmallestValidtion = epoch
+
       if meanValidation > lastValidationError:
           count +=1
       else:
