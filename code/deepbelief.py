@@ -335,7 +335,7 @@ class DBN(object):
     lastValidationError = np.inf
     count = 0
     epoch = 0
-    while epoch < maxEpochs and count < 4:
+    while epoch < maxEpochs and count < 5:
       print "epoch"
 
       for batchNr in xrange(nrMiniBatches):
