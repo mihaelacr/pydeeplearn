@@ -75,11 +75,6 @@ class MiniBatchTrainer(object):
 
     # Rmsprop
     # The old mean that were performed in the last batch
-    # Required for momentum
-    # It is important that the order in which
-    # we add the oldUpdates is the same as which we add the params
-    # TODO: add an assertion for this
-    # TODO: maybe not zeros?
     self.oldMeanSquare = []
     for i in xrange(nrLayers - 1):
       oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
@@ -104,7 +99,6 @@ class MiniBatchTrainer(object):
 
     # Sample from the visible layer
     # Get the mask that is used for the visible units
-    # TODO: fix the bias problem: check if it is also in rbm
     dropout_mask = self.theano_rng.binomial(n=1, p=visibleDropout,
                                             size=self.input.shape,
                                             dtype=theanoFloat)
