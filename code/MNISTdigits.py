@@ -163,7 +163,7 @@ def cvMNIST():
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices])
 
-    _, predicted = net.classify(testingScaledVectors)
+    proabilities, predicted = net.classify(testingScaledVectors)
     # Test it with the testing data and measure the missclassification error
     error = getClassificationError(vectorLabels, predicted)
     if error < bestError:
@@ -175,7 +175,7 @@ def cvMNIST():
 
 
 def getClassificationError(actual, predicted):
-  return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
+  return 1.0 - (predicted == proabilities).sum() * 1.0 / len(actual)
 
 
 
