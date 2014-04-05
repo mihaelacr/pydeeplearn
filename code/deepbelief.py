@@ -14,6 +14,8 @@ layer above the current one."""
 from common import *
 from debug import *
 
+DEBUG = False
+
 class MiniBatchTrainer(object):
 
   # TODO: maybe creating the ring here might be better?
@@ -289,17 +291,20 @@ class DBN(object):
       updates.append((oldUpdate, paramUpdate))
       updates.append((oldMeanSquare, meanSquare))
 
-    mode = theano.compile.MonitorMode(
-      post_func=detect_nan).excluding(
-    'local_elemwise_fusion', 'inplace')
+    if DEBUG:
+      mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
+                                        'local_elemwise_fusion', 'inplace')
+    else:
+      mode = None
 
     train_model = theano.function(
-            inputs=[miniBatchIndex, momentum],
-            outputs=error,
-            updates=updates,
-            givens={
-                x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+        inputs=[miniBatchIndex, momentum],
+        outputs=error,
+        updates=updates,
+        givens={
+            x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+            y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
+        mode=mode)
 
     # Let's create the function that validates the model!
     validate_model = theano.function(inputs=[],
