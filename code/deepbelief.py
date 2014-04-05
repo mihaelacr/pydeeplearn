@@ -80,8 +80,6 @@ class MiniBatchTrainer(object):
     # If it is not shared, does it update when we do the
     # when we go to another function call?
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
-    # Note: do the optimization when you keep all of them:
-    # this is required for classification
 
     # Sample from the visible layer
     # Get the mask that is used for the visible units
@@ -146,7 +144,8 @@ class DBN(object):
         type: list of objects of type ActivationFunction
   """
   def __init__(self, nrLayers, layerSizes, activationFunctions,
-               dropout=0.5, rbmDropout=0.5, visibleDropout=0.8, rbmVisibleDropout=1):
+                miniBatchSize=10, dropout=0.5, rbmDropout=0.5,
+                visibleDropout=0.8, rbmVisibleDropout=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
     # Note that for the first one the activatiom function does not matter
@@ -159,7 +158,7 @@ class DBN(object):
     self.visibleDropout = visibleDropout
     self.rbmDropout = rbmDropout
     self.rbmVisibleDropout = rbmVisibleDropout
-    self.miniBatchSize = 10
+    self.miniBatchSize = miniBatchSize
 
   """
     Choose a percentage (percentValidation) of the data given to be
@@ -244,8 +243,9 @@ class DBN(object):
       miniBatch: The number of instances to be used in a miniBatch
       epochs: The number of epochs to use for fine tuning
   """
-  def fineTune(self, data, labels, validationData, validationLabels, maxEpochs=200):
-    learningRate = 0.001
+  def fineTune(self, data, labels, validationData, validationLabels,
+               learningRate=0.001,
+               maxEpochs=200):
     batchLearningRate = learningRate / self.miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
 
