@@ -322,7 +322,7 @@ class DBN(object):
 
     # Let's create the function that validates the model!
     validate_model = theano.function(inputs=[],
-      outputs=error,
+      outputs=batchTrainer.cost(y),
       givens={x: validationData,
               y: validationLabels})
 
@@ -342,7 +342,7 @@ class DBN(object):
         momentum_step(momentum)
         error = update_params(batchNr)
 
-      meanValidation = validate_model()
+      meanValidation = np.mean(validate_model(), axis=0)
 
       if meanValidation > lastValidationError:
           count +=1
