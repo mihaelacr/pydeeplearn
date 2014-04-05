@@ -154,6 +154,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, dropout,
     # data - model
     # Positive phase - negative
     # Weight decay factor
+    # TODO: RMSPROP here as well.
     deltaWeights = (batchLearningRate * weightsDiff
                     - epsilon * weightDecay * decayFactor * weights)
 
