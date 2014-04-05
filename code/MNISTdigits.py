@@ -179,6 +179,7 @@ def getClassificationError(actual, probs):
   return 1.0 - (actual == probs).sum() * 1.0 / len(actual)
 
 def deepbeliefMNIST():
+
   training = args.trainSize
   testing = args.testSize
 
@@ -272,6 +273,10 @@ def pcaMain():
   pcaOnMnist(train, dimension=100)
 
 def main():
+  import random
+  print "FIXING RANDOMNESS"
+  random.seed(6)
+  np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv!= 1:
     raise Exception("You decide on one main method to run")
 
