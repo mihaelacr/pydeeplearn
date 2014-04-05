@@ -215,6 +215,7 @@ def deepbeliefMNIST():
 
   probs, predicted = net.classify(testingScaledVectors)
   correct = 0
+  errorCases = []
   for i in xrange(testing):
     print "predicted"
     print "probs"
@@ -223,7 +224,17 @@ def deepbeliefMNIST():
     print "actual"
     actual = testLabels[i]
     print actual
-    correct += (predicted[i] == actual)
+    if predicted[i] == actual:
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  # Mistakes for digits
+  # You just need to display some for the report
+  # trueDigits = testLabels[errorCases]
+  # predictedDigits = predicted[errorCases]
+
+
 
   print "correct"
   print correct
