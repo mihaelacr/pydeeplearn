@@ -27,6 +27,8 @@ parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
 parser.add_argument('--db', dest='db',action='store_true', default=False,
                     help=("if true, the code for traning a deepbelief net on the"
                           "data is run"))
+parser.add_argument('--cv', dest='cv',action='store_true', default=False,
+                    help=("if true, performs cv on the MNIST data"))
 parser.add_argument('--trainSize', type=int, default=10000,
                     help='the number of tranining cases to be considered')
 parser.add_argument('--testSize', type=int, default=1000,
@@ -34,7 +36,7 @@ parser.add_argument('--testSize', type=int, default=1000,
 parser.add_argument('netFile', help="file where the serialized network should be saved")
 
 # DEBUG mode?
-parser.add_argument('--debug', dest='debug',action='store_false', default=False,
+parser.add_argument('--debug', dest='debug',action='store_true', default=False,
                     help=("if true, the deep belief net is ran in DEBUG mode"))
 
 # Get the arguments of the program
@@ -268,6 +270,8 @@ def main():
     pcaMain()
   if args.rbm:
     rbmMain()
+  if arg.cv:
+    cvMNIST()
 
 
 if __name__ == '__main__':
