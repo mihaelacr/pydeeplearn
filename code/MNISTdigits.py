@@ -270,7 +270,7 @@ def main():
     pcaMain()
   if args.rbm:
     rbmMain()
-  if arg.cv:
+  if args.cv:
     cvMNIST()
 
 
