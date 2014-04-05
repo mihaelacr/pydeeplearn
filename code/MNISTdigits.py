@@ -10,6 +10,7 @@ import restrictedBoltzmannMachine as rbm
 import deepbelief as db
 import utils
 import PCA
+from sklearn import cross_validation
 
 from common import *
 
@@ -124,6 +125,56 @@ def pcaOnMnist(training, dimension=700):
   plt.imshow(image2D, cmap=plt.cm.gray)
   plt.show()
   print "done"
+
+
+def cvMNIST():
+  training = args.trainSize
+  testing = args.testSize
+
+  trainVectors, trainLabels =\
+      readmnist.read(0, training, bTrain=True, path="MNIST")
+  testVectors, testLabels =\
+      readmnist.read(0, testing, bTrain=False, path="MNIST")
+  print trainVectors[0].shape
+
+  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
+
+  trainingScaledVectors = trainVectors / 255.0
+  testingScaledVectors = testVectors / 255.0
+
+  vectorLabels = labelsToVectors(trainLabels, 10)
+
+  nrFolds = 3
+
+  permutation = np.random.permutation(range(training))
+  foldSize = training / nrFolds
+  bestFold = -1
+  bestError = np.inf
+  params = [0.01, 0.001, 0.0001]
+  for i in xrange(nrFolds):
+    # Train the net
+    net = db.DBN(5, [784, 1000, 1000, 1000, 10],
+                 [Sigmoid, Sigmoid, Sigmoid, Softmax],
+                  supervisedLearningRate=params[i],
+                  dropout=0.5, rbmDropout=0.5, visibleDropout=0.8,
+                  rbmVisibleDropout=1)
+    foldIndices = permutation[i * foldSize, (i + 1) * foldSize - 1]
+    net.train(trainingScaledVectors[foldIndices], trainLabels[foldIndices])
+
+    _, predicted = net.classify(testingScaledVectors)
+    # Test it with the testing data and measure the missclassification error
+    error = getClassificationError(vectorLabels, predicted)
+    if error < bestError:
+      bestError = error
+      bestFold = i
+
+  print "best fold was" + str(bestFold)
+  print "bestParameter" + str(params[bestFold])
+
+
+def getClassificationError(actual, predicted):
+  return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
+
 
 
 def deepbeliefMNIST():

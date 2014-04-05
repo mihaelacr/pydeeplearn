@@ -146,6 +146,7 @@ class DBN(object):
         type: list of objects of type ActivationFunction
   """
   def __init__(self, nrLayers, layerSizes, activationFunctions,
+                supervisedLearningRate=0.001,
                 miniBatchSize=10, dropout=0.5, rbmDropout=0.5,
                 visibleDropout=0.8, rbmVisibleDropout=1):
     self.nrLayers = nrLayers
@@ -161,6 +162,7 @@ class DBN(object):
     self.rbmDropout = rbmDropout
     self.rbmVisibleDropout = rbmVisibleDropout
     self.miniBatchSize = miniBatchSize
+    self.supervisedLearningRate = supervisedLearningRate
 
   """
     Choose a percentage (percentValidation) of the data given to be
@@ -228,7 +230,8 @@ class DBN(object):
 
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels,
-                  sharedValidationData, sharedValidationLabels)
+                  sharedValidationData, sharedValidationLabels,
+                  self.supervisedLearningRate)
 
     # Dropout: Get the classification
     self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
