@@ -305,7 +305,7 @@ class DBN(object):
     else:
       mode = None
 
-    train_modelmomentum_step = theano.function(
+    momentum_step = theano.function(
         inputs=[momentum],
         outputs=[],
         updates=preDeltaUpdates,
