@@ -10,6 +10,9 @@ import restrictedBoltzmannMachine as rbm
 import deepbelief as db
 import utils
 import PCA
+import glob
+
+import DimensionalityReduction
 
 from common import *
 
@@ -40,11 +43,11 @@ def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,
                                   tileShape, tile_spacing=(1, 1))
 
-def rbmMain():
+def rbmMain(reconstructRandom=True):
   trainVectors, trainLabels =\
       readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
   testingVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None,bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -67,14 +70,26 @@ def rbmMain():
     net = pickle.load(f)
     f.close()
 
-  # Reconstruct a training image and see that it actually looks like a digit
+  # Reconstruct an image and see that it actually looks like a digit
   test = testingScaledVectors[0,:]
 
+  # get a random image and see it looks like
+  if reconstructRandom:
+    test = np.random.random_sample(test.shape)
+
+
+  # Show the initial image first
+  recon = net.reconstruct(test.reshape(1, test.shape[0]))
+  plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
+  plt.show()
+
+  # Show the reconstruction
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
   plt.show()
 
   # Show the weights and their form in a tile fashion
+  # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
   plt.show()
   print "done"
@@ -94,8 +109,8 @@ def shuffle(data, labels):
 
 
 def pcaOnMnist(training, dimension=700):
-  res = PCA.pca(training, dimension)
-  low, same = PCA.reduce(res, training)
+  principalComponents = PCA.pca(training, dimension)
+  low, same = PCA.reduce(principalComponents, training)
 
   image2DInitial = vectorToImage(training[0], (28,28))
   print same[0].shape
@@ -107,12 +122,8 @@ def pcaOnMnist(training, dimension=700):
   plt.show()
   print "done"
 
-def deepbeliefMNIST():
-  import random
-  print "FIXING RANDOMNESS"
-  random.seed(6)
-  np.random.seed(6)
 
+def deepbeliefMNIST():
   training = args.trainSize
   testing = args.testSize
 
@@ -132,6 +143,7 @@ def deepbeliefMNIST():
   if args.train:
     # net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
     # net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
+
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                  [Sigmoid, Sigmoid, Sigmoid, Softmax],
                  dropout=0.5, rbmDropout=0.5, visibleDropout=0.8,
@@ -177,7 +189,51 @@ def deepbeliefMNIST():
     pickle.dump(net, f)
     f.close()
 
+"""
+  Arguments:
+    big: should the big or small images be used?
+    folds: which folds should be used (1,..5) (a list). If None is passed all
+    folds are used
+"""
+def deepBeliefKanade(big=False, folds=None):
+  if big:
+    files = glob.glob('kanade_150*.pickle')
+  else:
+    files = glob.glob('kanade_f*.pickle')
 
+  if not folds:
+    folds = range(1, 6)
+
+  # Read the data from them. Sort out the files that do not have
+  # the folds that we want
+  # TODO: do this better (with regex in the file name)
+  # DO not reply on the order returned
+  files = files[folds]
+
+  data = []
+  labels = []
+  for filename in files:
+    with open(filename, "rb") as  f:
+      # Sort out the labels from the data
+      dataAndLabels = pickle.load(f)
+      foldData = dataAndLabels[0:-1 ,:]
+      foldLabels = dataAndLabels[-1,:]
+      data.append(foldData)
+      labels.append(foldLabels)
+
+  # Do LDA
+
+  # Create the network
+
+  # Test
+
+  # You can also group the emotions into positive and negative to see
+  # if you can get better results (probably yes)
+  pass
+
+
+# TODO: fix this (look at the ML coursework for it)
+# Even better, use LDA
 # think of normalizing them to 0.1 for pca as well
 def pcaMain():
   training = args.trainSize
