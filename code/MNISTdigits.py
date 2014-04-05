@@ -261,7 +261,7 @@ def pcaMain():
   pcaOnMnist(train, dimension=100)
 
 def main():
-  if args.db + args.pca + args.rbm != 1:
+  if args.db + args.pca + args.rbm + args.cv!= 1:
     raise Exception("You decide on one main method to run")
 
   if args.db:
