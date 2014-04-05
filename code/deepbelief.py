@@ -305,19 +305,20 @@ class DBN(object):
     else:
       mode = None
 
-    train_model = theano.function(
-        inputs=[miniBatchIndex, momentum],
-        outputs=error,
+    train_modelmomentum_step = theano.function(
+        inputs=[momentum],
+        outputs=[],
         updates=preDeltaUpdates,
+        mode = mode)
+
+    update_params = theano.function(
+        inputs =[miniBatchIndex],
+        outputs=error,
+        updates=updates,
         givens={
             x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
             y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
         mode=mode)
-
-    update_params = theano.function(
-        inputs =[],
-        outputs=[],
-        updates=updates)
 
     # Let's create the function that validates the model!
     validate_model = theano.function(inputs=[],
@@ -338,8 +339,8 @@ class DBN(object):
           momentum = np.float32(0.5)
         else:
           momentum = np.float32(0.95)
-        error = train_model(batchNr, momentum)
-        update_params()
+        momentum_step(momentum)
+        error = update_params(batchNr)
 
       meanValidation = validate_model()
 
