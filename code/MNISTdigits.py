@@ -13,7 +13,7 @@ import PCA
 
 from common import *
 
-parser = argparse.ArgumentParser(description='RBM for digit recognition')
+parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,
                     help="if true, the network is serialized and saved")
 parser.add_argument('--train',dest='train',action='store_true', default=False,
