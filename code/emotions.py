@@ -6,6 +6,8 @@ import glob
 import argparse
 import DimensionalityReduction
 
+import deepbelief as db
+
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,
                     help="if true, the network is serialized and saved")
@@ -23,6 +25,16 @@ parser.add_argument('--testSize', type=int, default=1000,
                     help='the number of testing cases to be considered')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
 
+
+# DEBUG mode?
+parser.add_argument('--debug', dest='debug',action='store_false', default=False,
+                    help=("if true, the deep belief net is ran in DEBUG mode"))
+
+# Get the arguments of the program
+args = parser.parse_args()
+
+# Set the debug mode in the deep belief net
+db.DEBUG = args.debug
 
 """
   Arguments:
