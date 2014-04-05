@@ -161,7 +161,7 @@ def cvMNIST():
                   dropout=0.5, rbmDropout=0.5, visibleDropout=0.8,
                   rbmVisibleDropout=1)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
-    net.train(trainingScaledVectors[foldIndices], trainLabels[foldIndices])
+    net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices])
 
     _, predicted = net.classify(testingScaledVectors)
     # Test it with the testing data and measure the missclassification error
