@@ -276,6 +276,11 @@ class DBN(object):
     error = T.sum(batchTrainer.cost(y))
     deltaParams = T.grad(error, batchTrainer.params)
 
+    preDeltaUpdates = []
+    for param, oldUpdate in zip(batchTrainer.params, batchTrainer.oldUpdates):
+      newParam = param + momentum * oldUpdate
+      preDeltaUpdates.append((param, newParam))
+
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
     updates = []
@@ -284,11 +289,9 @@ class DBN(object):
                            batchTrainer.oldUpdates,
                            batchTrainer.oldMeanSquare)
 
-    # TODO: also try # AdaDelta learning rule.
-    # seems to use something from rmsprop
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-      paramUpdate = momentum * oldUpdate - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+      paramUpdate = - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
       newParam = param + paramUpdate
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
@@ -303,11 +306,16 @@ class DBN(object):
     train_model = theano.function(
         inputs=[miniBatchIndex, momentum],
         outputs=error,
-        updates=updates,
+        updates=preDeltaUpdates,
         givens={
             x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
             y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
         mode=mode)
+
+    update_params = theano.function(
+        inputs =[],
+        outputs=[],
+        updates=updates)
 
     # Let's create the function that validates the model!
     validate_model = theano.function(inputs=[],
@@ -328,6 +336,7 @@ class DBN(object):
         else:
           momentum = np.float32(0.95)
         error = train_model(batchNr, momentum)
+        update_params()
 
       meanValidation = validate_model()
 
