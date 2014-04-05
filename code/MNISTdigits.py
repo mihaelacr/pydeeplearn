@@ -165,7 +165,8 @@ def cvMNIST():
 
     proabilities, predicted = net.classify(testingScaledVectors)
     # Test it with the testing data and measure the missclassification error
-    error = getClassificationError(vectorLabels, proabilities)
+    error = getClassificationError(labelsToVectors(testLabels), proabilities)
+
     if error < bestError:
       bestError = error
       bestFold = i
@@ -174,10 +175,8 @@ def cvMNIST():
   print "bestParameter" + str(params[bestFold])
 
 
-def getClassificationError(actual, predicted):
-  return 1.0 - (actual == predicted).sum() * 1.0 / len(actual)
-
-
+def getClassificationError(actual, probs):
+  return 1.0 - (actual == probs).sum() * 1.0 / len(actual)
 
 def deepbeliefMNIST():
   training = args.trainSize
