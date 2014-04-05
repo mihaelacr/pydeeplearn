@@ -163,9 +163,14 @@ def cvMNIST():
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices])
 
+<<<<<<< HEAD
     probs, predicted = net.classify(testingScaledVectors)
+=======
+    proabilities, predicted = net.classify(testingScaledVectors)
+>>>>>>> master
     # Test it with the testing data and measure the missclassification error
-    error = getClassificationError(vectorLabels, predicted)
+    error = getClassificationError(labelsToVectors(testLabels, 10), proabilities)
+
     if error < bestError:
       bestError = error
       bestFold = i
@@ -174,10 +179,8 @@ def cvMNIST():
   print "bestParameter" + str(params[bestFold])
 
 
-def getClassificationError(actual, predicted):
-  return 1.0 - (probs == actual).sum() * 1.0 / len(actual)
-
-
+def getClassificationError(actual, probs):
+  return 1.0 - (actual == probs).sum() * 1.0 / len(actual)
 
 def deepbeliefMNIST():
   training = args.trainSize
@@ -216,6 +219,7 @@ def deepbeliefMNIST():
 
   probs, predicted = net.classify(testingScaledVectors)
   correct = 0
+  errorCases = []
   for i in xrange(testing):
     print "predicted"
     print "probs"
@@ -224,7 +228,17 @@ def deepbeliefMNIST():
     print "actual"
     actual = testLabels[i]
     print actual
-    correct += (predicted[i] == actual)
+    if predicted[i] == actual:
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  # Mistakes for digits
+  # You just need to display some for the report
+  # trueDigits = testLabels[errorCases]
+  # predictedDigits = predicted[errorCases]
+
+
 
   print "correct"
   print correct

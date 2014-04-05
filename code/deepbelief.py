@@ -251,6 +251,8 @@ class DBN(object):
   def fineTune(self, data, labels, validationData, validationLabels,
                learningRate=0.001,
                maxEpochs=200):
+    print "supervisedLearningRate"
+    print learningRate
     batchLearningRate = learningRate / self.miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
 
