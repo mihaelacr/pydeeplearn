@@ -326,6 +326,7 @@ class DBN(object):
     lastValidationError = np.inf
     count = 0
     epoch = 0
+
     while epoch < maxEpochs and count < 3:
       print "epoch"
 
