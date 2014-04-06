@@ -286,8 +286,6 @@ class DBN(object):
                            batchTrainer.oldUpdates,
                            batchTrainer.oldMeanSquare)
 
-    # TODO: also try # AdaDelta learning rule.
-    # seems to use something from rmsprop
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
       paramUpdate = momentum * oldUpdate - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
@@ -311,6 +309,7 @@ class DBN(object):
             y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
         mode=mode)
 
+    theano.printing.pydotprint(train_model)
     # Let's create the function that validates the model!
     validate_model = theano.function(inputs=[],
       outputs=batchTrainer.cost(y),
