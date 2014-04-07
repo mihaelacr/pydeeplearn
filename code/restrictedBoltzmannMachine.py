@@ -95,6 +95,7 @@ class RBM(object):
       self.biases = intializeBiases(data, self.nrHidden)
       self.initialized = True
 
+    sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
 
     self.miniBatchSize = miniBatchSize
     # Now you have to build the training function
@@ -126,7 +127,7 @@ class RBM(object):
       output=[], # TODO: output error
       updates=updates,
       givens={
-        x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]
+        x: sharedData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]
         })
 
     nrMiniBatches = N / miniBatchSize
