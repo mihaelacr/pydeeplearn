@@ -116,14 +116,19 @@ class RBM(object):
                                batchTrainer.hiddenReconstruction)
     wUpdate = momentum * batchTrainer.oldDParams[0] + learningRate * (positiveDifference - negativeDifference)
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
+    updates.append((batchTrainer.oldDParams[0], wUpdate))
 
     visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
     biasVisUpdate = momentum * batchTrainer.oldDParams[1] + learningRate * visibleBiasDiff
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
+    updates.append((batchTrainer.oldDParams[1], biasVisUpdate))
+
 
     hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
     biasHidUpdate = momentum * batchTrainer.oldDParams[2] + learningRate * hiddenBiasDiff
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
+    updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
+
 
     train_function = theano.function(
       inputs=[miniBatchIndex, momentum],
