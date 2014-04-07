@@ -132,6 +132,10 @@ class RBM(object):
     # so maybe not put it here
     for i in xrange(10):
       for miniBatchIndex in range(nrMiniBatches):
+        print "miniBatchIndex"
+        print miniBatchIndex
+        print "miniBatchSize"
+        print miniBatchSize
         train_function([miniBatchIndex])
 
     self.weights = batchTrainer.weights
