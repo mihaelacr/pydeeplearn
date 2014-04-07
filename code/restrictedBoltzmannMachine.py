@@ -91,8 +91,8 @@ class RBM(object):
 
   def train(self, data, learningRate=0.01):
     if not self.initialized:
-      self.weights = self.initializeWeights(self.nrVisible, self.nrHidden)
-      self.biases = self.intializeBiases(data, self.nrHidden)
+      self.weights = initializeWeights(self.nrVisible, self.nrHidden)
+      self.biases = intializeBiases(data, self.nrHidden)
       self.initialized = True
 
     # Now you have to build the training function
