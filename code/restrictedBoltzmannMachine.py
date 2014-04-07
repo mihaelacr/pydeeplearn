@@ -136,10 +136,10 @@ class RBM(object):
     nrMiniBatches = len(data) / miniBatchSize
     # The rbm trainign has only one step, you do multiple for the dbn,
     # so maybe not put it here
-    epochs = 10
+    epochs = 100
     for epoch in xrange(epochs):
       for miniBatchIndex in range(nrMiniBatches):
-        if epoch < epochs / 100:
+        if epoch < 10:
           momentum = 0.5
         else:
           momentum = 0.95
