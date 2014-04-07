@@ -114,7 +114,7 @@ class RBM(object):
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hidden)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
-    wUpdate = momentum * batchTrainer.oldDParams[0] - learningRate * (positiveDifference - negativeDifference)
+    wUpdate = momentum * batchTrainer.oldDParams[0] + learningRate * (positiveDifference - negativeDifference)
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
 
     visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
