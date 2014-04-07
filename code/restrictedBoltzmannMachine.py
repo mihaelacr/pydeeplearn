@@ -101,11 +101,11 @@ class RBM(object):
     x = T.matrix('x', dtype=theanoFloat)
 
 
-    batchTrainer = MiniBatchTrainer(input=x,
-                                    initialWeights=self.weights,
-                                    initialBiases=self.biases,
-                                    visibleDropout=0.8,
-                                    hiddenDropout=0.5)
+    batchTrainer = RBMMiniBatchTrainer(input=x,
+                                       initialWeights=self.weights,
+                                       initialBiases=self.biases,
+                                       visibleDropout=0.8,
+                                       hiddenDropout=0.5)
 
     updates = []
     for param in batchTrainer.params:
