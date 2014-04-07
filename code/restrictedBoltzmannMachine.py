@@ -124,7 +124,7 @@ class RBM(object):
     # TODO: momentum and all that
     train_function = theano.function(
       inputs=[miniBatchIndex],
-      output=[], # TODO: output error
+      outputs=[], # TODO: output error
       updates=updates,
       givens={
         x: sharedData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]
