@@ -113,14 +113,14 @@ class RBM(object):
                                        hiddenDropout=0.5)
 
     updates = []
-    for param in batchTrainer.params:
-      # The theano people do not need this because they use gradient
-      # I wonder how that works
-      positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hidden)
-      negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
-                                 batchTrainer.hiddenReconstruction)
-      paramUpdate = learningRate * (positiveDifference - negativeDifference)
-      updates.append((param, param + paramUpdate))
+
+    # The theano people do not need this because they use gradient
+    # I wonder how that works
+    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hidden)
+    negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
+                               batchTrainer.hiddenReconstruction)
+    paramUpdate = learningRate * (positiveDifference - negativeDifference)
+    updates.append((batchTrainer.weights, batchTrainer.weights + paramUpdate))
 
 
     # TODO: momentum and all that
