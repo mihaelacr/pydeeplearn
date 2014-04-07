@@ -122,6 +122,7 @@ class RBM(object):
     paramUpdate = learningRate * (positiveDifference - negativeDifference)
     updates.append((batchTrainer.weights, batchTrainer.weights + paramUpdate))
 
+    # TODO: update the biases
 
     # TODO: momentum and all that
     train_function = theano.function(
@@ -132,7 +133,7 @@ class RBM(object):
         x: sharedData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]
         })
 
-    nrMiniBatches = N / miniBatchSize
+    nrMiniBatches = len(data) / miniBatchSize
     # The rbm trainign has only one step, you do multiple for the dbn,
     # so maybe not put it here
     for i in xrange(10):
