@@ -95,6 +95,8 @@ class RBM(object):
       self.biases = intializeBiases(data, self.nrHidden)
       self.initialized = True
 
+
+    self.miniBatchSize = miniBatchSize
     # Now you have to build the training function
     # and the updates
     # The mini-batch data is a matrix
@@ -124,7 +126,7 @@ class RBM(object):
       output=[], # TODO: output error
       updates=updates,
       givens={
-        x: data[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize]
+        x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]
         })
 
     nrMiniBatches = N / miniBatchSize
