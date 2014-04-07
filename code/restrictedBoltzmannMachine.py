@@ -122,7 +122,11 @@ class RBM(object):
     paramUpdate = learningRate * (positiveDifference - negativeDifference)
     updates.append((batchTrainer.weights, batchTrainer.weights + paramUpdate))
 
-    # TODO: update the biases
+    visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
+    updates.append(self.biases[0] , visibleBiasDiff)
+
+    hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
+    updates.append(self.biases[1] , hiddenBiasDiff)
 
     # TODO: momentum and all that
     train_function = theano.function(
@@ -142,7 +146,7 @@ class RBM(object):
         print miniBatchIndex
         print "miniBatchSize"
         print miniBatchSize
-        train_function([miniBatchIndex])
+        train_function(miniBatchIndex)
 
     self.weights = batchTrainer.weights
     self.biases = batchTrainer.biases
