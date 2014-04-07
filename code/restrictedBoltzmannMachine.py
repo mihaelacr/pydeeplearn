@@ -100,6 +100,8 @@ class RBM(object):
     # The mini-batch data is a matrix
     x = T.matrix('x', dtype=theanoFloat)
 
+    miniBatchIndex = T.lscalar()
+    momentum = T.fscalar()
 
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                        initialWeights=self.weights,
