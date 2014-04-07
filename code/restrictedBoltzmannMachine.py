@@ -89,7 +89,7 @@ class RBM(object):
     self.activationFun = activationFun
     self.initialized = False
 
-  def train(self, data, learningRate=0.01):
+  def train(self, data, learningRate=0.01, miniBatchSize=10):
     if not self.initialized:
       self.weights = initializeWeights(self.nrVisible, self.nrHidden)
       self.biases = intializeBiases(data, self.nrHidden)
@@ -124,7 +124,7 @@ class RBM(object):
       output=[], # TODO: output error
       updates=updates,
       givens={
-        x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]
+        x: data[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize]
         })
 
     nrMiniBatches = N / miniBatchSize
