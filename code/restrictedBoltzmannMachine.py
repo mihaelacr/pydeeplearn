@@ -140,8 +140,9 @@ class RBM(object):
       for miniBatchIndex in range(nrMiniBatches):
         train_function(miniBatchIndex)
 
-    self.weights = batchTrainer.weights
-    self.biases = [batchTrainer.biasVisible, batchTrainer.biasHidden]
+    self.weights = batchTrainer.weights.get_value()
+    self.biases = [batchTrainer.biasVisible.get_value(),
+                   batchTrainer.biasHidden.get_value()]
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible
