@@ -8,7 +8,68 @@ TODO: monitor overfitting
 import numpy as np
 from common import *
 
+import theano
+from theano import tensor as T
+from theano.ifelse import ifelse as theanoifelse
+from theano.tensor.shared_randomstreams import RandomStreams
+
+theanoFloat  = theano.config.floatX
+
+
 EXPENSIVE_CHECKS_ON = False
+
+# I need a mini batch trainer for this
+
+class RBMMiniBatchTrainer(object):
+
+  # TODO: i need to see how I do it with the sampling, because
+  # we do not sample all the time to make them binary
+  def __init(self, input, initialWeights, initialBiases,
+             visibleDropout, dropout, cdSteps=1):
+
+    self.visible = input
+    self.theano_rng = RandomStreams(numpy_rng.randint(2 ** 30))
+
+    w = theano.shared(value=np.asarray(initialWeights,
+                                         dtype=theanoFloat),
+                        name='W')
+    biasVisible = theano.shared(value=np.asarray(initialBiases[0],
+                                         dtype=theanoFloat),
+                        name='bvis')
+    biasHidden = theano.shared(value=np.asarray(initialBiases[1],
+                                         dtype=theanoFloat),
+                        name='bhid')
+
+    self.weights = w
+    self.biases = [biasVisible, biasHidden]
+    self.params = [self.weights] + self.biases
+
+    oldDw = theano.shared(value=np.zeros(shape=initialWeights.shape,
+                                           dtype=theanoFloat))
+    oldDVis = theano.shared(value=np.zeros(shape=initialBiases[0].shape,
+                                           dtype=theanoFloat))
+    oldDHid = theano.shared(value=np.zeros(shape=initialBiases[1].shape,
+                                           dtype=theanoFloat))
+
+    self.oldDParams = [oldDw, oldDVis, oldDHid]
+
+    # TODO: scan for a loop in theano
+    # Now do 1 step in CD, but later you will have to do more
+    # I think that should happen with scan or something
+    hiddenActivations = T.sigmoid(T.dot(input, w) + biasHidden)
+    self.hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
+                                          n=1, p=hiddenActivations,
+                                          dtype=theanoFloat)
+
+    visibleRec = T.sigmoid(T.dot(self.hidden, w.T) + biasVisible)
+    self.visibleReconstruction = self.theano_rng.binomial(size=visibleRec.shape,
+                                          n=1, p=visibleRec,
+                                          dtype=theanoFloat)
+    hiddenRec = T.sigmoid(T.dot(self.visibleReconstruction, w) + biasHidden)
+    self.hiddenReconstruction = self.theano_rng.binomial(size=hiddenRec.shape,
+                                          n=1, p=hiddenRec,
+                                          dtype=theanoFloat)
+
 
 # TODO: different learning rates for weights and biases
 """
@@ -28,7 +89,57 @@ class RBM(object):
     self.activationFun = activationFun
     self.initialized = False
 
-  def train(self, data):
+  def train(self, data, learningRate=0.01):
+    if not self.initialized:
+      self.weights = self.initializeWeights(self.nrVisible, self.nrHidden)
+      self.biases = self.intializeBiases(data, self.nrHidden)
+      self.initialized = True
+
+    # Now you have to build the training function
+    # and the updates
+    # The mini-batch data is a matrix
+    x = T.matrix('x', dtype=theanoFloat)
+
+
+    batchTrainer = MiniBatchTrainer(input=x,
+                                    initialWeights=self.weights,
+                                    initialBiases=self.biases,
+                                    visibleDropout=0.8,
+                                    hiddenDropout=0.5)
+
+    updates = []
+    for param in batchTrainer.params:
+      positiveDifference = T.dot(batchTrainer.visible, batchTrainer.hidden)
+      negativeDifference = T.dot(batchTrainer.visibleReconstruction,
+                                 batchTrainer.hiddenReconstruction)
+      paramUpdate = learningRate * (positiveDifference - negativeDifference)
+      updates.append((param, param + paramUpdate))
+
+
+    # TODO: momentum and all that
+    train_function = theano.function(
+      inputs=[miniBatchIndex],
+      output=[], # TODO: output error
+      updates=updates,
+      givens={
+        x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]
+        })
+
+    nrMiniBatches = N / miniBatchSize
+    # The rbm trainign has only one step, you do multiple for the dbn,
+    # so maybe not put it here
+    for i in xrange(10):
+      for miniBatchIndex in range(nrMiniBatches):
+        train_function(miniBatchIndex)
+
+    self.weights = batchTrainer.weights
+    self.biases = batchTrainer.biases
+
+    assert self.weights.shape == (self.nrVisible, self.nrHidden)
+    assert self.biases[0].shape[0] == self.nrVisible
+    assert self.biases[1].shape[0] == self.nrHidden
+
+  def trainold(self, data):
     # If the network has not been initialized yet, do it now
     # Ie if this is the time it is traning batch of traning
     if not self.initialized:
@@ -58,20 +169,6 @@ class RBM(object):
     return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
                        self.testWeights, self.activationFun, True)
 
-  @classmethod
-  def initializeWeights(cls, nrVisible, nrHidden):
-    return np.random.normal(0, 0.01, (nrVisible, nrHidden))
-
-  @classmethod
-  def intializeBiases(cls, data, nrHidden):
-    # get the procentage of data points that have the i'th unit on
-    # and set the visible vias to log (p/(1-p))
-    percentages = data.mean(axis=0, dtype='float')
-    vectorized = np.vectorize(safeLogFraction, otypes=[np.float])
-    visibleBiases = vectorized(percentages)
-
-    hiddenBiases = np.zeros(nrHidden)
-    return np.array([visibleBiases, hiddenBiases])
 
 def reconstruct(biases, weights, dataInstances, activationFun):
   hidden = updateLayer(Layer.HIDDEN, dataInstances, biases, weights,
@@ -114,7 +211,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, dropout,
   on = sample(visibleDropout, data.shape)
   dropoutData = data * on
 
-  epsilon = 0.01
+  learningRate = 0.01
   decayFactor = 0.0002
   weightDecay = True
   reconstructionStep = 50
@@ -123,7 +220,7 @@ def contrastiveDivergence(data, biases, weights, activationFun, dropout,
   oldDeltaVisible = np.zeros(biases[0].shape)
   oldDeltaHidden = np.zeros(biases[1].shape)
 
-  batchLearningRate = epsilon / miniBatchSize
+  batchLearningRate = learningRate / miniBatchSize
   print "batchLearningRate"
   print batchLearningRate
 
@@ -248,3 +345,16 @@ def updateLayer(layer, otherLayerValues, biases, weights, activationFun,
 
   return probs
 
+
+def initializeWeights(nrVisible, nrHidden):
+  return np.random.normal(0, 0.01, (nrVisible, nrHidden))
+
+def intializeBiases(data, nrHidden):
+  # get the procentage of data points that have the i'th unit on
+  # and set the visible vias to log (p/(1-p))
+  percentages = data.mean(axis=0, dtype='float')
+  vectorized = np.vectorize(safeLogFraction, otypes=[np.float])
+  visibleBiases = vectorized(percentages)
+
+  hiddenBiases = np.zeros(nrHidden)
+  return np.array([visibleBiases, hiddenBiases])
