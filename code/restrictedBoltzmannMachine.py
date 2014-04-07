@@ -24,7 +24,7 @@ class RBMMiniBatchTrainer(object):
 
   # TODO: i need to see how I do it with the sampling, because
   # we do not sample all the time to make them binary
-  def __init(self, input, initialWeights, initialBiases,
+  def __init__(self, input, initialWeights, initialBiases,
              visibleDropout, dropout, cdSteps=1):
 
     self.visible = input
