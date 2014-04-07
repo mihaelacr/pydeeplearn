@@ -152,6 +152,9 @@ class RBM(object):
 
     self.testWeights = self.weights
 
+    print reconstructionError(self.biases, self.weights, data, activationFun)
+
+
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible
     assert self.biases[1].shape[0] == self.nrHidden
