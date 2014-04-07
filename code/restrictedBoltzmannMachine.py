@@ -119,10 +119,10 @@ class RBM(object):
     updates.append((batchTrainer.weights, batchTrainer.weights + paramUpdate))
 
     visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
-    updates.append((self.biasVisible, visibleBiasDiff))
+    updates.append((batchTrainer.biasVisible, visibleBiasDiff))
 
     hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
-    updates.append((self.biasHidden, hiddenBiasDiff))
+    updates.append((batchTrainer.biasHidden, hiddenBiasDiff))
 
     # TODO: momentum and all that
     train_function = theano.function(
