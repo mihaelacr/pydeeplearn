@@ -36,7 +36,7 @@ class RBM(object):
       self.biases = self.intializeBiases(data, self.nrHidden)
       self.initialized = True
 
-    for i in xrange(100):
+    for i in xrange(50):
       self.biases, self.weights = self.trainingFunction(data,
                                                       self.biases,
                                                       self.weights,
@@ -248,8 +248,3 @@ def updateLayer(layer, otherLayerValues, biases, weights, activationFun,
 
   return probs
 
-# Another training algorithm. Slower than Contrastive divergence, but
-# gives better results. Not used in practice as it is too slow.
-# This is what Hinton said but it is not OK due to NIPS paper
-def PCD():
-  pass
