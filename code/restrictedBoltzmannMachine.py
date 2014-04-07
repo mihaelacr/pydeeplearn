@@ -144,6 +144,8 @@ class RBM(object):
     self.biases = [batchTrainer.biasVisible.get_value(),
                    batchTrainer.biasHidden.get_value()]
 
+    self.testWeights = self.weights
+
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible
     assert self.biases[1].shape[0] == self.nrHidden
@@ -163,6 +165,8 @@ class RBM(object):
                                                       self.activationFun,
                                                       self.dropout,
                                                       self.visibleDropout)
+    # TODO:you have to do this for the biases as well
+    # TODO: check that I do this in the deep belief net
     self.testWeights = self.weights * self.dropout
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
