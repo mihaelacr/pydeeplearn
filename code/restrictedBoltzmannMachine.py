@@ -102,6 +102,9 @@ class RBM(object):
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
 
+    batchLearningRate = learningRate / miniBatchSize
+
+
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                        initialWeights=self.weights,
                                        initialBiases=self.biases,
@@ -114,18 +117,18 @@ class RBM(object):
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hidden)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
-    wUpdate = momentum * batchTrainer.oldDParams[0] + learningRate * (positiveDifference - negativeDifference)
+    wUpdate = momentum * batchTrainer.oldDParams[0] + batchLearningRate * (positiveDifference - negativeDifference)
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDParams[0], wUpdate))
 
     visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
-    biasVisUpdate = momentum * batchTrainer.oldDParams[1] + learningRate * visibleBiasDiff
+    biasVisUpdate = momentum * batchTrainer.oldDParams[1] + batchLearningRate * visibleBiasDiff
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
     updates.append((batchTrainer.oldDParams[1], biasVisUpdate))
 
 
     hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
-    biasHidUpdate = momentum * batchTrainer.oldDParams[2] + learningRate * hiddenBiasDiff
+    biasHidUpdate = momentum * batchTrainer.oldDParams[2] + batchLearningRate * hiddenBiasDiff
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
     updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
 
