@@ -56,16 +56,16 @@ class RBMMiniBatchTrainer(object):
     # TODO: scan for a loop in theano
     # Now do 1 step in CD, but later you will have to do more
     # I think that should happen with scan or something
-    hiddenActivations = T.sigmoid(T.dot(input, w) + biasHidden)
+    hiddenActivations = T.nnet.sigmoid(T.dot(input, w) + biasHidden)
     self.hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
                                           n=1, p=hiddenActivations,
                                           dtype=theanoFloat)
 
-    visibleRec = T.sigmoid(T.dot(self.hidden, w.T) + biasVisible)
+    visibleRec = T.nnet.sigmoid(T.dot(self.hidden, w.T) + biasVisible)
     self.visibleReconstruction = self.theano_rng.binomial(size=visibleRec.shape,
                                           n=1, p=visibleRec,
                                           dtype=theanoFloat)
-    hiddenRec = T.sigmoid(T.dot(self.visibleReconstruction, w) + biasHidden)
+    hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, w) + biasHidden)
     self.hiddenReconstruction = self.theano_rng.binomial(size=hiddenRec.shape,
                                           n=1, p=hiddenRec,
                                           dtype=theanoFloat)
