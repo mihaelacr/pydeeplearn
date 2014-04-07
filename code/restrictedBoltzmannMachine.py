@@ -109,24 +109,24 @@ class RBM(object):
                                        hiddenDropout=0.5)
 
     updates = []
-
     # The theano people do not need this because they use gradient
     # I wonder how that works
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hidden)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
-    paramUpdate = learningRate * (positiveDifference - negativeDifference)
-    updates.append((batchTrainer.weights, batchTrainer.weights + paramUpdate))
+    wUpdate = momentum * self.oldDParams[0] - learningRate * (positiveDifference - negativeDifference)
+    updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
 
     visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
-    updates.append((batchTrainer.biasVisible, visibleBiasDiff))
+    biasVisUpdate = momentum * self.oldDParams[1] + learningRate * visibleBiasDiff
+    updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
 
     hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
-    updates.append((batchTrainer.biasHidden, hiddenBiasDiff))
+    biasHidUpdate = momentum * self.oldDParams[2] + learningRate * hiddenBiasDiff
+    updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
 
-    # TODO: momentum and all that
     train_function = theano.function(
-      inputs=[miniBatchIndex],
+      inputs=[miniBatchIndex, momentum],
       outputs=[], # TODO: output error
       updates=updates,
       givens={
@@ -136,9 +136,14 @@ class RBM(object):
     nrMiniBatches = len(data) / miniBatchSize
     # The rbm trainign has only one step, you do multiple for the dbn,
     # so maybe not put it here
-    for i in xrange(10):
+    for epoch in xrange(10):
       for miniBatchIndex in range(nrMiniBatches):
-        train_function(miniBatchIndex)
+        if epoch < epochs / 100:
+          momentum = 0.5
+        else:
+          momentum = 0.95
+
+        train_function(miniBatchIndex, momentum)
 
     self.weights = batchTrainer.weights.get_value()
     self.biases = [batchTrainer.biasVisible.get_value(),
