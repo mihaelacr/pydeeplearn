@@ -30,19 +30,15 @@ class RBMMiniBatchTrainer(object):
     self.visible = input
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
-    w = theano.shared(value=np.asarray(initialWeights,
+    self.weights = theano.shared(value=np.asarray(initialWeights,
                                          dtype=theanoFloat),
                         name='W')
-    biasVisible = theano.shared(value=np.asarray(initialBiases[0],
+    self.biasVisible = theano.shared(value=np.asarray(initialBiases[0],
                                          dtype=theanoFloat),
                         name='bvis')
-    biasHidden = theano.shared(value=np.asarray(initialBiases[1],
+    self.biasHidden = theano.shared(value=np.asarray(initialBiases[1],
                                          dtype=theanoFloat),
                         name='bhid')
-
-    self.weights = w
-    self.biases = [biasVisible, biasHidden]
-    self.params = [self.weights] + self.biases
 
     oldDw = theano.shared(value=np.zeros(shape=initialWeights.shape,
                                            dtype=theanoFloat))
@@ -123,10 +119,10 @@ class RBM(object):
     updates.append((batchTrainer.weights, batchTrainer.weights + paramUpdate))
 
     visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
-    updates.append((self.biases[0], visibleBiasDiff))
+    updates.append((self.biasVisible, visibleBiasDiff))
 
     hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
-    updates.append((self.biases[1], hiddenBiasDiff))
+    updates.append((self.biasHidden, hiddenBiasDiff))
 
     # TODO: momentum and all that
     train_function = theano.function(
