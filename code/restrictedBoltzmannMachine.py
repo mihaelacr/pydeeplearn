@@ -28,7 +28,7 @@ class RBMMiniBatchTrainer(object):
              visibleDropout, hiddenDropout, cdSteps=1):
 
     self.visible = input
-    self.theano_rng = RandomStreams(numpy_rng.randint(2 ** 30))
+    self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
     w = theano.shared(value=np.asarray(initialWeights,
                                          dtype=theanoFloat),
