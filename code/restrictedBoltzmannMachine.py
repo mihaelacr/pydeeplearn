@@ -169,6 +169,7 @@ class RBM(object):
           momentum = 0.95
           steps = 3
 
+        print batchTrainer.cdSteps.get_value()
         train_function(miniBatchIndex, momentum, steps)
 
     self.weights = batchTrainer.weights.get_value()
