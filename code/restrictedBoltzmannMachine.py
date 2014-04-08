@@ -29,7 +29,7 @@ class RBMMiniBatchTrainer(object):
 
 
     self.visible = input
-    self.cdSteps = cdSteps
+    self.cdSteps = theano.shared(value=cdSteps, dtype=theanoFloat)
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
     self.weights = theano.shared(value=np.asarray(initialWeights,
@@ -120,7 +120,7 @@ class RBM(object):
                                        initialBiases=self.biases,
                                        visibleDropout=0.8,
                                        hiddenDropout=0.5,
-                                       cdSteps=cdSteps)
+                                       cdSteps=1)
 
     updates = []
     # The theano people do not need this because they use gradient
