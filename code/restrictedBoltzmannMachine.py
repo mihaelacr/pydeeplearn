@@ -145,7 +145,7 @@ class RBM(object):
 
 
     # Add the updates required for the theano random generator
-    updates += batchTrainer.updates
+    updates += batchTrainer.updates.items()
     updates.append((batchTrainer.cdSteps, batchTrainer.cdSteps + cdStepsUpdate))
 
     train_function = theano.function(
