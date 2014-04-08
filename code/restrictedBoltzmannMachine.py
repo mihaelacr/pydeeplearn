@@ -27,7 +27,9 @@ class RBMMiniBatchTrainer(object):
   def __init__(self, input, initialWeights, initialBiases,
              visibleDropout, hiddenDropout, cdSteps):
 
+
     self.visible = input
+    self.cdSteps = cdSteps
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
     self.weights = theano.shared(value=np.asarray(initialWeights,
@@ -59,18 +61,11 @@ class RBMMiniBatchTrainer(object):
       visibleRec = T.nnet.sigmoid(T.dot(hidden, self.weights.T) + self.biasVisible)
       return hidden, visibleRec
 
-    # sample = theano.tensor.vector()
     results, updates = theano.scan(OneSampleStep,
                           outputs_info=self.visible,
-                          n_steps=cdSteps)
+                          n_steps=3)
 
     self.updates = updates
-    # Create the gibbs sampling function
-    # It is important to add the updates to the function in order to change
-    # the theano random number generator
-    # gibbsSampling = theano.function(inputs=[sample],
-    #     outputs=[results[0], results[-2], results[-3]]
-    #     , updates=updates)
 
     self.hidden = results[0][0]
     self.visibleReconstruction = results[-1][1]
@@ -167,7 +162,7 @@ class RBM(object):
           momentum = 0.5
         else:
           momentum = 0.95
-          batchTrainer.cdSteps = 3
+          # batchTrainer.cdSteps = 3
 
         train_function(miniBatchIndex, momentum)
 
