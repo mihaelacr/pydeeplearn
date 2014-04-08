@@ -164,10 +164,10 @@ class RBM(object):
       for miniBatchIndex in range(nrMiniBatches):
         if epoch < 10:
           momentum = 0.5
-          steps = 1
+          steps = 0
         else:
           momentum = 0.95
-          steps = 3
+          steps = 2
 
         print batchTrainer.cdSteps.get_value()
         train_function(miniBatchIndex, momentum, steps)
