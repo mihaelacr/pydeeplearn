@@ -63,7 +63,7 @@ class RBMMiniBatchTrainer(object):
 
     results, updates = theano.scan(OneSampleStep,
                           outputs_info=[None, self.visible],
-                          n_steps=3)
+                          n_steps=self.cdSteps)
 
     self.updates = updates
 
@@ -109,6 +109,7 @@ class RBM(object):
 
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
+    cdSteps = T.iscalar()
 
     batchLearningRate = learningRate / miniBatchSize
 
@@ -118,7 +119,7 @@ class RBM(object):
                                        initialBiases=self.biases,
                                        visibleDropout=0.8,
                                        hiddenDropout=0.5,
-                                       cdSteps=1)
+                                       cdSteps=cdSteps)
 
     updates = []
     # The theano people do not need this because they use gradient
@@ -145,11 +146,11 @@ class RBM(object):
     updates += batchTrainer.updates
 
     train_function = theano.function(
-      inputs=[miniBatchIndex, momentum],
+      inputs=[miniBatchIndex, momentum, cdSteps],
       outputs=[], # TODO: output error
       updates=updates,
       givens={
-        x: sharedData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]
+        x: sharedData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
         })
 
     nrMiniBatches = len(data) / miniBatchSize
@@ -160,11 +161,12 @@ class RBM(object):
       for miniBatchIndex in range(nrMiniBatches):
         if epoch < 10:
           momentum = 0.5
+          steps = 1
         else:
           momentum = 0.95
-          # batchTrainer.cdSteps = 3
+          steps = 3
 
-        train_function(miniBatchIndex, momentum)
+        train_function(miniBatchIndex, momentum, steps)
 
     self.weights = batchTrainer.weights.get_value()
     self.biases = [batchTrainer.biasVisible.get_value(),
