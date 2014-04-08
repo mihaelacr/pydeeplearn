@@ -29,7 +29,7 @@ class RBMMiniBatchTrainer(object):
 
 
     self.visible = input
-    self.cdSteps = theano.shared(value=cdSteps, dtype=theanoFloat)
+    self.cdSteps = theano.shared(value=T.cast(cdSteps,theanoFloat))
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
     self.weights = theano.shared(value=np.asarray(initialWeights,
