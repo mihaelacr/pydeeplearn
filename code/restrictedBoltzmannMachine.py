@@ -62,7 +62,7 @@ class RBMMiniBatchTrainer(object):
       return hidden, visibleRec
 
     results, updates = theano.scan(OneSampleStep,
-                          outputs_info=self.visible,
+                          outputs_info=[self.visible, None],
                           n_steps=3)
 
     self.updates = updates
