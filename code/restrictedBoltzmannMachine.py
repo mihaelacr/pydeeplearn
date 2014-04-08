@@ -147,7 +147,7 @@ class RBM(object):
     updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
 
     # Add the updates required for the theano random generator
-    updates.append(batchTrainer.updates)
+    updates += batchTrainer.updates
 
     train_function = theano.function(
       inputs=[miniBatchIndex, momentum],
