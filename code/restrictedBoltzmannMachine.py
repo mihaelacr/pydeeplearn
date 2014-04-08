@@ -25,7 +25,7 @@ class RBMMiniBatchTrainer(object):
   # TODO: i need to see how I do it with the sampling, because
   # we do not sample all the time to make them binary
   def __init__(self, input, initialWeights, initialBiases,
-             visibleDropout, hiddenDropout, cdSteps=1):
+             visibleDropout, hiddenDropout, cdSteps):
 
     self.visible = input
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
@@ -49,19 +49,33 @@ class RBMMiniBatchTrainer(object):
 
     self.oldDParams = [oldDw, oldDVis, oldDHid]
 
-    # TODO: scan for a loop in theano
-    # TODO: only sample from the hidden ones that are not the last one
-    # Now do 1 step in CD, but later you will have to do more
-    # I think that should happen with scan or something
-    hiddenActivations = T.nnet.sigmoid(T.dot(input, self.weights) + self.biasHidden)
-    self.hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
+    # This does not sample the visible layers, but samples
+    # The hidden layers up to the last one, like Hinton suggests
+    def OneSampleStep(visibleSample):
+      hiddenActivations = T.nnet.sigmoid(T.dot(visibleSample, self.weights) + self.biasHidden)
+      hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
                                           n=1, p=hiddenActivations,
                                           dtype=theanoFloat)
+      visibleRec = T.nnet.sigmoid(T.dot(self.hidden, self.weights.T) + self.biasVisible)
+      return hidden, visibleRec
 
-    visibleRec = T.nnet.sigmoid(T.dot(self.hidden, self.weights.T) + self.biasVisible)
-    self.visibleReconstruction = self.theano_rng.binomial(size=visibleRec.shape,
-                                          n=1, p=visibleRec,
-                                          dtype=theanoFloat)
+    # sample = theano.tensor.vector()
+    results, updates = theano.scan(OneSampleStep,
+                          outputs_info=self.visible,
+                          n_steps=cdSteps)
+
+    self.updates = updates
+    # Create the gibbs sampling function
+    # It is important to add the updates to the function in order to change
+    # the theano random number generator
+    # gibbsSampling = theano.function(inputs=[sample],
+    #     outputs=[results[0], results[-2], results[-3]]
+    #     , updates=updates)
+
+    self.hidden = self.results[0][0]
+    self.visibleReconstruction = self.results[-1][1]
+
+    # Do not sample for the last one, in order to get less sampling noise
     hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     self.hiddenReconstruction = hiddenRec
 
@@ -108,7 +122,8 @@ class RBM(object):
                                        initialWeights=self.weights,
                                        initialBiases=self.biases,
                                        visibleDropout=0.8,
-                                       hiddenDropout=0.5)
+                                       hiddenDropout=0.5,
+                                       cdSteps=1)
 
     updates = []
     # The theano people do not need this because they use gradient
@@ -131,6 +146,8 @@ class RBM(object):
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
     updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
 
+    # Add the updates required for the theano random generator
+    updates.append(batchTrainer.updates)
 
     train_function = theano.function(
       inputs=[miniBatchIndex, momentum],
@@ -150,6 +167,7 @@ class RBM(object):
           momentum = 0.5
         else:
           momentum = 0.95
+          batchTrainer.cdSteps = 3
 
         train_function(miniBatchIndex, momentum)
 
