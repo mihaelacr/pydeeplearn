@@ -56,7 +56,7 @@ class RBMMiniBatchTrainer(object):
       hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
                                           n=1, p=hiddenActivations,
                                           dtype=theanoFloat)
-      visibleRec = T.nnet.sigmoid(T.dot(self.hidden, self.weights.T) + self.biasVisible)
+      visibleRec = T.nnet.sigmoid(T.dot(hidden, self.weights.T) + self.biasVisible)
       return hidden, visibleRec
 
     # sample = theano.tensor.vector()
