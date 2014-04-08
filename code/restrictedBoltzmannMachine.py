@@ -27,13 +27,12 @@ class RBMMiniBatchTrainer(object):
   def __init__(self, input, initialWeights, initialBiases,
              visibleDropout, hiddenDropout, cdSteps):
 
-
     self.visible = input
     self.cdSteps = cdSteps
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
     self.weights = theano.shared(value=np.asarray(initialWeights,
-                                         dtype=theanoFloat),
+                                  dtype=theanoFloat),
                         name='W')
     self.biasVisible = theano.shared(value=np.asarray(initialBiases[0],
                                          dtype=theanoFloat),
