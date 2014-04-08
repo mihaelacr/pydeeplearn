@@ -29,7 +29,7 @@ class RBMMiniBatchTrainer(object):
 
 
     self.visible = input
-    self.cdSteps = theano.shared(value=np.int32(cdSteps))
+    self.cdSteps = cdSteps
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
     self.weights = theano.shared(value=np.asarray(initialWeights,
@@ -109,7 +109,6 @@ class RBM(object):
 
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
-    cdStepsUpdate = T.iscalar()
 
     batchLearningRate = learningRate / miniBatchSize
     batchLearningRate = T.cast(batchLearningRate, theanoFloat)
@@ -146,7 +145,6 @@ class RBM(object):
 
     # Add the updates required for the theano random generator
     updates += batchTrainer.updates.items()
-    updates.append((batchTrainer.cdSteps, batchTrainer.cdSteps + cdStepsUpdate))
 
     train_function = theano.function(
       inputs=[miniBatchIndex, momentum, cdStepsUpdate],
@@ -164,13 +162,10 @@ class RBM(object):
       for miniBatchIndex in range(nrMiniBatches):
         if epoch < 10:
           momentum = 0.5
-          steps = 0
         else:
           momentum = 0.95
-          steps = 2
 
-        print batchTrainer.cdSteps.get_value()
-        train_function(miniBatchIndex, momentum, steps)
+        train_function(miniBatchIndex, momentum)
 
     self.weights = batchTrainer.weights.get_value()
     self.biases = [batchTrainer.biasVisible.get_value(),
