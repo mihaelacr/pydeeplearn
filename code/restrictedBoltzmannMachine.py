@@ -50,6 +50,7 @@ class RBMMiniBatchTrainer(object):
     self.oldDParams = [oldDw, oldDVis, oldDHid]
 
     # TODO: scan for a loop in theano
+    # TODO: only sample from the hidden ones that are not the last one
     # Now do 1 step in CD, but later you will have to do more
     # I think that should happen with scan or something
     hiddenActivations = T.nnet.sigmoid(T.dot(input, self.weights) + self.biasHidden)
@@ -62,9 +63,7 @@ class RBMMiniBatchTrainer(object):
                                           n=1, p=visibleRec,
                                           dtype=theanoFloat)
     hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
-    self.hiddenReconstruction = self.theano_rng.binomial(size=hiddenRec.shape,
-                                          n=1, p=hiddenRec,
-                                          dtype=theanoFloat)
+    self.hiddenReconstruction = hiddenRec
 
 
 # TODO: different learning rates for weights and biases
