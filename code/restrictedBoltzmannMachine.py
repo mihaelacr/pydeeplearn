@@ -146,7 +146,7 @@ class RBM(object):
     updates += batchTrainer.updates.items()
 
     train_function = theano.function(
-      inputs=[miniBatchIndex, momentum, cdStepsUpdate],
+      inputs=[miniBatchIndex, momentum],
       outputs=[], # TODO: output error
       updates=updates,
       givens={
