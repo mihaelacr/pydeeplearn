@@ -156,7 +156,7 @@ class RBM(object):
     nrMiniBatches = len(data) / miniBatchSize
     # The rbm trainign has only one step, you do multiple for the dbn,
     # so maybe not put it here
-    epochs = 100
+    epochs = 10
     for epoch in xrange(epochs):
       for miniBatchIndex in range(nrMiniBatches):
         if epoch < 10:
