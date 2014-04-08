@@ -63,7 +63,7 @@ class RBMMiniBatchTrainer(object):
 
     results, updates = theano.scan(OneSampleStep,
                           outputs_info=[None, self.visible],
-                          n_steps=self.cdSteps)
+                          n_steps=self.cdSteps.get_value())
 
     self.updates = updates
 
