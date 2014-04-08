@@ -110,7 +110,7 @@ class RBM(object):
     momentum = T.fscalar()
 
     batchLearningRate = learningRate / miniBatchSize
-    batchLearningRate = T.cast(batchLearningRate, theanoFloat)
+    batchLearningRate = np.float32(batchLearningRate)
 
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                        initialWeights=self.weights,
