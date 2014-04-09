@@ -50,18 +50,29 @@ class RBMMiniBatchTrainer(object):
 
     self.oldDParams = [oldDw, oldDVis, oldDHid]
 
+    # Create the dropout for the visible layer
+    dropoutMask = self.theano_rng.binomial(size=visible.shape,
+                                          n=1, p=visibleDropout,
+                                          dtype=theanoFloat)
+
+    droppedOutVisible = dropoutMask * self.visible
+    dropoutMaskHidden = self.theano_rng.binomial(size=hiddenActivations.shape,
+                                          n=1, p=hiddenDropout,
+                                          dtype=theanoFloat)
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneSampleStep(visibleSample):
       hiddenActivations = T.nnet.sigmoid(T.dot(visibleSample, self.weights) + self.biasHidden)
-      hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
-                                          n=1, p=hiddenActivations,
+      hiddenActivationsDropped = hiddenActivations * dropoutMaskHidden
+      hidden = self.theano_rng.binomial(size=hiddenActivationsDropped.shape,
+                                          n=1, p=hiddenActivationsDropped,
                                           dtype=theanoFloat)
+
       visibleRec = T.nnet.sigmoid(T.dot(hidden, self.weights.T) + self.biasVisible)
-      return [hidden, visibleRec]
+      return [hiddenActivationsDropped, visibleRec]
 
     results, updates = theano.scan(OneSampleStep,
-                          outputs_info=[None, self.visible],
+                          outputs_info=[None, droppedOutVisible],
                           n_steps=self.cdSteps)
 
     self.updates = updates
@@ -72,6 +83,7 @@ class RBMMiniBatchTrainer(object):
     self.visibleReconstruction = results[1][-1]
 
     # Do not sample for the last one, in order to get less sampling noise
+    # TODO: drop these as well?
     hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     self.hiddenReconstruction = hiddenRec
 
