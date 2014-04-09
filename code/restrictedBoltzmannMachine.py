@@ -95,7 +95,7 @@ class RBMMiniBatchTrainer(object):
 """
 class RBM(object):
 
-  def __init__(self, nrVisible, nrHidden, trainingFunction, dropout,
+  def __init__(self, nrVisible, nrHidden, trainingFunction, hiddenDropout,
                 visibleDropout, activationFun=sigmoid):
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
