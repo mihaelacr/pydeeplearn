@@ -127,6 +127,8 @@ class RBM(object):
 
     batchLearningRate = learningRate / miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
+    print "rbm learningRate"
+    print batchLearningRate
 
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                        initialWeights=self.weights,
