@@ -335,13 +335,13 @@ class DBN(object):
 
     while epoch < maxEpochs and count < 5:
       print "epoch"
+      if epoch < maxEpochs / 10:
+        momentum = np.float32(0.5)
+      else:
+        momentum = np.float32(0.95)
 
       for batchNr in xrange(nrMiniBatches):
         # Maybe you can do this according to the validation error as well?
-        if epoch < maxEpochs / 10:
-          momentum = np.float32(0.5)
-        else:
-          momentum = np.float32(0.95)
         momentum_step(momentum)
         error = update_params(batchNr)
 

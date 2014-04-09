@@ -78,8 +78,6 @@ class RBMMiniBatchTrainer(object):
 
     self.updates = updates
 
-    # This is not really semantically correct but I am trying to fix
-    # some things with theano
     self.hidden = results[0][0]
     self.visibleReconstruction = results[1][-1]
 
@@ -177,10 +175,10 @@ class RBM(object):
 
     for miniBatchIndex in range(nrMiniBatches):
       if miniBatchIndex < 10:
-        momentum = 0.
+        momentum = np.float32(0.5)
         step = 1
       else:
-        momentum = 0.95
+        momentum = np.float32(0.95)
         step = 3
 
       train_function(miniBatchIndex, momentum, step)
