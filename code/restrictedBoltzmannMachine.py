@@ -173,7 +173,7 @@ class RBM(object):
     nrMiniBatches = len(data) / miniBatchSize
 
     for miniBatchIndex in range(nrMiniBatches):
-      if epoch < 10:
+      if miniBatchIndex < 10:
         momentum = 0.
         step = 1
       else:
