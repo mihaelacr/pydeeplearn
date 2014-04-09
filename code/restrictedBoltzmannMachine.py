@@ -189,7 +189,7 @@ class RBM(object):
     self.biases = [batchTrainer.biasVisible.get_value(),
                    batchTrainer.biasHidden.get_value()]
 
-    self.testWeights = self.weights * self.dropoutHidden
+    self.testWeights = self.weights * self.hiddenDropout
 
     print reconstructionError(self.biases, self.weights, data, self.activationFun)
 

@@ -158,7 +158,7 @@ def cvMNIST():
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                  [Sigmoid, Sigmoid, Sigmoid, Softmax],
                   supervisedLearningRate=params[i],
-                  dropout=0.5, rbmDropout=0.5, visibleDropout=0.8,
+                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                   rbmVisibleDropout=1)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices])
@@ -207,7 +207,7 @@ def deepbeliefMNIST():
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                  [Sigmoid, Sigmoid, Sigmoid, Softmax],
                  supervisedLearningRate=0.01,
-                 dropout=0.5, rbmDropout=0.5, visibleDropout=0.8,
+                 hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                  rbmVisibleDropout=1)
     # TODO: think about what the network should do for 2 layers
     net.train(trainingScaledVectors, vectorLabels)

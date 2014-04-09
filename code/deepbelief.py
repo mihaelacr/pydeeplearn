@@ -107,7 +107,7 @@ class MiniBatchTrainer(object):
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
       if stage != len(self.weights) -1:
-        # Use dropout: give the next layer only some of the units
+        # Use hiddenDropout: give the next layer only some of the units
         # from this layer
         dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
@@ -149,7 +149,7 @@ class DBN(object):
   """
   def __init__(self, nrLayers, layerSizes, activationFunctions,
                 supervisedLearningRate=0.001,
-                miniBatchSize=10, dropout=0.5, rbmDropout=0.5,
+                miniBatchSize=10, hiddenDropout=0.5, rbmHiddenDropout=0.5,
                 visibleDropout=0.8, rbmVisibleDropout=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
@@ -159,9 +159,9 @@ class DBN(object):
 
     assert len(layerSizes) == nrLayers
     assert len(activationFunctions) == nrLayers - 1
-    self.dropout = dropout
+    self.hiddenDropout = hiddenDropout
     self.visibleDropout = visibleDropout
-    self.rbmDropout = rbmDropout
+    self.rbmHiddenDropout = rbmHiddenDropout
     self.rbmVisibleDropout = rbmVisibleDropout
     self.miniBatchSize = miniBatchSize
     self.supervisedLearningRate = supervisedLearningRate
@@ -202,12 +202,12 @@ class DBN(object):
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     rbm.contrastiveDivergence,
-                    self.rbmDropout, self.rbmVisibleDropout,
+                    self.rbmHiddenDropout, self.rbmVisibleDropout,
                     self.activationFunctions[i].value)
       net.train(currentData)
 
       w = net.testWeights
-      self.weights += [w / self.dropout]
+      self.weights += [w / self.hiddenDropout]
       b = net.biases[1]
       self.biases += [b]
 
@@ -235,8 +235,8 @@ class DBN(object):
                   sharedValidationData, sharedValidationLabels,
                   self.supervisedLearningRate)
 
-    # Dropout: Get the classification
-    self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
+    # hiddenDropout: Get the classification
+    self.classifcationWeights = map(lambda x: x * self.hiddenDropout, self.weights)
     self.classifcationBiases = self.biases
 
   """Fine tunes the weigths and biases using backpropagation.
@@ -370,8 +370,8 @@ class DBN(object):
 
     x = T.matrix('x', dtype=theanoFloat)
 
-    # Use the classification weights because now we have dropout
-    # Ensure that you have no dropout in classification
+    # Use the classification weights because now we have hiddenDropout
+    # Ensure that you have no hiddenDropout in classification
     # TODO: are the variables still shared? or can we make a new one?
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.classifcationWeights,
