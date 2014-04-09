@@ -73,7 +73,7 @@ class RBMMiniBatchTrainer(object):
                           outputs_info=[None, self.visible],
                           n_steps=3)
 
-    # self.updates = updates
+    self.updates = updates
 
     # This is not really semantically correct but I am trying to fix
     # some things with theano
@@ -153,7 +153,7 @@ class RBM(object):
 
 
     # Add the updates required for the theano random generator
-    # updates += batchTrainer.updates.items()
+    updates += batchTrainer.updates.items()
 
     train_function = theano.function(
       inputs=[miniBatchIndex, momentum],
