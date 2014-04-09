@@ -154,7 +154,7 @@ class RBM(object):
 
 
     # Add the updates required for the theano random generator
-    updates += batchTrainer.updates.items()
+    # updates += batchTrainer.updates.items()
 
     train_function = theano.function(
       inputs=[miniBatchIndex, momentum],
