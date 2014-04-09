@@ -56,9 +56,10 @@ class RBMMiniBatchTrainer(object):
                                           dtype=theanoFloat)
 
     droppedOutVisible = dropoutMask * self.visible
-    dropoutMaskHidden = self.theano_rng.binomial(size=hiddenActivations.shape,
-                                          n=1, p=hiddenDropout,
-                                          dtype=theanoFloat)
+    dropoutMaskHidden = self.theano_rng.binomial(
+                              size=(input.shape[0],initialBiases[1].shape[0]),
+                              n=1, p=hiddenDropout,
+                              dtype=theanoFloat)
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneSampleStep(visibleSample):
