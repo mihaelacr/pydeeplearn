@@ -152,7 +152,7 @@ def cvMNIST():
   foldSize = training / nrFolds
   bestFold = -1
   bestError = np.inf
-  params = [0.05, 0.01, 0.005]
+  params = [0.05, 0.01, 0.1]
   for i in xrange(nrFolds):
     # Train the net
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
