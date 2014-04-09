@@ -148,7 +148,7 @@ class DBN(object):
         type: list of objects of type ActivationFunction
   """
   def __init__(self, nrLayers, layerSizes, activationFunctions,
-                supervisedLearningRate=0.001,
+                supervisedLearningRate=0.01,
                 miniBatchSize=10, hiddenDropout=0.5, rbmHiddenDropout=0.5,
                 visibleDropout=0.8, rbmVisibleDropout=1):
     self.nrLayers = nrLayers
@@ -333,7 +333,7 @@ class DBN(object):
     count = 0
     epoch = 0
 
-    while epoch < maxEpochs and count < 4:
+    while epoch < maxEpochs and count < 5:
       print "epoch"
 
       for batchNr in xrange(nrMiniBatches):
