@@ -52,35 +52,33 @@ class RBMMiniBatchTrainer(object):
 
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
-    def OneSampleStep(previousResult):
-      visibleSample = previousResult[0]
-      hiddenActivations = T.nnet.sigmoid(T.dot(visibleSample, self.weights) + self.biasHidden)
+    # def OneSampleStep(previousResult):
+    #   visibleSample = previousResult[0]
+    #   hiddenActivations = T.nnet.sigmoid(T.dot(visibleSample, self.weights) + self.biasHidden)
+    #   hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
+    #                                       n=1, p=hiddenActivations,
+    #                                       dtype=theanoFloat)
+    #   visibleRec = T.nnet.sigmoid(T.dot(hidden, self.weights.T) + self.biasVisible)
+    #   return [hidden, visibleRec]
+
+    visible = self.visible
+    for i in xrange(cdSteps):
+      hiddenActivations = T.nnet.sigmoid(T.dot(visible, self.weights) + self.biasHidden)
       hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
                                           n=1, p=hiddenActivations,
                                           dtype=theanoFloat)
-      visibleRec = T.nnet.sigmoid(T.dot(hidden, self.weights.T) + self.biasVisible)
-      return hidden, visibleRec
-
-    # visible = self.visible
-    # for i in xrange(cdSteps):
-    #   # hiddenActivations = T.nnet.sigmoid(T.dot(self.visible, self.weights) + self.biasHidden)
-    #   # hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
-    #   #                                     n=1, p=hiddenActivations,
-    #   #                                     dtype=theanoFloat)
-    #   # visibleRec = T.nnet.sigmoid(T.dot(hidden, self.weights.T) + self.biasVisible)
-    #   hidden, visible = OneSampleStep(visible)
-
-
-    results, updates = theano.scan(OneSampleStep,
-                          outputs_info=[None, self.visible],
-                          n_steps=3)
+      if i == 0:
+        self.hidden = hidden
+      visible = T.nnet.sigmoid(T.dot(hidden, self.weights.T) + self.biasVisible)
 
     # self.updates = updates
 
     # This is not really semantically correct but I am trying to fix
     # some things with theano
-    self.hidden = results[0][0]
-    self.visibleReconstruction = results[-1][1]
+    # self.hidden = results[0][0]
+    # self.visibleReconstruction = results[-1][1]
+
+    self.visibleReconstruction = visible
 
     # Do not sample for the last one, in order to get less sampling noise
     hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
