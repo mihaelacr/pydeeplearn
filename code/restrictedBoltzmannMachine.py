@@ -171,19 +171,16 @@ class RBM(object):
         })
 
     nrMiniBatches = len(data) / miniBatchSize
-    # The rbm trainign has only one step, you do multiple for the dbn,
-    # so maybe not put it here
-    epochs = 10
-    for epoch in xrange(epochs):
-      for miniBatchIndex in range(nrMiniBatches):
-        if epoch < 10:
-          momentum = 0.
-          step = 1
-        else:
-          momentum = 0.95
-          step = 3
 
-        train_function(miniBatchIndex, momentum, step)
+    for miniBatchIndex in range(nrMiniBatches):
+      if epoch < 10:
+        momentum = 0.
+        step = 1
+      else:
+        momentum = 0.95
+        step = 3
+
+      train_function(miniBatchIndex, momentum, step)
 
     self.weights = batchTrainer.weights.get_value()
     self.biases = [batchTrainer.biasVisible.get_value(),
@@ -192,7 +189,6 @@ class RBM(object):
     self.testWeights = self.weights * self.hiddenDropout
 
     print reconstructionError(self.biases, self.testWeights, data, self.activationFun)
-
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible

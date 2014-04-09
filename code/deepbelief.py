@@ -208,6 +208,7 @@ class DBN(object):
 
       w = net.testWeights
       self.weights += [w / self.hiddenDropout]
+      # Only add the biases for the hidden unit
       b = net.biases[1]
       self.biases += [b]
 
