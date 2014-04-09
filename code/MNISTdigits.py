@@ -152,7 +152,7 @@ def cvMNIST():
   foldSize = training / nrFolds
   bestFold = -1
   bestError = np.inf
-  params = [0.01, 0.005, 0.001]
+  params = [0.05, 0.01, 0.005]
   for i in xrange(nrFolds):
     # Train the net
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
@@ -166,6 +166,9 @@ def cvMNIST():
     proabilities, predicted = net.classify(testingScaledVectors)
     # Test it with the testing data and measure the missclassification error
     error = getClassificationError(labelsToVectors(testLabels, 10), proabilities)
+
+    print "error for " + str(params[i])
+    print error
 
     if error < bestError:
       bestError = error
