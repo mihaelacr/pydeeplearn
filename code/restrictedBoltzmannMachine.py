@@ -51,7 +51,7 @@ class RBMMiniBatchTrainer(object):
     self.oldDParams = [oldDw, oldDVis, oldDHid]
 
     # Create the dropout for the visible layer
-    dropoutMask = self.theano_rng.binomial(size=visible.shape,
+    dropoutMask = self.theano_rng.binomial(size=self.visible.shape,
                                           n=1, p=visibleDropout,
                                           dtype=theanoFloat)
 
