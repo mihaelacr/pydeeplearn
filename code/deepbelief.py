@@ -206,7 +206,7 @@ class DBN(object):
                     self.activationFunctions[i].value)
       net.train(currentData)
 
-      w = net.weights
+      w = net.testWeights
       self.weights += [w / self.dropout]
       b = net.biases[1]
       self.biases += [b]

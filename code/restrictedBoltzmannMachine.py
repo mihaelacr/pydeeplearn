@@ -98,7 +98,7 @@ class RBM(object):
   def __init__(self, nrVisible, nrHidden, trainingFunction, dropout,
                 visibleDropout, activationFun=sigmoid):
     # dropout = 1 means no dropout, keep all the weights
-    self.dropout = dropout
+    self.hiddenDropout = hiddenDropout
     # dropout = 1 means no dropout, keep all the weights
     self.visibleDropout = visibleDropout
     self.nrHidden = nrHidden
@@ -189,7 +189,7 @@ class RBM(object):
     self.biases = [batchTrainer.biasVisible.get_value(),
                    batchTrainer.biasHidden.get_value()]
 
-    self.testWeights = self.weights
+    self.testWeights = self.weights * self.dropoutHidden
 
     print reconstructionError(self.biases, self.weights, data, self.activationFun)
 
@@ -211,11 +211,11 @@ class RBM(object):
                                                       self.biases,
                                                       self.weights,
                                                       self.activationFun,
-                                                      self.dropout,
+                                                      self.hiddenDropout,
                                                       self.visibleDropout)
     # TODO:you have to do this for the biases as well
     # TODO: check that I do this in the deep belief net
-    self.testWeights = self.weights * self.dropout
+    self.testWeights = self.weights * self.hiddenDropout
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible
