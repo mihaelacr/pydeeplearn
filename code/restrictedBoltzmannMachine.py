@@ -61,7 +61,7 @@ class RBMMiniBatchTrainer(object):
       return hidden, visibleRec
 
     for i in xrange(cdSteps):
-      hiddenActivations = T.nnet.sigmoid(T.dot(visibleSample, self.weights) + self.biasHidden)
+      hiddenActivations = T.nnet.sigmoid(T.dot(self.visible, self.weights) + self.biasHidden)
       hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
                                           n=1, p=hiddenActivations,
                                           dtype=theanoFloat)
