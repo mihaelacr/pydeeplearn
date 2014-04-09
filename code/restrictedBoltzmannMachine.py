@@ -108,6 +108,9 @@ class RBM(object):
     self.initialized = False
 
   def train(self, data, learningRate=0.01, miniBatchSize=10):
+    print "rbm learningRate"
+    print learningRate
+
     if not self.initialized:
       self.weights = initializeWeights(self.nrVisible, self.nrHidden)
       self.biases = intializeBiases(data, self.nrHidden)
@@ -127,8 +130,6 @@ class RBM(object):
 
     batchLearningRate = learningRate / miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
-    print "rbm learningRate"
-    print batchLearningRate
 
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                        initialWeights=self.weights,
