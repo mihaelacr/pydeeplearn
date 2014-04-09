@@ -60,14 +60,23 @@ class RBMMiniBatchTrainer(object):
       visibleRec = T.nnet.sigmoid(T.dot(hidden, self.weights.T) + self.biasVisible)
       return hidden, visibleRec
 
-    results, updates = theano.scan(OneSampleStep,
-                          outputs_info=[None, self.visible],
-                          n_steps=3)
+    for i in xrange(cdSteps):
+      hiddenActivations = T.nnet.sigmoid(T.dot(visibleSample, self.weights) + self.biasHidden)
+      hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
+                                          n=1, p=hiddenActivations,
+                                          dtype=theanoFloat)
+      visibleRec = T.nnet.sigmoid(T.dot(hidden, self.weights.T) + self.biasVisible)
 
-    self.updates = updates
+    # results, updates = theano.scan(OneSampleStep,
+    #                       outputs_info=[None, self.visible],
+    #                       n_steps=3)
 
-    self.hidden = results[0][0]
-    self.visibleReconstruction = results[-1][1]
+    # self.updates = updates
+
+    # This is not really semantically correct but I am trying to fix
+    # some things with theano
+    self.hidden = hidden
+    self.visibleReconstruction = visibleRec
 
     # Do not sample for the last one, in order to get less sampling noise
     hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
