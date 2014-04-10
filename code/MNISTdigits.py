@@ -158,7 +158,6 @@ def cvMNIST():
   for i in xrange(nrFolds):
     # Train the net
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                 [Sigmoid, Sigmoid, Sigmoid, Softmax],
                   supervisedLearningRate=params[i],
                   nesterovMomentum=args.nesterov,
                   hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
@@ -211,7 +210,6 @@ def deepbeliefMNIST():
     # net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
 
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                 [Sigmoid, Sigmoid, Sigmoid, Softmax],
                  unsupervisedLearningRate=0.01,
                  supervisedLearningRate=0.05,
                  nesterovMomentum=args.nesterov,

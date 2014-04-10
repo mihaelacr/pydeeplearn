@@ -141,13 +141,8 @@ class DBN(object):
         type: integer
     layerSizes: the sizes of the individual layers.
         type: list of integers of size nrLayers
-    activationFunctions: the functions that are used to transform
-        the input of a neuron into its output. The functions should be
-        vectorized (as per numpy) to be able to apply them for an entire
-        layer.
-        type: list of objects of type ActivationFunction
   """
-  def __init__(self, nrLayers, layerSizes, activationFunctions,
+  def __init__(self, nrLayers, layerSizes,
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,
                 nesterovMomentum=True,
@@ -155,12 +150,8 @@ class DBN(object):
                 visibleDropout=0.8, rbmVisibleDropout=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
-    # Note that for the first one the activatiom function does not matter
-    # So for that one there is no need to pass in an activation function
-    self.activationFunctions = activationFunctions
 
     assert len(layerSizes) == nrLayers
-    assert len(activationFunctions) == nrLayers - 1
     self.hiddenDropout = hiddenDropout
     self.visibleDropout = visibleDropout
     self.rbmHiddenDropout = rbmHiddenDropout
