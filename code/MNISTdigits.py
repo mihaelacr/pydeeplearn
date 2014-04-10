@@ -29,6 +29,8 @@ parser.add_argument('--db', dest='db',action='store_true', default=False,
                           "data is run"))
 parser.add_argument('--nesterov', dest='nesterov',action='store_true', default=False,
                     help=("if true, the deep belief net is trained using nesterov momentum"))
+parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=False,
+                    help=("if true, rmsprop is used when training the deep belief net."))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
 parser.add_argument('--trainSize', type=int, default=10000,
@@ -84,7 +86,6 @@ def rbmMain(reconstructRandom=True):
   # get a random image and see it looks like
   if reconstructRandom:
     test = np.random.random_sample(test.shape)
-
 
   # Show the initial image first
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
@@ -160,6 +161,7 @@ def cvMNIST():
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                   supervisedLearningRate=params[i],
                   nesterovMomentum=args.nesterov,
+                  rmsprop=args.rmsprop,
                   hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                   rbmVisibleDropout=1)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
@@ -213,6 +215,7 @@ def deepbeliefMNIST():
                  unsupervisedLearningRate=0.01,
                  supervisedLearningRate=0.05,
                  nesterovMomentum=args.nesterov,
+                 rmsprop=args.rmsprop,
                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                  rbmVisibleDropout=1)
     # TODO: think about what the network should do for 2 layers
@@ -244,8 +247,6 @@ def deepbeliefMNIST():
   # You just need to display some for the report
   # trueDigits = testLabels[errorCases]
   # predictedDigits = predicted[errorCases]
-
-
 
   print "correct"
   print correct

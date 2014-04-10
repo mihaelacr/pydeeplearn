@@ -146,8 +146,12 @@ class DBN(object):
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,
                 nesterovMomentum=True,
-                miniBatchSize=10, hiddenDropout=0.5, rbmHiddenDropout=0.5,
-                visibleDropout=0.8, rbmVisibleDropout=1):
+                rmsprop=True,
+                miniBatchSize=10,
+                iddenDropout=0.5,
+                rbmHiddenDropout=0.5,
+                visibleDropout=0.8,
+                rbmVisibleDropout=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
 
@@ -160,6 +164,7 @@ class DBN(object):
     self.supervisedLearningRate = supervisedLearningRate
     self.unsupervisedLearningRate = unsupervisedLearningRate
     self.nesterovMomentum = nesterovMomentum
+    self.rmsprop = rmsprop
 
   """
     Choose a percentage (percentValidation) of the data given to be
@@ -371,12 +376,16 @@ class DBN(object):
                            batchTrainer.oldMeanSquare)
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
-      meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-      paramUpdate = - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+      if self.rmsprop:
+        meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
+        paramUpdate = - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+        updates.append((oldMeanSquare, meanSquare))
+      else:
+        paramUpdate = - batchLearningRate * delta
+
       newParam = param + paramUpdate
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
-      updates.append((oldMeanSquare, meanSquare))
 
     return preDeltaUpdates, updates
 
@@ -389,13 +398,17 @@ class DBN(object):
                            batchTrainer.oldMeanSquare)
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
-      meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
       paramUpdate = momentum * oldUpdate
-      paramUpdate += - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+      if self.rmsprop:
+        meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
+        paramUpdate += - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+        updates.append((oldMeanSquare, meanSquare))
+      else:
+        paramUpdate += - batchLearningRate * delta
+
       newParam = param + paramUpdate
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
-      updates.append((oldMeanSquare, meanSquare))
 
     return updates
 
