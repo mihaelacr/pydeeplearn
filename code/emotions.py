@@ -61,7 +61,8 @@ def deepBeliefKanade(big=False, folds=None):
   # the folds that we want
   # TODO: do this better (with regex in the file name)
   # DO not reply on the order returned
-  files = files[folds]
+
+  files = [ files[x -1] for x in folds]
 
   data = []
   labels = []
