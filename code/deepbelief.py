@@ -119,7 +119,7 @@ class MiniBatchTrainer(object):
       currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
 
     # Last layer operations
-    linearSum = T.dot(currentLayerValues, self.weights[self.nrLayers - 1]) + b
+    linearSum = T.dot(currentLayerValues, self.weights[nrLayers - 1]) + b
     # Do not use theano's softmax, it is numerically unstable
     # and it causes Nans to appear
     # Note that semantically this is the same
