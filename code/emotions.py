@@ -59,6 +59,10 @@ def deepBeliefKanade(big=False, folds=None):
 
   data = []
   labels = []
+  # TODO: do LDA on the training data
+
+  # TODO: do proper CV in which you use 4 folds for training and one for testing
+  # at that time
   for filename in files:
     with open(filename, "rb") as  f:
       # Sort out the labels from the data
@@ -68,12 +72,16 @@ def deepBeliefKanade(big=False, folds=None):
       data.append(foldData)
       labels.append(foldLabels)
 
-  # Do LDA
+      vectorLabels = labelsToVectors(labels, 6)
 
-  # Create the network
+      # TODO: this might require more thought
+      net = db.DBN(5, [1200, 1000, 1000, 1000, 6],
+                 [Sigmoid, Sigmoid, Sigmoid, Softmax],
+                  supervisedLearningRate=0.01,
+                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
+                  rbmVisibleDropout=1)
+      net.train(foldData, vectorLabels)
 
-  # Test
 
   # You can also group the emotions into positive and negative to see
   # if you can get better results (probably yes)
-  pass

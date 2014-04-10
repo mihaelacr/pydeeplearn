@@ -93,7 +93,7 @@ class RBMMiniBatchTrainer(object):
 """
 class RBM(object):
 
-  def __init__(self, nrVisible, nrHidden, trainingFunction, hiddenDropout,
+  def __init__(self, nrVisible, nrHidden, learningRate, hiddenDropout,
                 visibleDropout, activationFun=sigmoid):
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
@@ -101,11 +101,11 @@ class RBM(object):
     self.visibleDropout = visibleDropout
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
-    self.trainingFunction = trainingFunction
     self.activationFun = activationFun
     self.initialized = False
+    self.learningRate = learningRate
 
-  def train(self, data, learningRate=0.01, miniBatchSize=10):
+  def train(self, data, miniBatchSize=10):
     print "rbm learningRate"
     print learningRate
 

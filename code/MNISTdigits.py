@@ -66,7 +66,7 @@ def rbmMain(reconstructRandom=True):
     nrVisible = len(trainingScaledVectors[0])
     nrHidden = 500
     # use 1 dropout to test the rbm for now
-    net = rbm.RBM(nrVisible, nrHidden, rbm.contrastiveDivergence, 1, 1)
+    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
   else:
@@ -209,6 +209,7 @@ def deepbeliefMNIST():
 
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                  [Sigmoid, Sigmoid, Sigmoid, Softmax],
+                 unsupervisedLearningRate=0.01,
                  supervisedLearningRate=0.05,
                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                  rbmVisibleDropout=1)

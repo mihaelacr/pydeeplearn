@@ -148,7 +148,8 @@ class DBN(object):
         type: list of objects of type ActivationFunction
   """
   def __init__(self, nrLayers, layerSizes, activationFunctions,
-                supervisedLearningRate=0.01,
+                unsupervisedLearningRate=0.01,
+                supervisedLearningRate=0.05,
                 miniBatchSize=10, hiddenDropout=0.5, rbmHiddenDropout=0.5,
                 visibleDropout=0.8, rbmVisibleDropout=1):
     self.nrLayers = nrLayers
@@ -165,6 +166,7 @@ class DBN(object):
     self.rbmVisibleDropout = rbmVisibleDropout
     self.miniBatchSize = miniBatchSize
     self.supervisedLearningRate = supervisedLearningRate
+    self.unsupervisedLearningRate = unsupervisedLearningRate
 
   """
     Choose a percentage (percentValidation) of the data given to be
@@ -201,7 +203,7 @@ class DBN(object):
     currentData = data
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                    rbm.contrastiveDivergence,
+                    self.unsupervisedLearningRate,
                     self.rbmHiddenDropout, self.rbmVisibleDropout,
                     self.activationFunctions[i].value)
       net.train(currentData)
