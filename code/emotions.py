@@ -5,6 +5,7 @@ with the Kanade database."""
 import glob
 import argparse
 import DimensionalityReduction
+import cPickle as pickle
 import sklearn
 
 import deepbelief as db
