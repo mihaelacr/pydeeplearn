@@ -150,6 +150,7 @@ class DBN(object):
   def __init__(self, nrLayers, layerSizes, activationFunctions,
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,
+                nesterovMomentum=True,
                 miniBatchSize=10, hiddenDropout=0.5, rbmHiddenDropout=0.5,
                 visibleDropout=0.8, rbmVisibleDropout=1):
     self.nrLayers = nrLayers
@@ -167,6 +168,7 @@ class DBN(object):
     self.miniBatchSize = miniBatchSize
     self.supervisedLearningRate = supervisedLearningRate
     self.unsupervisedLearningRate = unsupervisedLearningRate
+    self.nesterovMomentum = nesterovMomentum
 
   """
     Choose a percentage (percentValidation) of the data given to be
@@ -235,8 +237,7 @@ class DBN(object):
 
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels,
-                  sharedValidationData, sharedValidationLabels,
-                  self.supervisedLearningRate)
+                  sharedValidationData, sharedValidationLabels)
 
     # hiddenDropout: Get the classification
     self.classifcationWeights = map(lambda x: x * self.hiddenDropout, self.weights)
@@ -254,11 +255,10 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   def fineTune(self, data, labels, validationData, validationLabels,
-               learningRate=0.001,
                maxEpochs=200):
     print "supervisedLearningRate"
-    print learningRate
-    batchLearningRate = learningRate / self.miniBatchSize
+    print self.supervisedLearningRate
+    batchLearningRate = self.supervisedLearningRate / self.miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
 
     nrMiniBatches = self.nrMiniBatches
@@ -283,6 +283,90 @@ class DBN(object):
     error = T.sum(batchTrainer.cost(y))
     deltaParams = T.grad(error, batchTrainer.params)
 
+    if DEBUG:
+      mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
+                                        'local_elemwise_fusion', 'inplace')
+    else:
+      mode = None
+
+    if self.nesterovMomentum:
+      preDeltaUpdates, updates = self.buildUpdatesNesterov(batchTrainer, momentum,
+                    batchLearningRate, deltaParams)
+      momentum_step = theano.function(
+          inputs=[momentum],
+          outputs=[],
+          updates=preDeltaUpdates,
+          mode = mode)
+
+      update_params = theano.function(
+          inputs =[miniBatchIndex],
+          outputs=error,
+          updates=updates,
+          givens={
+              x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+              y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
+          mode=mode)
+
+      def trainModel(miniBatchIndex, momentum):
+        momentum_step(momentum)
+        error = update_params(miniBatchIndex)
+        return error
+    else:
+
+      updates = buildUpdatesSimpleMomentum(batchTrainer, momentum,
+                    batchLearningRate, deltaParams)
+      trainModel = theano.function(
+            inputs=[miniBatchIndex, momentum],
+            outputs=error,
+            updates=updates,
+            givens={
+                x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+
+    # Let's create the function that validates the model!
+    validate_model = theano.function(inputs=[],
+      outputs=batchTrainer.cost(y),
+      givens={x: validationData,
+              y: validationLabels})
+
+    lastValidationError = np.inf
+    count = 0
+    epoch = 0
+
+    # while epoch < maxEpochs and count < 5:
+    for epoch in xrange(100):
+      print "epoch"
+      if epoch < maxEpochs / 10:
+        momentum = np.float32(0.5)
+      else:
+        momentum = np.float32(0.95)
+
+      for batchNr in xrange(nrMiniBatches):
+        trainModel(batchNr, momentum)
+
+      meanValidation = np.mean(validate_model(), axis=0)
+
+      if meanValidation > lastValidationError:
+          count +=1
+      else:
+          count = 0
+      lastValidationError = meanValidation
+
+      epoch +=1
+
+    # Set up the weights in the dbn object
+    for i in xrange(len(self.weights)):
+      self.weights[i] = batchTrainer.weights[i].get_value()
+
+    for i in xrange(len(self.biases)):
+      self.biases[i] = batchTrainer.biases[i].get_value()
+
+    print "number of epochs"
+    print epoch
+
+
+  def buildUpdatesNesterov(self, batchTrainer, momentum,
+                  batchLearningRate, deltaParams):
     preDeltaUpdates = []
     for param, oldUpdate in zip(batchTrainer.params, batchTrainer.oldUpdates):
       newParam = param + momentum * oldUpdate
@@ -304,69 +388,17 @@ class DBN(object):
       updates.append((oldUpdate, paramUpdate))
       updates.append((oldMeanSquare, meanSquare))
 
-    if DEBUG:
-      mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
-                                        'local_elemwise_fusion', 'inplace')
-    else:
-      mode = None
+    return preDeltaUpdates, updates
 
-    momentum_step = theano.function(
-        inputs=[momentum],
-        outputs=[],
-        updates=preDeltaUpdates,
-        mode = mode)
-
-    update_params = theano.function(
-        inputs =[miniBatchIndex],
-        outputs=error,
-        updates=updates,
-        givens={
-            x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-            y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
-        mode=mode)
-
-    # Let's create the function that validates the model!
-    validate_model = theano.function(inputs=[],
-      outputs=batchTrainer.cost(y),
-      givens={x: validationData,
-              y: validationLabels})
-
-    lastValidationError = np.inf
-    count = 0
-    epoch = 0
-
-    # while epoch < maxEpochs and count < 5:
-    for epoch in xrange(100):
-      print "epoch"
-      if epoch < maxEpochs / 10:
-        momentum = np.float32(0.5)
-      else:
-        momentum = np.float32(0.95)
-
-      for batchNr in xrange(nrMiniBatches):
-        # Maybe you can do this according to the validation error as well?
-        momentum_step(momentum)
-        error = update_params(batchNr)
-
-      meanValidation = np.mean(validate_model(), axis=0)
-
-      if meanValidation > lastValidationError:
-          count +=1
-      else:
-          count = 0
-      lastValidationError = meanValidation
-
-      epoch +=1
-
-    # Set up the weights in the dbn object
-    for i in xrange(len(self.weights)):
-      self.weights[i] = batchTrainer.weights[i].get_value()
-
-    for i in xrange(len(self.biases)):
-      self.biases[i] = batchTrainer.biases[i].get_value()
-
-    print "number of epochs"
-    print epoch
+  def buildUpdatesSimpleMomentum(self, batchTrainer, momentum,
+                  batchLearningRate, deltaParams):
+    updates = []
+    parametersTuples = zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates)
+    for param, delta, oldUpdate in parametersTuples:
+        paramUpdate = momentum * oldUpdate - batchLearningRate * delta
+        newParam = param + paramUpdate
+        updates.append((param, newParam))
+        updates.append((oldUpdate, paramUpdate))
 
 
   def classify(self, dataInstaces):
