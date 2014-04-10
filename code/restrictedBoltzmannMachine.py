@@ -126,7 +126,7 @@ class RBM(object):
     momentum = T.fscalar()
     cdSteps = T.iscalar()
 
-    batchLearningRate = learningRate / miniBatchSize
+    batchLearningRate = self.learningRate / miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
 
     batchTrainer = RBMMiniBatchTrainer(input=x,
