@@ -148,7 +148,7 @@ class DBN(object):
                 nesterovMomentum=True,
                 rmsprop=True,
                 miniBatchSize=10,
-                iddenDropout=0.5,
+                hiddenDropout=0.5,
                 rbmHiddenDropout=0.5,
                 visibleDropout=0.8,
                 rbmVisibleDropout=1):
