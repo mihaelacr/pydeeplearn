@@ -399,12 +399,12 @@ class DBN(object):
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-      paramUpdate = momentum * oldUpdate - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+      paramUpdate = momentum * oldUpdate
+      paramUpdate += - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
       newParam = param + paramUpdate
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
       updates.append((oldMeanSquare, meanSquare))
-
 
     return updates
 
