@@ -337,7 +337,7 @@ class DBN(object):
       if epoch < maxEpochs / 10:
         momentum = np.float32(0.5)
       else:
-        momentum = np.float32(0.98)
+        momentum = np.float32(0.95)
 
       for batchNr in xrange(nrMiniBatches):
         trainModel(batchNr, momentum)
