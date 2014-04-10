@@ -231,3 +231,17 @@ def intializeBiases(data, nrHidden):
 
   hiddenBiases = np.zeros(nrHidden)
   return np.array([visibleBiases, hiddenBiases])
+
+def reconstructionError(biases, weights, data):
+    # Returns the rmse of the reconstruction of the data
+    # Good to keep track of it, should decrease trough training
+    # Initially faster, and then slower
+    reconstructions = reconstruct(biases, weights, data)
+    return rmse(reconstructions, data)
+
+def reconstruct(biases, weights, dataInstances):
+  hidden = updateLayer(Layer.HIDDEN, dataInstances, biases, weights, True)
+
+  visibleReconstructions = updateLayer(Layer.VISIBLE, hidden,
+      biases, weights, False)
+  return visibleReconstructions
