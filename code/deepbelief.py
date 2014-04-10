@@ -122,7 +122,8 @@ class MiniBatchTrainer(object):
         # Do not use theano's softmax, it is numerically unstable
         # and it causes Nans to appear
         # currentLayerValues = T.nnet.softmax(linearSum)
-        e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
+        # e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
+        e_x = T.exp(linearSum)
         currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
 
     self.output = currentLayerValues
