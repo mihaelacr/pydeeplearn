@@ -86,9 +86,11 @@ def deepBeliefKanade(big=False, folds=None):
   kf = cross_validation.KFold(n=len(data), n_folds=len(folds))
 
   for train, test in kf:
-    trainData = train[0]
-    labels=train[1]
-    vectorLabels = labelsToVectors(labels, 6)
+    print train
+    print test
+    trainData = data[train[0]]
+    trainLabels = labels[train[1]]
+    vectorLabels = labelsToVectors(trainLabels, 6)
 
     # TODO: this might require more thought
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
@@ -102,7 +104,7 @@ def deepBeliefKanade(big=False, folds=None):
 
     probs, predicted = net.classify(test[0])
 
-    actualLabels = test[1]
+    actualLabels = labels[test[1]]
     correct = 0
     errorCases = []
     for i in xrange(len(test[0])):
