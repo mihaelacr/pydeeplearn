@@ -6,7 +6,7 @@ import glob
 import argparse
 import DimensionalityReduction
 import cPickle as pickle
-import sklearn
+from sklearn import cross_validation
 
 import deepbelief as db
 from common import *
@@ -83,7 +83,7 @@ def deepBeliefKanade(big=False, folds=None):
       labels.append(foldLabels)
 
 
-  kf = sklearn.cross_validation.KFold(n=len(data), n_folds=len(folds))
+  kf = cross_validation.KFold(n=len(data), n_folds=len(folds))
 
   for train, test in kf:
     trainData = train[0]
