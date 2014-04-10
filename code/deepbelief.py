@@ -205,9 +205,9 @@ class DBN(object):
     currentData = data
     for i in xrange(nrRbms):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                    self.unsupervisedLearningRate,
-                    self.rbmHiddenDropout, self.rbmVisibleDropout,
-                    self.activationFunctions[i].value)
+                    learningRate=self.unsupervisedLearningRate,
+                    hiddenDropout=self.rbmHiddenDropout,
+                    visibleDropout=self.rbmVisibleDropout)
       net.train(currentData)
 
       w = net.testWeights
@@ -239,7 +239,7 @@ class DBN(object):
     self.fineTune(sharedData, sharedLabels,
                   sharedValidationData, sharedValidationLabels)
 
-    # hiddenDropout: Get the classification
+    # Get the classification weights
     self.classifcationWeights = map(lambda x: x * self.hiddenDropout, self.weights)
     self.classifcationBiases = self.biases
 

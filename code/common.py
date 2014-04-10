@@ -23,7 +23,7 @@ def imagesToVectors(images):
   return np.array(map(lambda x: x.reshape(-1), images))
 
 def sigmoid(x):
-  return 1 / (1 + np.exp(-x))
+  return 1.0 / (1.0 + np.exp(-x))
 
 def softmax(activation):
   out = np.exp(activation)
