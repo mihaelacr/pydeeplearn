@@ -98,7 +98,7 @@ class MiniBatchTrainer(object):
 
     currentLayerValues = self.input * dropout_mask
 
-    for stage in xrange(len(self.weights)):
+    for stage in xrange(len(self.weights) -1):
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
@@ -106,10 +106,9 @@ class MiniBatchTrainer(object):
       # it is important to make the classification activation functions outside
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
-      if stage != len(self.weights) -1:
         # Use hiddenDropout: give the next layer only some of the units
         # from this layer
-        dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
+      dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
         # Optimization: only update the mask when we actually sample
@@ -117,14 +116,13 @@ class MiniBatchTrainer(object):
         #     theanoifelse(T.lt(hiddenDropout, 1.0),
         #                   dropout_mask.rng.default_update,
         #                   dropout_mask.rng)
-        currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
-      else:
-        # Do not use theano's softmax, it is numerically unstable
-        # and it causes Nans to appear
-        # currentLayerValues = T.nnet.softmax(linearSum)
-        e_x = T.exp(linearSum - linearSum.max(axis=0, keepdims=True))
-        # e_x = T.exp(linearSum)
-        currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
+      currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
+
+    # Do not use theano's softmax, it is numerically unstable
+    # and it causes Nans to appear
+    # Note that semantically this
+    e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
+    currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
 
     self.output = currentLayerValues
 

@@ -27,7 +27,7 @@ def sigmoid(x):
 
 def softmax(activation):
   out = np.exp(activation)
-  return out / out.sum()
+  return out / (out.sum(axis=1)[:,None])
 
 def sample(p, size):
   return np.random.uniform(size=size) <= p
