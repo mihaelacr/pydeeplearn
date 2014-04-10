@@ -10,7 +10,6 @@ import restrictedBoltzmannMachine as rbm
 import deepbelief as db
 import utils
 import PCA
-from sklearn import cross_validation
 
 from common import *
 

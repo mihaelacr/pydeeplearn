@@ -5,8 +5,10 @@ with the Kanade database."""
 import glob
 import argparse
 import DimensionalityReduction
+import sklearn
 
 import deepbelief as db
+from common import *
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,
@@ -24,6 +26,10 @@ parser.add_argument('--trainSize', type=int, default=10000,
 parser.add_argument('--testSize', type=int, default=1000,
                     help='the number of testing cases to be considered')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
+parser.add_argument('--nesterov', dest='nesterov',action='store_true', default=False,
+                    help=("if true, the deep belief net is trained using nesterov momentum"))
+parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=False,
+                    help=("if true, rmsprop is used when training the deep belief net."))
 
 
 # DEBUG mode?
@@ -72,15 +78,44 @@ def deepBeliefKanade(big=False, folds=None):
       data.append(foldData)
       labels.append(foldLabels)
 
-      vectorLabels = labelsToVectors(labels, 6)
 
-      # TODO: this might require more thought
-      net = db.DBN(5, [1200, 1000, 1000, 1000, 6],
-                 [Sigmoid, Sigmoid, Sigmoid, Softmax],
-                  supervisedLearningRate=0.01,
-                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
-                  rbmVisibleDropout=1)
-      net.train(foldData, vectorLabels)
+  kf = sklearn.cross_validation.KFold(n=len(data), n_folds=len(folds))
+
+  for train, test in kf:
+    trainData = train[0]
+    labels=train[1]
+    vectorLabels = labelsToVectors(labels, 6)
+
+    # TODO: this might require more thought
+    net = db.DBN(5, [784, 1000, 1000, 1000, 10],
+               unsupervisedLearningRate=0.01,
+               supervisedLearningRate=0.05,
+               nesterovMomentum=args.nesterov,
+               rmsprop=args.rmsprop,
+               hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
+               rbmVisibleDropout=1)
+    net.train(trainData, vectorLabels)
+
+    probs, predicted = net.classify(test[0])
+
+    actualLabels = test[1]
+    correct = 0
+    errorCases = []
+    for i in xrange(len(test[0])):
+      print "predicted"
+      print "probs"
+      print probs[i]
+      print predicted[i]
+      print "actual"
+      actual = actualLabels[i]
+      print actual
+      if predicted[i] == actual:
+        correct += 1
+      else:
+        errorCases.append(i)
+
+    print "correct"
+    print correct
 
 
   # You can also group the emotions into positive and negative to see
