@@ -334,7 +334,7 @@ class DBN(object):
     # while epoch < maxEpochs and count < 5:
     for epoch in xrange(100):
       print "epoch"
-      if epoch < 3:
+      if epoch < 5:
         momentum = np.float32(0.5)
       else:
         momentum = np.float32(0.98)
