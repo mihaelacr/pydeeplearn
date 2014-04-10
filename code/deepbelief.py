@@ -392,12 +392,20 @@ class DBN(object):
   def buildUpdatesSimpleMomentum(self, batchTrainer, momentum,
                   batchLearningRate, deltaParams):
     updates = []
-    parametersTuples = zip(batchTrainer.params, deltaParams, batchTrainer.oldUpdates)
-    for param, delta, oldUpdate in parametersTuples:
-        paramUpdate = momentum * oldUpdate - batchLearningRate * delta
-        newParam = param + paramUpdate
-        updates.append((param, newParam))
-        updates.append((oldUpdate, paramUpdate))
+    parametersTuples = zip(batchTrainer.params,
+                           deltaParams,
+                           batchTrainer.oldUpdates,
+                           batchTrainer.oldMeanSquare)
+
+    for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
+      meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
+      paramUpdate = momentum * oldUpdate - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+      newParam = param + paramUpdate
+      updates.append((param, newParam))
+      updates.append((oldUpdate, paramUpdate))
+      updates.append((oldMeanSquare, meanSquare))
+
+
     return updates
 
 
