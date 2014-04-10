@@ -107,7 +107,7 @@ class RBM(object):
 
   def train(self, data, miniBatchSize=10):
     print "rbm learningRate"
-    print learningRate
+    print self.learningRate
 
     if not self.initialized:
       self.weights = initializeWeights(self.nrVisible, self.nrHidden)
