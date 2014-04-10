@@ -313,7 +313,7 @@ class DBN(object):
         return error
     else:
 
-      updates = buildUpdatesSimpleMomentum(batchTrainer, momentum,
+      updates = self.buildUpdatesSimpleMomentum(batchTrainer, momentum,
                     batchLearningRate, deltaParams)
       trainModel = theano.function(
             inputs=[miniBatchIndex, momentum],
