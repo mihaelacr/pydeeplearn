@@ -118,5 +118,10 @@ def deepBeliefKanade(big=False, folds=None):
     print correct
 
 
-  # You can also group the emotions into positive and negative to see
-  # if you can get better results (probably yes)
+def main():
+  deepBeliefKanade()
+
+# You can also group the emotions into positive and negative to see
+# if you can get better results (probably yes)
+if __name__ == '__main__':
+  main()
