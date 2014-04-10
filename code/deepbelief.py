@@ -309,8 +309,7 @@ class DBN(object):
 
       def trainModel(miniBatchIndex, momentum):
         momentum_step(momentum)
-        error = update_params(miniBatchIndex)
-        return error
+        return update_params(miniBatchIndex)
     else:
 
       updates = self.buildUpdatesSimpleMomentum(batchTrainer, momentum,
@@ -399,6 +398,7 @@ class DBN(object):
         newParam = param + paramUpdate
         updates.append((param, newParam))
         updates.append((oldUpdate, paramUpdate))
+    return updates
 
 
   def classify(self, dataInstaces):
