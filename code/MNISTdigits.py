@@ -217,6 +217,13 @@ def deepbeliefMNIST():
                  rmsprop=args.rmsprop,
                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                  rbmVisibleDropout=1)
+    net = db.DBN(5, [784, 500, 500, 2000, 10],
+                 unsupervisedLearningRate=0.01,
+                 supervisedLearningRate=0.05,
+                 nesterovMomentum=args.nesterov,
+                 rmsprop=args.rmsprop,
+                 hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
+                 rbmVisibleDropout=1)
     # TODO: think about what the network should do for 2 layers
     net.train(trainingScaledVectors, vectorLabels)
   else:
