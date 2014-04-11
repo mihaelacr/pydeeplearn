@@ -4,7 +4,7 @@ with the Kanade database."""
 
 import glob
 import argparse
-import DimensionalityReduction
+# import DimensionalityReduction
 import cPickle as pickle
 from sklearn import cross_validation
 
@@ -67,26 +67,36 @@ def deepBeliefKanade(big=False, folds=None):
 
   files = [ files[x -1] for x in folds]
 
-  data = []
-  labels = []
+  data = np.array([])
+  labels = np.array([])
   # TODO: do LDA on the training data
 
   # TODO: do proper CV in which you use 4 folds for training and one for testing
   # at that time
+  dataFolds = []
+  labelFolds = []
   for filename in files:
     with open(filename, "rb") as  f:
       # Sort out the labels from the data
+      # TODO: run the readKanade again tomorrow and change these idnices here
       dataAndLabels = pickle.load(f)
       foldData = dataAndLabels[0:-1 ,:]
+      print "foldData.shape"
+      print foldData.shape
       foldLabels = dataAndLabels[-1,:]
-      data.append(foldData)
-      labels.append(foldLabels)
+      dataFolds.append(foldData)
+      labelFolds.append(foldLabels)
+
+  data =  np.vstack(tuple(dataFolds))
+  labels = np.vstack(tuple(labelFolds))
 
 
   kf = cross_validation.KFold(n=len(data), n_folds=len(folds))
 
   for train, test in kf:
+    print "train"
     print train
+    print "test"
     print test
     trainData = data[train[0]]
     trainLabels = labels[train[1]]

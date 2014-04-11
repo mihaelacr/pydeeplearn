@@ -23,7 +23,7 @@ def readTxtWritePickle(filename):
   pickleFileName = filename[0:-3] + "pickle"
 
   with open(pickleFileName,"wb") as f:
-    pickle.dump(lines, f)
+    pickle.dump(lines.T, f)
 
 
 def main():
@@ -63,6 +63,7 @@ def viewTestImage(big=False):
 
 if __name__ == '__main__':
   viewTestImage(big=True)
+  # main()
 
 
 
