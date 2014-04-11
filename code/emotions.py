@@ -143,7 +143,7 @@ def deepBeliefKanade(big=False, folds=None):
       else:
         errorCases.append(i)
 
-    print "correct for" + params[fold]
+    print "correct for" + str(params[fold])
     print correct
 
     if bestCorrect < correct:
