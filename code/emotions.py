@@ -102,7 +102,11 @@ def deepBeliefKanade(big=False, folds=None):
 
 
   kf = cross_validation.KFold(n=len(data), k=len(folds))
+  bestCorrect = 0
 
+  # TODO: try boosting for CV in order to increase the number of folds
+  params = [0.1, 0.01, 0.001, 0.0001, 0.00001]
+  fold = 0
   for train, test in kf:
 
     trainData = data[train]
@@ -111,7 +115,7 @@ def deepBeliefKanade(big=False, folds=None):
     # TODO: this might require more thought
     net = db.DBN(5, [1200, 1000, 1000, 1000, 7],
                unsupervisedLearningRate=0.01,
-               supervisedLearningRate=0.05,
+               supervisedLearningRate=params[fold],
                nesterovMomentum=args.nesterov,
                rmsprop=args.rmsprop,
                hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
@@ -139,6 +143,15 @@ def deepBeliefKanade(big=False, folds=None):
 
     print "correct"
     print correct
+
+    if bestCorrect < correct:
+      correct = bestCorrect
+      bestParam = params[fold]
+
+    fold += 1
+
+  print "bestParam"
+  print bestParam
 
 
 def main():
