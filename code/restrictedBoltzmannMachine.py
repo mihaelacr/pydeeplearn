@@ -94,7 +94,7 @@ class RBMMiniBatchTrainer(object):
 class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, learningRate, hiddenDropout,
-                visibleDropout):
+                visibleDropout, initialWeights=None, initialBiases=None):
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
     # dropout = 1 means no dropout, keep all the weights
@@ -103,14 +103,17 @@ class RBM(object):
     self.nrVisible = nrVisible
     self.initialized = False
     self.learningRate = learningRate
+    self.weights = initialWeights
+    self.biases = initialBiases
 
   def train(self, data, miniBatchSize=10):
     print "rbm learningRate"
     print self.learningRate
 
     if not self.initialized:
-      self.weights = initializeWeights(self.nrVisible, self.nrHidden)
-      self.biases = intializeBiases(data, self.nrHidden)
+      if self.weights == None and self.biases == None:
+        self.weights = initializeWeights(self.nrVisible, self.nrHidden)
+        self.biases = intializeBiases(data, self.nrHidden)
       self.initialized = True
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))

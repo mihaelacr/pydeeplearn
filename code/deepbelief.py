@@ -206,15 +206,25 @@ class DBN(object):
     currentData = data
     for i in xrange(nrRbms):
       # If the network can be initialized from the previous one,
-      # do so
+      # do so, by using the transpose
+      if i > 0 and self.layerSizes[i+1] == self.layerSizes[i-1]:
+        initialWeights = self.weights[i-1]
+        initialBiases = self.biases[i-1]
+      else:
+        initialWeights = None
+        initialBiases = None
+
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                    learningRate=self.unsupervisedLearningRate,
-                    hiddenDropout=self.rbmHiddenDropout,
-                    visibleDropout=self.rbmVisibleDropout)
+                      learningRate=self.unsupervisedLearningRate,
+                      hiddenDropout=self.rbmHiddenDropout,
+                      visibleDropout=self.rbmVisibleDropout,
+                      initialWeights=initialWeights,
+                      initialBiases=initialBiases)
 
       for i in xrange(self.preTrainEpochs):
         net.train(currentData)
 
+      # TODO: should it really be testWeights?
       w = net.testWeights
       self.weights += [w / self.hiddenDropout]
       # Only add the biases for the hidden unit
