@@ -105,6 +105,10 @@ def deepBeliefKanade(big=False, folds=None):
   bestCorrect = 0
   bestProbs = 0
 
+  # bestParam
+  # 0.001
+  # bestProbs
+  # 0.3703703703
   # TODO: try boosting for CV in order to increase the number of folds
   params = [0.1, 0.01, 0.001, 0.0001, 0.00001]
   fold = 0
