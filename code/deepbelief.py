@@ -348,8 +348,38 @@ class DBN(object):
     count = 0
     epoch = 0
 
-    while epoch < maxEpochs and count < 5:
-    # for epoch in xrange(100):
+    bestValidationError = numpy.inf
+    doneTraining = False
+    improvmentTreshold = 0.995
+    patience = 10 # do at least 10 passes trough the data no matter what
+
+    # while (epoch < maxEpochs) and not doneTraining:
+    #   # Train the net with all data
+    #   print "epoch"
+    #   if epoch < 5:
+    #     momentum = np.float32(0.5)
+    #   else:
+    #     momentum = np.float32(0.98)
+
+    #   for batchNr in xrange(nrMiniBatches):
+    #     trainModel(batchNr, momentum)
+
+    #   # why axis = 0? this should be a number?!
+    #   meanValidation = np.mean(validate_model())
+
+    #   if meanValidation < bestValidationError:
+    #     # If we have improved well enough, then increase the patience
+    #     if meanValidation < bestValidationError * improvmentTreshold:
+    #       patience = max(patience, epoch * 2)
+
+    #     bestValidationError = meanValidation
+
+    #   if patience <= epoch:
+    #     doneTraining = True
+
+
+    # while epoch < maxEpochs and count < 5:
+    for epoch in xrange(100):
       print "epoch"
       if epoch < 5:
         momentum = np.float32(0.5)
