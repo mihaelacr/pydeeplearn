@@ -154,7 +154,8 @@ class DBN(object):
                 hiddenDropout=0.5,
                 rbmHiddenDropout=0.5,
                 visibleDropout=0.8,
-                rbmVisibleDropout=1):
+                rbmVisibleDropout=1,
+                preTrainEpochs=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
 
@@ -168,6 +169,7 @@ class DBN(object):
     self.unsupervisedLearningRate = unsupervisedLearningRate
     self.nesterovMomentum = nesterovMomentum
     self.rmsprop = rmsprop
+    self.preTrainEpochs = preTrainEpochs
 
   """
     Choose a percentage (percentValidation) of the data given to be
@@ -207,7 +209,9 @@ class DBN(object):
                     learningRate=self.unsupervisedLearningRate,
                     hiddenDropout=self.rbmHiddenDropout,
                     visibleDropout=self.rbmVisibleDropout)
-      net.train(currentData)
+
+      for i in xrange(self.preTrainEpochs):
+        net.train(currentData)
 
       w = net.testWeights
       self.weights += [w / self.hiddenDropout]

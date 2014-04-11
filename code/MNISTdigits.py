@@ -36,6 +36,8 @@ parser.add_argument('--trainSize', type=int, default=10000,
                     help='the number of tranining cases to be considered')
 parser.add_argument('--testSize', type=int, default=1000,
                     help='the number of testing cases to be considered')
+parser.add_argument('--preTrainEpochs', type=int, default=1,
+                    help='the number of pretraining epochs')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
 
 # DEBUG mode?
@@ -217,13 +219,13 @@ def deepbeliefMNIST():
                  rmsprop=args.rmsprop,
                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                  rbmVisibleDropout=1)
-    net = db.DBN(5, [784, 500, 500, 2000, 10],
-                 unsupervisedLearningRate=0.01,
-                 supervisedLearningRate=0.05,
-                 nesterovMomentum=args.nesterov,
-                 rmsprop=args.rmsprop,
-                 hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
-                 rbmVisibleDropout=1)
+    # net = db.DBN(5, [784, 500, 500, 2000, 10],
+    #              unsupervisedLearningRate=0.01,
+    #              supervisedLearningRate=0.05,
+    #              nesterovMomentum=args.nesterov,
+    #              rmsprop=args.rmsprop,
+    #              hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
+    #              rbmVisibleDropout=1)
     # TODO: think about what the network should do for 2 layers
     net.train(trainingScaledVectors, vectorLabels)
   else:

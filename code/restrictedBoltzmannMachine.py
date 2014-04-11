@@ -188,6 +188,7 @@ class RBM(object):
 
     self.testWeights = self.weights * self.hiddenDropout
 
+    print "reconstruction Error"
     print reconstructionError(self.biases, self.testWeights, data)
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
