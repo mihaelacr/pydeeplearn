@@ -175,7 +175,8 @@ class DBN(object):
     Choose a percentage (percentValidation) of the data given to be
     validation data, used for early stopping of the model.
   """
-  def train(self, data, labels, percentValidation=0.1):
+  def train(self, data, labels, percentValidation=0.1,
+            unsupervisedData=None):
     nrInstances = len(data)
     validationIndices = np.random.choice(xrange(nrInstances),
                                          percentValidation * nrInstances)
@@ -190,7 +191,8 @@ class DBN(object):
                                      validationData, validationLabels)
 
   def trainWithGivenValidationSet(self, data, labels,
-                                  validationData, validationLabels):
+                                  validationData, validationLabels,
+                                  unsupervisedData=None):
     nrRbms = self.nrLayers - 2
 
     self.weights = []
@@ -204,6 +206,11 @@ class DBN(object):
 
     # Train the restricted Boltzmann machines that form the network
     currentData = data
+
+    if unsupervisedData:
+      # TODO: does it really work like this in numpy
+      currentData = np.vstack((currentData, unsupervisedData))
+
     for i in xrange(nrRbms):
       # If the network can be initialized from the previous one,
       # do so, by using the transpose
