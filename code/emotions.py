@@ -103,6 +103,7 @@ def deepBeliefKanade(big=False, folds=None):
 
   kf = cross_validation.KFold(n=len(data), k=len(folds))
   bestCorrect = 0
+  bestProbs = 0
 
   # TODO: try boosting for CV in order to increase the number of folds
   params = [0.1, 0.01, 0.001, 0.0001, 0.00001]
@@ -128,6 +129,7 @@ def deepBeliefKanade(big=False, folds=None):
     actualLabels = labels[test]
     correct = 0
     errorCases = []
+
     for i in xrange(len(test)):
       print "predicted"
       print "probs"
@@ -144,14 +146,21 @@ def deepBeliefKanade(big=False, folds=None):
     print "correct"
     print correct
 
+
     if bestCorrect < correct:
       correct = bestCorrect
       bestParam = params[fold]
+      bestProbs = correct / len(test)
 
     fold += 1
 
   print "bestParam"
   print bestParam
+
+  print "bestProbs"
+  print bestProbs
+
+
 
 
 def main():
