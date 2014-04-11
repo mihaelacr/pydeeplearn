@@ -113,7 +113,7 @@ def deepBeliefKanade(big=False, folds=None):
     trainLabels = labels[train]
 
     # TODO: this might require more thought
-    net = db.DBN(5, [1200, 1000, 1000, 1000, 10],
+    net = db.DBN(5, [1200, 1000, 1000, 1000, 7],
                unsupervisedLearningRate=0.01,
                supervisedLearningRate=0.05,
                nesterovMomentum=args.nesterov,
