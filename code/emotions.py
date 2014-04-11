@@ -62,8 +62,6 @@ def deepBeliefKanade(big=False, folds=None):
   # the folds that we want
   # TODO: do this better (with regex in the file name)
   # DO not reply on the order returned
-  print len(files)
-  print len(folds)
 
   files = [ files[x -1] for x in folds]
 
@@ -86,14 +84,12 @@ def deepBeliefKanade(big=False, folds=None):
       foldLabels = dataAndLabels[:,-1]
       dataFolds.append(foldData)
       foldLabels = np.array(map(int, foldLabels))
-      print "foldLabels"
-      print foldLabels
+
       vectorLabels = labelsToVectors(foldLabels -1, 7)
       labelFolds.append(vectorLabels)
+
       print "foldLabels.shape"
       print vectorLabels.shape
-
-
 
 
   data =  np.vstack(tuple(dataFolds))
@@ -136,7 +132,7 @@ def deepBeliefKanade(big=False, folds=None):
       print "actual"
       actual = actualLabels[i]
       print actual
-      if predicted[i] == actual:
+      if predicted[i] == np.argmax(actual):
         correct += 1
       else:
         errorCases.append(i)
