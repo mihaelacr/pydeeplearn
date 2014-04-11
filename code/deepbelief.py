@@ -348,38 +348,13 @@ class DBN(object):
     count = 0
     epoch = 0
 
-    # bestValidationError = np.inf
-    # doneTraining = False
-    # improvmentTreshold = 0.995
-    # patience = 10 # do at least 10 passes trough the data no matter what
+    bestValidationError = np.inf
+    doneTraining = False
+    improvmentTreshold = 0.995
+    patience = 10 # do at least 10 passes trough the data no matter what
 
-    # while (epoch < maxEpochs) and not doneTraining:
-    #   # Train the net with all data
-    #   print "epoch"
-    #   if epoch < 5:
-    #     momentum = np.float32(0.5)
-    #   else:
-    #     momentum = np.float32(0.98)
-
-    #   for batchNr in xrange(nrMiniBatches):
-    #     trainModel(batchNr, momentum)
-
-    #   # why axis = 0? this should be a number?!
-    #   meanValidation = np.mean(validate_model())
-
-    #   if meanValidation < bestValidationError:
-    #     # If we have improved well enough, then increase the patience
-    #     if meanValidation < bestValidationError * improvmentTreshold:
-    #       patience = max(patience, epoch * 2)
-
-    #     bestValidationError = meanValidation
-
-    #   if patience <= epoch:
-    #     doneTraining = True
-
-
-    # while epoch < maxEpochs and count < 5:
-    for epoch in xrange(100):
+    while (epoch < maxEpochs) and not doneTraining:
+      # Train the net with all data
       print "epoch"
       if epoch < 5:
         momentum = np.float32(0.5)
@@ -389,15 +364,40 @@ class DBN(object):
       for batchNr in xrange(nrMiniBatches):
         trainModel(batchNr, momentum)
 
-      meanValidation = np.mean(validate_model(), axis=0)
+      # why axis = 0? this should be a number?!
+      meanValidation = np.mean(validate_model())
 
-      if meanValidation > lastValidationError:
-          count +=1
-      else:
-          count = 0
-      lastValidationError = meanValidation
+      if meanValidation < bestValidationError:
+        # If we have improved well enough, then increase the patience
+        if meanValidation < bestValidationError * improvmentTreshold:
+          patience = max(patience, epoch * 2)
 
-      epoch +=1
+        bestValidationError = meanValidation
+
+      if patience <= epoch:
+        doneTraining = True
+
+
+    # while epoch < maxEpochs and count < 5:
+    # for epoch in xrange(100):
+    #   print "epoch"
+    #   if epoch < 5:
+    #     momentum = np.float32(0.5)
+    #   else:
+    #     momentum = np.float32(0.98)
+
+    #   for batchNr in xrange(nrMiniBatches):
+    #     trainModel(batchNr, momentum)
+
+    #   meanValidation = np.mean(validate_model(), axis=0)
+
+    #   if meanValidation > lastValidationError:
+    #       count +=1
+    #   else:
+    #       count = 0
+    #   lastValidationError = meanValidation
+
+    #   epoch +=1
 
     # Set up the weights in the dbn object
     for i in xrange(len(self.weights)):
