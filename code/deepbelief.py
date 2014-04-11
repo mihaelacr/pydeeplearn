@@ -348,10 +348,10 @@ class DBN(object):
     count = 0
     epoch = 0
 
-    bestValidationError = numpy.inf
-    doneTraining = False
-    improvmentTreshold = 0.995
-    patience = 10 # do at least 10 passes trough the data no matter what
+    # bestValidationError = np.inf
+    # doneTraining = False
+    # improvmentTreshold = 0.995
+    # patience = 10 # do at least 10 passes trough the data no matter what
 
     # while (epoch < maxEpochs) and not doneTraining:
     #   # Train the net with all data
