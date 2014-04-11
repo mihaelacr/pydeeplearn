@@ -123,9 +123,9 @@ def deepBeliefKanade(big=False, folds=None):
 
     net.train(trainData, trainLabels)
 
-    probs, predicted = net.classify(test[0])
+    probs, predicted = net.classify(test)
 
-    actualLabels = labels[test[1]]
+    actualLabels = labels[test]
     correct = 0
     errorCases = []
     for i in xrange(len(test[0])):
