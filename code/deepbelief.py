@@ -208,7 +208,7 @@ class DBN(object):
       # If the network can be initialized from the previous one,
       # do so, by using the transpose
       if i > 0 and self.layerSizes[i+1] == self.layerSizes[i-1]:
-        initialWeights = self.weights[i-1]
+        initialWeights = self.weights[i-1].T
         initialBiases = lastRbmBiases
       else:
         initialWeights = None
