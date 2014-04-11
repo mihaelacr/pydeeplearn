@@ -205,6 +205,8 @@ class DBN(object):
     # Train the restricted Boltzmann machines that form the network
     currentData = data
     for i in xrange(nrRbms):
+      # If the network can be initialized from the previous one,
+      # do so
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                     learningRate=self.unsupervisedLearningRate,
                     hiddenDropout=self.rbmHiddenDropout,

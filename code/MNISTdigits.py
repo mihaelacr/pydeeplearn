@@ -164,7 +164,8 @@ def cvMNIST():
                   nesterovMomentum=args.nesterov,
                   rmsprop=args.rmsprop,
                   hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
-                  rbmVisibleDropout=1)
+                  rbmVisibleDropout=1,
+                  preTrainEpochs=args.preTrainEpochs)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices])
 
@@ -218,7 +219,8 @@ def deepbeliefMNIST():
                  nesterovMomentum=args.nesterov,
                  rmsprop=args.rmsprop,
                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
-                 rbmVisibleDropout=1)
+                 rbmVisibleDropout=1,
+                 preTrainEpochs=args.preTrainEpochs)
     # net = db.DBN(5, [784, 500, 500, 2000, 10],
     #              unsupervisedLearningRate=0.01,
     #              supervisedLearningRate=0.05,

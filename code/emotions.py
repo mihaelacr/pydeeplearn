@@ -80,18 +80,30 @@ def deepBeliefKanade(big=False, folds=None):
       # Sort out the labels from the data
       # TODO: run the readKanade again tomorrow and change these idnices here
       dataAndLabels = pickle.load(f)
-      foldData = dataAndLabels[0:-1 ,:]
+      foldData = dataAndLabels[:, 0:-1]
       print "foldData.shape"
       print foldData.shape
-      foldLabels = dataAndLabels[-1,:]
+      foldLabels = dataAndLabels[:,-1]
       dataFolds.append(foldData)
-      labelFolds.append(foldLabels)
+      print foldLabels
+      vectorLabels = labelsToVectors(foldLabels -1, 7)
+      labelFolds.append(vectorLabels)
+      print "foldLabels.shape"
+      print vectorLabels.shape
+
+
+
 
   data =  np.vstack(tuple(dataFolds))
   labels = np.vstack(tuple(labelFolds))
 
+  print "data.shape"
+  print data.shape
+  print "labels.shape"
+  print labels.shape
 
-  kf = cross_validation.KFold(n=len(data), n_folds=len(folds))
+
+  kf = cross_validation.KFold(n=len(data), k=len(folds))
 
   for train, test in kf:
     print "train"
