@@ -209,7 +209,7 @@ class DBN(object):
       # do so, by using the transpose
       if i > 0 and self.layerSizes[i+1] == self.layerSizes[i-1]:
         initialWeights = self.weights[i-1]
-        initialBiases = self.biases[i-1]
+        initialBiases = lastRbmBiases
       else:
         initialWeights = None
         initialBiases = None
@@ -229,6 +229,7 @@ class DBN(object):
       self.weights += [w / self.hiddenDropout]
       # Only add the biases for the hidden unit
       b = net.biases[1]
+      lastRbmBiases = net.biases
       self.biases += [b]
 
       # Let's update the current representation given to the next RBM
