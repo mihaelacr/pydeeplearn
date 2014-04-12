@@ -385,6 +385,8 @@ class DBN(object):
       if patience <= epoch:
         doneTraining = True
 
+      epoch += 1
+
 
     # while epoch < maxEpochs and count < 5:
     # for epoch in xrange(100):
