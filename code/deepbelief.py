@@ -380,6 +380,7 @@ class DBN(object):
       if meanValidation < bestValidationError:
         # If we have improved well enough, then increase the patience
         if meanValidation < bestValidationError * improvmentTreshold:
+          print "increasing patience"
           patience = max(patience, epoch * 2)
 
         bestValidationError = meanValidation
