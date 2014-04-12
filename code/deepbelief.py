@@ -375,6 +375,8 @@ class DBN(object):
       # why axis = 0? this should be a number?!
       meanValidation = np.mean(validate_model())
 
+      print 'meanValidation'
+      print meanValidation
       if meanValidation < bestValidationError:
         # If we have improved well enough, then increase the patience
         if meanValidation < bestValidationError * improvmentTreshold:
