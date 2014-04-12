@@ -362,7 +362,8 @@ class DBN(object):
 
     while (epoch < maxEpochs) and not doneTraining:
       # Train the net with all data
-      print "epoch"
+      print "epoch " + str(epoch)
+
       if epoch < 5:
         momentum = np.float32(0.5)
       else:
