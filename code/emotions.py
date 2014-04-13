@@ -11,6 +11,7 @@ from sklearn import cross_validation
 import os
 import fnmatch
 import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
 
 
 import deepbelief as db
