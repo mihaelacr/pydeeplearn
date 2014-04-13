@@ -266,8 +266,8 @@ def deepBeliefKanade(big=False):
 
 # TODO: get big, small as argument in order to be able to fit the resizing
 def readCroppedYale():
-  # PATH = "/data/mcr10/yaleb/CroppedYale"
-  PATH = "/home/aela/uni/project/CroppedYale"
+  PATH = "/data/mcr10/yaleb/CroppedYale"
+  # PATH = "/home/aela/uni/project/CroppedYale"
   print list(os.walk(PATH))
 
   imageFiles = [os.path.join(dirpath, f)
