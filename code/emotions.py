@@ -171,7 +171,7 @@ def deepBeliefKanadeCV(big=False, folds=None):
   print bestProbs
 
 
-def deepBeliefKanade():
+def deepBeliefKanade(big=False):
   if big:
     files = glob.glob('kanade_150*.pickle')
   else:
