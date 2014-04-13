@@ -210,8 +210,11 @@ class DBN(object):
 
     if unsupervisedData is not None:
       # TODO: does it really work like this in numpy
-      print " adding unsupervisedData"
+      print "adding unsupervisedData"
       currentData = np.vstack((currentData, unsupervisedData))
+
+    print "pre-training with a data set of size", len(currentData)
+
 
     for i in xrange(nrRbms):
       # If the network can be initialized from the previous one,
