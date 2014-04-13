@@ -183,7 +183,10 @@ def readCroppedYale():
 
   print imageFiles
 
-  mpimg.imread(imageFiles[0])
+  img = mpimg.imread(imageFiles[0])
+
+  plt.imshow(img)
+
 
 def main():
   readCroppedYale()
