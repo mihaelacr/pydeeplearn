@@ -234,6 +234,8 @@ def deepBeliefKanade(big=False):
              rbmVisibleDropout=1)
 
   unsupervisedData = readCroppedYale()
+  print "unsupervisedData"
+  print unsupervisedData
   net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
 
   probs, predicted = net.classify(data[test])
