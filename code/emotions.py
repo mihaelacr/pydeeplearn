@@ -233,7 +233,8 @@ def deepBeliefKanade(big=False):
              hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
              rbmVisibleDropout=1)
 
-  net.train(trainData, trainLabels, unsupervisedData=readCroppedYale())
+  unsupervisedData = readCroppedYale()
+  net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
 
   probs, predicted = net.classify(data[test])
 
@@ -258,7 +259,7 @@ def deepBeliefKanade(big=False):
   print correct
 
   print "percentage correct"
-  print correct / len(test)
+  print correct  * 1.0/ len(test)
 
 
 # TODO: get big, small as argument in order to be able to fit the resizing

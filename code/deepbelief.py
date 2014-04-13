@@ -209,6 +209,7 @@ class DBN(object):
 
     if unsupervisedData:
       # TODO: does it really work like this in numpy
+      print " adding unsupervisedData"
       currentData = np.vstack((currentData, unsupervisedData))
 
     for i in xrange(nrRbms):
