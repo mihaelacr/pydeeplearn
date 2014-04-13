@@ -179,7 +179,7 @@ def readCroppedYale():
 
   print imageFiles
   # Filter out the ones that containt "ambient"
-  imageFiles = [ x for x in imageFiles if not x.contains("Ambient")]
+  imageFiles = [ x for x in imageFiles if not "Ambient" in x]
 
   print imageFiles
 
