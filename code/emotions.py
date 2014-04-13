@@ -177,15 +177,10 @@ def deepBeliefKanade(big=False):
   else:
     files = glob.glob('kanade_f*.pickle')
 
-  if not folds:
-    folds = range(1, 6)
-
   # Read the data from them. Sort out the files that do not have
   # the folds that we want
   # TODO: do this better (with regex in the file name)
   # DO not reply on the order returned
-
-  files = [ files[x -1] for x in folds]
 
   data = np.array([])
   labels = np.array([])
