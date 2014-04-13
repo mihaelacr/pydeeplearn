@@ -171,7 +171,7 @@ def deepBeliefKanade(big=False, folds=None):
 
 def readCroppedYale():
   PATH = "/data/mcr10/yaleb/CroppedYale"
-  print os.walk(PATH)
+  print list(os.walk(PATH))
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
