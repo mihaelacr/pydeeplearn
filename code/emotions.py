@@ -172,7 +172,7 @@ def deepBeliefKanadeCV(big=False, folds=None):
 
 
 def deepBeliefKanade():
-    if big:
+  if big:
     files = glob.glob('kanade_150*.pickle')
   else:
     files = glob.glob('kanade_f*.pickle')
@@ -291,8 +291,8 @@ def readCroppedYale():
 
 
 def main():
-  readCroppedYale()
-  # deepBeliefKanade()
+  # readCroppedYale()
+  deepBeliefKanade()
 
 # You can also group the emotions into positive and negative to see
 # if you can get better results (probably yes)
