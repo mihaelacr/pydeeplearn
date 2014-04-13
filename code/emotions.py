@@ -175,7 +175,7 @@ def readCroppedYale():
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
-    for f in fnmatch.filter(files, '*.png')]
+    for f in fnmatch.filter(files, '*.pgm')]
 
   print imageFiles
   # Filter out the ones that containt "ambient"
