@@ -12,7 +12,7 @@ import os
 import fnmatch
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
-
+from skimage.transform import resize
 
 import deepbelief as db
 from common import *
@@ -171,7 +171,8 @@ def deepBeliefKanade(big=False, folds=None):
 
 
 def readCroppedYale():
-  PATH = "/data/mcr10/yaleb/CroppedYale"
+  # PATH = "/data/mcr10/yaleb/CroppedYale"
+  PATH = "/home/aela/uni/project/CroppedYale"
   print list(os.walk(PATH))
 
   imageFiles = [os.path.join(dirpath, f)
@@ -182,11 +183,14 @@ def readCroppedYale():
   # Filter out the ones that containt "ambient"
   imageFiles = [ x for x in imageFiles if not "Ambient" in x]
 
-  print imageFiles
+  for f in imageFiles:
+    img = mpimg.imread(f)
+    img = resize(img, (30, 40))
+    print img.shape
 
-  img = mpimg.imread(imageFiles[0])
-
-  plt.imshow(img)
+  print img.shape
+  plt.imshow(img, cmap=plt.cm.gray)
+  plt.show()
 
 
 def main():
