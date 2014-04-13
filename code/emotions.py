@@ -12,6 +12,7 @@ import os
 import fnmatch
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+import numpy as np
 from skimage.transform import resize
 
 import deepbelief as db
@@ -55,7 +56,7 @@ db.DEBUG = args.debug
     folds: which folds should be used (1,..5) (a list). If None is passed all
     folds are used
 """
-def deepBeliefKanade(big=False, folds=None):
+def deepBeliefKanadeCV(big=False, folds=None):
   if big:
     files = glob.glob('kanade_150*.pickle')
   else:
@@ -132,7 +133,7 @@ def deepBeliefKanade(big=False, folds=None):
                hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                rbmVisibleDropout=1)
 
-    net.train(trainData, trainLabels)
+    net.train(trainData, trainLabels, unsupervisedData=readCroppedYale())
 
     probs, predicted = net.classify(data[test])
 
@@ -170,6 +171,102 @@ def deepBeliefKanade(big=False, folds=None):
   print bestProbs
 
 
+def deepBeliefKanade():
+    if big:
+    files = glob.glob('kanade_150*.pickle')
+  else:
+    files = glob.glob('kanade_f*.pickle')
+
+  if not folds:
+    folds = range(1, 6)
+
+  # Read the data from them. Sort out the files that do not have
+  # the folds that we want
+  # TODO: do this better (with regex in the file name)
+  # DO not reply on the order returned
+
+  files = [ files[x -1] for x in folds]
+
+  data = np.array([])
+  labels = np.array([])
+  # TODO: do LDA on the training data
+
+  # TODO: do proper CV in which you use 4 folds for training and one for testing
+  # at that time
+  dataFolds = []
+  labelFolds = []
+  for filename in files:
+    with open(filename, "rb") as  f:
+      # Sort out the labels from the data
+      # TODO: run the readKanade again tomorrow and change these idnices here
+      dataAndLabels = pickle.load(f)
+      foldData = dataAndLabels[:, 0:-1]
+      print "foldData.shape"
+      print foldData.shape
+      foldLabels = dataAndLabels[:,-1]
+      dataFolds.append(foldData)
+      foldLabels = np.array(map(int, foldLabels))
+
+      vectorLabels = labelsToVectors(foldLabels -1, 7)
+      labelFolds.append(vectorLabels)
+
+      print "foldLabels.shape"
+      print vectorLabels.shape
+
+
+  data =  np.vstack(tuple(dataFolds))
+  labels = np.vstack(tuple(labelFolds))
+
+  print "data.shape"
+  print data.shape
+  print "labels.shape"
+  print labels.shape
+
+
+  train = range(0, 350)
+  test = range(350, len(data))
+
+  trainData = data[train]
+  trainLabels = labels[train]
+
+  # TODO: this might require more thought
+  net = db.DBN(5, [1200, 1000, 1000, 1000, 7],
+             unsupervisedLearningRate=0.01,
+             supervisedLearningRate=0.001,
+             nesterovMomentum=args.nesterov,
+             rmsprop=args.rmsprop,
+             hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
+             rbmVisibleDropout=1)
+
+  net.train(trainData, trainLabels, unsupervisedData=readCroppedYale())
+
+  probs, predicted = net.classify(data[test])
+
+  actualLabels = labels[test]
+  correct = 0
+  errorCases = []
+
+  for i in xrange(len(test)):
+    print "predicted"
+    print "probs"
+    print probs[i]
+    print predicted[i]
+    print "actual"
+    actual = actualLabels[i]
+    print actual
+    if predicted[i] == np.argmax(actual):
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  print "correct"
+  print correct
+
+  print "percentage correct"
+  print correct / len(test)
+
+
+# TODO: get big, small as argument in order to be able to fit the resizing
 def readCroppedYale():
   # PATH = "/data/mcr10/yaleb/CroppedYale"
   PATH = "/home/aela/uni/project/CroppedYale"
@@ -183,14 +280,14 @@ def readCroppedYale():
   # Filter out the ones that containt "ambient"
   imageFiles = [ x for x in imageFiles if not "Ambient" in x]
 
+  images = []
   for f in imageFiles:
     img = mpimg.imread(f)
     img = resize(img, (30, 40))
     print img.shape
+    images += [img]
 
-  print img.shape
-  plt.imshow(img, cmap=plt.cm.gray)
-  plt.show()
+  return np.array(images)
 
 
 def main():
