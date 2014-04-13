@@ -8,6 +8,11 @@ import argparse
 import cPickle as pickle
 from sklearn import cross_validation
 
+import os
+import fnmatch
+import matplotlib.image as mpimg
+
+
 import deepbelief as db
 from common import *
 
@@ -164,10 +169,20 @@ def deepBeliefKanade(big=False, folds=None):
   print bestProbs
 
 
+def readCroppedYale():
+  PATH = "/data/mcr10/yaleb/CroppedYale"
+  imageFiles = [os.path.join(PATH, f)
+    for dirpath, dirnames, files in os.walk(path)
+    for f in fnmatch.filter(files, '*.png')]
 
+  # Filter out the ones that containt "ambient"
+  imageFiles = [ x for x in imageFiles if not x.contains("Ambient")]
+
+  mpimg.read(imageFiles[0])
 
 def main():
-  deepBeliefKanade()
+  readCroppedYale()
+  # deepBeliefKanade()
 
 # You can also group the emotions into positive and negative to see
 # if you can get better results (probably yes)
