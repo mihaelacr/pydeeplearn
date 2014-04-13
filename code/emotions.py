@@ -267,13 +267,11 @@ def deepBeliefKanade(big=False):
 def readCroppedYale():
   PATH = "/data/mcr10/yaleb/CroppedYale"
   # PATH = "/home/aela/uni/project/CroppedYale"
-  print list(os.walk(PATH))
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
     for f in fnmatch.filter(files, '*.pgm')]
 
-  print imageFiles
   # Filter out the ones that containt "ambient"
   imageFiles = [ x for x in imageFiles if not "Ambient" in x]
 
