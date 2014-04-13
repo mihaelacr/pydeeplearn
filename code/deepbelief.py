@@ -208,7 +208,7 @@ class DBN(object):
     # Train the restricted Boltzmann machines that form the network
     currentData = data
 
-    if unsupervisedData:
+    if unsupervisedData is not None:
       # TODO: does it really work like this in numpy
       print " adding unsupervisedData"
       currentData = np.vstack((currentData, unsupervisedData))
