@@ -178,7 +178,7 @@ def readCroppedYale():
   # Filter out the ones that containt "ambient"
   imageFiles = [ x for x in imageFiles if not x.contains("Ambient")]
 
-  mpimg.read(imageFiles[0])
+  mpimg.imread(imageFiles[0])
 
 def main():
   readCroppedYale()
