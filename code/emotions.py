@@ -10,10 +10,11 @@ from sklearn import cross_validation
 
 import os
 import fnmatch
-import matplotlib.image as mpimg
+import matplotlib.image as io
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage.transform import resize
+from skimage import io
 
 import deepbelief as db
 from common import *
@@ -282,7 +283,7 @@ def readCroppedYale():
 
   images = []
   for f in imageFiles:
-    img = mpimg.imread(f)
+    img = io.imread(f)
     img = resize(img, (30, 40))
     print img.shape
     images += [img.reshape(-1)]
@@ -299,7 +300,7 @@ def readAttData():
 
   images = []
   for f in imageFiles:
-    img = mpimg.imread(f)
+    img = io.imread(f)
     img = resize(img, (30, 40))
     print img.shape
     images += [img.reshape(-1)]
@@ -316,7 +317,7 @@ def readJaffe():
 
   images = []
   for f in imageFiles:
-    img = mpimg.imread(f)
+    img = io.imread(f)
     img = resize(img, (30, 40))
     print img.shape
     images += [img.reshape(-1)]
