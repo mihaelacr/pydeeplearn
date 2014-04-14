@@ -307,6 +307,24 @@ def readAttData():
   print len(images)
   return np.array(images)
 
+# TODO: best crop the images using openCV
+def readJaffe():
+  PATH = "/data/mcr10/jaffe"
+  imageFiles = [os.path.join(dirpath, f)
+    for dirpath, dirnames, files in os.walk(PATH)
+    for f in fnmatch.filter(files, '*.tiff')]
+
+  images = []
+  for f in imageFiles:
+    img = mpimg.imread(f)
+    img = resize(img, (30, 40))
+    print img.shape
+    images += [img.reshape(-1)]
+
+  print len(images)
+  return np.array(images)
+
+
 def main():
   # readCroppedYale()
   if args.cv:
