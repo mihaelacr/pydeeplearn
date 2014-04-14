@@ -109,7 +109,7 @@ def deepBeliefKanadeCV(big=False, folds=None):
   print "labels.shape"
   print labels.shape
 
-  unsupervisedData = np.vstack((readCroppedYale(), readAttData()))
+  unsupervisedData = np.vstack((readCroppedYale(), readAttData(), readJaffe()))
 
 
   kf = cross_validation.KFold(n=len(data), k=len(folds))
@@ -237,8 +237,8 @@ def deepBeliefKanade(big=False):
              hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
              rbmVisibleDropout=1)
 
-  unsupervisedData = readCroppedYale()
-  # unsupervisedData = np.vstack((readCroppedYale(), readAttData()))
+  # unsupervisedData = readCroppedYale()
+  unsupervisedData = np.vstack((readCroppedYale(), readAttData(), readJaffe()))
 
 
   net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
