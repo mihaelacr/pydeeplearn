@@ -285,7 +285,6 @@ def readCroppedYale():
   for f in imageFiles:
     img = io.imread(f)
     img = resize(img, (30, 40))
-    print img.shape
     images += [img.reshape(-1)]
 
   return np.array(images)
@@ -302,7 +301,6 @@ def readAttData():
   for f in imageFiles:
     img = io.imread(f)
     img = resize(img, (30, 40))
-    print img.shape
     images += [img.reshape(-1)]
 
   print len(images)
@@ -319,7 +317,6 @@ def readJaffe():
   for f in imageFiles:
     img = io.imread(f)
     img = resize(img, (30, 40))
-    print img.shape
     images += [img.reshape(-1)]
 
   print len(images)
