@@ -138,7 +138,7 @@ def deepBeliefKanadeCV(big=False, folds=None):
 
     net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
 
-    probs, predideepBeliefKanadeCVdeepBeliefKanadeCVcted = net.classify(data[test])
+    probs, predicted = net.classify(data[test])
 
     actualLabels = labels[test]
     correct = 0
