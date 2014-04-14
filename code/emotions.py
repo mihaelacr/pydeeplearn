@@ -108,6 +108,8 @@ def deepBeliefKanadeCV(big=False, folds=None):
   print "labels.shape"
   print labels.shape
 
+  unsupervisedData = np.vstack(readCroppedYale(), readAttData())
+
 
   kf = cross_validation.KFold(n=len(data), k=len(folds))
   bestCorrect = 0
@@ -134,9 +136,9 @@ def deepBeliefKanadeCV(big=False, folds=None):
                hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                rbmVisibleDropout=1)
 
-    net.train(trainData, trainLabels, unsupervisedData=readCroppedYale())
+    net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
 
-    probs, predicted = net.classify(data[test])
+    probs, predideepBeliefKanadeCVdeepBeliefKanadeCVcted = net.classify(data[test])
 
     actualLabels = labels[test]
     correct = 0
@@ -235,6 +237,8 @@ def deepBeliefKanade(big=False):
              rbmVisibleDropout=1)
 
   unsupervisedData = readCroppedYale()
+  # unsupervisedData = np.vstack(readCroppedYale(), readAttData())
+
 
   net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
 
@@ -273,7 +277,7 @@ def readCroppedYale():
     for dirpath, dirnames, files in os.walk(PATH)
     for f in fnmatch.filter(files, '*.pgm')]
 
-  # Filter out the ones that containt "ambient"
+  # Filter out the ones that containt "amyes bient"
   imageFiles = [ x for x in imageFiles if not "Ambient" in x]
 
   images = []
@@ -285,6 +289,23 @@ def readCroppedYale():
 
   return np.array(images)
 
+def readAttData():
+  PATH = "/data/mcr10/att"
+  # PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
+
+  imageFiles = [os.path.join(dirpath, f)
+    for dirpath, dirnames, files in os.walk(PATH)
+    for f in fnmatch.filter(files, '*.pgm')]
+
+  images = []
+  for f in imageFiles:
+    img = mpimg.imread(f)
+    img = resize(img, (30, 40))
+    print img.shape
+    images += [img.reshape(-1)]
+
+  print len(images)
+  return np.array(images)
 
 def main():
   # readCroppedYale()
