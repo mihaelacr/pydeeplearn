@@ -38,7 +38,8 @@ parser.add_argument('--nesterov', dest='nesterov',action='store_true', default=F
                     help=("if true, the deep belief net is trained using nesterov momentum"))
 parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=False,
                     help=("if true, rmsprop is used when training the deep belief net."))
-
+parser.add_argument('--cv', dest='cv',action='store_true', default=False,
+                    help=("if true, do cross validation"))
 
 # DEBUG mode?
 parser.add_argument('--debug', dest='debug',action='store_false', default=False,
@@ -287,7 +288,11 @@ def readCroppedYale():
 
 def main():
   # readCroppedYale()
-  deepBeliefKanade()
+  if args.cv:
+    deepBeliefKanadeCV()
+  elif args.db:
+    deepBeliefKanade()
+
 
 # You can also group the emotions into positive and negative to see
 # if you can get better results (probably yes)
