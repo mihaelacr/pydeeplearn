@@ -110,6 +110,9 @@ class RBM(object):
     print "rbm learningRate"
     print self.learningRate
 
+    print "data set size"
+    print len(data)
+
     if not self.initialized:
       if self.weights == None and self.biases == None:
         self.weights = initializeWeights(self.nrVisible, self.nrHidden)

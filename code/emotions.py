@@ -112,8 +112,7 @@ def deepBeliefKanadeCV(big=False, folds=None):
   print "labels.shape"
   print labels.shape
 
-  unsupervisedData = np.vstack((readCroppedYale(), readAttData(), readJaffe()))
-
+  unsupervisedData = buildUnsupervisedDataSet()
 
   kf = cross_validation.KFold(n=len(data), k=len(folds))
   bestCorrect = 0
@@ -240,8 +239,7 @@ def deepBeliefKanade(big=False):
              hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
              rbmVisibleDropout=1)
 
-  # unsupervisedData = readCroppedYale()
-  unsupervisedData = np.vstack((readCroppedYale(), readAttData(), readJaffe()))
+  unsupervisedData = buildUnsupervisedDataSet()
 
 
   net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
@@ -270,6 +268,14 @@ def deepBeliefKanade(big=False):
 
   print "percentage correct"
   print correct  * 1.0/ len(test)
+
+
+def buildUnsupervisedDataSet():
+  return np.vstack((
+    readCroppedYale(),
+    readAttData(),
+    readJaffe(),
+    readNottingham()))
 
 
 # TODO: get big, small as argument in order to be able to fit the resizing
@@ -308,7 +314,6 @@ def readAttData():
 
   return np.array(images)
 
-# TODO: best crop the images using openCV
 def readJaffe():
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
@@ -320,6 +325,8 @@ def readJaffe():
   for f in imageFiles:
     img = io.imread(f)
     face = facedetection.cropFace(img)
+    if face == None:
+      continue
 
     # Only do the resizing once you are done with the cropping of the faces
     img = resize(face, (30, 40))
@@ -329,11 +336,37 @@ def readJaffe():
   return np.array(images)
 
 
+def readNottingham():
+  # PATH = "/home/aela/uni/project/nottingham"
+  PATH = "/data/mcr10/nottingham"
+
+  imageFiles = [os.path.join(dirpath, f)
+    for dirpath, dirnames, files in os.walk(PATH)
+    for f in fnmatch.filter(files, '*.gif')]
+
+  images = []
+  for f in imageFiles:
+    img = io.imread(f)
+    face = facedetection.cropFace(img, rescaleForReconigtion=1)
+    if face == None:
+      io.imshow(img)
+      io.show()
+    else:
+      # Only do the resizing once you are done with the cropping of the faces
+      img = resize(face, (30, 40))
+      images += [img.reshape(-1)]
+
+  print len(images)
+  return np.array(images)
+
+
 def main():
-  if args.cv:
-    deepBeliefKanadeCV()
-  elif args.db:
-    deepBeliefKanade()
+  # readNottingham()
+  readJaffe()
+  # if args.cv:
+  #   deepBeliefKanadeCV()
+  # elif args.db:
+  #   deepBeliefKanade()
 
 
 # You can also group the emotions into positive and negative to see
