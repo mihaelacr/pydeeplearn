@@ -17,5 +17,7 @@ export CUDA_ROOT=/usr/local/export
 export THEANO_FLAGS='floatX=float32,device=gpu0,nvcc.fastmath=True'
 
 # for opencv
-export LD_LIBRARY_PATH=/data/mcr10/opencv/:$LD_LIBRARY_PATH
-export PKG_CONFIG_PATH=/data/mcr10/opencv/pkgconfig:$PKG_CONFIG_PATH
+export LD_LIBRARY_PATH=/data/mcr10/opencv/lib/:$LD_LIBRARY_PATH
+export PKG_CONFIG_PATH=/data/mcr10/opencv/lib/pkgconfig:$PKG_CONFIG_PATH
+
+export PYTHONPATH=/data/mcr10/opencv/lib/python2.7/site-packages
