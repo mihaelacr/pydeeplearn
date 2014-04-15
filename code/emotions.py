@@ -305,7 +305,6 @@ def readAttData():
     img = io.imread(f)
     img = resize(img, (30, 40))
     images += [img.reshape(-1)]
-    images += [img]
 
   print len(images)
   return np.array(images)
@@ -321,14 +320,13 @@ def readJaffe():
   images = []
   for f in imageFiles:
     img = io.imread(f)
-    print img.shape
-
     face = facedetection.cropFace(img)
 
     # Only do the resizing once you are done with the cropping of the faces
     img = resize(face, (30, 40))
     images += [img.reshape(-1)]
     images += [img]
+    print img.shape
 
   print len(images)
   return np.array(images)
