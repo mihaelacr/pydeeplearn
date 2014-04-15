@@ -323,9 +323,10 @@ def readJaffe():
     img = io.imread(f)
     print img.shape
 
-    facedetection.cropFace(img)
+    face = facedetection.cropFace(img)
+
     # Only do the resizing once you are done with the cropping of the faces
-    img = resize(img, (30, 40))
+    img = resize(face, (30, 40))
     # images += [img.reshape(-1)]
     images += [img]
 
@@ -334,14 +335,10 @@ def readJaffe():
 
 
 def main():
-
-  readJaffe()
-  # for f in faces:
-  #   facedetection.cropFace(f)
-  # if args.cv:
-  #   deepBeliefKanadeCV()
-  # elif args.db:
-  #   deepBeliefKanade()
+  if args.cv:
+    deepBeliefKanadeCV()
+  elif args.db:
+    deepBeliefKanade()
 
 
 # You can also group the emotions into positive and negative to see
