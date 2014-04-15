@@ -293,8 +293,8 @@ def readCroppedYale():
   return np.array(images)
 
 def readAttData():
-  # PATH = "/data/mcr10/att"
-  PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
+  PATH = "/data/mcr10/att"
+  # PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -312,8 +312,8 @@ def readAttData():
 
 # TODO: best crop the images using openCV
 def readJaffe():
-  # PATH = "/data/mcr10/jaffe"
-  PATH = "/home/aela/uni/project/jaffe"
+  PATH = "/data/mcr10/jaffe"
+  # PATH = "/home/aela/uni/project/jaffe"
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
     for f in fnmatch.filter(files, '*.tiff')]
