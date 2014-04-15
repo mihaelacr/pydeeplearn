@@ -19,8 +19,6 @@ THICKNESS = 2
 # TODO: add the rescaling
 """Needs the image to already be black and white """
 def cropFace(image):
-  print "image.shape"
-  print image.shape
   cascade = cv2.CascadeClassifier(CASCADE_FN)
   imageScaled = cv2.resize(image, (image.shape[0] / RESIZE_SCALE ,
                             image.shape[1] / RESIZE_SCALE))
@@ -28,8 +26,6 @@ def cropFace(image):
 
   gray = cv2.equalizeHist(imageScaled)
   rects = cascade.detectMultiScale(gray, 1.3, 5)
-  print "rects"
-  print rects
   # You need to find exactly one face in the picture
   assert len(rects) == 1
 

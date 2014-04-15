@@ -306,7 +306,6 @@ def readAttData():
     img = resize(img, (30, 40))
     images += [img.reshape(-1)]
 
-  print len(images)
   return np.array(images)
 
 # TODO: best crop the images using openCV
@@ -325,8 +324,6 @@ def readJaffe():
     # Only do the resizing once you are done with the cropping of the faces
     img = resize(face, (30, 40))
     images += [img.reshape(-1)]
-    images += [img]
-    print img.shape
 
   print len(images)
   return np.array(images)
