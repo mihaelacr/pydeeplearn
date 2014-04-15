@@ -16,6 +16,9 @@ import numpy as np
 from skimage.transform import resize
 from skimage import io
 
+import facedetection
+
+
 import deepbelief as db
 from common import *
 
@@ -290,8 +293,8 @@ def readCroppedYale():
   return np.array(images)
 
 def readAttData():
-  PATH = "/data/mcr10/att"
-  # PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
+  # PATH = "/data/mcr10/att"
+  PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -301,14 +304,16 @@ def readAttData():
   for f in imageFiles:
     img = io.imread(f)
     img = resize(img, (30, 40))
-    images += [img.reshape(-1)]
+    # images += [img.reshape(-1)]
+    images += [img]
 
   print len(images)
   return np.array(images)
 
 # TODO: best crop the images using openCV
 def readJaffe():
-  PATH = "/data/mcr10/jaffe"
+  # PATH = "/data/mcr10/jaffe"
+  PATH = "/home/aela/uni/project/jaffe"
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
     for f in fnmatch.filter(files, '*.tiff')]
@@ -316,19 +321,27 @@ def readJaffe():
   images = []
   for f in imageFiles:
     img = io.imread(f)
+    print img.shape
+
+    facedetection.cropFace(img)
+    # Only do the resizing once you are done with the cropping of the faces
     img = resize(img, (30, 40))
-    images += [img.reshape(-1)]
+    # images += [img.reshape(-1)]
+    images += [img]
 
   print len(images)
   return np.array(images)
 
 
 def main():
-  # readCroppedYale()
-  if args.cv:
-    deepBeliefKanadeCV()
-  elif args.db:
-    deepBeliefKanade()
+
+  readJaffe()
+  # for f in faces:
+  #   facedetection.cropFace(f)
+  # if args.cv:
+  #   deepBeliefKanadeCV()
+  # elif args.db:
+  #   deepBeliefKanade()
 
 
 # You can also group the emotions into positive and negative to see
