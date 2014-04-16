@@ -360,14 +360,14 @@ def readJaffe(doRecognition=True):
         images += [face.reshape(-1)]
 
         # Save faces as files
-        croppedFileName = os.path.join(PATH, "cropped" + shortPath)
+        croppedFileName = os.path.join(PATH, "cropped", shortPath)
         io.imsave(croppedFileName, face)
 
   else:
     images = []
-    imageFiles = [os.path.join(dirpath, f)
+    imageFiles = [os.path.join(dirpath, 'cropped', f)
       for dirpath, dirnames, files in os.walk(PATH)
-      for f in fnmatch.filter(files, 'cropped*.tiff')]
+      for f in fnmatch.filter(files, '*.tiff')]
 
     for f in imageFiles:
       img = io.imread(f)
@@ -396,14 +396,14 @@ def readNottingham(doRecognition=True):
         images += [face.reshape(-1)]
 
         # Save faces as files
-        croppedFileName = os.path.join(PATH, "cropped" + shortPath)
+        croppedFileName = os.path.join(PATH, "cropped", shortPath)
         io.imsave(croppedFileName, face)
 
   else:
     images = []
-    imageFiles = [os.path.join(dirpath, f)
+    imageFiles = [os.path.join(dirpath, "cropped", f)
       for dirpath, dirnames, files in os.walk(PATH)
-      for f in fnmatch.filter(files, 'cropped*.gif')]
+      for f in fnmatch.filter(files, '*.gif')]
 
     for f in imageFiles:
       img = io.imread(f)
@@ -436,14 +436,14 @@ def readAberdeen(doRecognition=True):
         images += [face.reshape(-1)]
 
         # Save faces as files
-        croppedFileName = os.path.join(PATH, "cropped" + shortPath)
+        croppedFileName = os.path.join(PATH, "cropped", shortPath)
         io.imsave(croppedFileName, face)
 
   else:
     images = []
-    imageFiles = [os.path.join(dirpath, f)
+    imageFiles = [os.path.join(dirpath, "cropped", f)
       for dirpath, dirnames, files in os.walk(PATH)
-      for f in fnmatch.filter(files, 'cropped*.jpg')]
+      for f in fnmatch.filter(files, '*.jpg')]
 
     for f in imageFiles:
       img = io.imread(f)
