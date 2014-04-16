@@ -360,7 +360,7 @@ def readJaffe(doRecognition=True):
         images += [face]
 
         # Save faces as files
-        croppedFileName = os.join(PATH, "cropped" + f)
+        croppedFileName = os.path.join(PATH, "cropped" + f)
         io.imsave(croppedFileName, face)
 
   else:
@@ -396,7 +396,7 @@ def readNottingham(doRecognition=True):
         images += [face]
 
         # Save faces as files
-        croppedFileName = os.join(PATH, "cropped" + f)
+        croppedFileName = os.path.join(PATH, "cropped" + f)
         io.imsave(croppedFileName, face)
 
   else:
@@ -436,7 +436,7 @@ def readAberdeen(doRecognition=True):
         images += [face]
 
         # Save faces as files
-        croppedFileName = os.join(PATH, "cropped" + f)
+        croppedFileName = os.path.join(PATH, "cropped" + f)
         io.imsave(croppedFileName, face)
 
   else:
