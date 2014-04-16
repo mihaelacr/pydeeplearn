@@ -3,11 +3,20 @@ import glob
 import cPickle as pickle
 import matplotlib.pyplot as plt
 
+
+SMALL_SIZE = (40, 30)
+BIG_SIZE = (200, 150)
+
 # Open the files that are from the kanade database and
 # parse them in order to get the emotions
 
 # TODO: write them as tuples not arrays
-def readTxtWritePickle(filename):
+def readTxtWritePickle(filename, big=False):
+  if big:
+    resizeShape = BIG_SIZE
+  else:
+    resizeShape = SMALL_SIZE
+
   with open(filename) as f:
     # TODO: replace this with a functiOn call from the library
     lines = []
@@ -22,16 +31,37 @@ def readTxtWritePickle(filename):
   # Create the new name for the file
   pickleFileName = filename[0:-3] + "pickle"
 
+  lines = lines.T
+
+  data = lines[:, 0:-1]
+  print "data.shape"
+  print data.shape
+  print "data[0].shape"
+  print data[0].shape
+
+  # Processing of the data
+  reshapeF = lambda x: x.reshape(resizeShape).T.reshape(-1)
+  reshapeF(data[0])
+  data = np.array(map(reshapeF, data))
+  lines[:, 0:-1] = data
+
   with open(pickleFileName,"wb") as f:
-    pickle.dump(lines.T, f)
+    pickle.dump(lines, f)
 
 
 def main():
   # Read all the given files, parse them and write them as a
   # numpy array using cpikle
-  files = glob.glob('kanade*.txt')
+
+  # The small files
+  files = glob.glob('kanade_f*.txt')
   for f in files:
-    readTxtWritePickle(f)
+    readTxtWritePickle(f, big=False)
+
+  # The big files
+  files = glob.glob('kanade_150*.txt')
+  for f in files:
+    readTxtWritePickle(f, big=True)
 
 # Method used for testing images
 def viewTestImage(big=False):
@@ -57,12 +87,14 @@ def viewTestImage(big=False):
   emotion = lines[:, 0][-1]
   print "emotion"
   print emotion
-  face = np.array(face).reshape(resizeShape).T
+  face = np.array(face).reshape(resizeShape)
+  print face.shape
   plt.imshow(face, cmap=plt.cm.gray)
   plt.show()
 
 if __name__ == '__main__':
-  viewTestImage(big=True)
+  main()
+  viewTestImage(big=False)
   # main()
 
 

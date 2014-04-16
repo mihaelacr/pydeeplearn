@@ -221,11 +221,8 @@ def deepBeliefKanade(big=False):
   data =  np.vstack(tuple(dataFolds))
   labels = np.vstack(tuple(labelFolds))
 
-  plt.imshow(data[0].reshape(SMALL_SIZE).T, cmap='gray')
+  plt.imshow(data[0].reshape((40,30)), cmap='gray')
   plt.show()
-
-  # plt.imshow(data[0], cmap='gray')
-  # plt.show()
 
   print "data.shape"
   print data.shape
