@@ -10,7 +10,6 @@ from common import *
 
 import theano
 from theano import tensor as T
-from theano.ifelse import ifelse as theanoifelse
 from theano.tensor.shared_randomstreams import RandomStreams
 
 theanoFloat  = theano.config.floatX
@@ -110,7 +109,7 @@ class RBM(object):
     print "rbm learningRate"
     print self.learningRate
 
-    print "data set size"
+    print "data set size for restricted boltzmann machine"
     print len(data)
 
     if not self.initialized:
