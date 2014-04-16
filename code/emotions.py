@@ -357,7 +357,7 @@ def readJaffe(doRecognition=True):
       if not face == None:
         # Only do the resizing once you are done with the cropping of the faces
         face = resize(face, SMALL_SIZE)
-        images += [face]
+        images += [face.reshape(-1)]
 
         # Save faces as files
         croppedFileName = os.path.join(PATH, "cropped" + shortPath)
@@ -393,7 +393,7 @@ def readNottingham(doRecognition=True):
       if not face == None:
         # Only do the resizing once you are done with the cropping of the faces
         face = resize(face, SMALL_SIZE)
-        images += [face]
+        images += [face.reshape(-1)]
 
         # Save faces as files
         croppedFileName = os.path.join(PATH, "cropped" + shortPath)
@@ -433,7 +433,7 @@ def readAberdeen(doRecognition=True):
       if not face == None:
         # Only do the resizing once you are done with the cropping of the faces
         face = resize(face, SMALL_SIZE)
-        images += [face]
+        images += [face.reshape(-1)]
 
         # Save faces as files
         croppedFileName = os.path.join(PATH, "cropped" + shortPath)
