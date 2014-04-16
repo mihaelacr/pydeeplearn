@@ -16,6 +16,7 @@ import numpy as np
 from skimage.transform import resize
 from skimage import io
 from skimage import color
+import os
 
 import facedetection
 
@@ -341,24 +342,36 @@ def readAttData():
 
   return np.array(images)
 
-def readJaffe():
+def readJaffe(doRecognition=False):
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
-  imageFiles = [os.path.join(dirpath, f)
-    for dirpath, dirnames, files in os.walk(PATH)
-    for f in fnmatch.filter(files, '*.tiff')]
+  if doRecognition:
+    imageFiles = [os.path.join(dirpath, f)
+      for dirpath, dirnames, files in os.walk(PATH)
+      for f in fnmatch.filter(files, '*.tiff')]
 
-  images = []
-  for f in imageFiles:
-    img = io.imread(f)
-    face = facedetection.cropFace(img)
-    if face == None:
-      continue
+    images = []
+    for f in imageFiles:
+      img = io.imread(f)
+      face = facedetection.cropFace(img)
+      if not face == None:
+        # Only do the resizing once you are done with the cropping of the faces
+        face = resize(face, SMALL_SIZE)
+        images += [face]
 
-    # Only do the resizing once you are done with the cropping of the faces
-    img = resize(face, SMALL_SIZE)
+        # Save faces as files
+        croppedFileName = os.join(PATH, "cropped" + f)
+        io.imsave(croppedFileName, face)
 
-    images += [img.reshape(-1)]
+  else:
+    images = []
+    imageFiles = [os.path.join(dirpath, f)
+      for dirpath, dirnames, files in os.walk(PATH)
+      for f in fnmatch.filter(files, 'cropped*.tiff')]
+
+    for f in imageFiles:
+      img = io.imread(f)
+      images += [img.reshape(-1)]
 
   print len(images)
   return np.array(images)
@@ -368,19 +381,32 @@ def readNottingham():
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
 
-  imageFiles = [os.path.join(dirpath, f)
-    for dirpath, dirnames, files in os.walk(PATH)
-    for f in fnmatch.filter(files, '*.gif')]
+  if doRecognition:
+    imageFiles = [os.path.join(dirpath, f)
+      for dirpath, dirnames, files in os.walk(PATH)
+      for f in fnmatch.filter(files, '*.gif')]
 
-  images = []
-  for f in imageFiles:
-    img = io.imread(f)
-    face = facedetection.cropFace(img, rescaleForReconigtion=1)
-    if face == None:
-      pass
-    else:
-      # Only do the resizing once you are done with the cropping of the faces
-      img = resize(face, SMALL_SIZE)
+    images = []
+    for f in imageFiles:
+      img = io.imread(f)
+      face = facedetection.cropFace(img)
+      if not face == None:
+        # Only do the resizing once you are done with the cropping of the faces
+        face = resize(face, SMALL_SIZE)
+        images += [face]
+
+        # Save faces as files
+        croppedFileName = os.join(PATH, "cropped" + f)
+        io.imsave(croppedFileName, face)
+
+  else:
+    images = []
+    imageFiles = [os.path.join(dirpath, f)
+      for dirpath, dirnames, files in os.walk(PATH)
+      for f in fnmatch.filter(files, 'cropped*.gif')]
+
+    for f in imageFiles:
+      img = io.imread(f)
       images += [img.reshape(-1)]
 
   print len(images)
@@ -392,24 +418,36 @@ def readAberdeen():
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
 
-  imageFiles = [os.path.join(dirpath, f)
-    for dirpath, dirnames, files in os.walk(PATH)
-    for f in fnmatch.filter(files, '*.jpg')]
+  if doRecognition:
+    imageFiles = [os.path.join(dirpath, f)
+      for dirpath, dirnames, files in os.walk(PATH)
+      for f in fnmatch.filter(files, '*.jpg')]
 
-  images = []
-  for f in imageFiles:
-    img = io.imread(f)
-    img = color.rgb2gray(img)
-    img = np.array(img * 255, dtype='uint8')
+    images = []
+    for f in imageFiles:
+      img = io.imread(f)
+      img = color.rgb2gray(img)
+      img = np.array(img * 255, dtype='uint8')
 
-    face = facedetection.cropFace(img, rescaleForReconigtion=1)
-    if face == None:
-      pass
-    else:
-      # Only do the resizing once you are done with the cropping of the faces
-      img = resize(face, SMALL_SIZE)
+      face = facedetection.cropFace(img, rescaleForReconigtion=1)
+      if not face == None:
+        # Only do the resizing once you are done with the cropping of the faces
+        face = resize(face, SMALL_SIZE)
+        images += [face]
+
+        # Save faces as files
+        croppedFileName = os.join(PATH, "cropped" + f)
+        io.imsave(croppedFileName, face)
+
+  else:
+    images = []
+    imageFiles = [os.path.join(dirpath, f)
+      for dirpath, dirnames, files in os.walk(PATH)
+      for f in fnmatch.filter(files, 'cropped*.jpg')]
+
+    for f in imageFiles:
+      img = io.imread(f)
       images += [img.reshape(-1)]
-
 
   print len(images)
   return np.array(images)
