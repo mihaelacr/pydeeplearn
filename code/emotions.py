@@ -58,6 +58,56 @@ db.DEBUG = args.debug
 
 SMALL_SIZE = ((40, 30))
 
+
+def rbmEmotions(big=False, reconstructRandom=False):
+  data, labels = readKanade(big)
+
+  trainData=data[0:-1, :]
+  test = data[-1]
+  # Train the network
+  if args.train:
+    # The number of hidden units is taken from a deep learning tutorial
+    # The data are the values of the images have to be normalized before being
+    # presented to the network
+    nrVisible = len(data[0])
+    nrHidden = 800
+    # use 1 dropout to test the rbm for now
+    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1)
+    net.train(trainData)
+    t = visualizeWeights(net.weights.T, SMALL_SIZE, (10,10))
+  else:
+    # Take the saved network and use that for reconstructions
+    f = open(args.netFile, "rb")
+    t = pickle.load(f)
+    net = pickle.load(f)
+    f.close()
+
+  # get a random image and see it looks like
+  if reconstructRandom:
+    test = np.random.random_sample(test.shape)
+
+  # Show the initial image first
+  recon = net.reconstruct(test.reshape(1, test.shape[0]))
+  plt.imshow(vectorToImage(test, SMALL_SIZE), cmap=plt.cm.gray)
+  plt.show()
+
+  # Show the reconstruction
+  recon = net.reconstruct(test.reshape(1, test.shape[0]))
+  plt.imshow(vectorToImage(recon, SMALL_SIZE), cmap=plt.cm.gray)
+  plt.show()
+
+  # Show the weights and their form in a tile fashion
+  # Plot the weights
+  plt.imshow(t, cmap=plt.cm.gray)
+  plt.show()
+  print "done"
+
+  if args.save:
+    f = open(args.netFile, "wb")
+    pickle.dump(t, f)
+    pickle.dump(net, f)
+
+
 """
   Arguments:
     big: should the big or small images be used?
@@ -65,50 +115,7 @@ SMALL_SIZE = ((40, 30))
     folds are used
 """
 def deepBeliefKanadeCV(big=False, folds=None):
-  if big:
-    files = glob.glob('kanade_150*.pickle')
-  else:
-    files = glob.glob('kanade_f*.pickle')
-
-  if not folds:
-    folds = range(1, 6)
-
-  # Read the data from them. Sort out the files that do not have
-  # the folds that we want
-  # TODO: do this better (with regex in the file name)
-  # DO not reply on the order returned
-
-  files = [ files[x -1] for x in folds]
-
-  data = np.array([])
-  labels = np.array([])
-  # TODO: do LDA on the training data
-
-  # TODO: do proper CV in which you use 4 folds for training and one for testing
-  # at that time
-  dataFolds = []
-  labelFolds = []
-  for filename in files:
-    with open(filename, "rb") as  f:
-      # Sort out the labels from the data
-      # TODO: run the readKanade again tomorrow and change these idnices here
-      dataAndLabels = pickle.load(f)
-      foldData = dataAndLabels[:, 0:-1]
-      print "foldData.shape"
-      print foldData.shape
-      foldLabels = dataAndLabels[:,-1]
-      dataFolds.append(foldData)
-      foldLabels = np.array(map(int, foldLabels))
-
-      vectorLabels = labelsToVectors(foldLabels -1, 7)
-      labelFolds.append(vectorLabels)
-
-      print "foldLabels.shape"
-      print vectorLabels.shape
-
-
-  data =  np.vstack(tuple(dataFolds))
-  labels = np.vstack(tuple(labelFolds))
+  data, labels = readKanade(big, folds)
 
   print "data.shape"
   print data.shape
@@ -181,40 +188,7 @@ def deepBeliefKanadeCV(big=False, folds=None):
 
 
 def deepBeliefKanade(big=False):
-  if big:
-    files = glob.glob('kanade_150*.pickle')
-  else:
-    files = glob.glob('kanade_f*.pickle')
-
-  # Read the data from them. Sort out the files that do not have
-  # the folds that we want
-  # TODO: do this better (with regex in the file name)
-  # DO not reply on the order returned
-
-  data = np.array([])
-  labels = np.array([])
-  # TODO: do LDA on the training data
-
-  # TODO: do proper CV in which you use 4 folds for training and one for testing
-  # at that time
-  dataFolds = []
-  labelFolds = []
-  for filename in files:
-    with open(filename, "rb") as  f:
-      # Sort out the labels from the data
-      # TODO: run the readKanade again tomorrow and change these idnices here
-      dataAndLabels = pickle.load(f)
-      foldData = dataAndLabels[:, 0:-1]
-      foldLabels = dataAndLabels[:,-1]
-      dataFolds.append(foldData)
-      foldLabels = np.array(map(int, foldLabels))
-
-      vectorLabels = labelsToVectors(foldLabels -1, 7)
-      labelFolds.append(vectorLabels)
-
-
-  data =  np.vstack(tuple(dataFolds))
-  labels = np.vstack(tuple(labelFolds))
+  data, labels = readKanade(big, None)
 
   print "data.shape"
   print data.shape
@@ -276,6 +250,52 @@ def buildUnsupervisedDataSet():
     readJaffe(),
     readNottingham()))
 
+
+def readKanade(big=False, folds=None):
+  if big:
+    files = glob.glob('kanade_150*.pickle')
+  else:
+    files = glob.glob('kanade_f*.pickle')
+
+  if not folds:
+    folds = range(1, 6)
+
+  # Read the data from them. Sort out the files that do not have
+  # the folds that we want
+  # TODO: do this better (with regex in the file name)
+  # DO not reply on the order returned
+  files = [ files[x -1] for x in folds]
+
+  data = np.array([])
+  labels = np.array([])
+  # TODO: do LDA on the training data
+
+  # TODO: do proper CV in which you use 4 folds for training and one for testing
+  # at that time
+  dataFolds = []
+  labelFolds = []
+  for filename in files:
+    with open(filename, "rb") as  f:
+      # Sort out the labels from the data
+      # TODO: run the readKanade again tomorrow and change these idnices here
+      dataAndLabels = pickle.load(f)
+      foldData = dataAndLabels[:, 0:-1]
+      print "foldData.shape"
+      print foldData.shape
+      foldLabels = dataAndLabels[:,-1]
+      dataFolds.append(foldData)
+      foldLabels = np.array(map(int, foldLabels))
+
+      vectorLabels = labelsToVectors(foldLabels -1, 7)
+      labelFolds.append(vectorLabels)
+
+      print "foldLabels.shape"
+      print vectorLabels.shape
+
+
+  data =  np.vstack(tuple(dataFolds))
+  labels = np.vstack(tuple(labelFolds))
+  return data, labels
 
 # TODO: get big, small as argument in order to be able to fit the resizing
 def readCroppedYale():
