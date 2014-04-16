@@ -387,17 +387,17 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
 def readJaffe(doRecognition=True):
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
-  return readAndCrop(PATH , "tiff", doRecognition, isColour=False)
+  return readAndCrop(PATH , "tiff", doRecognition, isColoured=False)
 
 def readNottingham(doRecognition=True):
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
-  return readAndCrop(PATH, "gif", doRecognition, isColour=False)
+  return readAndCrop(PATH, "gif", doRecognition, isColoured=False)
 
 def readAberdeen(doRecognition=True):
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
-  return readAndCrop(PATH, "jpg", doRecognition, isColour=True)
+  return readAndCrop(PATH, "jpg", doRecognition, isColoured=True)
 
 def main():
   # deepBeliefKanade()
