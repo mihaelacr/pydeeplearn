@@ -62,10 +62,14 @@ SMALL_SIZE = ((40, 30))
 
 def rbmEmotions(big=False, reconstructRandom=False):
   data, labels = readKanade(big)
+  print "data.shape"
+  print data.shape
 
-  trainData = data[:, 0:-1]
+  trainData = data[0:-1, :]
+  plt.imshow(trainData[0].reshape(SMALL_SIZE))
+  plt.show()
 
-  test = data[:, -1]
+  test = data[-1, :]
   # Train the network
   if args.train:
     # The number of hidden units is taken from a deep learning tutorial

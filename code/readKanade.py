@@ -13,9 +13,9 @@ BIG_SIZE = (200, 150)
 # TODO: write them as tuples not arrays
 def readTxtWritePickle(filename, big=False):
   if big:
-    resizeShape = BIG_SIZE
+    resizeShape = (150, 200)
   else:
-    resizeShape = SMALL_SIZE
+    resizeShape = (30, 40)
 
   with open(filename) as f:
     # TODO: replace this with a functiOn call from the library
@@ -43,6 +43,7 @@ def readTxtWritePickle(filename, big=False):
   reshapeF = lambda x: x.reshape(resizeShape).T.reshape(-1)
   reshapeF(data[0])
   data = np.array(map(reshapeF, data))
+
   lines[:, 0:-1] = data
 
   with open(pickleFileName,"wb") as f:
