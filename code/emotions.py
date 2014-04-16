@@ -342,7 +342,7 @@ def readAttData():
 
   return np.array(images)
 
-def readAndCrop(path, extension, doRecognition, color=False):
+def readAndCrop(path, extension, doRecognition, isColoured=False):
   pathForCropped = os.path.join(path, "cropped")
 
   if doRecognition:
@@ -357,7 +357,7 @@ def readAndCrop(path, extension, doRecognition, color=False):
 
     for fullPath, shortPath in imageFiles:
       img = io.imread(fullPath)
-      if color:
+      if isColoured:
         img = color.rgb2gray(img)
         img = np.array(img * 255, dtype='uint8')
 
@@ -387,18 +387,17 @@ def readAndCrop(path, extension, doRecognition, color=False):
 def readJaffe(doRecognition=True):
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
-  return readAndCrop(PATH , "tiff", doRecognition, color=False)
+  return readAndCrop(PATH , "tiff", doRecognition, isColour=False)
 
 def readNottingham(doRecognition=True):
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
-  return readAndCrop(PATH, "gif", doRecognition, color=False)
+  return readAndCrop(PATH, "gif", doRecognition, isColour=False)
 
-""" These ones also need to be also transformed into non-color ones"""
 def readAberdeen(doRecognition=True):
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
-  return readAndCrop(PATH, "jpg", doRecognition, color=True)
+  return readAndCrop(PATH, "jpg", doRecognition, isColour=True)
 
 def main():
   # deepBeliefKanade()
