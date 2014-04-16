@@ -202,8 +202,10 @@ class RBM(object):
 
   # TODO: move this to GPU as well?
   def reconstruct(self, dataInstances):
-    return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
+    hidden = updateLayer(Layer.HIDDEN, dataInstances, self.biases,
                        self.testWeights, True)
+    return updateLayer(Layer.HIDDEN, hidden, self.biases,
+                       self.testWeights, False)
 
 """ Updates an entire layer. This procedure can be used both in training
     and in testing.
