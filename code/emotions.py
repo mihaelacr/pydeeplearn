@@ -377,7 +377,7 @@ def readJaffe(doRecognition=False):
   return np.array(images)
 
 
-def readNottingham():
+def readNottingham(doRecognition=False):
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
 
@@ -414,7 +414,7 @@ def readNottingham():
 
 
 """ These ones also need to be also transformed into non-color ones"""
-def readAberdeen():
+def readAberdeen(doRecognition=False):
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
 
