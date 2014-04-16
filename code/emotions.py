@@ -412,14 +412,16 @@ def main():
   # deepBeliefKanade()
 
   # readNottingham()
-  readCroppedYale()
+  # readCroppedYale()
   # readJaffe()
   # readAttData()
   # readAberdeen()
-  # if args.cv:
-  #   deepBeliefKanadeCV()
-  # elif args.db:
-  #   deepBeliefKanade()
+  if args.rbm:
+    rbmEmotions()
+  elif args.cv:
+    deepBeliefKanadeCV()
+  elif args.db:
+    deepBeliefKanade()
 
 
 # You can also group the emotions into positive and negative to see
