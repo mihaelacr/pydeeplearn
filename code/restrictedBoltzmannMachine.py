@@ -204,7 +204,7 @@ class RBM(object):
   def reconstruct(self, dataInstances):
     hidden = updateLayer(Layer.HIDDEN, dataInstances, self.biases,
                        self.testWeights, True)
-    return updateLayer(Layer.HIDDEN, hidden, self.biases,
+    return updateLayer(Layer.VISIBLE, hidden, self.biases,
                        self.testWeights, False)
 
 """ Updates an entire layer. This procedure can be used both in training
