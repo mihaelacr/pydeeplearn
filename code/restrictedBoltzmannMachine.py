@@ -201,6 +201,10 @@ class RBM(object):
     assert self.biases[1].shape[0] == self.nrHidden
 
   # TODO: move this to GPU as well?
+  def hiddenRepresentation(self, dataInstances):
+    return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
+                       self.testWeights, True)
+
   def reconstruct(self, dataInstances):
     return reconstruct(self.biases, self.testWeights, dataInstances)
 
