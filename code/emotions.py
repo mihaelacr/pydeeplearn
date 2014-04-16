@@ -222,7 +222,7 @@ def deepBeliefKanade(big=False):
   print labels.shape
 
   # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), k=5)
+  kf = cross_validation.KFold(n=len(data), n_folds=5)
   for train, test in kf:
     break
 
@@ -389,10 +389,10 @@ def readAberdeen():
   return np.array(images)
 
 def main():
-  deepBeliefKanade()
+  # deepBeliefKanade()
 
   # readNottingham()
-  # readCroppedYale()
+  readCroppedYale()
   # readJaffe()
   # readAttData()
   # readAberdeen()
