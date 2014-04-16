@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from skimage.transform import resize
 from skimage import io
+from skimage import color
 
 import facedetection
 
@@ -54,6 +55,8 @@ args = parser.parse_args()
 
 # Set the debug mode in the deep belief net
 db.DEBUG = args.debug
+
+SMALL_SIZE = ((40, 30))
 
 """
   Arguments:
@@ -218,6 +221,12 @@ def deepBeliefKanade(big=False):
   data =  np.vstack(tuple(dataFolds))
   labels = np.vstack(tuple(labelFolds))
 
+  plt.imshow(data[0].reshape(SMALL_SIZE).T, cmap='gray')
+  plt.show()
+
+  # plt.imshow(data[0], cmap='gray')
+  # plt.show()
+
   print "data.shape"
   print data.shape
   print "labels.shape"
@@ -280,8 +289,8 @@ def buildUnsupervisedDataSet():
 
 # TODO: get big, small as argument in order to be able to fit the resizing
 def readCroppedYale():
-  PATH = "/data/mcr10/yaleb/CroppedYale"
-  # PATH = "/home/aela/uni/project/CroppedYale"
+  # PATH = "/data/mcr10/yaleb/CroppedYale"
+  PATH = "/home/aela/uni/project/CroppedYale"
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -293,14 +302,16 @@ def readCroppedYale():
   images = []
   for f in imageFiles:
     img = io.imread(f)
-    img = resize(img, (30, 40))
+    img = resize(img, SMALL_SIZE)
     images += [img.reshape(-1)]
 
+  plt.imshow(images[0].reshape(SMALL_SIZE), cmap='gray')
+  plt.show()
   return np.array(images)
 
 def readAttData():
-  PATH = "/data/mcr10/att"
-  # PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
+  # PATH = "/data/mcr10/att"
+  PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -309,14 +320,15 @@ def readAttData():
   images = []
   for f in imageFiles:
     img = io.imread(f)
-    img = resize(img, (30, 40))
+    img = resize(img, SMALL_SIZE)
     images += [img.reshape(-1)]
+
 
   return np.array(images)
 
 def readJaffe():
-  PATH = "/data/mcr10/jaffe"
-  # PATH = "/home/aela/uni/project/jaffe"
+  # PATH = "/data/mcr10/jaffe"
+  PATH = "/home/aela/uni/project/jaffe"
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
     for f in fnmatch.filter(files, '*.tiff')]
@@ -329,16 +341,19 @@ def readJaffe():
       continue
 
     # Only do the resizing once you are done with the cropping of the faces
-    img = resize(face, (30, 40))
+    img = resize(face, SMALL_SIZE)
+
     images += [img.reshape(-1)]
 
   print len(images)
+  plt.imshow(images[0].reshape(SMALL_SIZE), cmap='gray')
+  plt.show()
   return np.array(images)
 
 
 def readNottingham():
-  # PATH = "/home/aela/uni/project/nottingham"
-  PATH = "/data/mcr10/nottingham"
+  PATH = "/home/aela/uni/project/nottingham"
+  # PATH = "/data/mcr10/nottingham"
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -349,20 +364,55 @@ def readNottingham():
     img = io.imread(f)
     face = facedetection.cropFace(img, rescaleForReconigtion=1)
     if face == None:
-      io.imshow(img)
-      io.show()
+      pass
     else:
       # Only do the resizing once you are done with the cropping of the faces
-      img = resize(face, (30, 40))
+      img = resize(face, SMALL_SIZE)
       images += [img.reshape(-1)]
 
   print len(images)
+  plt.imshow(images[0].reshape(SMALL_SIZE), cmap='gray')
+  plt.show()
   return np.array(images)
 
 
+""" These ones also need to be also transformed into non-color ones"""
+def readAberdeen():
+  # PATH = "/data/mcr10/Aberdeen"
+  PATH = "/home/aela/uni/project/Aberdeen"
+
+  imageFiles = [os.path.join(dirpath, f)
+    for dirpath, dirnames, files in os.walk(PATH)
+    for f in fnmatch.filter(files, '*.jpg')]
+
+  images = []
+  for f in imageFiles:
+    img = io.imread(f)
+    img = color.rgb2gray(img)
+    img = np.array(img * 255, dtype='uint8')
+
+    face = facedetection.cropFace(img, rescaleForReconigtion=1)
+    if face == None:
+      pass
+    else:
+      # Only do the resizing once you are done with the cropping of the faces
+      img = resize(face, SMALL_SIZE)
+      images += [img.reshape(-1)]
+
+
+  print len(images)
+  plt.imshow(images[0].reshape(SMALL_SIZE), cmap='gray')
+  plt.show()
+  return np.array(images)
+
 def main():
+  deepBeliefKanade()
+
   # readNottingham()
-  readJaffe()
+  # readCroppedYale()
+  # readJaffe()
+  # readAttData()
+  # readAberdeen()
   # if args.cv:
   #   deepBeliefKanadeCV()
   # elif args.db:
@@ -372,4 +422,8 @@ def main():
 # You can also group the emotions into positive and negative to see
 # if you can get better results (probably yes)
 if __name__ == '__main__':
+  import random
+  print "FIXING RANDOMNESS"
+  random.seed(6)
+  np.random.seed(6)
   main()

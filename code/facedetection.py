@@ -3,9 +3,8 @@
 crop some of the input databases, because they are not centered"""
 
 import cv2
-import numpy as np
 
-# Create window for image display
+# XML file with the recognition data
 CASCADE_FN = "haarcascade_frontalface_default.xml"
 
 
@@ -22,11 +21,8 @@ def cropFace(image, rescaleForReconigtion=2):
   # assert len(rects) == 1
   print "len(rects)"
   print len(rects)
-  if len(rects) == 0:
+  if len(rects) is not 1:
     return None
-  # if len(rects) is not 1:
-
-  # assert len(rects) == 1
 
   x, y, w, h = map(lambda x: x * rescaleForReconigtion,  rects[0])
   face = image[y:y + h, x:x + w]
