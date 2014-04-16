@@ -250,10 +250,11 @@ def deepBeliefKanade(big=False):
 
 def buildUnsupervisedDataSet():
   return np.vstack((
-    readCroppedYale(),
+    # readCroppedYale(),
     readAttData(),
     readJaffe(),
-    readNottingham()))
+    # readNottingham(),
+    readAberdeen()))
 
 
 def readKanade(big=False, folds=None):
@@ -324,8 +325,8 @@ def readCroppedYale():
   return np.array(images)
 
 def readAttData():
-  # PATH = "/data/mcr10/att"
-  PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
+  PATH = "/data/mcr10/att"
+  # PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -341,8 +342,8 @@ def readAttData():
   return np.array(images)
 
 def readJaffe():
-  # PATH = "/data/mcr10/jaffe"
-  PATH = "/home/aela/uni/project/jaffe"
+  PATH = "/data/mcr10/jaffe"
+  # PATH = "/home/aela/uni/project/jaffe"
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
     for f in fnmatch.filter(files, '*.tiff')]
@@ -388,8 +389,8 @@ def readNottingham():
 
 """ These ones also need to be also transformed into non-color ones"""
 def readAberdeen():
-  # PATH = "/data/mcr10/Aberdeen"
-  PATH = "/home/aela/uni/project/Aberdeen"
+  PATH = "/data/mcr10/Aberdeen"
+  # PATH = "/home/aela/uni/project/Aberdeen"
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
