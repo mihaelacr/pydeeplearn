@@ -50,10 +50,6 @@ args = parser.parse_args()
 # Set the debug mode in the deep belief net
 db.DEBUG = args.debug
 
-def visualizeWeights(weights, imgShape, tileShape):
-  return utils.tile_raster_images(weights, imgShape,
-                                  tileShape, tile_spacing=(1, 1))
-
 def rbmMain(reconstructRandom=True):
   trainVectors, trainLabels =\
       readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")

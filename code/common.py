@@ -1,5 +1,9 @@
 import numpy as np
+import utils
 
+def visualizeWeights(weights, imgShape, tileShape):
+  return utils.tile_raster_images(weights, imgShape,
+                                  tileShape, tile_spacing=(1, 1))
 """
 Arguments:
   vec: A numpy 1-D vector.
