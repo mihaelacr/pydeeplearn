@@ -283,7 +283,7 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   def fineTune(self, data, labels, validationData, validationLabels,
-               maxEpochs=800):
+               maxEpochs=1000):
     print "supervisedLearningRate"
     print self.supervisedLearningRate
     batchLearningRate = self.supervisedLearningRate / self.miniBatchSize
