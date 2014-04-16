@@ -16,7 +16,8 @@ def cropFace(image, rescaleForReconigtion=2):
 
 
   gray = cv2.equalizeHist(imageScaled)
-  rects = cascade.detectMultiScale(gray, 1.2, 5)
+  # maybe 4 here will help more because you get more 2s and less 0
+  rects = cascade.detectMultiScale(gray, 1.2, 4)
   # You need to find exactly one face in the picture
   # assert len(rects) == 1
   print "len(rects)"
