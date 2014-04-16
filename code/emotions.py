@@ -68,6 +68,8 @@ def rbmEmotions(big=False, reconstructRandom=False):
   trainData = data[0:-1, :]
 
   test = data[-1, :]
+  print "test.shape"
+  print test.shape
   # Train the network
   if args.train:
     # The number of hidden units is taken from a deep learning tutorial
@@ -96,6 +98,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
   plt.show()
 
   recon = net.reconstruct(test)
+  print recon.shape
   plt.imshow(vectorToImage(recon, SMALL_SIZE), cmap=plt.cm.gray)
   plt.show()
 
