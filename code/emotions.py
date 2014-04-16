@@ -342,7 +342,7 @@ def readAttData():
 
   return np.array(images)
 
-def readJaffe(doRecognition=False):
+def readJaffe(doRecognition=True):
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
   if doRecognition:
@@ -377,7 +377,7 @@ def readJaffe(doRecognition=False):
   return np.array(images)
 
 
-def readNottingham(doRecognition=False):
+def readNottingham(doRecognition=True):
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
 
@@ -414,7 +414,7 @@ def readNottingham(doRecognition=False):
 
 
 """ These ones also need to be also transformed into non-color ones"""
-def readAberdeen(doRecognition=False):
+def readAberdeen(doRecognition=True):
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
 
