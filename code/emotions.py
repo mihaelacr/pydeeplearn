@@ -350,7 +350,7 @@ def readAndCrop(path, extension, doRecognition, color=False):
       os.makedirs(pathForCropped)
 
     imageFiles = [(os.path.join(dirpath, f), f)
-      for dirpath, dirnames, files in os.walk(PATH)
+      for dirpath, dirnames, files in os.walk(path)
       for f in fnmatch.filter(files, '*.' + extension)]
 
     images = []
