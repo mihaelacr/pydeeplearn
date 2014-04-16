@@ -97,7 +97,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
   plt.imshow(vectorToImage(test, SMALL_SIZE), cmap=plt.cm.gray)
   plt.show()
 
-  recon = net.reconstruct(test)
+  recon = net.reconstruct(test.reshape(1, test.shape[0]))
   print recon.shape
   plt.imshow(vectorToImage(recon, SMALL_SIZE), cmap=plt.cm.gray)
   plt.show()
