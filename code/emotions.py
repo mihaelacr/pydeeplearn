@@ -66,8 +66,6 @@ def rbmEmotions(big=False, reconstructRandom=False):
   print data.shape
 
   trainData = data[0:-1, :]
-  plt.imshow(trainData[0].reshape(SMALL_SIZE))
-  plt.show()
 
   test = data[-1, :]
   # Train the network
@@ -93,13 +91,11 @@ def rbmEmotions(big=False, reconstructRandom=False):
   #   test = np.random.random_sample(test.shape)
 
   # Show the initial image first
-  recon = net.reconstruct(test.reshape(1, test.shape[0]))
 
   plt.imshow(vectorToImage(test, SMALL_SIZE), cmap=plt.cm.gray)
   plt.show()
 
-  # Show the reconstruction
-  recon = net.reconstruct(test.reshape(1, test.shape[0]))
+  recon = net.reconstruct(test)
   plt.imshow(vectorToImage(recon, SMALL_SIZE), cmap=plt.cm.gray)
   plt.show()
 
