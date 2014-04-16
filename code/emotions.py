@@ -205,8 +205,6 @@ def deepBeliefKanade(big=False):
       # TODO: run the readKanade again tomorrow and change these idnices here
       dataAndLabels = pickle.load(f)
       foldData = dataAndLabels[:, 0:-1]
-      print "foldData.shape"
-      print foldData.shape
       foldLabels = dataAndLabels[:,-1]
       dataFolds.append(foldData)
       foldLabels = np.array(map(int, foldLabels))
@@ -214,15 +212,9 @@ def deepBeliefKanade(big=False):
       vectorLabels = labelsToVectors(foldLabels -1, 7)
       labelFolds.append(vectorLabels)
 
-      print "foldLabels.shape"
-      print vectorLabels.shape
-
 
   data =  np.vstack(tuple(dataFolds))
   labels = np.vstack(tuple(labelFolds))
-
-  plt.imshow(data[0].reshape((40,30)), cmap='gray')
-  plt.show()
 
   print "data.shape"
   print data.shape
@@ -286,8 +278,8 @@ def buildUnsupervisedDataSet():
 
 # TODO: get big, small as argument in order to be able to fit the resizing
 def readCroppedYale():
-  # PATH = "/data/mcr10/yaleb/CroppedYale"
-  PATH = "/home/aela/uni/project/CroppedYale"
+  PATH = "/data/mcr10/yaleb/CroppedYale"
+  # PATH = "/home/aela/uni/project/CroppedYale"
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -302,8 +294,6 @@ def readCroppedYale():
     img = resize(img, SMALL_SIZE)
     images += [img.reshape(-1)]
 
-  plt.imshow(images[0].reshape(SMALL_SIZE), cmap='gray')
-  plt.show()
   return np.array(images)
 
 def readAttData():
@@ -343,8 +333,6 @@ def readJaffe():
     images += [img.reshape(-1)]
 
   print len(images)
-  plt.imshow(images[0].reshape(SMALL_SIZE), cmap='gray')
-  plt.show()
   return np.array(images)
 
 
@@ -368,8 +356,6 @@ def readNottingham():
       images += [img.reshape(-1)]
 
   print len(images)
-  plt.imshow(images[0].reshape(SMALL_SIZE), cmap='gray')
-  plt.show()
   return np.array(images)
 
 
@@ -398,8 +384,6 @@ def readAberdeen():
 
 
   print len(images)
-  plt.imshow(images[0].reshape(SMALL_SIZE), cmap='gray')
-  plt.show()
   return np.array(images)
 
 def main():
