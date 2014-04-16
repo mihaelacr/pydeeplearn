@@ -221,9 +221,10 @@ def deepBeliefKanade(big=False):
   print "labels.shape"
   print labels.shape
 
-
-  train = range(0, 350)
-  test = range(350, len(data))
+  # Random data for training and testing
+  kf = cross_validation.KFold(n=len(data), k=len(folds))
+  for train, test in kf:
+    break
 
   trainData = data[train]
   trainLabels = labels[train]
@@ -278,8 +279,8 @@ def buildUnsupervisedDataSet():
 
 # TODO: get big, small as argument in order to be able to fit the resizing
 def readCroppedYale():
-  PATH = "/data/mcr10/yaleb/CroppedYale"
-  # PATH = "/home/aela/uni/project/CroppedYale"
+  # PATH = "/data/mcr10/yaleb/CroppedYale"
+  PATH = "/home/aela/uni/project/CroppedYale"
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -292,6 +293,7 @@ def readCroppedYale():
   for f in imageFiles:
     img = io.imread(f)
     img = resize(img, SMALL_SIZE)
+
     images += [img.reshape(-1)]
 
   return np.array(images)
