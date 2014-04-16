@@ -419,7 +419,7 @@ def readAberdeen(doRecognition=True):
   # PATH = "/home/aela/uni/project/Aberdeen"
 
   if doRecognition:
-    imageFiles = [os.path.join(dirpath, f)
+    imageFiles = [(os.path.join(dirpath, f), f)
       for dirpath, dirnames, files in os.walk(PATH)
       for f in fnmatch.filter(files, '*.jpg')]
 
