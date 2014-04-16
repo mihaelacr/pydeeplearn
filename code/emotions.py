@@ -63,8 +63,9 @@ SMALL_SIZE = ((40, 30))
 def rbmEmotions(big=False, reconstructRandom=False):
   data, labels = readKanade(big)
 
-  trainData=data[0:-1, :]
-  test = data[-1]
+  trainData = data[:, 0:-1]
+
+  test = data[:, -1]
   # Train the network
   if args.train:
     # The number of hidden units is taken from a deep learning tutorial
@@ -84,11 +85,12 @@ def rbmEmotions(big=False, reconstructRandom=False):
     f.close()
 
   # get a random image and see it looks like
-  if reconstructRandom:
-    test = np.random.random_sample(test.shape)
+  # if reconstructRandom:
+  #   test = np.random.random_sample(test.shape)
 
   # Show the initial image first
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
+
   plt.imshow(vectorToImage(test, SMALL_SIZE), cmap=plt.cm.gray)
   plt.show()
 
