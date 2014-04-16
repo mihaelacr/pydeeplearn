@@ -21,6 +21,7 @@ import facedetection
 
 
 import deepbelief as db
+import restrictedBoltzmannMachine as rbm
 from common import *
 
 parser = argparse.ArgumentParser(description='digit recognition')
