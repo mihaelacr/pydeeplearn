@@ -346,13 +346,13 @@ def readJaffe(doRecognition=True):
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
   if doRecognition:
-    imageFiles = [os.path.join(dirpath, f)
+    imageFiles = [(os.path.join(dirpath, f), f)
       for dirpath, dirnames, files in os.walk(PATH)
       for f in fnmatch.filter(files, '*.tiff')]
 
     images = []
-    for f in imageFiles:
-      img = io.imread(f)
+    for fullPath, shortPath in imageFiles:
+      img = io.imread(fullPath)
       face = facedetection.cropFace(img)
       if not face == None:
         # Only do the resizing once you are done with the cropping of the faces
@@ -360,7 +360,7 @@ def readJaffe(doRecognition=True):
         images += [face]
 
         # Save faces as files
-        croppedFileName = os.path.join(PATH, "cropped" + f)
+        croppedFileName = os.path.join(PATH, "cropped" + shortPath)
         io.imsave(croppedFileName, face)
 
   else:
@@ -382,13 +382,13 @@ def readNottingham(doRecognition=True):
   # PATH = "/data/mcr10/nottingham"
 
   if doRecognition:
-    imageFiles = [os.path.join(dirpath, f)
+    imageFiles = [(os.path.join(dirpath, f),f)
       for dirpath, dirnames, files in os.walk(PATH)
       for f in fnmatch.filter(files, '*.gif')]
 
     images = []
-    for f in imageFiles:
-      img = io.imread(f)
+    for fullPath, shortPath in imageFiles:
+      img = io.imread(fullPath)
       face = facedetection.cropFace(img)
       if not face == None:
         # Only do the resizing once you are done with the cropping of the faces
@@ -396,7 +396,7 @@ def readNottingham(doRecognition=True):
         images += [face]
 
         # Save faces as files
-        croppedFileName = os.path.join(PATH, "cropped" + f)
+        croppedFileName = os.path.join(PATH, "cropped" + shortPath)
         io.imsave(croppedFileName, face)
 
   else:
@@ -424,8 +424,8 @@ def readAberdeen(doRecognition=True):
       for f in fnmatch.filter(files, '*.jpg')]
 
     images = []
-    for f in imageFiles:
-      img = io.imread(f)
+    for fullPath, shortPath in imageFiles:
+      img = io.imread(fullPath)
       img = color.rgb2gray(img)
       img = np.array(img * 255, dtype='uint8')
 
@@ -436,7 +436,7 @@ def readAberdeen(doRecognition=True):
         images += [face]
 
         # Save faces as files
-        croppedFileName = os.path.join(PATH, "cropped" + f)
+        croppedFileName = os.path.join(PATH, "cropped" + shortPath)
         io.imsave(croppedFileName, face)
 
   else:
