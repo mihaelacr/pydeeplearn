@@ -343,7 +343,8 @@ def readAttData():
   return np.array(images)
 
 def readAndCrop(path, extension, doRecognition, isColoured=False):
-  pathForCropped = os.path.join(path, "cropped")
+  dirforres = "detection-cropped"
+  pathForCropped = os.path.join(path, dirforres)
 
   if doRecognition:
     if not os.path.exists(pathForCropped):
@@ -356,6 +357,10 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
     images = []
 
     for fullPath, shortPath in imageFiles:
+      # Do not do this for already cropped images
+      if pathForCropped in fullPath:
+        continue
+
       img = io.imread(fullPath)
       if isColoured:
         img = color.rgb2gray(img)
@@ -365,6 +370,8 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
       if not face == None:
         # Only do the resizing once you are done with the cropping of the faces
         face = resize(face, SMALL_SIZE)
+        # Check that you are always saving them in the right format
+        assert face.min >=0 and face.max <=1
         images += [face.reshape(-1)]
 
         # Save faces as files
