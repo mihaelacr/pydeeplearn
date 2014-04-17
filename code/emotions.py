@@ -396,6 +396,8 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
 
     for f in imageFiles:
       img = io.imread(f)
+      if not img.min() >=0 and img.max()<=1.000008:
+        img = img / 255
       images += [img.reshape(-1)]
 
   print len(images)
