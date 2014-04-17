@@ -215,7 +215,7 @@ class RBM(object):
     biasHidUpdate += batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
     updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
-    updates.append((batchTrainer.oldDHid, meanHid))
+    updates.append((batchTrainer.oldMeanHid, meanHid))
 
     # Add the updates required for the theano random generator
     updates += batchTrainer.updates.items()
