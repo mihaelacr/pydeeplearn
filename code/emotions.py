@@ -384,17 +384,17 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
   print len(images)
   return np.array(images)
 
-def readJaffe(doRecognition=True):
+def readJaffe(doRecognition=False):
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
   return readAndCrop(PATH , "tiff", doRecognition, isColoured=False)
 
-def readNottingham(doRecognition=True):
+def readNottingham(doRecognition=False):
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
   return readAndCrop(PATH, "gif", doRecognition, isColoured=False)
 
-def readAberdeen(doRecognition=True):
+def readAberdeen(doRecognition=False):
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
   return readAndCrop(PATH, "jpg", doRecognition, isColoured=True)
