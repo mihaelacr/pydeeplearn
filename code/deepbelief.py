@@ -399,8 +399,8 @@ class DBN(object):
 
     validationErrors = []
 
-    while epoch < maxEpochs and count < 5:
-    # for epoch in xrange(100):
+    # while epoch < maxEpochs and count < 5:
+    for epoch in xrange(200):
       print "epoch " + str(epoch)
 
       if epoch < 5:

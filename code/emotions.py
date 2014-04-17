@@ -384,6 +384,8 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
   print len(images)
   return np.array(images)
 
+# This needs some thought: remove the cropped folder from path?
+
 def readJaffe(doRecognition=False):
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
