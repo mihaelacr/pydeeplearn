@@ -192,30 +192,30 @@ class RBM(object):
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
     delta = positiveDifference - negativeDifference
-    meanW = 0.9 * bathchTrained.oldMeanW + 0.1 * delta ** 2
+    meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
 
     wUpdate = momentum * batchTrainer.oldDParams[0]
     wUpdate += batchLearningRate * delta / T.sqrt(meanW + 1e-8)
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDParams[0], wUpdate))
-    updates.append((bathchTrained.oldMeanW, meanW))
+    updates.append((batchTrainer.oldMeanW, meanW))
 
     visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
-    meanVis = 0.9 * bathchTrained.oldMeanVis + 0.1 * visibleBiasDiff ** 2
+    meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
     biasVisUpdate = momentum * batchTrainer.oldDParams[1]
     biasVisUpdate += batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
     updates.append((batchTrainer.oldDParams[1], biasVisUpdate))
-    updates.append((bathchTrained.oldMeanVis, meanVis))
+    updates.append((batchTrainer.oldMeanVis, meanVis))
 
     hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
-    meanHid = 0.9 * bathchTrained.oldDHid + 0.1 * hiddenBiasDiff ** 2
+    meanHid = 0.9 * batchTrainer.oldDHid + 0.1 * hiddenBiasDiff ** 2
     biasHidUpdate = momentum * batchTrainer.oldDParams[2]
     biasHidUpdate += batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
     updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
-    updates.append((bathchTrained.oldDHid, meanHid))
+    updates.append((batchTrainer.oldDHid, meanHid))
 
     # Add the updates required for the theano random generator
     updates += batchTrainer.updates.items()
