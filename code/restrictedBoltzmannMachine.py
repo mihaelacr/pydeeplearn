@@ -201,7 +201,7 @@ class RBM(object):
     updates.append((batchTrainer.oldDParams[0], wUpdate))
     updates.append((batchTrainer.oldMeanW, meanW))
 
-    visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
+    visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
     meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
     biasVisUpdate = momentum * batchTrainer.oldDParams[1]
     biasVisUpdate += batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
