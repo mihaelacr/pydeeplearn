@@ -364,6 +364,7 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
       if pathForCropped in fullPath:
         continue
 
+      print fullPath
       img = io.imread(fullPath)
       if isColoured:
         img = color.rgb2gray(img)
