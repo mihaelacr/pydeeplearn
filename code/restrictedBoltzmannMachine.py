@@ -140,32 +140,7 @@ class RBM(object):
                                        hiddenDropout=0.5,
                                        cdSteps=1)
 
-    updates = []
-    # The theano people do not need this because they use gradient
-    # I wonder how that works
-    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hidden)
-    negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
-                               batchTrainer.hiddenReconstruction)
-    wUpdate = momentum * batchTrainer.oldDParams[0] + batchLearningRate * (positiveDifference - negativeDifference)
-    updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
-    updates.append((batchTrainer.oldDParams[0], wUpdate))
-
-    visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
-    biasVisUpdate = momentum * batchTrainer.oldDParams[1] + batchLearningRate * visibleBiasDiff
-    updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
-    updates.append((batchTrainer.oldDParams[1], biasVisUpdate))
-
-
-    hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
-    biasHidUpdate = momentum * batchTrainer.oldDParams[2] + batchLearningRate * hiddenBiasDiff
-    updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
-    updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
-
-
-    # Add the updates required for the theano random generator
-    updates += batchTrainer.updates.items()
-
-    updates.append((batchTrainer.cdSteps, cdSteps))
+    updates = buildUpdates(batchTrainer, momentum, batchLearningRate)
 
     train_function = theano.function(
       inputs=[miniBatchIndex, momentum, cdSteps],
@@ -182,7 +157,7 @@ class RBM(object):
         momentum = np.float32(0.5)
         step = 1
       else:
-        momentum = np.float32(0.95)
+        momentum = np.float32(0.98)
         step = 3
 
       train_function(miniBatchIndex, momentum, step)
@@ -199,6 +174,35 @@ class RBM(object):
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible
     assert self.biases[1].shape[0] == self.nrHidden
+
+  def buildUpdates(batchTrainer, momentum, batchLearningRate):
+    updates = []
+    # The theano people do not need this because they use gradient
+    # I wonder how that works
+    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hidden)
+    negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
+                               batchTrainer.hiddenReconstruction)
+    wUpdate = momentum * batchTrainer.oldDParams[0] + batchLearningRate * (positiveDifference - negativeDifference)
+    updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
+    updates.append((batchTrainer.oldDParams[0], wUpdate))
+
+    visibleBiasDiff = T.sum(x - batchTrainer.visible, axis=0)
+    biasVisUpdate = momentum * batchTrainer.oldDParams[1] + batchLearningRate * visibleBiasDiff
+    updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
+    updates.append((batchTrainer.oldDParams[1], biasVisUpdate))
+
+    hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
+    biasHidUpdate = momentum * batchTrainer.oldDParams[2] + batchLearningRate * hiddenBiasDiff
+    updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
+    updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
+
+    # Add the updates required for the theano random generator
+    updates += batchTrainer.updates.items()
+
+    updates.append((batchTrainer.cdSteps, cdSteps))
+
+    return updates
+
 
   # TODO: move this to GPU as well?
   def hiddenRepresentation(self, dataInstances):
