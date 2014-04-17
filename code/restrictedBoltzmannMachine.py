@@ -147,7 +147,7 @@ class RBM(object):
                                        hiddenDropout=0.5,
                                        cdSteps=1)
 
-    updates = self.buildUpdates(batchTrainer, momentum, batchLearningRate)
+    updates = self.buildUpdates(batchTrainer, momentum, batchLearningRate, cdSteps)
 
     train_function = theano.function(
       inputs=[miniBatchIndex, momentum, cdSteps],
@@ -184,7 +184,7 @@ class RBM(object):
 
   # So far this does not have nesterov momentum
   # DO cv for this and add nesterov option as well
-  def buildUpdates(self, batchTrainer, momentum, batchLearningRate):
+  def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
     updates = []
     # The theano people do not need this because they use gradient
     # I wonder how that works
