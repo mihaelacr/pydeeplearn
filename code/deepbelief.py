@@ -6,6 +6,8 @@ from theano import tensor as T
 from theano.ifelse import ifelse as theanoifelse
 from theano.tensor.shared_randomstreams import RandomStreams
 
+import matplotlib.pyplot as plt
+
 theanoFloat  = theano.config.floatX
 
 """In all the above topLayer does not mean the top most layer, but rather the
@@ -395,6 +397,7 @@ class DBN(object):
 
     #   epoch += 1
 
+    validationErrors = []
 
     while epoch < maxEpochs and count < 5:
     # for epoch in xrange(100):
@@ -409,6 +412,7 @@ class DBN(object):
         trainModel(batchNr, momentum)
 
       meanValidation = np.mean(validate_model(), axis=0)
+      validationErrors += [meanValidation]
 
       if meanValidation > lastValidationError:
           count +=1
@@ -418,6 +422,8 @@ class DBN(object):
 
       epoch +=1
 
+    plt.plot(validationErrors)
+    plt.show()
     # Set up the weights in the dbn object
     for i in xrange(len(self.weights)):
       self.weights[i] = batchTrainer.weights[i].get_value()
