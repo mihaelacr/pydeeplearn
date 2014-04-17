@@ -380,7 +380,7 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
         print "face.max"
         print face.max()
 
-        assert face.min >=0 and face.max <=1
+        assert face.min() >=0 and face.max() <=1
         images += [face.reshape(-1)]
 
         # Save faces as files
