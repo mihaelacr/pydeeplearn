@@ -374,6 +374,12 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
         # Only do the resizing once you are done with the cropping of the faces
         face = resize(face, SMALL_SIZE)
         # Check that you are always saving them in the right format
+        print "face.min"
+        print face.min
+
+        print "face.max"
+        print face.max
+
         assert face.min >=0 and face.max <=1
         images += [face.reshape(-1)]
 
