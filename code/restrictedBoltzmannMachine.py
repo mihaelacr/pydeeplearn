@@ -210,7 +210,7 @@ class RBM(object):
     updates.append((batchTrainer.oldMeanVis, meanVis))
 
     hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
-    meanHid = 0.9 * batchTrainer.oldDHid + 0.1 * hiddenBiasDiff ** 2
+    meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
     biasHidUpdate = momentum * batchTrainer.oldDParams[2]
     biasHidUpdate += batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
