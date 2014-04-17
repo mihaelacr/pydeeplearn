@@ -47,6 +47,9 @@ parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=Fal
                     help=("if true, rmsprop is used when training the deep belief net."))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, do cross validation"))
+parser.add_argument('--facedetection', dest='facedetection',action='store_true', default=False,
+                    help=("if true, do face detection"))
+
 
 # DEBUG mode?
 parser.add_argument('--debug', dest='debug',action='store_false', default=False,
@@ -393,20 +396,20 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
 
 # This needs some thought: remove the cropped folder from path?
 
-def readJaffe(doRecognition=False):
+def readJaffe():
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
-  return readAndCrop(PATH , "tiff", doRecognition, isColoured=False)
+  return readAndCrop(PATH , "tiff", args.facedetection, isColoured=False)
 
-def readNottingham(doRecognition=False):
+def readNottingham():
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
-  return readAndCrop(PATH, "gif", doRecognition, isColoured=False)
+  return readAndCrop(PATH, "gif", args.facedetection, isColoured=False)
 
-def readAberdeen(doRecognition=False):
+def readAberdeen():
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
-  return readAndCrop(PATH, "jpg", doRecognition, isColoured=True)
+  return readAndCrop(PATH, "jpg", args.facedetection, isColoured=True)
 
 def main():
   # deepBeliefKanade()
