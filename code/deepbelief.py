@@ -403,10 +403,12 @@ class DBN(object):
     for epoch in xrange(5000):
       print "epoch " + str(epoch)
 
-      if epoch < 5:
-        momentum = np.float32(0.5)
-      else:
-        momentum = np.float32(0.98)
+      momentum = min(np.float32(0.5) + epoch * np.float32(0.01),
+                     np.float32(0.99))
+      # if epoch < 5:
+      #   momentum = np.float32(0.5)
+      # else:
+      #   momentum = np.float32(0.98)
 
       for batchNr in xrange(nrMiniBatches):
         trainModel(batchNr, momentum)
