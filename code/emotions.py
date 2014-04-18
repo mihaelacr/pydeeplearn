@@ -138,7 +138,7 @@ def deepBeliefKanadeCV(big=False):
   # bestProbs
   # 0.3703703703
   # TODO: try boosting for CV in order to increase the number of folds
-  params = [15, 20, 25, 30, 40]
+  params = [5, 10, 15]
 
   unsupervisedData = buildUnsupervisedDataSet()
 
