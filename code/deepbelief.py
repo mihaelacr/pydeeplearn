@@ -463,7 +463,7 @@ class DBN(object):
       if self.normConstraint is not None and isWeight:
         norms = SquaredElementWiseNorm(newParam)
         rescaled = norms > self.normConstraint
-        factors = T.ones(norms.shape, dtype=theanoFloat) / norms * np.sqrt(self.normConstraint, dtype='float32') - 1.0
+        factors = T.ones(norms.shape, dtype=theanoFloat) / T.sqrt(norms) * np.sqrt(self.normConstraint, dtype='float32') - 1.0
         replaceNewParam = (factors * rescaled) * newParam
         replaceNewParam += newParam
         newParam = replaceNewParam
@@ -530,4 +530,4 @@ class DBN(object):
 
 # Element wise norm of the columns of a matrix
 def SquaredElementWiseNorm(x):
-    return T.sqrt(T.sum(T.sqr(x), axis=0))
+  return T.sum(T.sqr(x), axis=0)
