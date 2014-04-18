@@ -147,7 +147,7 @@ def deepBeliefKanadeCV(big=False, folds=None):
   # bestProbs
   # 0.3703703703
   # TODO: try boosting for CV in order to increase the number of folds
-  params = [0.1, 0.01, 0.001, 0.0001, 0.00001]
+  params = [15, 20, 25, 30, 40]
   fold = 0
   for train, test in kf:
 
@@ -157,11 +157,12 @@ def deepBeliefKanadeCV(big=False, folds=None):
     # TODO: this might require more thought
     net = db.DBN(5, [1200, 1000, 1000, 1000, 7],
                unsupervisedLearningRate=0.01,
-               supervisedLearningRate=params[fold],
+               supervisedLearningRate=0.001,
                nesterovMomentum=args.nesterov,
                rmsprop=args.rmsprop,
                hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
-               rbmVisibleDropout=1)
+               rbmVisibleDropout=1,
+               normConstraint=params[i])
 
     net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
 
@@ -220,6 +221,7 @@ def deepBeliefKanade(big=False):
   # TODO: this might require more thought
   net = db.DBN(5, [1200, 1000, 1000, 1000, 7],
              unsupervisedLearningRate=0.01,
+             # is this not a bad learning rate?
              supervisedLearningRate=0.001,
              nesterovMomentum=args.nesterov,
              rmsprop=args.rmsprop,
