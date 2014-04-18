@@ -125,29 +125,27 @@ def rbmEmotions(big=False, reconstructRandom=False):
 """
   Arguments:
     big: should the big or small images be used?
-    folds: which folds should be used (1,..5) (a list). If None is passed all
-    folds are used
 """
-def deepBeliefKanadeCV(big=False, folds=None):
-  data, labels = readKanade(big, folds)
+def deepBeliefKanadeCV(big=False):
+  data, labels = readKanade(big)
 
   print "data.shape"
   print data.shape
   print "labels.shape"
   print labels.shape
-
-  unsupervisedData = buildUnsupervisedDataSet()
-
-  kf = cross_validation.KFold(n=len(data), k=len(folds))
-  bestCorrect = 0
-  bestProbs = 0
-
   # bestParam
   # 0.001
   # bestProbs
   # 0.3703703703
   # TODO: try boosting for CV in order to increase the number of folds
   params = [15, 20, 25, 30, 40]
+
+  unsupervisedData = buildUnsupervisedDataSet()
+
+  kf = cross_validation.KFold(n=len(data), k=len(params))
+  bestCorrect = 0
+  bestProbs = 0
+
   fold = 0
   for train, test in kf:
 
