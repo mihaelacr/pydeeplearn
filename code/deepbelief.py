@@ -530,4 +530,4 @@ class DBN(object):
 
 # Element wise norm of the columns of a matrix
 def SquaredElementWiseNorm(x):
-    return T.sum(T.sqr(x), axis=0)
+    return T.sqrt(T.sum(T.sqr(x), axis=0))
