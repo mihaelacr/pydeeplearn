@@ -159,6 +159,7 @@ def cvMNIST():
   params = [0.05, 0.01, 0.1]
   for i in xrange(nrFolds):
     # Train the net
+    # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                   supervisedLearningRate=params[i],
                   nesterovMomentum=args.nesterov,
@@ -210,9 +211,8 @@ def deepbeliefMNIST():
   vectorLabels = labelsToVectors(trainLabels, 10)
 
   if args.train:
-    # net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
-    # net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
-
+    # Try 1200, 1200, 1200
+    # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                  unsupervisedLearningRate=0.01,
                  supervisedLearningRate=0.05,
@@ -221,14 +221,6 @@ def deepbeliefMNIST():
                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                  rbmVisibleDropout=1,
                  preTrainEpochs=args.preTrainEpochs)
-    # net = db.DBN(5, [784, 500, 500, 2000, 10],
-    #              unsupervisedLearningRate=0.01,
-    #              supervisedLearningRate=0.05,
-    #              nesterovMomentum=args.nesterov,
-    #              rmsprop=args.rmsprop,
-    #              hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
-    #              rbmVisibleDropout=1)
-    # TODO: think about what the network should do for 2 layers
     net.train(trainingScaledVectors, vectorLabels)
   else:
     # Take the saved network and use that for reconstructions

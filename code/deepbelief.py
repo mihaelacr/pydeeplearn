@@ -92,11 +92,6 @@ class MiniBatchTrainer(object):
     dropout_mask = self.theano_rng.binomial(n=1, p=visibleDropout,
                                             size=self.input.shape,
                                             dtype=theanoFloat)
-    # Optimization: only update the mask when we actually sample
-    # dropout_mask.rng.default_update =\
-    #         theanoifelse(T.lt(visibleDropout, 1.0),
-    #                       dropout_mask.rng.default_update,
-    #                       dropout_mask.rng)
 
     currentLayerValues = self.input * dropout_mask
 
@@ -113,11 +108,6 @@ class MiniBatchTrainer(object):
       dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
-        # Optimization: only update the mask when we actually sample
-        # dropout_mask.rng.default_update =\
-        #     theanoifelse(T.lt(hiddenDropout, 1.0),
-        #                   dropout_mask.rng.default_update,
-        #                   dropout_mask.rng)
       currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
 
     # Last layer operations
