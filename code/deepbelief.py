@@ -147,7 +147,8 @@ class DBN(object):
                 rbmHiddenDropout=0.5,
                 visibleDropout=0.8,
                 rbmVisibleDropout=1,
-                preTrainEpochs=1):
+                preTrainEpochs=1,
+                normConstraint=None):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
 
@@ -162,6 +163,7 @@ class DBN(object):
     self.nesterovMomentum = nesterovMomentum
     self.rmsprop = rmsprop
     self.preTrainEpochs = preTrainEpochs
+    self.normConstraint = normConstraint
 
   """
     Choose a percentage (percentValidation) of the data given to be
@@ -206,7 +208,6 @@ class DBN(object):
       currentData = np.vstack((currentData, unsupervisedData))
 
     print "pre-training with a data set of size", len(currentData)
-
 
     for i in xrange(nrRbms):
       # If the network can be initialized from the previous one,
@@ -301,7 +302,6 @@ class DBN(object):
 
     # the error is the sum of the errors in the individual cases
     error = T.sum(batchTrainer.cost(y))
-    deltaParams = T.grad(error, batchTrainer.params)
 
     if DEBUG:
       mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
@@ -311,7 +311,7 @@ class DBN(object):
 
     if self.nesterovMomentum:
       preDeltaUpdates, updates = self.buildUpdatesNesterov(batchTrainer, momentum,
-                    batchLearningRate, deltaParams)
+                    batchLearningRate, error)
       momentum_step = theano.function(
           inputs=[momentum],
           outputs=[],
@@ -428,7 +428,8 @@ class DBN(object):
 
 
   def buildUpdatesNesterov(self, batchTrainer, momentum,
-                  batchLearningRate, deltaParams):
+                  batchLearningRate, error):
+
     preDeltaUpdates = []
     for param, oldUpdate in zip(batchTrainer.params, batchTrainer.oldUpdates):
       newParam = param + momentum * oldUpdate
@@ -436,13 +437,15 @@ class DBN(object):
 
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
+    deltaParams = T.grad(error, batchTrainer.params)
     updates = []
     parametersTuples = zip(batchTrainer.params,
                            deltaParams,
                            batchTrainer.oldUpdates,
-                           batchTrainer.oldMeanSquare)
+                           batchTrainer.oldMeanSquare,
+                           batchTrainer.isWeight)
 
-    for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
+    for param, delta, oldUpdate, oldMeanSquare, isWeight in parametersTuples:
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
         paramUpdate = - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
@@ -451,13 +454,28 @@ class DBN(object):
         paramUpdate = - batchLearningRate * delta
 
       newParam = param + paramUpdate
+
+      if self.normConstraint is not None and isWeight:
+        norms = SquaredElementWiseNorm(newParam)
+        factors = T.ones(norms.shape)
+        trueFalseVec = norms < self.normConstraint
+        factors[trueFalseVec] = 1.0 / norms[trueFalseVec] * self.normConstraint
+        # Will it not get confused when they are equal hidden and visible?
+        newParam *= factors
+
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
+
+    # replace the 0s with 1/ theirnorm * normConstraint
+    # and then multiply the resulting weight with this array
+    # elementwise
 
     return preDeltaUpdates, updates
 
   def buildUpdatesSimpleMomentum(self, batchTrainer, momentum,
-                  batchLearningRate, deltaParams):
+                  batchLearningRate, error):
+
+    deltaParams = T.grad(error, batchTrainer.params)
     updates = []
     parametersTuples = zip(batchTrainer.params,
                            deltaParams,
@@ -503,3 +521,8 @@ class DBN(object):
     lastLayers = classify()
 
     return lastLayers, np.argmax(lastLayers, axis=1)
+
+
+# Element wise norm of the columns of a matrix
+def SquaredElementWiseNorm(x):
+    return T.sum(T.sqr(x), axis=0)
