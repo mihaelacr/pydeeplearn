@@ -46,6 +46,7 @@ class MiniBatchTrainer(object):
     # Do not set more than this, these will be used for differentiation in the
     # gradient
     self.params = self.weights + self.biases
+    self.isWeight = [True] * nrLayers + [False] * nrLayers
 
     # Required for momentum
     # The updates that were performed in the last batch
