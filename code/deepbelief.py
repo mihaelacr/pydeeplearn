@@ -458,11 +458,11 @@ class DBN(object):
 
       if self.normConstraint is not None and isWeight:
         norms = SquaredElementWiseNorm(newParam)
-        factors = T.ones(norms.shape)
-        trueFalseVec = norms < self.normConstraint
-        factors[trueFalseVec] = 1.0 / norms[trueFalseVec] * self.normConstraint
-        # Will it not get confused when they are equal hidden and visible?
-        newParam *= factors
+        rescaled = norms > self.normConstraint
+        factors = T.ones(norms.shape, dtype=theanoFloat) / norms[trueFalseVec] * self.normConstraint - 1.0
+        replaceNewParam = (factors * rescaled) * newParam
+        replaceNewParam += newParam
+        newParam = replaceNewParam
 
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
