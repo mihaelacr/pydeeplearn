@@ -260,7 +260,7 @@ class DBN(object):
 
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels,
-                  sharedValidationData, sharedValidationLabels)
+                  sharedValidationData, sharedValidationLabels, maxEpochs)
 
     # Get the classification weights
     self.classifcationWeights = map(lambda x: x * self.hiddenDropout, self.weights)
