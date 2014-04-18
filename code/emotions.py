@@ -224,7 +224,8 @@ def deepBeliefKanade(big=False):
              nesterovMomentum=args.nesterov,
              rmsprop=args.rmsprop,
              hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
-             rbmVisibleDropout=1)
+             rbmVisibleDropout=1,
+             normConstraint=15)
 
   unsupervisedData = buildUnsupervisedDataSet()
 
