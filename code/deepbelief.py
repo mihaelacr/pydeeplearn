@@ -403,8 +403,8 @@ class DBN(object):
     for epoch in xrange(5000):
       print "epoch " + str(epoch)
 
-      momentum = min(np.float32(0.5) + epoch * np.float32(0.01),
-                     np.float32(0.99))
+      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
+                     np.float32(0.99)))
       # if epoch < 5:
       #   momentum = np.float32(0.5)
       # else:
