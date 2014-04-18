@@ -463,7 +463,7 @@ class DBN(object):
       if self.normConstraint is not None and isWeight:
         norms = SquaredElementWiseNorm(newParam)
         rescaled = norms > self.normConstraint
-        factors = T.ones(norms.shape, dtype=theanoFloat) / norms * self.normConstraint - 1.0
+        factors = T.ones(norms.shape, dtype=theanoFloat) / norms * np.sqrt(self.normConstraint) - 1.0
         replaceNewParam = (factors * rescaled) * newParam
         replaceNewParam += newParam
         newParam = replaceNewParam
