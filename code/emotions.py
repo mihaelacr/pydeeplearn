@@ -160,7 +160,7 @@ def deepBeliefKanadeCV(big=False):
                rmsprop=args.rmsprop,
                hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                rbmVisibleDropout=1,
-               normConstraint=params[i])
+               normConstraint=params[fold])
 
     net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
 
