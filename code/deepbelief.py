@@ -183,7 +183,7 @@ class DBN(object):
     validationLabels = labels[validationIndices, :]
 
     self.trainWithGivenValidationSet(trainingData, trainingLabels,
-                                     validationData, validationLabels,
+                                     validationData, validationLabels, maxEpochs,
                                      unsupervisedData)
 
   def trainWithGivenValidationSet(self, data, labels,
