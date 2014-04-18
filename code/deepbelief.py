@@ -391,7 +391,7 @@ class DBN(object):
     validationErrors = []
 
     # while epoch < maxEpochs and count < 5:
-    for epoch in xrange(5000):
+    for epoch in xrange(200):
       print "epoch " + str(epoch)
 
       momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
