@@ -162,7 +162,7 @@ def deepBeliefKanadeCV(big=False):
                rbmVisibleDropout=1,
                normConstraint=params[fold])
 
-    net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
+    net.train(trainData, trainLabels, maxEpochs=10000, unsupervisedData=unsupervisedData)
 
     probs, predicted = net.classify(data[test])
 
@@ -229,7 +229,7 @@ def deepBeliefKanade(big=False):
   unsupervisedData = buildUnsupervisedDataSet()
 
 
-  net.train(trainData, trainLabels, unsupervisedData=unsupervisedData)
+  net.train(trainData, trainLabels, maxEpochs=10000, unsupervisedData=unsupervisedData)
 
   probs, predicted = net.classify(data[test])
 

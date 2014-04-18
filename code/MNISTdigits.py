@@ -170,7 +170,8 @@ def cvMNIST():
                   preTrainEpochs=args.preTrainEpochs,
                   normConstraint=params[i])
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
-    net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices])
+    net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
+              maxEpochs=1000)
 
     proabilities, predicted = net.classify(testingScaledVectors)
     # Test it with the testing data and measure the missclassification error
@@ -223,7 +224,7 @@ def deepbeliefMNIST():
                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                  rbmVisibleDropout=1,
                  preTrainEpochs=args.preTrainEpochs)
-    net.train(trainingScaledVectors, vectorLabels)
+    net.train(trainingScaledVectors, vectorLabels, maxEpochs=1000)
   else:
     # Take the saved network and use that for reconstructions
     f = open(args.netFile, "rb")

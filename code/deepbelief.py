@@ -170,7 +170,7 @@ class DBN(object):
     Choose a percentage (percentValidation) of the data given to be
     validation data, used for early stopping of the model.
   """
-  def train(self, data, labels, percentValidation=0.1,
+  def train(self, data, labels, maxEpochs, percentValidation=0.1,
             unsupervisedData=None):
     nrInstances = len(data)
     validationIndices = np.random.choice(xrange(nrInstances),
@@ -188,6 +188,7 @@ class DBN(object):
 
   def trainWithGivenValidationSet(self, data, labels,
                                   validationData, validationLabels,
+                                  maxEpochs,
                                   unsupervisedData=None):
     nrRbms = self.nrLayers - 2
 
@@ -276,8 +277,7 @@ class DBN(object):
       miniBatch: The number of instances to be used in a miniBatch
       epochs: The number of epochs to use for fine tuning
   """
-  def fineTune(self, data, labels, validationData, validationLabels,
-               maxEpochs=1000):
+  def fineTune(self, data, labels, validationData, validationLabels, maxEpochs):
     print "supervisedLearningRate"
     print self.supervisedLearningRate
     batchLearningRate = self.supervisedLearningRate / self.miniBatchSize
@@ -391,7 +391,7 @@ class DBN(object):
     validationErrors = []
 
     # while epoch < maxEpochs and count < 5:
-    for epoch in xrange(200):
+    for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
 
       momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
