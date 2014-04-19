@@ -164,7 +164,7 @@ class RBM(object):
         )
 
       def train_function(miniBatchIndex, momentum, cdSteps):
-        momentum_function(miniBatchIndex, momentum)
+        momentum_function(momentum)
         after_momentum_updates(miniBatchIndex, cdSteps)
 
     else:
