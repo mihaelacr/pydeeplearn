@@ -155,7 +155,7 @@ class RBM(object):
         updates=preDeltaUpdates
         )
       after_momentum_updates = theano.function(
-        inputs=[miniBatchIndex, cdSteps],
+        inputs=[miniBatchIndex, cdSteps, momentum],
         outputs=[],
         updates=updates,
         givens={
@@ -165,7 +165,7 @@ class RBM(object):
 
       def train_function(miniBatchIndex, momentum, cdSteps):
         momentum_function(momentum)
-        after_momentum_updates(miniBatchIndex, cdSteps)
+        after_momentum_updates(miniBatchIndex, cdSteps, momentum)
 
     else:
       updates = self.buildUpdates(batchTrainer, momentum, batchLearningRate, cdSteps)
