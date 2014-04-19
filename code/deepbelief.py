@@ -337,7 +337,7 @@ class DBN(object):
     else:
 
       updates = self.buildUpdatesSimpleMomentum(batchTrainer, momentum,
-                    batchLearningRate, deltaParams)
+                    batchLearningRate, error)
       trainModel = theano.function(
             inputs=[miniBatchIndex, momentum],
             outputs=error,
