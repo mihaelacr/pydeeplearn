@@ -147,7 +147,7 @@ class RBM(object):
                                        cdSteps=1)
 
     if self.nesterov:
-      preDeltaUpdates, updates = buildNesterovUpdates(batchTrainer,
+      preDeltaUpdates, updates = self.buildNesterovUpdates(batchTrainer,
         momentum, batchLearningRate, cdSteps)
       momentum_function = theano.function(
         inputs=[miniBatchIndex, momentum],
