@@ -197,11 +197,6 @@ def getClassificationError(predicted, actual):
   return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
 
 def deepbeliefMNIST():
-  import random
-  print "FIXING RANDOMNESS"
-  random.seed(6)
-  np.random.seed(6)
-
   training = args.trainSize
   testing = args.testSize
 
