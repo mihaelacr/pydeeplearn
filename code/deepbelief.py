@@ -346,7 +346,8 @@ class DBN(object):
                 x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
                 y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
 
-    theano.printing.pydotprint(trainModel)
+      theano.printing.pydotprint(trainModel)
+
     # Let's create the function that validates the model!
     validate_model = theano.function(inputs=[],
       outputs=batchTrainer.cost(y),
