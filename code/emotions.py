@@ -51,6 +51,9 @@ parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, do cross validation"))
 parser.add_argument('--facedetection', dest='facedetection',action='store_true', default=False,
                     help=("if true, do face detection"))
+parser.add_argument('--maxEpochs', type=int, default=1000,
+                    help='the maximum number of supervised epochs')
+
 
 
 # DEBUG mode?
@@ -165,7 +168,7 @@ def deepBeliefKanadeCV(big=False):
                rbmVisibleDropout=1,
                normConstraint=params[fold])
 
-    net.train(trainData, trainLabels, maxEpochs=10000, unsupervisedData=unsupervisedData)
+    net.train(trainData, trainLabels, maxEpochs=args.maxEpochs)
 
     probs, predicted = net.classify(data[test])
 
@@ -234,7 +237,7 @@ def deepBeliefKanade(big=False):
   unsupervisedData = buildUnsupervisedDataSet()
 
 
-  net.train(trainData, trainLabels, maxEpochs=10000, unsupervisedData=unsupervisedData)
+  net.train(trainData, trainLabels, maxEpochs=args.maxEpochs, unsupervisedData=unsupervisedData)
 
   probs, predicted = net.classify(data[test])
 
