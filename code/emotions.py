@@ -160,7 +160,7 @@ def deepBeliefKanadeCV(big=False):
     # TODO: this might require more thought
     net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
                unsupervisedLearningRate=0.01,
-               supervisedLearningRate=0.001,
+               supervisedLearningRate=0.01,
                nesterovMomentum=args.nesterov,
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
