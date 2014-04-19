@@ -28,6 +28,8 @@ parser.add_argument('--db', dest='db',action='store_true', default=False,
                           "data is run"))
 parser.add_argument('--nesterov', dest='nesterov',action='store_true', default=False,
                     help=("if true, the deep belief net is trained using nesterov momentum"))
+parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
+                    help=("if true, rbms are trained using nesterov momentum"))
 parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=False,
                     help=("if true, rmsprop is used when training the deep belief net."))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
@@ -67,7 +69,7 @@ def rbmMain(reconstructRandom=True):
     nrVisible = len(trainingScaledVectors[0])
     nrHidden = 500
     # use 1 dropout to test the rbm for now
-    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1)
+    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1, nesterov=args.rbmnesterov)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
   else:
@@ -164,6 +166,7 @@ def cvMNIST():
                   unsupervisedLearningRate=0.01,
                   supervisedLearningRate=0.05,
                   nesterovMomentum=args.nesterov,
+                  rbmNesterovMomentum=args.rbmnesterov,
                   rmsprop=args.rmsprop,
                   hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                   rbmVisibleDropout=1,
@@ -220,6 +223,7 @@ def deepbeliefMNIST():
                  unsupervisedLearningRate=0.01,
                  supervisedLearningRate=0.05,
                  nesterovMomentum=args.nesterov,
+                 rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                  rbmVisibleDropout=1,

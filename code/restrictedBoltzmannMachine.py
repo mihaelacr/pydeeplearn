@@ -21,8 +21,6 @@ EXPENSIVE_CHECKS_ON = False
 
 class RBMMiniBatchTrainer(object):
 
-  # TODO: i need to see how I do it with the sampling, because
-  # we do not sample all the time to make them binary
   def __init__(self, input, initialWeights, initialBiases,
              visibleDropout, hiddenDropout, cdSteps):
 
@@ -100,7 +98,7 @@ class RBMMiniBatchTrainer(object):
 class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, learningRate, hiddenDropout,
-                visibleDropout, initialWeights=None, initialBiases=None):
+                visibleDropout, nesterov=True, initialWeights=None, initialBiases=None):
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
     # dropout = 1 means no dropout, keep all the weights
@@ -109,6 +107,7 @@ class RBM(object):
     self.nrVisible = nrVisible
     self.initialized = False
     self.learningRate = learningRate
+    self.nesterov = nesterov
     self.weights = initialWeights
     self.biases = initialBiases
 
@@ -147,15 +146,37 @@ class RBM(object):
                                        hiddenDropout=0.5,
                                        cdSteps=1)
 
-    updates = self.buildUpdates(batchTrainer, momentum, batchLearningRate, cdSteps)
+    if self.nesterov:
+      preDeltaUpdates, updates = buildNesterovUpdates(batchTrainer,
+        momentum, batchLearningRate, cdSteps)
+      momentum_function = theano.function(
+        inputs=[miniBatchIndex, momentum],
+        outputs=[],
+        updates=preDeltaUpdates
+        )
+      after_momentum_updates = theano.function(
+        inputs=[miniBatchIndex, cdSteps],
+        outputs=[],
+        updates=updates,
+        givens={
+          x: sharedData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+          }
+        )
 
-    train_function = theano.function(
-      inputs=[miniBatchIndex, momentum, cdSteps],
-      outputs=[], # TODO: output error
-      updates=updates,
-      givens={
-        x: sharedData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-        })
+      def train_function(miniBatchIndex, momentum, cdSteps):
+        momentum_function(miniBatchIndex, momentum)
+        after_momentum_updates(miniBatchIndex, cdSteps)
+
+    else:
+      updates = self.buildUpdates(batchTrainer, momentum, batchLearningRate, cdSteps)
+
+      train_function = theano.function(
+        inputs=[miniBatchIndex, momentum, cdSteps],
+        outputs=[], # TODO: output error
+        updates=updates,
+        givens={
+          x: sharedData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+          })
 
     nrMiniBatches = len(data) / miniBatchSize
 
@@ -182,8 +203,6 @@ class RBM(object):
     assert self.biases[0].shape[0] == self.nrVisible
     assert self.biases[1].shape[0] == self.nrHidden
 
-  # So far this does not have nesterov momentum
-  # DO cv for this and add nesterov option as well
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
     updates = []
     # The theano people do not need this because they use gradient
@@ -224,6 +243,53 @@ class RBM(object):
 
     return updates
 
+
+  def buildNesterovUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
+    preDeltaUpdates = []
+
+    wUpdate = momentum * batchTrainer.oldDParams[0]
+    biasVisUpdate = momentum * batchTrainer.oldDParams[1]
+    biasHidUpdate = momentum * batchTrainer.oldDParams[2]
+
+    preDeltaUpdates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
+    preDeltaUpdates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
+    preDeltaUpdates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
+
+    updates = []
+    # The theano people do not need this because they use gradient
+    # I wonder how that works
+    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hidden)
+    negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
+                               batchTrainer.hiddenReconstruction)
+    delta = positiveDifference - negativeDifference
+    meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
+
+    wUpdate = batchLearningRate * delta / T.sqrt(meanW + 1e-8)
+
+    updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
+    updates.append((batchTrainer.oldDParams[0], wUpdate))
+    updates.append((batchTrainer.oldMeanW, meanW))
+
+    visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
+    meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
+    biasVisUpdate = batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
+    updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
+    updates.append((batchTrainer.oldDParams[1], biasVisUpdate))
+    updates.append((batchTrainer.oldMeanVis, meanVis))
+
+    hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
+    meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
+    biasHidUpdate = batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
+    updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
+    updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
+    updates.append((batchTrainer.oldMeanHid, meanHid))
+
+    # Add the updates required for the theano random generator
+    updates += batchTrainer.updates.items()
+
+    updates.append((batchTrainer.cdSteps, cdSteps))
+
+    return preDeltaUpdates, updates
 
   # TODO: move this to GPU as well?
   def hiddenRepresentation(self, dataInstances):

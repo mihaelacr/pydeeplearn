@@ -26,6 +26,8 @@ import restrictedBoltzmannMachine as rbm
 from common import *
 
 parser = argparse.ArgumentParser(description='digit recognition')
+parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
+                    help=("if true, rbms are trained using nesterov momentum"))
 parser.add_argument('--save',dest='save',action='store_true', default=False,
                     help="if true, the network is serialized and saved")
 parser.add_argument('--train',dest='train',action='store_true', default=False,
@@ -79,7 +81,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
     nrVisible = len(data[0])
     nrHidden = 800
     # use 1 dropout to test the rbm for now
-    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1)
+    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1, nesterov=args.rbmnesterov)
     net.train(trainData)
     t = visualizeWeights(net.weights.T, SMALL_SIZE, (10,10))
   else:
@@ -157,6 +159,7 @@ def deepBeliefKanadeCV(big=False):
                unsupervisedLearningRate=0.01,
                supervisedLearningRate=0.001,
                nesterovMomentum=args.nesterov,
+               rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                rbmVisibleDropout=1,
@@ -222,6 +225,7 @@ def deepBeliefKanade(big=False):
              # is this not a bad learning rate?
              supervisedLearningRate=0.001,
              nesterovMomentum=args.nesterov,
+             rbmNesterovMomentum=args.rbmnesterov,
              rmsprop=args.rmsprop,
              hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
              rbmVisibleDropout=1,

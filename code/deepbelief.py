@@ -142,6 +142,7 @@ class DBN(object):
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,
                 nesterovMomentum=True,
+                rbmNesterovMomentum=True,
                 rmsprop=True,
                 miniBatchSize=10,
                 hiddenDropout=0.5,
@@ -162,6 +163,7 @@ class DBN(object):
     self.supervisedLearningRate = supervisedLearningRate
     self.unsupervisedLearningRate = unsupervisedLearningRate
     self.nesterovMomentum = nesterovMomentum
+    self.rbmNesterovMomentum = rbmNesterovMomentum
     self.rmsprop = rmsprop
     self.preTrainEpochs = preTrainEpochs
     self.normConstraint = normConstraint
@@ -225,6 +227,7 @@ class DBN(object):
                       learningRate=self.unsupervisedLearningRate,
                       hiddenDropout=self.rbmHiddenDropout,
                       visibleDropout=self.rbmVisibleDropout,
+                      nesterov=self.rbmNesterovMomentum,
                       initialWeights=initialWeights,
                       initialBiases=initialBiases)
 
