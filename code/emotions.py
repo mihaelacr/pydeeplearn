@@ -183,7 +183,7 @@ def deepBeliefKanadeCV(big=False):
       print predicted[i]
       print "actual"
       actual = actualLabels[i]
-      print actual
+      print np.argmax(actual)
       if predicted[i] == np.argmax(actual):
         correct += 1
       else:
@@ -252,7 +252,7 @@ def deepBeliefKanade(big=False):
     print predicted[i]
     print "actual"
     actual = actualLabels[i]
-    print actual
+    print np.argmax(actual)
     if predicted[i] == np.argmax(actual):
       correct += 1
     else:
