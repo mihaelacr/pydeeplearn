@@ -243,17 +243,16 @@ class RBM(object):
 
     return updates
 
-
   def buildNesterovUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
     preDeltaUpdates = []
 
-    wUpdate = momentum * batchTrainer.oldDParams[0]
-    biasVisUpdate = momentum * batchTrainer.oldDParams[1]
-    biasHidUpdate = momentum * batchTrainer.oldDParams[2]
+    wUpdateMomentum = momentum * batchTrainer.oldDParams[0]
+    biasVisUpdateMomentum = momentum * batchTrainer.oldDParams[1]
+    biasHidUpdateMomentum = momentum * batchTrainer.oldDParams[2]
 
-    preDeltaUpdates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
-    preDeltaUpdates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
-    preDeltaUpdates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
+    preDeltaUpdates.append((batchTrainer.weights, batchTrainer.weights + wUpdateMomentum))
+    preDeltaUpdates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdateMomentum))
+    preDeltaUpdates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdateMomentum))
 
     updates = []
     # The theano people do not need this because they use gradient
@@ -266,7 +265,7 @@ class RBM(object):
     wUpdate = batchLearningRate * delta / T.sqrt(meanW + 1e-8)
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
-    updates.append((batchTrainer.oldDParams[0], wUpdate))
+    updates.append((batchTrainer.oldDParams[0], wUpdate + wUpdateMomentum))
     updates.append((batchTrainer.oldMeanW, meanW))
 
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
@@ -274,7 +273,7 @@ class RBM(object):
     biasVisUpdate = batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
 
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
-    updates.append((batchTrainer.oldDParams[1], biasVisUpdate))
+    updates.append((batchTrainer.oldDParams[1], biasVisUpdate + biasVisUpdateMomentum))
     updates.append((batchTrainer.oldMeanVis, meanVis))
 
     hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
@@ -282,7 +281,7 @@ class RBM(object):
     biasHidUpdate = batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
 
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
-    updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
+    updates.append((batchTrainer.oldDParams[2], biasHidUpdate + biasHidUpdateMomentum))
     updates.append((batchTrainer.oldMeanHid, meanHid))
 
     # Add the updates required for the theano random generator
