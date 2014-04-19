@@ -263,7 +263,6 @@ class RBM(object):
                                batchTrainer.hiddenReconstruction)
     delta = positiveDifference - negativeDifference
     meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
-
     wUpdate = batchLearningRate * delta / T.sqrt(meanW + 1e-8)
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
@@ -273,6 +272,7 @@ class RBM(object):
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
     meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
     biasVisUpdate = batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
+
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
     updates.append((batchTrainer.oldDParams[1], biasVisUpdate))
     updates.append((batchTrainer.oldMeanVis, meanVis))
@@ -280,6 +280,7 @@ class RBM(object):
     hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
     meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
     biasHidUpdate = batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
+
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
     updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
     updates.append((batchTrainer.oldMeanHid, meanHid))

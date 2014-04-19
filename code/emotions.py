@@ -143,7 +143,7 @@ def deepBeliefKanadeCV(big=False):
   # bestProbs
   # 0.3703703703
   # TODO: try boosting for CV in order to increase the number of folds
-  params = [5, 10, 15]
+  params = [0.01, 0.05, 0.015]
 
   unsupervisedData = buildUnsupervisedDataSet()
 
@@ -159,14 +159,14 @@ def deepBeliefKanadeCV(big=False):
 
     # TODO: this might require more thought
     net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
-               unsupervisedLearningRate=0.01,
+               unsupervisedLearningRate=params[fold],
                supervisedLearningRate=0.001,
                nesterovMomentum=args.nesterov,
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                rbmVisibleDropout=1,
-               normConstraint=params[fold])
+               normConstraint=15)
 
     net.train(trainData, trainLabels, maxEpochs=args.maxEpochs)
 
