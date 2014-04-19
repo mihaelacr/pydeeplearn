@@ -479,10 +479,6 @@ class DBN(object):
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate + momentumUpdate))
 
-    # replace the 0s with 1/ theirnorm * normConstraint
-    # and then multiply the resulting weight with this array
-    # elementwise
-
     return preDeltaUpdates, updates
 
   def buildUpdatesSimpleMomentum(self, batchTrainer, momentum,
