@@ -153,7 +153,7 @@ def deepBeliefKanadeCV(big=False):
     trainLabels = labels[train]
 
     # TODO: this might require more thought
-    net = db.DBN(5, [1200, 1000, 1000, 1000, 7],
+    net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
                unsupervisedLearningRate=0.01,
                supervisedLearningRate=0.001,
                nesterovMomentum=args.nesterov,
@@ -217,7 +217,7 @@ def deepBeliefKanade(big=False):
   trainLabels = labels[train]
 
   # TODO: this might require more thought
-  net = db.DBN(5, [1200, 1000, 1000, 1000, 7],
+  net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
              unsupervisedLearningRate=0.01,
              # is this not a bad learning rate?
              supervisedLearningRate=0.001,
