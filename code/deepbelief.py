@@ -493,9 +493,10 @@ class DBN(object):
     parametersTuples = zip(batchTrainer.params,
                            deltaParams,
                            batchTrainer.oldUpdates,
-                           batchTrainer.oldMeanSquare)
+                           batchTrainer.oldMeanSquare,
+                           batchTrainer.isWeight)
 
-    for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
+    for param, delta, oldUpdate, oldMeanSquare, isWeight in parametersTuples:
       paramUpdate = momentum * oldUpdate
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
@@ -505,6 +506,15 @@ class DBN(object):
         paramUpdate += - batchLearningRate * delta
 
       newParam = param + paramUpdate
+
+      if self.normConstraint is not None and isWeight:
+        norms = SquaredElementWiseNorm(newParam)
+        rescaled = norms > self.normConstraint
+        factors = T.ones(norms.shape, dtype=theanoFloat) / T.sqrt(norms) * np.sqrt(self.normConstraint, dtype='float32') - 1.0
+        replaceNewParam = (factors * rescaled) * newParam
+        replaceNewParam += newParam
+        newParam = replaceNewParam
+
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
 
