@@ -197,13 +197,10 @@ def getClassificationError(predicted, actual):
   return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
 
 def deepbeliefMNIST():
-<<<<<<< HEAD
-=======
   import random
   print "FIXING RANDOMNESS"
   random.seed(6)
   np.random.seed(6)
->>>>>>> rbmrmsprop
 
   training = args.trainSize
   testing = args.testSize
