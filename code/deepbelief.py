@@ -333,7 +333,7 @@ class DBN(object):
 
       def trainModel(miniBatchIndex, momentum):
         momentum_step(momentum)
-        return update_params(miniBatchIndex)
+        return update_params(miniBatchIndex, momentum)
     else:
 
       updates = self.buildUpdatesSimpleMomentum(batchTrainer, momentum,
