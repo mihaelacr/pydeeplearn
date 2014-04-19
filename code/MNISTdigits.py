@@ -225,7 +225,7 @@ def deepbeliefMNIST():
                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                  rbmVisibleDropout=1,
                  preTrainEpochs=args.preTrainEpochs,
-                 normConstraint=15)
+                 normConstraint=None)
     net.train(trainingScaledVectors, vectorLabels, maxEpochs=args.maxEpochs)
   else:
     # Take the saved network and use that for reconstructions
