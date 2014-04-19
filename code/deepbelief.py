@@ -323,7 +323,7 @@ class DBN(object):
           mode = mode)
 
       update_params = theano.function(
-          inputs =[miniBatchIndex],
+          inputs =[miniBatchIndex, momentum],
           outputs=error,
           updates=updates,
           givens={
@@ -439,9 +439,11 @@ class DBN(object):
                   batchLearningRate, error):
 
     preDeltaUpdates = []
+    momentumUpdates = []
     for param, oldUpdate in zip(batchTrainer.params, batchTrainer.oldUpdates):
-      newParam = param + momentum * oldUpdate
-      preDeltaUpdates.append((param, newParam))
+      momentumUpdate = momentum * oldUpdate
+      momentumUpdates.append(momentumUpdate)
+      preDeltaUpdates.append((param, param + momentumUpdate))
 
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
@@ -451,9 +453,10 @@ class DBN(object):
                            deltaParams,
                            batchTrainer.oldUpdates,
                            batchTrainer.oldMeanSquare,
+                           momentumUpdates,
                            batchTrainer.isWeight)
 
-    for param, delta, oldUpdate, oldMeanSquare, isWeight in parametersTuples:
+    for param, delta, oldUpdate, oldMeanSquare, momentumUpdate, isWeight in parametersTuples:
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
         paramUpdate = - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
@@ -472,7 +475,7 @@ class DBN(object):
         newParam = replaceNewParam
 
       updates.append((param, newParam))
-      updates.append((oldUpdate, paramUpdate))
+      updates.append((oldUpdate, paramUpdate + momentumUpdate))
 
     # replace the 0s with 1/ theirnorm * normConstraint
     # and then multiply the resulting weight with this array
