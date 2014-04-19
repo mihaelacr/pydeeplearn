@@ -1,5 +1,9 @@
 import numpy as np
+import utils
 
+def visualizeWeights(weights, imgShape, tileShape):
+  return utils.tile_raster_images(weights, imgShape,
+                                  tileShape, tile_spacing=(1, 1))
 """
 Arguments:
   vec: A numpy 1-D vector.
@@ -23,11 +27,11 @@ def imagesToVectors(images):
   return np.array(map(lambda x: x.reshape(-1), images))
 
 def sigmoid(x):
-  return 1 / (1 + np.exp(-x))
+  return 1.0 / (1.0 + np.exp(-x))
 
 def softmax(activation):
   out = np.exp(activation)
-  return out / out.sum()
+  return out / (out.sum(axis=1)[:,None])
 
 def sample(p, size):
   return np.random.uniform(size=size) <= p

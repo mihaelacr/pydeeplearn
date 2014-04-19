@@ -6,6 +6,8 @@ from theano import tensor as T
 from theano.ifelse import ifelse as theanoifelse
 from theano.tensor.shared_randomstreams import RandomStreams
 
+import matplotlib.pyplot as plt
+
 theanoFloat  = theano.config.floatX
 
 """In all the above topLayer does not mean the top most layer, but rather the
@@ -15,6 +17,8 @@ from common import *
 from debug import *
 
 DEBUG = False
+# TODO: the random stream can be put in the
+# class: maybe that is faster?
 
 class MiniBatchTrainer(object):
 
@@ -42,6 +46,7 @@ class MiniBatchTrainer(object):
     # Do not set more than this, these will be used for differentiation in the
     # gradient
     self.params = self.weights + self.biases
+    self.isWeight = [True] * nrLayers + [False] * nrLayers
 
     # Required for momentum
     # The updates that were performed in the last batch
@@ -88,15 +93,10 @@ class MiniBatchTrainer(object):
     dropout_mask = self.theano_rng.binomial(n=1, p=visibleDropout,
                                             size=self.input.shape,
                                             dtype=theanoFloat)
-    # Optimization: only update the mask when we actually sample
-    # dropout_mask.rng.default_update =\
-    #         theanoifelse(T.lt(visibleDropout, 1.0),
-    #                       dropout_mask.rng.default_update,
-    #                       dropout_mask.rng)
 
     currentLayerValues = self.input * dropout_mask
 
-    for stage in xrange(len(self.weights)):
+    for stage in xrange(len(self.weights) -1):
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
@@ -104,24 +104,22 @@ class MiniBatchTrainer(object):
       # it is important to make the classification activation functions outside
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
-      if stage != len(self.weights) -1:
-        # Use dropout: give the next layer only some of the units
+        # Use hiddenDropout: give the next layer only some of the units
         # from this layer
-        dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
+      dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
-        # Optimization: only update the mask when we actually sample
-        # dropout_mask.rng.default_update =\
-        #     theanoifelse(T.lt(hiddenDropout, 1.0),
-        #                   dropout_mask.rng.default_update,
-        #                   dropout_mask.rng)
-        currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
-      else:
-        # Do not use theano's softmax, it is numerically unstable
-        # and it causes Nans to appear
-        # currentLayerValues = T.nnet.softmax(linearSum)
-        e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
-        currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
+      currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
+
+    # Last layer operations
+    w = self.weights[nrLayers - 2]
+    b = self.biases[nrLayers - 2]
+    linearSum = T.dot(currentLayerValues, w) + b
+    # Do not use theano's softmax, it is numerically unstable
+    # and it causes Nans to appear
+    # Note that semantically this is the same
+    e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
+    currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
 
     self.output = currentLayerValues
 
@@ -139,36 +137,43 @@ class DBN(object):
         type: integer
     layerSizes: the sizes of the individual layers.
         type: list of integers of size nrLayers
-    activationFunctions: the functions that are used to transform
-        the input of a neuron into its output. The functions should be
-        vectorized (as per numpy) to be able to apply them for an entire
-        layer.
-        type: list of objects of type ActivationFunction
   """
-  def __init__(self, nrLayers, layerSizes, activationFunctions,
-                supervisedLearningRate=0.001,
-                miniBatchSize=10, dropout=0.5, rbmDropout=0.5,
-                visibleDropout=0.8, rbmVisibleDropout=1):
+  def __init__(self, nrLayers, layerSizes,
+                unsupervisedLearningRate=0.01,
+                supervisedLearningRate=0.05,
+                nesterovMomentum=True,
+                rbmNesterovMomentum=True,
+                rmsprop=True,
+                miniBatchSize=10,
+                hiddenDropout=0.5,
+                rbmHiddenDropout=0.5,
+                visibleDropout=0.8,
+                rbmVisibleDropout=1,
+                preTrainEpochs=1,
+                normConstraint=None):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
-    # Note that for the first one the activatiom function does not matter
-    # So for that one there is no need to pass in an activation function
-    self.activationFunctions = activationFunctions
 
     assert len(layerSizes) == nrLayers
-    assert len(activationFunctions) == nrLayers - 1
-    self.dropout = dropout
+    self.hiddenDropout = hiddenDropout
     self.visibleDropout = visibleDropout
-    self.rbmDropout = rbmDropout
+    self.rbmHiddenDropout = rbmHiddenDropout
     self.rbmVisibleDropout = rbmVisibleDropout
     self.miniBatchSize = miniBatchSize
     self.supervisedLearningRate = supervisedLearningRate
+    self.unsupervisedLearningRate = unsupervisedLearningRate
+    self.nesterovMomentum = nesterovMomentum
+    self.rbmNesterovMomentum = rbmNesterovMomentum
+    self.rmsprop = rmsprop
+    self.preTrainEpochs = preTrainEpochs
+    self.normConstraint = normConstraint
 
   """
     Choose a percentage (percentValidation) of the data given to be
     validation data, used for early stopping of the model.
   """
-  def train(self, data, labels, percentValidation=0.1):
+  def train(self, data, labels, maxEpochs, percentValidation=0.1,
+            unsupervisedData=None):
     nrInstances = len(data)
     validationIndices = np.random.choice(xrange(nrInstances),
                                          percentValidation * nrInstances)
@@ -180,10 +185,13 @@ class DBN(object):
     validationLabels = labels[validationIndices, :]
 
     self.trainWithGivenValidationSet(trainingData, trainingLabels,
-                                     validationData, validationLabels)
+                                     validationData, validationLabels, maxEpochs,
+                                     unsupervisedData)
 
   def trainWithGivenValidationSet(self, data, labels,
-                                  validationData, validationLabels):
+                                  validationData, validationLabels,
+                                  maxEpochs,
+                                  unsupervisedData=None):
     nrRbms = self.nrLayers - 2
 
     self.weights = []
@@ -197,16 +205,41 @@ class DBN(object):
 
     # Train the restricted Boltzmann machines that form the network
     currentData = data
-    for i in xrange(nrRbms):
-      net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                    rbm.contrastiveDivergence,
-                    self.rbmDropout, self.rbmVisibleDropout,
-                    self.activationFunctions[i].value)
-      net.train(currentData)
 
-      w = net.weights
-      self.weights += [w]
+    if unsupervisedData is not None:
+      # TODO: does it really work like this in numpy
+      print "adding unsupervisedData"
+      currentData = np.vstack((currentData, unsupervisedData))
+
+    print "pre-training with a data set of size", len(currentData)
+
+    for i in xrange(nrRbms):
+      # If the network can be initialized from the previous one,
+      # do so, by using the transpose
+      if i > 0 and self.layerSizes[i+1] == self.layerSizes[i-1]:
+        initialWeights = self.weights[i-1].T
+        initialBiases = lastRbmBiases
+      else:
+        initialWeights = None
+        initialBiases = None
+
+      net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
+                      learningRate=self.unsupervisedLearningRate,
+                      hiddenDropout=self.rbmHiddenDropout,
+                      visibleDropout=self.rbmVisibleDropout,
+                      nesterov=self.rbmNesterovMomentum,
+                      initialWeights=initialWeights,
+                      initialBiases=initialBiases)
+
+      for i in xrange(self.preTrainEpochs):
+        net.train(currentData)
+
+      # TODO: should it really be testWeights?
+      w = net.testWeights
+      self.weights += [w / self.hiddenDropout]
+      # Only add the biases for the hidden unit
       b = net.biases[1]
+      lastRbmBiases = net.biases
       self.biases += [b]
 
       # Let's update the current representation given to the next RBM
@@ -230,11 +263,10 @@ class DBN(object):
 
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels,
-                  sharedValidationData, sharedValidationLabels,
-                  self.supervisedLearningRate)
+                  sharedValidationData, sharedValidationLabels, maxEpochs)
 
-    # Dropout: Get the classification
-    self.classifcationWeights = map(lambda x: x * self.dropout, self.weights)
+    # Get the classification weights
+    self.classifcationWeights = map(lambda x: x * self.hiddenDropout, self.weights)
     self.classifcationBiases = self.biases
 
   """Fine tunes the weigths and biases using backpropagation.
@@ -248,12 +280,10 @@ class DBN(object):
       miniBatch: The number of instances to be used in a miniBatch
       epochs: The number of epochs to use for fine tuning
   """
-  def fineTune(self, data, labels, validationData, validationLabels,
-               learningRate=0.001,
-               maxEpochs=200):
+  def fineTune(self, data, labels, validationData, validationLabels, maxEpochs):
     print "supervisedLearningRate"
-    print learningRate
-    batchLearningRate = learningRate / self.miniBatchSize
+    print self.supervisedLearningRate
+    batchLearningRate = self.supervisedLearningRate / self.miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
 
     nrMiniBatches = self.nrMiniBatches
@@ -276,23 +306,6 @@ class DBN(object):
 
     # the error is the sum of the errors in the individual cases
     error = T.sum(batchTrainer.cost(y))
-    deltaParams = T.grad(error, batchTrainer.params)
-
-    # specify how to update the parameters of the model as a list of
-    # (variable, update expression) pairs
-    updates = []
-    parametersTuples = zip(batchTrainer.params,
-                           deltaParams,
-                           batchTrainer.oldUpdates,
-                           batchTrainer.oldMeanSquare)
-
-    for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
-      meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-      paramUpdate = momentum * oldUpdate - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
-      newParam = param + paramUpdate
-      updates.append((param, newParam))
-      updates.append((oldUpdate, paramUpdate))
-      updates.append((oldMeanSquare, meanSquare))
 
     if DEBUG:
       mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
@@ -300,14 +313,38 @@ class DBN(object):
     else:
       mode = None
 
-    train_model = theano.function(
-        inputs=[miniBatchIndex, momentum],
-        outputs=error,
-        updates=updates,
-        givens={
-            x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-            y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
-        mode=mode)
+    if self.nesterovMomentum:
+      preDeltaUpdates, updates = self.buildUpdatesNesterov(batchTrainer, momentum,
+                    batchLearningRate, error)
+      momentum_step = theano.function(
+          inputs=[momentum],
+          outputs=[],
+          updates=preDeltaUpdates,
+          mode = mode)
+
+      update_params = theano.function(
+          inputs =[miniBatchIndex, momentum],
+          outputs=error,
+          updates=updates,
+          givens={
+              x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+              y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
+          mode=mode)
+
+      def trainModel(miniBatchIndex, momentum):
+        momentum_step(momentum)
+        return update_params(miniBatchIndex, momentum)
+    else:
+
+      updates = self.buildUpdatesSimpleMomentum(batchTrainer, momentum,
+                    batchLearningRate, deltaParams)
+      trainModel = theano.function(
+            inputs=[miniBatchIndex, momentum],
+            outputs=error,
+            updates=updates,
+            givens={
+                x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
 
     theano.printing.pydotprint(train_model)
     # Let's create the function that validates the model!
@@ -319,18 +356,60 @@ class DBN(object):
     lastValidationError = np.inf
     count = 0
     epoch = 0
-    while epoch < maxEpochs and count < 3:
-      print "epoch"
+
+    bestValidationError = np.inf
+    doneTraining = False
+    improvmentTreshold = 0.995
+    patience = 10 # do at least 10 passes trough the data no matter what
+
+    # while (epoch < maxEpochs) and not doneTraining:
+    #   # Train the net with all data
+    #   print "epoch " + str(epoch)
+
+    #   if epoch < 5:
+    #     momentum = np.float32(0.5)
+    #   else:
+    #     momentum = np.float32(0.98)
+
+    #   for batchNr in xrange(nrMiniBatches):
+    #     trainModel(batchNr, momentum)
+
+    #   # why axis = 0? this should be a number?!
+    #   meanValidation = np.mean(validate_model())
+
+    #   print 'meanValidation'
+    #   print meanValidation
+    #   if meanValidation < bestValidationError:
+    #     # If we have improved well enough, then increase the patience
+    #     if meanValidation < bestValidationError * improvmentTreshold:
+    #       print "increasing patience"
+    #       patience = max(patience, epoch * 2)
+
+    #     bestValidationError = meanValidation
+
+    #   if patience <= epoch:
+    #     doneTraining = True
+
+    #   epoch += 1
+
+    validationErrors = []
+
+    # while epoch < maxEpochs and count < 5:
+    for epoch in xrange(maxEpochs):
+      print "epoch " + str(epoch)
+
+      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
+                     np.float32(0.99)))
+      # if epoch < 5:
+      #   momentum = np.float32(0.5)
+      # else:
+      #   momentum = np.float32(0.98)
 
       for batchNr in xrange(nrMiniBatches):
-        # Maybe you can do this according to the validation error as well?
-        if epoch < maxEpochs / 10:
-          momentum = np.float32(0.5)
-        else:
-          momentum = np.float32(0.95)
-        error = train_model(batchNr, momentum)
+        trainModel(batchNr, momentum)
 
       meanValidation = np.mean(validate_model(), axis=0)
+      validationErrors += [meanValidation]
 
       if meanValidation > lastValidationError:
           count +=1
@@ -340,15 +419,95 @@ class DBN(object):
 
       epoch +=1
 
+    plt.plot(validationErrors)
+    plt.show()
     # Set up the weights in the dbn object
     for i in xrange(len(self.weights)):
       self.weights[i] = batchTrainer.weights[i].get_value()
 
+    print self.weights
+
     for i in xrange(len(self.biases)):
       self.biases[i] = batchTrainer.biases[i].get_value()
 
+    print self.biases
+
     print "number of epochs"
     print epoch
+
+
+  def buildUpdatesNesterov(self, batchTrainer, momentum,
+                  batchLearningRate, error):
+
+    preDeltaUpdates = []
+    momentumUpdates = []
+    for param, oldUpdate in zip(batchTrainer.params, batchTrainer.oldUpdates):
+      momentumUpdate = momentum * oldUpdate
+      momentumUpdates.append(momentumUpdate)
+      preDeltaUpdates.append((param, param + momentumUpdate))
+
+    # specify how to update the parameters of the model as a list of
+    # (variable, update expression) pairs
+    deltaParams = T.grad(error, batchTrainer.params)
+    updates = []
+    parametersTuples = zip(batchTrainer.params,
+                           deltaParams,
+                           batchTrainer.oldUpdates,
+                           batchTrainer.oldMeanSquare,
+                           momentumUpdates,
+                           batchTrainer.isWeight)
+
+    for param, delta, oldUpdate, oldMeanSquare, momentumUpdate, isWeight in parametersTuples:
+      if self.rmsprop:
+        meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
+        paramUpdate = - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+        updates.append((oldMeanSquare, meanSquare))
+      else:
+        paramUpdate = - batchLearningRate * delta
+
+      newParam = param + paramUpdate
+
+      if self.normConstraint is not None and isWeight:
+        norms = SquaredElementWiseNorm(newParam)
+        rescaled = norms > self.normConstraint
+        factors = T.ones(norms.shape, dtype=theanoFloat) / T.sqrt(norms) * np.sqrt(self.normConstraint, dtype='float32') - 1.0
+        replaceNewParam = (factors * rescaled) * newParam
+        replaceNewParam += newParam
+        newParam = replaceNewParam
+
+      updates.append((param, newParam))
+      updates.append((oldUpdate, paramUpdate + momentumUpdate))
+
+    # replace the 0s with 1/ theirnorm * normConstraint
+    # and then multiply the resulting weight with this array
+    # elementwise
+
+    return preDeltaUpdates, updates
+
+  def buildUpdatesSimpleMomentum(self, batchTrainer, momentum,
+                  batchLearningRate, error):
+
+    deltaParams = T.grad(error, batchTrainer.params)
+    updates = []
+    parametersTuples = zip(batchTrainer.params,
+                           deltaParams,
+                           batchTrainer.oldUpdates,
+                           batchTrainer.oldMeanSquare)
+
+    for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
+      paramUpdate = momentum * oldUpdate
+      if self.rmsprop:
+        meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
+        paramUpdate += - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+        updates.append((oldMeanSquare, meanSquare))
+      else:
+        paramUpdate += - batchLearningRate * delta
+
+      newParam = param + paramUpdate
+      updates.append((param, newParam))
+      updates.append((oldUpdate, paramUpdate))
+
+    return updates
 
 
   def classify(self, dataInstaces):
@@ -356,8 +515,8 @@ class DBN(object):
 
     x = T.matrix('x', dtype=theanoFloat)
 
-    # Use the classification weights because now we have dropout
-    # Ensure that you have no dropout in classification
+    # Use the classification weights because now we have hiddenDropout
+    # Ensure that you have no hiddenDropout in classification
     # TODO: are the variables still shared? or can we make a new one?
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.classifcationWeights,
@@ -374,3 +533,8 @@ class DBN(object):
     lastLayers = classify()
 
     return lastLayers, np.argmax(lastLayers, axis=1)
+
+
+# Element wise norm of the columns of a matrix
+def SquaredElementWiseNorm(x):
+  return T.sum(T.sqr(x), axis=0)

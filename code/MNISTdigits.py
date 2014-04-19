@@ -10,7 +10,6 @@ import restrictedBoltzmannMachine as rbm
 import deepbelief as db
 import utils
 import PCA
-from sklearn import cross_validation
 
 from common import *
 
@@ -27,12 +26,22 @@ parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
 parser.add_argument('--db', dest='db',action='store_true', default=False,
                     help=("if true, the code for traning a deepbelief net on the"
                           "data is run"))
+parser.add_argument('--nesterov', dest='nesterov',action='store_true', default=False,
+                    help=("if true, the deep belief net is trained using nesterov momentum"))
+parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
+                    help=("if true, rbms are trained using nesterov momentum"))
+parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=False,
+                    help=("if true, rmsprop is used when training the deep belief net."))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
 parser.add_argument('--trainSize', type=int, default=10000,
                     help='the number of tranining cases to be considered')
 parser.add_argument('--testSize', type=int, default=1000,
                     help='the number of testing cases to be considered')
+parser.add_argument('--preTrainEpochs', type=int, default=1,
+                    help='the number of pretraining epochs')
+parser.add_argument('--maxEpochs', type=int, default=100,
+                    help='the maximum number of supervised epochs')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
 
 # DEBUG mode?
@@ -44,10 +53,6 @@ args = parser.parse_args()
 
 # Set the debug mode in the deep belief net
 db.DEBUG = args.debug
-
-def visualizeWeights(weights, imgShape, tileShape):
-  return utils.tile_raster_images(weights, imgShape,
-                                  tileShape, tile_spacing=(1, 1))
 
 def rbmMain(reconstructRandom=True):
   trainVectors, trainLabels =\
@@ -66,7 +71,7 @@ def rbmMain(reconstructRandom=True):
     nrVisible = len(trainingScaledVectors[0])
     nrHidden = 500
     # use 1 dropout to test the rbm for now
-    net = rbm.RBM(nrVisible, nrHidden, rbm.contrastiveDivergence, 1, 1)
+    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1, nesterov=args.rbmnesterov)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
   else:
@@ -83,21 +88,24 @@ def rbmMain(reconstructRandom=True):
   if reconstructRandom:
     test = np.random.random_sample(test.shape)
 
-
   # Show the initial image first
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
+  plt.axis('off')
   plt.show()
 
   # Show the reconstruction
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
+  plt.axis('off')
   plt.show()
 
   # Show the weights and their form in a tile fashion
   # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
+  plt.axis('off')
   plt.show()
+
   print "done"
 
   if args.save:
@@ -152,20 +160,30 @@ def cvMNIST():
   foldSize = training / nrFolds
   bestFold = -1
   bestError = np.inf
-  params = [0.01, 0.001, 0.0001]
+  params = [5, 10, 15]
   for i in xrange(nrFolds):
     # Train the net
+    # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                 [Sigmoid, Sigmoid, Sigmoid, Softmax],
-                  supervisedLearningRate=params[i],
-                  dropout=0.5, rbmDropout=0.5, visibleDropout=0.8,
-                  rbmVisibleDropout=1)
+                  unsupervisedLearningRate=0.01,
+                  supervisedLearningRate=0.05,
+                  nesterovMomentum=args.nesterov,
+                  rbmNesterovMomentum=args.rbmnesterov,
+                  rmsprop=args.rmsprop,
+                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
+                  rbmVisibleDropout=1,
+                  preTrainEpochs=args.preTrainEpochs,
+                  normConstraint=params[i])
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
-    net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices])
+    net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
+              maxEpochs=args.maxEpochs)
 
     proabilities, predicted = net.classify(testingScaledVectors)
     # Test it with the testing data and measure the missclassification error
-    error = getClassificationError(labelsToVectors(testLabels, 10), proabilities)
+    error = getClassificationError(predicted, testLabels)
+
+    print "error for " + str(params[i])
+    print error
 
     if error < bestError:
       bestError = error
@@ -175,10 +193,17 @@ def cvMNIST():
   print "bestParameter" + str(params[bestFold])
 
 
-def getClassificationError(actual, probs):
-  return 1.0 - (actual == probs).sum() * 1.0 / len(actual)
+def getClassificationError(predicted, actual):
+  return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
 
 def deepbeliefMNIST():
+<<<<<<< HEAD
+=======
+  import random
+  print "FIXING RANDOMNESS"
+  random.seed(6)
+  np.random.seed(6)
+>>>>>>> rbmrmsprop
 
   training = args.trainSize
   testing = args.testSize
@@ -197,16 +222,19 @@ def deepbeliefMNIST():
   vectorLabels = labelsToVectors(trainLabels, 10)
 
   if args.train:
-    # net = db.DBN(3, [784, 500, 10], [Sigmoid(), Softmax()])
-    # net = db.DBN(4, [784, 500, 500, 10], [Sigmoid, Sigmoid, Softmax])
-
+    # Try 1200, 1200, 1200
+    # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                 [Sigmoid, Sigmoid, Sigmoid, Softmax],
-                 supervisedLearningRate=0.01,
-                 dropout=0.5, rbmDropout=0.5, visibleDropout=0.8,
-                 rbmVisibleDropout=1)
-    # TODO: think about what the network should do for 2 layers
-    net.train(trainingScaledVectors, vectorLabels)
+                 unsupervisedLearningRate=0.01,
+                 supervisedLearningRate=0.05,
+                 nesterovMomentum=args.nesterov,
+                 rbmNesterovMomentum=args.rbmnesterov,
+                 rmsprop=args.rmsprop,
+                 hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
+                 rbmVisibleDropout=1,
+                 preTrainEpochs=args.preTrainEpochs,
+                 normConstraint=15)
+    net.train(trainingScaledVectors, vectorLabels, maxEpochs=args.maxEpochs)
   else:
     # Take the saved network and use that for reconstructions
     f = open(args.netFile, "rb")
@@ -234,8 +262,6 @@ def deepbeliefMNIST():
   # You just need to display some for the report
   # trueDigits = testLabels[errorCases]
   # predictedDigits = predicted[errorCases]
-
-
 
   print "correct"
   print correct
