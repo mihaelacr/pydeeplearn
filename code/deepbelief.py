@@ -283,8 +283,6 @@ class DBN(object):
   def fineTune(self, data, labels, validationData, validationLabels, maxEpochs):
     print "supervisedLearningRate"
     print self.supervisedLearningRate
-    batchLearningRate = self.supervisedLearningRate / self.miniBatchSize
-    batchLearningRate = np.float32(batchLearningRate)
 
     nrMiniBatches = self.nrMiniBatches
     # Let's build the symbolic graph which takes the data trough the network
@@ -292,6 +290,9 @@ class DBN(object):
     # index of a mini-batch
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
+    batchLearningRate = T.fscalar()
+    # batchLearningRate = self.supervisedLearningRate / self.miniBatchSize
+    # batchLearningRate = np.float32(batchLearningRate)
 
     # The mini-batch data is a matrix
     x = T.matrix('x', dtype=theanoFloat)
@@ -323,7 +324,7 @@ class DBN(object):
           mode = mode)
 
       update_params = theano.function(
-          inputs =[miniBatchIndex],
+          inputs =[miniBatchIndex, batchLearningRate],
           outputs=error,
           updates=updates,
           givens={
@@ -331,15 +332,15 @@ class DBN(object):
               y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
           mode=mode)
 
-      def trainModel(miniBatchIndex, momentum):
+      def trainModel(miniBatchIndex, momentum, batchLearningRate):
         momentum_step(momentum)
-        return update_params(miniBatchIndex)
+        return update_params(miniBatchIndex, batchLearningRate)
     else:
 
       updates = self.buildUpdatesSimpleMomentum(batchTrainer, momentum,
                     batchLearningRate, deltaParams)
       trainModel = theano.function(
-            inputs=[miniBatchIndex, momentum],
+            inputs=[miniBatchIndex, momentum, batchLearningRate],
             outputs=error,
             updates=updates,
             givens={
@@ -356,6 +357,7 @@ class DBN(object):
     count = 0
     epoch = 0
 
+    # TODO: retry this with thei way (even though it is slower)
     bestValidationError = np.inf
     doneTraining = False
     improvmentTreshold = 0.995
@@ -393,19 +395,23 @@ class DBN(object):
 
     validationErrors = []
 
+    learningRate = self.learningRate
+    learningRateDecay = 0.998
     # while epoch < maxEpochs and count < 5:
     for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
 
       momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
                      np.float32(0.99)))
+
+      learningRate *= learningRateDecay
       # if epoch < 5:
       #   momentum = np.float32(0.5)
       # else:
       #   momentum = np.float32(0.98)
 
       for batchNr in xrange(nrMiniBatches):
-        trainModel(batchNr, momentum)
+        trainModel(batchNr, momentum, learningRate)
 
       meanValidation = np.mean(validate_model(), axis=0)
       validationErrors += [meanValidation]
