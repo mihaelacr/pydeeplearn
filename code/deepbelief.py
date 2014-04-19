@@ -395,7 +395,7 @@ class DBN(object):
 
     validationErrors = []
 
-    learningRate = self.learningRate
+    learningRate = self.supervisedLearningRate
     learningRateDecay = 0.998
     # while epoch < maxEpochs and count < 5:
     for epoch in xrange(maxEpochs):
