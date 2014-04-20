@@ -95,19 +95,23 @@ def rbmMain(reconstructRandom=True):
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
   plt.axis('off')
-  plt.show()
+  savefig('initial.png', transparent=True)
+  # plt.show()
 
   # Show the reconstruction
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
   plt.axis('off')
-  plt.show()
+  savefig('reconstruct.png', transparent=True)
+
+  # plt.show()
 
   # Show the weights and their form in a tile fashion
   # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
   plt.axis('off')
-  plt.show()
+  savefig('weights.png', transparent=True)
+  # plt.show()
 
   print "done"
 
