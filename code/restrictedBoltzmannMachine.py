@@ -197,7 +197,7 @@ class RBM(object):
     self.testWeights = self.weights * self.hiddenDropout
 
     print "reconstruction Error"
-    print reconstructionError(self.biases, self.testWeights, data)
+    print self.reconstructionError(data)
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible
@@ -294,11 +294,53 @@ class RBM(object):
   # TODO: move this to GPU as well?
   # Could be a good idea to speed up things + cleaner
   def hiddenRepresentation(self, dataInstances):
-    return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
-                       self.testWeights, True)
+    dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
+
+    x = T.matrix('x', dtype=theanoFloat)
+
+    batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
+                                    initialWeights=self.testWeights,
+                                    initialBiases=self.biases,
+                                    visibleDropout=1,
+                                    hiddenDropout=1,
+                                    cdSteps=1)
+
+    representHidden = theano.function(
+            inputs=[],
+            outputs=batchTrainer.hidden,
+            updates={},
+            givens={x: dataInstacesConverted})
+
+    return representHidden()
+
+    # return lastLayers, np.argmax(lastLayers, axis=1)
+    # return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
+    #                    self.testWeights, True)
 
   def reconstruct(self, dataInstances):
-    return reconstruct(self.biases, self.testWeights, dataInstances)
+    dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
+
+    x = T.matrix('x', dtype=theanoFloat)
+
+    batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
+                                    initialWeights=self.testWeights,
+                                    initialBiases=self.biases,
+                                    visibleDropout=1,
+                                    hiddenDropout=1,
+                                    cdSteps=1)
+
+    reconstruct = theano.function(
+            inputs=[],
+            outputs=batchTrainer.visibleReconstruction,
+            updates={},
+            givens={x: dataInstacesConverted})
+
+    return reconstruct()
+    # return reconstruct(self.biases, self.testWeights, dataInstances)
+
+  def reconstructionError(self, dataInstances):
+    reconstructions = reconstruct(dataInstances)
+    return rmse(reconstructions, dataInstances)
 
 """ Updates an entire layer. This procedure can be used both in training
     and in testing.
@@ -350,3 +392,4 @@ def reconstruct(biases, weights, dataInstances):
   visibleReconstructions = updateLayer(Layer.VISIBLE, hidden,
       biases, weights, False)
   return visibleReconstructions
+
