@@ -237,7 +237,7 @@ def deepbeliefMNIST():
                  visibleDropout=0.8,
                  rbmVisibleDropout=1,
                  preTrainEpochs=args.preTrainEpochs,
-                 normConstraint=15)
+                 normConstraint=None)
     net.train(trainingScaledVectors, vectorLabels,
               maxEpochs=args.maxEpochs, validation=args.validation)
   else:
