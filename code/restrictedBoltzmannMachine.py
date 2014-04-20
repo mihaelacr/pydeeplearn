@@ -324,16 +324,16 @@ def updateLayer(layer, otherLayerValues, biases, weights, binary=False):
 
 
 def initializeWeights(nrVisible, nrHidden):
-  return np.random.normal(0, 0.01, (nrVisible, nrHidden))
+  return np.asarray(np.random.normal(0, 0.01, (nrVisible, nrHidden)), dtype=theanoFloat)
 
 def intializeBiases(data, nrHidden):
   # get the procentage of data points that have the i'th unit on
   # and set the visible vias to log (p/(1-p))
-  percentages = data.mean(axis=0, dtype='float')
-  vectorized = np.vectorize(safeLogFraction, otypes=[np.float])
+  percentages = data.mean(axis=0, dtype=theanoFloat)
+  vectorized = np.vectorize(safeLogFraction, otypes=[np.float32])
   visibleBiases = vectorized(percentages)
 
-  hiddenBiases = np.zeros(nrHidden)
+  hiddenBiases = np.zeros(nrHidden, dtype=theanoFloat)
   return np.array([visibleBiases, hiddenBiases])
 
 def reconstructionError(biases, weights, data):
