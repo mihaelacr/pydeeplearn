@@ -455,8 +455,48 @@ class DBN(object):
     print epoch
 
 
+  # A very greedy approach to training
+  # Probably not the best idea but worth trying
+  def trainModelGetBestWeights(self, trainModel, validateModel, maxEpochs):
+    bestValidationError = np.inf
 
-  def trainModelPatience(trainModel, validateModel, maxEpochs):
+    validationErrors = []
+
+    bestWeights = None
+    bestBiases = None
+
+    for epoch in xrange(maxEpochs):
+      print "epoch " + str(epoch)
+
+      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
+                     np.float32(0.99)))
+
+      for batchNr in xrange(self.nrMiniBatches):
+        trainModel(batchNr, momentum)
+
+      meanValidation = np.mean(validateModel(), axis=0)
+      validationErrors += [meanValidation]
+
+      if meanValidation < bestValidationError:
+        bestValidationError = meanValidation
+        # Save the weights which are the best ones
+        bestWeights = batchTrainer.weights
+        bestBiases = biases.biases
+
+    # If we have improved at all during training
+    if bestWeights is not None and bestBiases is not None:
+      batchTrainer.weights = bestWeights
+      batchTrainer.biases = bestBiases
+    try:
+      plt.plot(validationErrors)
+      plt.show()
+    except e:
+      print "validation error plot not made"
+
+    print "number of epochs"
+    print epoch
+
+  def trainModelPatience(self, trainModel, validateModel, maxEpochs):
     bestValidationError = np.inf
     epoch = 0
     doneTraining = False
