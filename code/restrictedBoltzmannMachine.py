@@ -339,7 +339,7 @@ class RBM(object):
     # return reconstruct(self.biases, self.testWeights, dataInstances)
 
   def reconstructionError(self, dataInstances):
-    reconstructions = reconstruct(dataInstances)
+    reconstructions = self.reconstruct(dataInstances)
     return rmse(reconstructions, dataInstances)
 
 """ Updates an entire layer. This procedure can be used both in training
