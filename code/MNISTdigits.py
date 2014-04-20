@@ -57,11 +57,11 @@ args = parser.parse_args()
 # Set the debug mode in the deep belief net
 db.DEBUG = args.debug
 
-def rbmMain(reconstructRandom=True):
+def rbmMain(reconstructRandom=False):
   trainVectors, trainLabels =\
       readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
   testingVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=[2], bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=[7], bTrain=False, path="MNIST")
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -95,14 +95,14 @@ def rbmMain(reconstructRandom=True):
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
   plt.axis('off')
-  plt.savefig('initial.png', transparent=True)
+  plt.savefig('initial7.png', transparent=True)
   # plt.show()
 
   # Show the reconstruction
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
   plt.axis('off')
-  plt.savefig('reconstruct.png', transparent=True)
+  plt.savefig('reconstruct7from2s.png', transparent=True)
 
   # plt.show()
 
