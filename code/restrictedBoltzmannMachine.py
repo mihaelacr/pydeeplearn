@@ -318,7 +318,7 @@ class RBM(object):
     #                    self.testWeights, True)
 
   def reconstruct(self, dataInstances):
-    dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
+    dataInstacesConverted = np.asarray(dataInstances, dtype=theanoFloat)
 
     x = T.matrix('x', dtype=theanoFloat)
 
