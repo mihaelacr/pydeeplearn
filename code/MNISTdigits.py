@@ -224,7 +224,7 @@ def deepbeliefMNIST():
     # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                  unsupervisedLearningRate=0.01,
-                 supervisedLearningRate=0.001,
+                 supervisedLearningRate=0.0001,
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,

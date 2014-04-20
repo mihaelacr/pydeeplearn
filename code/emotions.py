@@ -56,9 +56,6 @@ parser.add_argument('--maxEpochs', type=int, default=1000,
 parser.add_argument('--validation',dest='validation',action='store_true', default=False,
                     help="if true, the network is trained using a validation set")
 
-
-
-
 # DEBUG mode?
 parser.add_argument('--debug', dest='debug',action='store_false', default=False,
                     help=("if true, the deep belief net is ran in DEBUG mode"))
