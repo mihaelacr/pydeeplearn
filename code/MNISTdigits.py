@@ -59,9 +59,9 @@ db.DEBUG = args.debug
 
 def rbmMain(reconstructRandom=True):
   trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
   testingVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=[2], bTrain=False, path="MNIST")
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
