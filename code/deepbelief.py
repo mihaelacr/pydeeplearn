@@ -421,8 +421,11 @@ class DBN(object):
 
       epoch +=1
 
-    plt.plot(validationErrors)
-    plt.show()
+    try:
+      plt.plot(validationErrors)
+      plt.show()
+    except e:
+      print "validation error plot not made"
     # Set up the weights in the dbn object
     for i in xrange(len(self.weights)):
       self.weights[i] = batchTrainer.weights[i].get_value()
