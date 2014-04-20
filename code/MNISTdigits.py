@@ -160,20 +160,22 @@ def cvMNIST():
   foldSize = training / nrFolds
   bestFold = -1
   bestError = np.inf
-  params = [5, 10, 15]
+  # params = [5, 10, 15]
+
+  params =[0.05, 0.001, 0.005]
   for i in xrange(nrFolds):
     # Train the net
     # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                   unsupervisedLearningRate=0.01,
-                  supervisedLearningRate=0.05,
+                  supervisedLearningRate=params[i],
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   rmsprop=args.rmsprop,
                   hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                   rbmVisibleDropout=1,
                   preTrainEpochs=args.preTrainEpochs,
-                  normConstraint=params[i])
+                  normConstraint=15)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
               maxEpochs=args.maxEpochs)

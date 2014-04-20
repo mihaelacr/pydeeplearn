@@ -443,8 +443,7 @@ class DBN(object):
 
     preDeltaUpdates = []
     for param, oldUpdate in zip(batchTrainer.params, batchTrainer.oldUpdates):
-      momentumUpdate = momentum * oldUpdate
-      preDeltaUpdates.append((param, param + momentumUpdate))
+      preDeltaUpdates.append((param, param + momentum * oldUpdate))
 
     # specify how to update the parameters of the model as a list of
     # (variable, update expression) pairs
