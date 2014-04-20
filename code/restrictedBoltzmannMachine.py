@@ -298,7 +298,7 @@ class RBM(object):
 
     x = T.matrix('x', dtype=theanoFloat)
 
-    batchTrainer = RBMMiniBatchTrainer(input=x, nrLayers=self.nrLayers,
+    batchTrainer = RBMMiniBatchTrainer(input=x,
                                     initialWeights=self.testWeights,
                                     initialBiases=self.biases,
                                     visibleDropout=1,
@@ -322,7 +322,7 @@ class RBM(object):
 
     x = T.matrix('x', dtype=theanoFloat)
 
-    batchTrainer = RBMMiniBatchTrainer(input=x, nrLayers=self.nrLayers,
+    batchTrainer = RBMMiniBatchTrainer(input=x,
                                     initialWeights=self.testWeights,
                                     initialBiases=self.biases,
                                     visibleDropout=1,
