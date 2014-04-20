@@ -43,6 +43,9 @@ parser.add_argument('--preTrainEpochs', type=int, default=1,
 parser.add_argument('--maxEpochs', type=int, default=100,
                     help='the maximum number of supervised epochs')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
+parser.add_argument('--validation',dest='validation',action='store_true', default=False,
+                    help="if true, the network is trained using a validation set")
+
 
 # DEBUG mode?
 parser.add_argument('--debug', dest='debug',action='store_true', default=False,
@@ -162,7 +165,7 @@ def cvMNIST():
   bestError = np.inf
   # params = [5, 10, 15]
 
-  params =[0.05, 0.001, 0.005]
+  params =[0.001, 0.0005, 0.0001]
   for i in xrange(nrFolds):
     # Train the net
     # Try 1200, 1200, 1200
@@ -178,7 +181,8 @@ def cvMNIST():
                   normConstraint=15)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
-              maxEpochs=args.maxEpochs)
+              maxEpochs=args.maxEpochs,
+              validation=args.validation)
 
     proabilities, predicted = net.classify(testingScaledVectors)
     # Test it with the testing data and measure the missclassification error
@@ -230,7 +234,8 @@ def deepbeliefMNIST():
                  rbmVisibleDropout=1,
                  preTrainEpochs=args.preTrainEpochs,
                  normConstraint=None)
-    net.train(trainingScaledVectors, vectorLabels, maxEpochs=args.maxEpochs)
+    net.train(trainingScaledVectors, vectorLabels,
+              maxEpochs=args.maxEpochs, validation=args.validation)
   else:
     # Take the saved network and use that for reconstructions
     f = open(args.netFile, "rb")

@@ -249,34 +249,53 @@ class DBN(object):
       validationData = data[validationIndices, :]
       validationLabels = labels[validationIndices, :]
 
-      self.trainWithGivenValidationSet(trainingData, trainingLabels,
+      self.trainWithGivenValidationSet(trainingData, trainingLabels, validation,
                                        validationData, validationLabels, maxEpochs,
                                        unsupervisedData)
     else:
-      self.trainFixedEpochs(self, data, labels, maxEpochs, unsupervisedData)
+      self.trainNoValidation(trainingData, trainingLabels, maxEpochs,
+                                       unsupervisedData)
+
 
   def trainWithGivenValidationSet(self, data, labels,
-                                  validationData, validationLabels,
+                                  validationData,
+                                  validationLabels,
                                   maxEpochs,
                                   unsupervisedData=None):
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
+
+    self.pretrain(data, unsupervisedData)
+
+    self.nrMiniBatches = len(data) / self.miniBatchSize
+
     sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
     sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
+    # Does backprop for the data and a the end sets the weights
+    self.fineTune(sharedData, sharedLabels, validation,
+                  sharedValidationData, sharedValidationLabels, maxEpochs)
+
+    # Get the classification weights
+    self.classifcationWeights = map(lambda x: x * self.hiddenDropout, self.weights)
+    self.classifcationBiases = self.biases
+
+  def trainNoValidation(trainingData, trainingLabels, maxEpochs, unsupervisedData):
+    sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
+    sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
     self.pretrain(data, unsupervisedData)
 
     self.nrMiniBatches = len(data) / self.miniBatchSize
 
     # Does backprop for the data and a the end sets the weights
-    self.fineTune(sharedData, sharedLabels,
-                  sharedValidationData, sharedValidationLabels, maxEpochs)
+    self.fineTune(sharedData, sharedLabels, False, None, None, maxEpochs)
 
     # Get the classification weights
     self.classifcationWeights = map(lambda x: x * self.hiddenDropout, self.weights)
     self.classifcationBiases = self.biases
+
 
   """Fine tunes the weigths and biases using backpropagation.
     data and labels are shared
@@ -289,13 +308,13 @@ class DBN(object):
       miniBatch: The number of instances to be used in a miniBatch
       epochs: The number of epochs to use for fine tuning
   """
-  def fineTune(self, data, labels, validationData, validationLabels, maxEpochs):
+  def fineTune(self, data, labels, validation, validationData, validationLabels,
+               maxEpochs):
     print "supervisedLearningRate"
     print self.supervisedLearningRate
     batchLearningRate = self.supervisedLearningRate / self.miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
 
-    nrMiniBatches = self.nrMiniBatches
     # Let's build the symbolic graph which takes the data trough the network
     # allocate symbolic variables for the data
     # index of a mini-batch
@@ -357,68 +376,62 @@ class DBN(object):
 
       theano.printing.pydotprint(trainModel)
 
+    if validation:
     # Let's create the function that validates the model!
-    validate_model = theano.function(inputs=[],
-      outputs=batchTrainer.cost(y),
-      givens={x: validationData,
-              y: validationLabels})
+      validateModel = theano.function(inputs=[],
+        outputs=batchTrainer.cost(y),
+        givens={x: validationData,
+                y: validationLabels})
+      self.trainLoopWithValidation(trainModel, validateModel, maxEpochs)
+    else:
+      if validationData is not None or validationLabels is not None:
+        raise Exception(("You provided validation data but requested a train method "
+                        "that does not need validation"))
 
-    lastValidationError = np.inf
-    count = 0
-    epoch = 0
+      self.trainLoopModelFixedEpochs(trainModel, maxEpochs)
 
-    bestValidationError = np.inf
-    doneTraining = False
-    improvmentTreshold = 0.995
-    patience = 10 # do at least 10 passes trough the data no matter what
+    # Set up the weights in the dbn object
+    for i in xrange(len(self.weights)):
+      self.weights[i] = batchTrainer.weights[i].get_value()
 
-    # while (epoch < maxEpochs) and not doneTraining:
-    #   # Train the net with all data
-    #   print "epoch " + str(epoch)
+    print self.weights
 
-    #   if epoch < 5:
-    #     momentum = np.float32(0.5)
-    #   else:
-    #     momentum = np.float32(0.98)
+    for i in xrange(len(self.biases)):
+      self.biases[i] = batchTrainer.biases[i].get_value()
 
-    #   for batchNr in xrange(nrMiniBatches):
-    #     trainModel(batchNr, momentum)
+    print self.biases
 
-    #   # why axis = 0? this should be a number?!
-    #   meanValidation = np.mean(validate_model())
+    print "number of epochs"
+    print epoch
 
-    #   print 'meanValidation'
-    #   print meanValidation
-    #   if meanValidation < bestValidationError:
-    #     # If we have improved well enough, then increase the patience
-    #     if meanValidation < bestValidationError * improvmentTreshold:
-    #       print "increasing patience"
-    #       patience = max(patience, epoch * 2)
 
-    #     bestValidationError = meanValidation
-
-    #   if patience <= epoch:
-    #     doneTraining = True
-
-    #   epoch += 1
-
-    validationErrors = []
-
-    # while epoch < maxEpochs and count < 5:
+  def trainLoopModelFixedEpochs(self, trainModel, maxEpochs):
     for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
 
       momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
                      np.float32(0.99)))
-      # if epoch < 5:
-      #   momentum = np.float32(0.5)
-      # else:
-      #   momentum = np.float32(0.98)
 
-      for batchNr in xrange(nrMiniBatches):
+      for batchNr in xrange(self.nrMiniBatches):
         trainModel(batchNr, momentum)
 
-      meanValidation = np.mean(validate_model(), axis=0)
+  def trainLoopWithValidation(self, trainModel, validateModel, maxEpochs):
+    lastValidationError = np.inf
+    count = 0
+    epoch = 0
+
+    validationErrors = []
+
+    while epoch < maxEpochs and count < 5:
+      print "epoch " + str(epoch)
+
+      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
+                     np.float32(0.99)))
+
+      for batchNr in xrange(self.nrMiniBatches):
+        trainModel(batchNr, momentum)
+
+      meanValidation = np.mean(validateModel(), axis=0)
       validationErrors += [meanValidation]
 
       if meanValidation > lastValidationError:
@@ -434,20 +447,44 @@ class DBN(object):
       plt.show()
     except e:
       print "validation error plot not made"
-    # Set up the weights in the dbn object
-    for i in xrange(len(self.weights)):
-      self.weights[i] = batchTrainer.weights[i].get_value()
 
-    print self.weights
 
-    for i in xrange(len(self.biases)):
-      self.biases[i] = batchTrainer.biases[i].get_value()
+  def trainModelPatience(trainModel, validateModel, maxEpochs):
+    bestValidationError = np.inf
+    epoch = 0
+    doneTraining = False
+    improvmentTreshold = 0.995
+    patience = 10 # do at least 10 passes trough the data no matter what
 
-    print self.biases
+    while (epoch < maxEpochs) and not doneTraining:
+      # Train the net with all data
+      print "epoch " + str(epoch)
 
-    print "number of epochs"
-    print epoch
+      if epoch < 5:
+        momentum = np.float32(0.5)
+      else:
+        momentum = np.float32(0.98)
 
+      for batchNr in xrange(self.nrMiniBatches):
+        trainModel(batchNr, momentum)
+
+      # why axis = 0? this should be a number?!
+      meanValidation = np.mean(validateModel, maxEpochs())
+
+      print 'meanValidation'
+      print meanValidation
+      if meanValidation < bestValidationError:
+        # If we have improved well enough, then increase the patience
+        if meanValidation < bestValidationError * improvmentTreshold:
+          print "increasing patience"
+          patience = max(patience, epoch * 2)
+
+        bestValidationError = meanValidation
+
+      if patience <= epoch:
+        doneTraining = True
+
+      epoch += 1
 
   def buildUpdatesNesterov(self, batchTrainer, momentum,
                   batchLearningRate, error):
