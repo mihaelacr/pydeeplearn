@@ -293,7 +293,7 @@ class RBM(object):
   # TODO: move this to GPU as well?
   # Could be a good idea to speed up things + cleaner
   def hiddenRepresentation(self, dataInstances):
-    dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
+    dataInstacesConverted = np.asarray(dataInstances, dtype=theanoFloat)
 
     x = T.matrix('x', dtype=theanoFloat)
 
