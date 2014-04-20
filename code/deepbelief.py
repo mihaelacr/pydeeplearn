@@ -478,7 +478,7 @@ class DBN(object):
         newParam = replaceNewParam
 
       updates.append((param, newParam))
-      updates.append((oldUpdate, paramUpdate + momentumUpdate))
+      updates.append((oldUpdate, paramUpdate))
 
     return preDeltaUpdates, updates
 
