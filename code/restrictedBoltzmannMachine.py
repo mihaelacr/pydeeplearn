@@ -292,6 +292,7 @@ class RBM(object):
     return preDeltaUpdates, updates
 
   # TODO: move this to GPU as well?
+  # Could be a good idea to speed up things + cleaner
   def hiddenRepresentation(self, dataInstances):
     return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
                        self.testWeights, True)
