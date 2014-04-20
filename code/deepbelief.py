@@ -403,9 +403,6 @@ class DBN(object):
 
     print self.biases
 
-    print "number of epochs"
-    print epoch
-
 
   def trainLoopModelFixedEpochs(self, trainModel, maxEpochs):
     for epoch in xrange(maxEpochs):
@@ -416,6 +413,10 @@ class DBN(object):
 
       for batchNr in xrange(self.nrMiniBatches):
         trainModel(batchNr, momentum)
+
+    print "number of epochs"
+    print epoch
+
 
   def trainLoopWithValidation(self, trainModel, validateModel, maxEpochs):
     lastValidationError = np.inf
@@ -449,6 +450,10 @@ class DBN(object):
       plt.show()
     except e:
       print "validation error plot not made"
+
+    print "number of epochs"
+    print epoch
+
 
 
   def trainModelPatience(trainModel, validateModel, maxEpochs):
@@ -487,6 +492,10 @@ class DBN(object):
         doneTraining = True
 
       epoch += 1
+
+    print "number of epochs"
+    print epoch
+
 
   def buildUpdatesNesterov(self, batchTrainer, momentum,
                   batchLearningRate, error):
