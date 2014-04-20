@@ -425,7 +425,7 @@ class DBN(object):
 
     validationErrors = []
 
-    while epoch < maxEpochs and count < 5:
+    while epoch < maxEpochs and count < 8:
       print "epoch " + str(epoch)
 
       momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
@@ -467,10 +467,8 @@ class DBN(object):
       # Train the net with all data
       print "epoch " + str(epoch)
 
-      if epoch < 5:
-        momentum = np.float32(0.5)
-      else:
-        momentum = np.float32(0.98)
+      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
+                     np.float32(0.99)))
 
       for batchNr in xrange(self.nrMiniBatches):
         trainModel(batchNr, momentum)
