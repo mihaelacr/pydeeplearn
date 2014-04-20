@@ -283,7 +283,7 @@ class DBN(object):
     self.classifcationWeights = map(lambda x: x * self.hiddenDropout, self.weights)
     self.classifcationBiases = self.biases
 
-  def trainNoValidation(self, trainingData, trainingLabels, maxEpochs, unsupervisedData):
+  def trainNoValidation(self, data, labels, maxEpochs, unsupervisedData):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
