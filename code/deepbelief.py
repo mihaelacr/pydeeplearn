@@ -324,7 +324,7 @@ class DBN(object):
           mode = mode)
 
       update_params = theano.function(
-          inputs =[miniBatchIndex, momentum],
+          inputs =[miniBatchIndex],
           outputs=error,
           updates=updates,
           givens={
@@ -334,7 +334,7 @@ class DBN(object):
 
       def trainModel(miniBatchIndex, momentum):
         momentum_step(momentum)
-        return update_params(miniBatchIndex, momentum)
+        return update_params(miniBatchIndex)
     else:
 
       updates = self.buildUpdatesSimpleMomentum(batchTrainer, momentum,
