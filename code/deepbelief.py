@@ -253,6 +253,8 @@ class DBN(object):
                                        validationData, validationLabels, maxEpochs,
                                        unsupervisedData)
     else:
+      trainingData = data
+      trainingLabels = labels
       self.trainNoValidation(trainingData, trainingLabels, maxEpochs,
                                        unsupervisedData)
 
