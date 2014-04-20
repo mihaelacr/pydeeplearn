@@ -169,42 +169,13 @@ class DBN(object):
     self.preTrainEpochs = preTrainEpochs
     self.normConstraint = normConstraint
 
-  """
-    Choose a percentage (percentValidation) of the data given to be
-    validation data, used for early stopping of the model.
-  """
-  def train(self, data, labels, maxEpochs, percentValidation=0.1,
-            unsupervisedData=None):
-    nrInstances = len(data)
-    validationIndices = np.random.choice(xrange(nrInstances),
-                                         percentValidation * nrInstances)
-    trainingIndices = list(set(xrange(nrInstances)) - set(validationIndices))
-    trainingData = data[trainingIndices, :]
-    trainingLabels = labels[trainingIndices, :]
 
-    validationData = data[validationIndices, :]
-    validationLabels = labels[validationIndices, :]
-
-    self.trainWithGivenValidationSet(trainingData, trainingLabels,
-                                     validationData, validationLabels, maxEpochs,
-                                     unsupervisedData)
-
-  def trainWithGivenValidationSet(self, data, labels,
-                                  validationData, validationLabels,
-                                  maxEpochs,
-                                  unsupervisedData=None):
+  def pretrain(self, data, unsupervisedData):
     nrRbms = self.nrLayers - 2
 
     self.weights = []
     self.biases = []
 
-    sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
-    sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
-
-    sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
-    sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
-
-    # Train the restricted Boltzmann machines that form the network
     currentData = data
 
     if unsupervisedData is not None:
@@ -259,6 +230,43 @@ class DBN(object):
 
     assert len(self.weights) == self.nrLayers - 1
     assert len(self.biases) == self.nrLayers - 1
+
+  """
+    Choose a percentage (percentValidation) of the data given to be
+    validation data, used for early stopping of the model.
+  """
+  def train(self, data, labels, maxEpochs, validation=True, percentValidation=0.1,
+            unsupervisedData=None):
+
+    if validation:
+      nrInstances = len(data)
+      validationIndices = np.random.choice(xrange(nrInstances),
+                                           percentValidation * nrInstances)
+      trainingIndices = list(set(xrange(nrInstances)) - set(validationIndices))
+      trainingData = data[trainingIndices, :]
+      trainingLabels = labels[trainingIndices, :]
+
+      validationData = data[validationIndices, :]
+      validationLabels = labels[validationIndices, :]
+
+      self.trainWithGivenValidationSet(trainingData, trainingLabels,
+                                       validationData, validationLabels, maxEpochs,
+                                       unsupervisedData)
+    else:
+      self.trainFixedEpochs(self, data, labels, maxEpochs, unsupervisedData)
+
+  def trainWithGivenValidationSet(self, data, labels,
+                                  validationData, validationLabels,
+                                  maxEpochs,
+                                  unsupervisedData=None):
+
+    sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
+    sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
+
+    sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
+    sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
+
+    self.pretrain(data, unsupervisedData)
 
     self.nrMiniBatches = len(data) / self.miniBatchSize
 
