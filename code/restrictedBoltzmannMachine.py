@@ -332,34 +332,10 @@ class RBM(object):
             givens={x: dataInstacesConverted})
 
     return reconstruct()
-    # return reconstruct(self.biases, self.testWeights, dataInstances)
 
   def reconstructionError(self, dataInstances):
     reconstructions = self.reconstruct(dataInstances)
     return rmse(reconstructions, dataInstances)
-
-""" Updates an entire layer. This procedure can be used both in training
-    and in testing.
-    Can even take multiple values of the layer, each of them given as rows
-    Uses matrix operations.
-"""
-def updateLayer(layer, otherLayerValues, biases, weights, binary=False):
-
-  bias = biases[layer]
-  size = otherLayerValues.shape[0]
-
-  if layer == Layer.VISIBLE:
-    activation = np.dot(otherLayerValues, weights.T)
-  else:
-    activation = np.dot(otherLayerValues, weights)
-
-  probs = sigmoid(np.tile(bias, (size, 1)) + activation)
-
-  if binary:
-    # Sample from the distributions
-    return sampleAll(probs)
-
-  return probs
 
 
 def initializeWeights(nrVisible, nrHidden):
@@ -374,18 +350,3 @@ def intializeBiases(data, nrHidden):
 
   hiddenBiases = np.zeros(nrHidden, dtype=theanoFloat)
   return np.array([visibleBiases, hiddenBiases])
-
-def reconstructionError(biases, weights, data):
-    # Returns the rmse of the reconstruction of the data
-    # Good to keep track of it, should decrease trough training
-    # Initially faster, and then slower
-    reconstructions = reconstruct(biases, weights, data)
-    return rmse(reconstructions, data)
-
-def reconstruct(biases, weights, dataInstances):
-  hidden = updateLayer(Layer.HIDDEN, dataInstances, biases, weights, True)
-
-  visibleReconstructions = updateLayer(Layer.VISIBLE, hidden,
-      biases, weights, False)
-  return visibleReconstructions
-
