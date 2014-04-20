@@ -32,7 +32,7 @@ class MiniBatchTrainer(object):
     self.weights = []
     self.biases = []
     nrWeights = nrLayers - 1
-    for i in xrange(nrLayers - nrWeights):
+    for i in xrange(nrWeights):
       w = theano.shared(value=np.asarray(initialWeights[i],
                                          dtype=theanoFloat),
                         name='W')
