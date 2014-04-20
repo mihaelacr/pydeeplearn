@@ -302,12 +302,11 @@ class RBM(object):
                                     initialBiases=self.biases,
                                     visibleDropout=1,
                                     hiddenDropout=1)
-    batchTrainer.cdSteps = 1
 
     representHidden = theano.function(
             inputs=[],
             outputs=batchTrainer.hidden,
-            updates={},
+            updates=batchTrainer.updates,
             givens={x: dataInstacesConverted})
 
     return representHidden()
@@ -326,13 +325,10 @@ class RBM(object):
                                     initialBiases=self.biases,
                                     visibleDropout=1,
                                     hiddenDropout=1)
-    batchTrainer.cdSteps = 1
-
-
     reconstruct = theano.function(
             inputs=[],
             outputs=batchTrainer.visibleReconstruction,
-            updates={},
+            updates=batchTrainer.updates,
             givens={x: dataInstacesConverted})
 
     return reconstruct()
