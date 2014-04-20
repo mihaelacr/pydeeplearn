@@ -31,7 +31,8 @@ class MiniBatchTrainer(object):
     # The weights and biases, make them shared variables
     self.weights = []
     self.biases = []
-    for i in xrange(nrLayers - 1):
+    nrWeights = nrLayers - 1
+    for i in xrange(nrLayers - nrWeights):
       w = theano.shared(value=np.asarray(initialWeights[i],
                                          dtype=theanoFloat),
                         name='W')
@@ -46,7 +47,7 @@ class MiniBatchTrainer(object):
     # Do not set more than this, these will be used for differentiation in the
     # gradient
     self.params = self.weights + self.biases
-    self.isWeight = [True] * nrLayers + [False] * nrLayers
+    self.isWeight = [True] * (nrWeights)+ [False] * (nrWeights)
 
     # Required for momentum
     # The updates that were performed in the last batch
@@ -54,13 +55,13 @@ class MiniBatchTrainer(object):
     # we add the oldUpdates is the same as which we add the params
     # TODO: add an assertion for this
     self.oldUpdates = []
-    for i in xrange(nrLayers - 1):
+    for i in xrange(nrWeights):
       oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
                                            dtype=theanoFloat),
                         name='oldDw')
       self.oldUpdates.append(oldDw)
 
-    for i in xrange(nrLayers - 1):
+    for i in xrange(nrWeights):
       oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
                                            dtype=theanoFloat),
                         name='oldDb')
@@ -69,13 +70,13 @@ class MiniBatchTrainer(object):
     # Rmsprop
     # The old mean that were performed in the last batch
     self.oldMeanSquare = []
-    for i in xrange(nrLayers - 1):
+    for i in xrange(nrWeights):
       oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
                                            dtype=theanoFloat),
                         name='oldDw')
       self.oldMeanSquare.append(oldDw)
 
-    for i in xrange(nrLayers - 1):
+    for i in xrange(nrWeights):
       oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
                                            dtype=theanoFloat),
                         name='oldDb')
@@ -96,7 +97,7 @@ class MiniBatchTrainer(object):
 
     currentLayerValues = self.input * dropout_mask
 
-    for stage in xrange(len(self.weights) -1):
+    for stage in xrange(nrWeights -1):
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
@@ -112,8 +113,8 @@ class MiniBatchTrainer(object):
       currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
 
     # Last layer operations
-    w = self.weights[nrLayers - 2]
-    b = self.biases[nrLayers - 2]
+    w = self.weights[nrWeights - 1]
+    b = self.biases[nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
     # Do not use theano's softmax, it is numerically unstable
     # and it causes Nans to appear
