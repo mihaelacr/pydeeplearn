@@ -22,7 +22,7 @@ EXPENSIVE_CHECKS_ON = False
 class RBMMiniBatchTrainer(object):
 
   def __init__(self, input, initialWeights, initialBiases,
-             visibleDropout, hiddenDropout, cdSteps):
+             visibleDropout, hiddenDropout):
 
     self.visible = input
     self.cdSteps = theano.shared(value=np.int32(1))
@@ -143,8 +143,7 @@ class RBM(object):
                                        initialWeights=self.weights,
                                        initialBiases=self.biases,
                                        visibleDropout=0.8,
-                                       hiddenDropout=0.5,
-                                       cdSteps=1)
+                                       hiddenDropout=0.5)
 
     if self.nesterov:
       preDeltaUpdates, updates = self.buildNesterovUpdates(batchTrainer,
@@ -302,8 +301,8 @@ class RBM(object):
                                     initialWeights=self.testWeights,
                                     initialBiases=self.biases,
                                     visibleDropout=1,
-                                    hiddenDropout=1,
-                                    cdSteps=1)
+                                    hiddenDropout=1)
+    batchTrainer.cdSteps = 1
 
     representHidden = theano.function(
             inputs=[],
@@ -326,8 +325,9 @@ class RBM(object):
                                     initialWeights=self.testWeights,
                                     initialBiases=self.biases,
                                     visibleDropout=1,
-                                    hiddenDropout=1,
-                                    cdSteps=1)
+                                    hiddenDropout=1)
+    batchTrainer.cdSteps = 1
+
 
     reconstruct = theano.function(
             inputs=[],
