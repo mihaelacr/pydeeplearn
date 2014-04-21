@@ -172,7 +172,7 @@ def cvMNIST():
   bestError = np.inf
   # params = [5, 10, 15]
 
-  params =[0.001, 0.0005, 0.0001]
+  params =[0.001, 0.005]
   for i in xrange(nrFolds):
     # Train the net
     # Try 1200, 1200, 1200
