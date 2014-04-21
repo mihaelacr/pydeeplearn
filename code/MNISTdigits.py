@@ -32,6 +32,8 @@ parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', def
                     help=("if true, rbms are trained using nesterov momentum"))
 parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=False,
                     help=("if true, rmsprop is used when training the deep belief net."))
+parser.add_argument('--rbmrmsprop', dest='rbmrmsprop',action='store_true', default=False,
+                    help=("if true, rmsprop is used when training the rbms."))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
 parser.add_argument('--trainSize', type=int, default=10000,
@@ -74,7 +76,8 @@ def rbmMain(reconstructRandom=False):
     nrVisible = len(trainingScaledVectors[0])
     nrHidden = 500
     # use 1 dropout to test the rbm for now
-    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1, nesterov=args.rbmnesterov)
+    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1,
+                  rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
   else:
