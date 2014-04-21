@@ -185,7 +185,7 @@ def cvMNIST():
                   hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                   rbmVisibleDropout=1,
                   preTrainEpochs=args.preTrainEpochs,
-                  normConstraint=15)
+                  normConstraint=None)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
               maxEpochs=args.maxEpochs,
