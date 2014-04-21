@@ -61,7 +61,7 @@ db.DEBUG = args.debug
 
 def rbmMain(reconstructRandom=False):
   trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
   testingVectors, testLabels =\
       readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
 
@@ -113,7 +113,7 @@ def rbmMain(reconstructRandom=False):
   # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
   plt.axis('off')
-  plt.savefig('weightsallrmsprop.png', transparent=True)
+  plt.savefig('weights2srmsprop.png', transparent=True)
   # plt.show()
 
   print "done"
