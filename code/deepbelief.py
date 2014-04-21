@@ -390,7 +390,7 @@ class DBN(object):
         raise Exception(("You provided validation data but requested a train method "
                         "that does not need validation"))
 
-      self.trainLoopModelFixedEpochs(trainModel, maxEpochs)
+      self.trainLoopModelFixedEpochs(batchTrainer, trainModel, maxEpochs)
 
     # Set up the weights in the dbn object
     for i in xrange(len(self.weights)):
@@ -404,7 +404,7 @@ class DBN(object):
     print self.biases
 
 
-  def trainLoopModelFixedEpochs(self, trainModel, maxEpochs):
+  def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
     for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
 
