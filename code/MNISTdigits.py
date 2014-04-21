@@ -168,9 +168,9 @@ def cvMNIST():
   permutation = np.random.permutation(range(training))
   bestFold = -1
   bestError = np.inf
-  # params = [5, 10, 15]
+  params = [10, 15, 20]
 
-  params =[0.001, 0.005]
+  # params =[0.001, 0.005]
   nrFolds = len(params)
   foldSize = training / nrFolds
 
@@ -186,7 +186,7 @@ def cvMNIST():
                   hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
                   rbmVisibleDropout=1,
                   preTrainEpochs=args.preTrainEpochs,
-                  normConstraint=None)
+                  normConstraint=params[i])
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
               maxEpochs=args.maxEpochs,
