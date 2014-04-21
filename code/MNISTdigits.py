@@ -164,7 +164,6 @@ def cvMNIST():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  nrFolds = 3
 
   permutation = np.random.permutation(range(training))
   foldSize = training / nrFolds
@@ -173,6 +172,7 @@ def cvMNIST():
   # params = [5, 10, 15]
 
   params =[0.001, 0.005]
+  nrFolds = len(params)
   for i in xrange(nrFolds):
     # Train the net
     # Try 1200, 1200, 1200
