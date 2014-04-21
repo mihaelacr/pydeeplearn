@@ -413,6 +413,8 @@ class DBN(object):
 
       for batchNr in xrange(self.nrMiniBatches):
         trainModel(batchNr, momentum)
+        assert np.all(np.norm(batchTrainer.weights.get_value(), axis=0) <= self.normConstraint + 1e-8)
+
 
     print "number of epochs"
     print epoch
@@ -515,7 +517,6 @@ class DBN(object):
 
       for batchNr in xrange(self.nrMiniBatches):
         trainModel(batchNr, momentum)
-        assert np.norm(batchTrainer.weights.get_value(), axis=0) <= self.normConstraint + 1e-8
 
       # why axis = 0? this should be a number?!
       meanValidation = np.mean(validateModel, maxEpochs())
