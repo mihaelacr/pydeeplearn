@@ -47,7 +47,11 @@ class MiniBatchTrainer(object):
     # Do not set more than this, these will be used for differentiation in the
     # gradient
     self.params = self.weights + self.biases
-    self.isWeight = [True] * (nrWeights - 1)+ [False] * (nrWeights + 1)
+
+    # Required for setting the norm constraint
+    # Note that only the hidden units have norm constraint
+    # The last layer (softmax) does not have it
+    self.hasNormConstraint = [True] * (nrWeights - 1) + [False] * (nrWeights + 1)
 
     # Required for momentum
     # The updates that were performed in the last batch
@@ -556,9 +560,9 @@ class DBN(object):
                            deltaParams,
                            batchTrainer.oldUpdates,
                            batchTrainer.oldMeanSquare,
-                           batchTrainer.isWeight)
+                           batchTrainer.hasNormConstraint)
 
-    for param, delta, oldUpdate, oldMeanSquare, isWeight in parametersTuples:
+    for param, delta, oldUpdate, oldMeanSquare, hasNormConstraint in parametersTuples:
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
         paramUpdate = - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
@@ -568,7 +572,7 @@ class DBN(object):
 
       newParam = param + paramUpdate
 
-      if self.normConstraint is not None and isWeight:
+      if self.normConstraint is not None and hasNormConstraint:
         norms = SquaredElementWiseNorm(newParam)
         rescaled = norms > self.normConstraint
         factors = T.ones(norms.shape, dtype=theanoFloat) / T.sqrt(norms) * np.sqrt(self.normConstraint, dtype='float32') - 1.0
@@ -592,9 +596,9 @@ class DBN(object):
                            deltaParams,
                            batchTrainer.oldUpdates,
                            batchTrainer.oldMeanSquare,
-                           batchTrainer.isWeight)
+                           batchTrainer.hasNormConstraint)
 
-    for param, delta, oldUpdate, oldMeanSquare, isWeight in parametersTuples:
+    for param, delta, oldUpdate, oldMeanSquare, hasNormConstraint in parametersTuples:
       paramUpdate = momentum * oldUpdate
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
@@ -605,7 +609,7 @@ class DBN(object):
 
       newParam = param + paramUpdate
 
-      if self.normConstraint is not None and isWeight:
+      if self.normConstraint is not None and hasNormConstraint:
         norms = SquaredElementWiseNorm(newParam)
         rescaled = norms > self.normConstraint
         factors = T.ones(norms.shape, dtype=theanoFloat) / T.sqrt(norms) * np.sqrt(self.normConstraint, dtype='float32') - 1.0
