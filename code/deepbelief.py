@@ -607,6 +607,7 @@ class DBN(object):
         replaceNewParam = (factors * rescaled) * newParam
         replaceNewParam += newParam
         newParam = replaceNewParam
+        paramUpdate = newParam - param
 
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
