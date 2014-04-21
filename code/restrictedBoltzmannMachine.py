@@ -108,6 +108,7 @@ class RBM(object):
     self.nrVisible = nrVisible
     self.initialized = False
     self.learningRate = learningRate
+    self.rmsprop = rmsprop
     self.nesterov = nesterov
     self.weights = initialWeights
     self.biases = initialBiases
