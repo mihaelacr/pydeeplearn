@@ -121,7 +121,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
   # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
   plt.axis('off')
-  if args.rmsprop:
+  if args.rbmrmsprop:
     st='rmsprop'
   else:
     st = 'simple'
