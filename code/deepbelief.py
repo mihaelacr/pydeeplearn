@@ -413,7 +413,7 @@ class DBN(object):
 
       for batchNr in xrange(self.nrMiniBatches):
         trainModel(batchNr, momentum)
-        assert np.all(np.norm(batchTrainer.weights.get_value(), axis=0) <= self.normConstraint + 1e-8)
+        assert np.all(np.linalg.norm(batchTrainer.weights.get_value(), axis=0) <= self.normConstraint + 1e-8)
 
 
     print "number of epochs"
