@@ -168,7 +168,7 @@ def cvMNIST():
   permutation = np.random.permutation(range(training))
   bestFold = -1
   bestError = np.inf
-  params = [20, 25, 30]
+  params = [5, 10, 15]
 
   # params =[0.001, 0.005]
   nrFolds = len(params)
@@ -179,7 +179,7 @@ def cvMNIST():
     # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                   unsupervisedLearningRate=0.01,
-                  supervisedLearningRate=params[i],
+                  supervisedLearningRate=0.001,
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   rmsprop=args.rmsprop,
