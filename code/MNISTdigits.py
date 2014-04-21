@@ -59,11 +59,11 @@ args = parser.parse_args()
 # Set the debug mode in the deep belief net
 db.DEBUG = args.debug
 
-def rbmMain(reconstructRandom=False):
+def rbmMain(reconstructRandom=True):
   trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
   testingVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=[7], bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -98,14 +98,14 @@ def rbmMain(reconstructRandom=False):
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
   plt.axis('off')
-  plt.savefig('initial7.png', transparent=True)
+  plt.savefig('randomdigits.png', transparent=True)
   # plt.show()
 
   # Show the reconstruction
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
   plt.axis('off')
-  plt.savefig('reconstruct7from2s.png', transparent=True)
+  plt.savefig('reconstructrandomfromall.png', transparent=True)
 
   # plt.show()
 
@@ -113,7 +113,7 @@ def rbmMain(reconstructRandom=False):
   # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
   plt.axis('off')
-  plt.savefig('weights.png', transparent=True)
+  plt.savefig('weightsallrmsprop.png', transparent=True)
   # plt.show()
 
   print "done"
