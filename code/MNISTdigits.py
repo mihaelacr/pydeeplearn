@@ -168,7 +168,7 @@ def cvMNIST():
   permutation = np.random.permutation(range(training))
   bestFold = -1
   bestError = np.inf
-  params = [10, 15, 20]
+  params = [20, 25, 30]
 
   # params =[0.001, 0.005]
   nrFolds = len(params)
