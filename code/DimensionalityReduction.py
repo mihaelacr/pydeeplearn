@@ -149,7 +149,9 @@ def LDA(data, classes, dimension):
   # Step1: build the within and between class scatter matrix
   # Let's amke the classes start form 0 so that
   # you can easily make the loops without having to worry about an extra 1
-  classes = classes - 1
+  if classes.min() != 0:
+    classes = classes -1 # If the classes start from 1 subtract 1
+
   distinctClasses = np.unique(classes)
   nrClasses = len(distinctClasses)
   nrData = data.shape[1]

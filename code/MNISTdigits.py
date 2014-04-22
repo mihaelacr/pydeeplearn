@@ -12,6 +12,8 @@ import ann
 import utils
 import PCA
 
+from sklearn import lda
+
 import DimensionalityReduction
 
 from common import *
@@ -146,6 +148,7 @@ def pcaOnMnist(training, dimension=700):
   plt.imshow(image2D, cmap=plt.cm.gray)
   plt.show()
   print "done"
+  return low
 
 
 def cvMNIST():
@@ -382,6 +385,74 @@ def pcaMain():
 
   pcaOnMnist(train, dimension=100)
 
+def pcadbn(dimension=700):
+  training = args.trainSize
+  testing = args.testSize
+
+  trainVectors, trainLabels =\
+      readmnist.read(0, training, bTrain=True, path="MNIST")
+  testVectors, testLabels =\
+      readmnist.read(0, testing, bTrain=False, path="MNIST")
+
+  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
+
+  mean, principalComponents = PCA.pca(trainVectors, dimension)
+  reducedTrain, _ = PCA.reduce(principalComponents, training, mean)
+
+  trainingScaledVectors = reducedTrain / 255.0
+  testingScaledVectors = testVectors / 255.0
+
+  vectorLabels = labelsToVectors(trainLabels, 10)
+
+  if args.train:
+    # Try 1200, 1200, 1200
+    # [784, 500, 500, 2000, 10
+    net = db.DBN(5, [dimension, 1000, 1000, 1000, 10],
+                 unsupervisedLearningRate=0.05,
+                 supervisedLearningRate=0.05,
+                 nesterovMomentum=args.nesterov,
+                 rbmNesterovMomentum=args.rbmnesterov,
+                 rmsprop=args.rmsprop,
+                 hiddenDropout=0.5,
+                 rbmHiddenDropout=0.5,
+                 visibleDropout=0.8,
+                 rbmVisibleDropout=0.9,
+                 preTrainEpochs=args.preTrainEpochs)
+    net.train(trainingScaledVectors, vectorLabels,
+              maxEpochs=args.maxEpochs, validation=args.validation)
+  else:
+    # Take the saved network and use that for reconstructions
+    f = open(args.netFile, "rb")
+    net = pickle.load(f)
+    f.close()
+
+
+  probs, predicted = net.classify(testingScaledVectors)
+  correct = 0
+  errorCases = []
+  for i in xrange(testing):
+    print "predicted"
+    print "probs"
+    print probs[i]
+    print predicted[i]
+    print "actual"
+    actual = testLabels[i]
+    print actual
+    if predicted[i] == actual:
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  # Mistakes for digits
+  # You just need to display some for the report
+  # trueDigits = testLabels[errorCases]
+  # predictedDigits = predicted[errorCases]
+
+  print "correct"
+  print correct
+
+
+
 def ldaMain():
   training = args.trainSize
   testing = args.testSize
@@ -392,23 +463,28 @@ def ldaMain():
       readmnist.read(0, testing, bTrain=False, path="MNIST")
   print train[0].shape
 
+  train, trainLabels = shuffle(train, trainLabels)
+
   # You need to transpose the data, here we have the data on rows
   transposedTrain = train.T
-  principalVectors = DimensionalityReduction.LDA(transposedTrain, dimension=100)
+  principalVectors = DimensionalityReduction.LDA(transposedTrain, trainLabels, dimension=700)
   meanData = transposedTrain.mean(axis=1)
 
   # Project
-  projections = np.dot(principalVectors, testing.T - meanData)
+  print principalVectors.shape
+  print "principalVectors.shape"
+  print "testVectors.T - meanData[:, np.newaxis])"
+  print (testVectors.T - meanData[:, np.newaxis]).shape
+  projections = np.dot(principalVectors.T, testVectors.T - meanData[:, np.newaxis])
 
   # Reconstruct
-  reconstructions = np.dot(principalVectors, projections) + meanData
+  reconstructions = np.dot(principalVectors, projections) + meanData[:, np.newaxis]
 
   projections = projections.T
 
   reconstructions = reconstructions.T
 
-
-  image2DInitial = vectorToImage(testing[0], (28,28))
+  image2DInitial = vectorToImage(testVectors[0], (28,28))
   image2Dreconstruction = vectorToImage(reconstructions[0], (28,28))
 
   plt.imshow(image2DInitial, cmap=plt.cm.gray)
@@ -425,19 +501,20 @@ def main():
   if args.db + args.pca + args.rbm + args.cv + args.ann + args.lda!= 1:
     raise Exception("You decide on one main method to run")
 
-  if args.db:
-    deepbeliefMNIST()
-  if args.pca:
-    pcaMain()
-  if args.rbm:
-    rbmMain()
-  if args.cv:
-    cvMNIST()
-  if args.ann:
-    annMNIST()
-  if args.ann:
-    ldaMain()
+  # if args.db:
+  #   deepbeliefMNIST()
+  # if args.pca:
+  #   pcaMain()
+  # if args.rbm:
+  #   rbmMain()
+  # if args.cv:
+  #   cvMNIST()
+  # if args.ann:
+  #   annMNIST()
+  # if args.lda:
+  #   ldaMain()
 
+  pcadbn(dimension=700)
 
 if __name__ == '__main__':
   main()
