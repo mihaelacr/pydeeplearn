@@ -395,12 +395,8 @@ class DBN(object):
     for i in xrange(len(self.weights)):
       self.weights[i] = batchTrainer.weights[i].get_value()
 
-    print self.weights
-
     for i in xrange(len(self.biases)):
       self.biases[i] = batchTrainer.biases[i].get_value()
-
-    print self.biases
 
 
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
