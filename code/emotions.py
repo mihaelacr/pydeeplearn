@@ -169,7 +169,9 @@ def deepBeliefKanadeCV(big=False):
                nesterovMomentum=args.nesterov,
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
-               hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
+               hiddenDropout=0.5,
+               rbmHiddenDropout=0.5,
+               visibleDropout=0.8,
                rbmVisibleDropout=1)
 
     net.train(trainData, trainLabels,
@@ -238,7 +240,9 @@ def deepBeliefKanade(big=False):
              nesterovMomentum=args.nesterov,
              rbmNesterovMomentum=args.rbmnesterov,
              rmsprop=args.rmsprop,
-             hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
+             hiddenDropout=0.5,
+             rbmHiddenDropout=0.5,
+             visibleDropout=0.8,
              rbmVisibleDropout=1)
 
   unsupervisedData = buildUnsupervisedDataSet()
