@@ -163,8 +163,8 @@ class ANN(object):
 
   def initialize(self, data):
 
-    self.weights = []
-    self.biases = []
+    self.weights = [None * (self.nrLayers - 1)]
+    self.biases  = [None * (self.nrLayers - 1)]
 
     for i in xrange(self.nrLayers - 1):
       self.weights[i] = np.asarray(np.random.normal(0, 0.01,
