@@ -166,7 +166,7 @@ class ANN(object):
     self.weights = [None] * (self.nrLayers - 1)
     self.biases  = [None] * (self.nrLayers - 1)
 
-    for i in xrange(self.nrLayers - 1):
+    for i in xrange(self.nrLayers - 2):
       self.weights[i] = np.asarray(np.random.normal(0, 0.01,
                                    (self.layerSizes[i], self.layerSizes[i+1])),
                                   dtype=theanoFloat)
