@@ -201,7 +201,6 @@ class DBN(object):
                       pretrainingEpochs=1)
       net.train(currentData)
 
-      # TODO: should it really be testWeights?
       w = net.testWeights
       self.weights += [w / self.hiddenDropout]
       # Only add the biases for the hidden unit
