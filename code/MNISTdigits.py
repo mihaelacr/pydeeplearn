@@ -48,6 +48,8 @@ parser.add_argument('--preTrainEpochs', type=int, default=1,
                     help='the number of pretraining epochs')
 parser.add_argument('--maxEpochs', type=int, default=100,
                     help='the maximum number of supervised epochs')
+parser.add_argument('--miniBatchSize', type=int, default=10,
+                    help='the number of training points in a mini batch')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
 parser.add_argument('--validation',dest='validation',action='store_true', default=False,
                     help="if true, the network is trained using a validation set")
@@ -182,7 +184,7 @@ def cvMNIST():
                   rbmHiddenDropout=0.5,
                   visibleDropout=0.8,
                   rbmVisibleDropout=1,
-                  miniBatchSize=100,
+                  miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
@@ -233,7 +235,7 @@ def annMNIST():
                  rmsprop=args.rmsprop,
                  hiddenDropout=0.5,
                  visibleDropout=0.8,
-                 miniBatchSize=100,
+                 miniBatchSize=args.miniBatchSize,
                  normConstraint=15)
     net.train(trainingScaledVectors, vectorLabels,
               maxEpochs=args.maxEpochs, validation=args.validation)
