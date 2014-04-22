@@ -301,7 +301,7 @@ def deepbeliefMNIST():
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                 unsupervisedLearningRate=0.1,
+                 unsupervisedLearningRate=0.05,
                  supervisedLearningRate=0.05,
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
