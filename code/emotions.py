@@ -421,7 +421,9 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
 
     for f in imageFiles:
       img = io.imread(f)
-      if not (img.min() >=0 and img.max()<=1.000008):
+      if type(img[0,0]) == np.uint8:
+        print "rescaling unit"
+      # if not (img.min() >=0.0 and img.max()<=1.000008):
         img = img / 255.0
       images += [img.reshape(-1)]
 
