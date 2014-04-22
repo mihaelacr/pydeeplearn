@@ -141,6 +141,8 @@ def rbmEmotions(big=False, reconstructRandom=False):
 def deepBeliefKanadeCV(big=False):
   data, labels = readKanade(big)
 
+  data, labels = shuffle(data, labels)
+
   print "data.shape"
   print data.shape
   print "labels.shape"

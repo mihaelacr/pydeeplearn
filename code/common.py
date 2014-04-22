@@ -139,3 +139,10 @@ class Tanh(ActivationFunction):
     return 2 * topLayerActivations * (1 - topLayerActivations) * topLayerDerivatives
     # return ((1.0 - topLayerActivations * topLayerActivations) * topLayerDerivatives) / 2
 
+
+def shuffle(data, labels):
+  indexShuffle = np.random.permutation(len(data))
+  shuffledData = np.array([data[i] for i in indexShuffle])
+  shuffledLabels = np.array([labels[i] for i in indexShuffle])
+
+  return shuffledData, shuffledLabels

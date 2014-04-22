@@ -128,14 +128,6 @@ def rbmMain(reconstructRandom=False):
     pickle.dump(net, f)
 
 
-def shuffle(data, labels):
-  indexShuffle = np.random.permutation(len(data))
-  shuffledData = np.array([data[i] for i in indexShuffle])
-  shuffledLabels = np.array([labels[i] for i in indexShuffle])
-
-  return shuffledData, shuffledLabels
-
-
 def pcaOnMnist(training, dimension=700):
   principalComponents = PCA.pca(training, dimension)
   low, same = PCA.reduce(principalComponents, training)
