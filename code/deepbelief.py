@@ -152,8 +152,7 @@ class DBN(object):
                 rbmHiddenDropout=0.5,
                 visibleDropout=0.8,
                 rbmVisibleDropout=1,
-                preTrainEpochs=1,
-                normConstraint=None):
+                preTrainEpochs=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
 
@@ -169,7 +168,6 @@ class DBN(object):
     self.rbmNesterovMomentum = rbmNesterovMomentum
     self.rmsprop = rmsprop
     self.preTrainEpochs = preTrainEpochs
-    self.normConstraint = normConstraint
 
 
   def pretrain(self, data, unsupervisedData):
@@ -567,16 +565,6 @@ class DBN(object):
 
       newParam = param + paramUpdate
 
-      if self.normConstraint is not None and hasNormConstraint:
-        norms = SquaredElementWiseNorm(newParam)
-        rescaled = norms > self.normConstraint
-        factors = T.ones(norms.shape, dtype=theanoFloat) / T.sqrt(norms) * np.sqrt(self.normConstraint, dtype='float32') - 1.0
-        replaceNewParam = (factors * rescaled) * newParam
-        replaceNewParam += newParam
-        newParam = replaceNewParam
-        # paramUpdate = newParam - param
-
-
       updates.append((param, newParam))
       updates.append((oldUpdate, momentum * oldUpdate + paramUpdate))
 
@@ -603,15 +591,6 @@ class DBN(object):
         paramUpdate += - batchLearningRate * delta
 
       newParam = param + paramUpdate
-
-      if self.normConstraint is not None and hasNormConstraint:
-        norms = SquaredElementWiseNorm(newParam)
-        rescaled = norms > self.normConstraint
-        factors = T.ones(norms.shape, dtype=theanoFloat) / T.sqrt(norms) * np.sqrt(self.normConstraint, dtype='float32') - 1.0
-        replaceNewParam = (factors * rescaled) * newParam
-        replaceNewParam += newParam
-        newParam = replaceNewParam
-        # paramUpdate = newParam - param
 
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
