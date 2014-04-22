@@ -178,8 +178,8 @@ class ANN(object):
     lastLayerBiases = np.zeros(shape=(self.layerSizes[-1]),
                                dtype=theanoFloat)
 
-    self.weights += [lastLayerWeights]
-    self.biases += [lastLayerBiases]
+    self.weights[-1] = lastLayerWeights
+    self.biases[-1] = lastLayerBiases
 
     assert len(self.weights) == self.nrLayers - 1
     assert len(self.biases) == self.nrLayers - 1
