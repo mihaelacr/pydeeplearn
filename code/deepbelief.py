@@ -558,10 +558,10 @@ class DBN(object):
     for param, delta, oldUpdate, oldMeanSquare, hasNormConstraint in parametersTuples:
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-        paramUpdate = - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+        paramUpdate = - (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
         updates.append((oldMeanSquare, meanSquare))
       else:
-        paramUpdate = - batchLearningRate * delta
+        paramUpdate = - (1.0 - momentum) * batchLearningRate * delta
 
       newParam = param + paramUpdate
 
@@ -585,10 +585,10 @@ class DBN(object):
       paramUpdate = momentum * oldUpdate
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-        paramUpdate += - batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+        paramUpdate += - (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
         updates.append((oldMeanSquare, meanSquare))
       else:
-        paramUpdate += - batchLearningRate * delta
+        paramUpdate += - (1.0 - momentum) * batchLearningRate * delta
 
       newParam = param + paramUpdate
 

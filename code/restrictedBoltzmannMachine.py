@@ -217,10 +217,10 @@ class RBM(object):
     wUpdate = momentum * batchTrainer.oldDParams[0]
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
-      wUpdate += batchLearningRate * delta / T.sqrt(meanW + 1e-8)
+      wUpdate += (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
       updates.append((batchTrainer.oldMeanW, meanW))
     else:
-      wUpdate += batchLearningRate * delta
+      wUpdate += (1.0 - momentum) * batchLearningRate * delta
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDParams[0], wUpdate))
@@ -229,10 +229,10 @@ class RBM(object):
     biasVisUpdate = momentum * batchTrainer.oldDParams[1]
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
-      biasVisUpdate += batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
+      biasVisUpdate += (1.0 - momentum) * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
       updates.append((batchTrainer.oldMeanVis, meanVis))
     else:
-      biasVisUpdate += batchLearningRate * visibleBiasDiff
+      biasVisUpdate += (1.0 - momentum) * batchLearningRate * visibleBiasDiff
 
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
     updates.append((batchTrainer.oldDParams[1], biasVisUpdate))
@@ -241,10 +241,10 @@ class RBM(object):
     biasHidUpdate = momentum * batchTrainer.oldDParams[2]
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
-      biasHidUpdate += batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
+      biasHidUpdate += (1.0 - momentum) * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
       updates.append((batchTrainer.oldMeanHid, meanHid))
     else:
-      biasHidUpdate += batchLearningRate * hiddenBiasDiff
+      biasHidUpdate += (1.0 - momentum) * batchLearningRate * hiddenBiasDiff
 
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
     updates.append((batchTrainer.oldDParams[2], biasHidUpdate))
@@ -276,10 +276,10 @@ class RBM(object):
     delta = positiveDifference - negativeDifference
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
-      wUpdate = batchLearningRate * delta / T.sqrt(meanW + 1e-8)
+      wUpdate = (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
       updates.append((batchTrainer.oldMeanW, meanW))
     else:
-      wUpdate = batchLearningRate * delta
+      wUpdate = (1.0 - momentum) * batchLearningRate * delta
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDParams[0], wUpdate + wUpdateMomentum))
@@ -287,10 +287,10 @@ class RBM(object):
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
-      biasVisUpdate = batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
+      biasVisUpdate = (1.0 - momentum) * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
       updates.append((batchTrainer.oldMeanVis, meanVis))
     else:
-      biasVisUpdate = batchLearningRate * visibleBiasDiff
+      biasVisUpdate = (1.0 - momentum) * batchLearningRate * visibleBiasDiff
 
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
     updates.append((batchTrainer.oldDParams[1], biasVisUpdate + biasVisUpdateMomentum))
@@ -298,10 +298,10 @@ class RBM(object):
     hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
-      biasHidUpdate = batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
+      biasHidUpdate = (1.0 - momentum) * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
       updates.append((batchTrainer.oldMeanHid, meanHid))
     else:
-      biasHidUpdate = batchLearningRate * hiddenBiasDiff
+      biasHidUpdate = (1.0 - momentum) * batchLearningRate * hiddenBiasDiff
 
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
     updates.append((batchTrainer.oldDParams[2], biasHidUpdate + biasHidUpdateMomentum))
