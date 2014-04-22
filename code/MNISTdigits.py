@@ -182,8 +182,8 @@ def cvMNIST():
     # Train the net
     # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                  unsupervisedLearningRate=params[i],
-                  supervisedLearningRate=0.1,
+                  unsupervisedLearningRate=0.1,
+                  supervisedLearningRate=params[i],
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   rmsprop=args.rmsprop,
