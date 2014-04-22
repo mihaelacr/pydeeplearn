@@ -194,6 +194,7 @@ class DBN(object):
                       learningRate=self.unsupervisedLearningRate,
                       hiddenDropout=self.rbmHiddenDropout,
                       visibleDropout=self.rbmVisibleDropout,
+                      rmsprop=True, # TODO: argument here as well?
                       nesterov=self.rbmNesterovMomentum,
                       initialWeights=initialWeights,
                       initialBiases=initialBiases,
