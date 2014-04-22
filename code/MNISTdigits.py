@@ -182,8 +182,8 @@ def cvMNIST():
     # Train the net
     # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                  unsupervisedLearningRate=0.01,
-                  supervisedLearningRate=0.001,
+                  unsupervisedLearningRate=1.0,
+                  supervisedLearningRate=0.1,
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   rmsprop=args.rmsprop,
@@ -308,8 +308,8 @@ def deepbeliefMNIST():
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                 unsupervisedLearningRate=0.01,
-                 supervisedLearningRate=0.001,
+                 unsupervisedLearningRate=1.0,
+                 supervisedLearningRate=0.1,
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,

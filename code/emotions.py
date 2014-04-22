@@ -215,6 +215,7 @@ def deepBeliefKanadeCV(big=False):
   print bestProbs
 
 
+# TODO: shuffle training data for minibatches
 def deepBeliefKanade(big=False):
   data, labels = readKanade(big, None)
 
