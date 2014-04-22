@@ -187,7 +187,9 @@ def cvMNIST():
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   rmsprop=args.rmsprop,
-                  hiddenDropout=0.5, rbmHiddenDropout=0.5, visibleDropout=0.8,
+                  hiddenDropout=0.5,
+                  rbmHiddenDropout=0.5,
+                  visibleDropout=0.8,
                   rbmVisibleDropout=1,
                   preTrainEpochs=args.preTrainEpochs)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]

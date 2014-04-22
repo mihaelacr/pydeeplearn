@@ -203,6 +203,7 @@ class DBN(object):
                       initialWeights=initialWeights,
                       initialBiases=initialBiases,
                       pretrainingEpochs=1)
+      net.train(currentData)
 
       # TODO: should it really be testWeights?
       w = net.testWeights
