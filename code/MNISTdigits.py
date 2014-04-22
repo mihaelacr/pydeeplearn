@@ -182,6 +182,7 @@ def cvMNIST():
                   rbmHiddenDropout=0.5,
                   visibleDropout=0.8,
                   rbmVisibleDropout=1,
+                  miniBatchSize=100,
                   preTrainEpochs=args.preTrainEpochs)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
@@ -232,6 +233,7 @@ def annMNIST():
                  rmsprop=args.rmsprop,
                  hiddenDropout=0.5,
                  visibleDropout=0.8,
+                 miniBatchSize=100,
                  normConstraint=15)
     net.train(trainingScaledVectors, vectorLabels,
               maxEpochs=args.maxEpochs, validation=args.validation)
