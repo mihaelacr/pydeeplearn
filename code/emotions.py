@@ -147,13 +147,9 @@ def deepBeliefKanadeCV(big=False):
   print data.shape
   print "labels.shape"
   print labels.shape
-  # bestParam
-  # 0.001
-  # bestProbs
-  # 0.3703703703
-  # TODO: try boosting for CV in order to increase the number of folds
-  params = [0.001, 0.005, 0.01]
 
+  # TODO: try boosting for CV in order to increase the number of folds
+  params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.01), (0.05, 0.05)]
   unsupervisedData = buildUnsupervisedDataSet()
 
   kf = cross_validation.KFold(n=len(data), k=len(params))
@@ -169,7 +165,7 @@ def deepBeliefKanadeCV(big=False):
     # TODO: this might require more thought
     net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
                unsupervisedLearningRate=params[fold],
-               supervisedLearningRate=0.001,
+               supervisedLearningRate=params[fold],
                nesterovMomentum=args.nesterov,
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
