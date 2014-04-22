@@ -31,6 +31,8 @@ parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
 parser.add_argument('--db', dest='db',action='store_true', default=False,
                     help=("if true, the code for traning a deepbelief net on the"
                           "data is run"))
+parser.add_argument('--lda', dest='lda',action='store_true', default=False,
+                    help=("if true, runs LDA main"))
 parser.add_argument('--nesterov', dest='nesterov',action='store_true', default=False,
                     help=("if true, the deep belief net is trained using nesterov momentum"))
 parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
@@ -405,12 +407,22 @@ def ldaMain():
 
   reconstructions = reconstructions.T
 
+
+  image2DInitial = vectorToImage(testing[0], (28,28))
+  image2Dreconstruction = vectorToImage(reconstructions[0], (28,28))
+
+  plt.imshow(image2DInitial, cmap=plt.cm.gray)
+  plt.show()
+  plt.imshow(image2Dreconstruction, cmap=plt.cm.gray)
+  plt.show()
+  print "done"
+
 def main():
   import random
   print "FIXING RANDOMNESS"
   random.seed(6)
   np.random.seed(6)
-  if args.db + args.pca + args.rbm + args.cv + args.ann != 1:
+  if args.db + args.pca + args.rbm + args.cv + args.ann + args.lda!= 1:
     raise Exception("You decide on one main method to run")
 
   if args.db:
@@ -423,6 +435,8 @@ def main():
     cvMNIST()
   if args.ann:
     annMNIST()
+  if args.ann:
+    ldaMain()
 
 
 if __name__ == '__main__':
