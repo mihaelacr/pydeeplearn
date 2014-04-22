@@ -174,7 +174,7 @@ def cvMNIST():
   bestError = np.inf
   params = [5, 10, 15]
 
-  params =[1.0, 0.5, 0.1]
+  params =[0.1, 0.05]
   nrFolds = len(params)
   foldSize = training / nrFolds
 
