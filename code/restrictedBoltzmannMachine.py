@@ -182,6 +182,7 @@ class RBM(object):
     nrMiniBatches = len(data) / miniBatchSize
 
     for miniBatchIndex in range(nrMiniBatches):
+      # TODO: also linear change, also 1- momentum
       if miniBatchIndex < 10:
         momentum = np.float32(0.5)
         step = 1
@@ -312,8 +313,6 @@ class RBM(object):
 
     return preDeltaUpdates, updates
 
-  # TODO: move this to GPU as well?
-  # Could be a good idea to speed up things + cleaner
   def hiddenRepresentation(self, dataInstances):
     dataInstacesConverted = np.asarray(dataInstances, dtype=theanoFloat)
 

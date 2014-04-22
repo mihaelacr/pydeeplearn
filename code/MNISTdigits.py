@@ -402,7 +402,7 @@ def main():
   if args.cv:
     cvMNIST()
   if args.ann:
-    annMain()
+    annMNIST()
 
 
 if __name__ == '__main__':
