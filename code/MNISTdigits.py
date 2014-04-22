@@ -131,8 +131,8 @@ def rbmMain(reconstructRandom=False):
 
 
 def pcaOnMnist(training, dimension=700):
-  principalComponents = PCA.pca(training, dimension)
-  low, same = PCA.reduce(principalComponents, training)
+  mean, principalComponents = PCA.pca(training, dimension)
+  low, same = PCA.reduce(principalComponents, training, mean)
 
   image2DInitial = vectorToImage(training[0], (28,28))
   print same[0].shape

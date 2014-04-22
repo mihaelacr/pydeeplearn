@@ -22,17 +22,17 @@ currentDir = os.path.dirname(os.path.abspath(__file__))
   Converts the data to zero mean data.
 """
 def convertDataToZeroMean(data):
-  means = scipy.mean(data, axis=0)
+  mean = scipy.mean(data, axis=0)
 
   # Step2: Substract the mean of it's column from every element
   rows, cols = data.shape
   zeroMean = numpy.zeros((rows, cols))
   for i in xrange(rows):
-    zeroMean[i] = data[i] - means
+    zeroMean[i] = data[i] - mean
 
   assert zeroMean.shape == data.shape
 
-  return zeroMean
+  return mean, zeroMeanData
 
 
 """
@@ -101,7 +101,7 @@ def pca(train, dimension):
   rows, cols = train.shape
   # Step1: Get the mean of each column of the data
   # Ie create the average image
-  u = convertDataToZeroMean(train)
+  mean, u = convertDataToZeroMean(train)
 
   # Step2: Compute the eigen values of the U * U^T matrix
   # the size of U * U^T is rows * rows (ie the number of data points you have
@@ -143,7 +143,7 @@ def pca(train, dimension):
     result += [vector]
     index = index + 1
 
-  return result
+  return mean, result
 
 """
 Arguments:
@@ -161,7 +161,7 @@ Returns:
   http://math.stackexchange.com/questions/3869/what-is-the-intuitive-relationship-between-svd-and-pca
 """
 def pcaWithSVD(train, dimension=None):
-  zeroMean = convertDataToZeroMean(train)
+  mean, zeroMean = convertDataToZeroMean(train)
 
   # SVD guaranteed that the singular values are in non-increasing order
   # this means that the u's are already ordered as required, according
@@ -174,7 +174,7 @@ def pcaWithSVD(train, dimension=None):
     dimension = dimensionFromEigenTotalVariance(eigenValues)
     print "Using PCA dimension " + str(dimension)
 
-  return vh[0:dimension-1]
+  return mean, vh[0:dimension-1]
 
 """
 Arguments:
@@ -201,13 +201,14 @@ def getEigenFaces(pcaMethod, images, dimension=None):
   return (eigenFaces, vectors)
 
 
-def reduce(principalComponents, vectors):
+def reduce(principalComponents, vectors, mean):
   assert len(principalComponents) > 0
 
   print principalComponents[0].shape
 
   principalComponents = np.array(principalComponents)
 
+  vectors = vectors - mean[np.newaxis, :]
   lowDimRepresentation  = np.dot(vectors, principalComponents.T)
   # lowDimRepresentation = map(lambda x : vectors.dot(x), principalComponents)
   # sameDimRepresentation = \
@@ -215,6 +216,7 @@ def reduce(principalComponents, vectors):
   # TODO: do this with einsum
   sameDimRepresentation = lowDimRepresentation[:, np.newaxis] * principalComponents.T
   sameDimRepresentation = sameDimRepresentation.sum(axis=2)
+  sameDimRepresentation +=  mean[np.newaxis, :]
   # TODO: create the proper thing here so that you can
   # easily see what the ouput is
   return  (lowDimRepresentation, sameDimRepresentation)
