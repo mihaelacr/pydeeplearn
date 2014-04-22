@@ -183,7 +183,7 @@ def cvMNIST():
                   hiddenDropout=0.5,
                   rbmHiddenDropout=0.5,
                   visibleDropout=0.8,
-                  rbmVisibleDropout=1,
+                  rbmVisibleDropout=0.9,
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs)
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
@@ -312,7 +312,7 @@ def deepbeliefMNIST():
                  hiddenDropout=0.5,
                  rbmHiddenDropout=0.5,
                  visibleDropout=0.8,
-                 rbmVisibleDropout=1,
+                 rbmVisibleDropout=0.9,
                  preTrainEpochs=args.preTrainEpochs)
     net.train(trainingScaledVectors, vectorLabels,
               maxEpochs=args.maxEpochs, validation=args.validation)

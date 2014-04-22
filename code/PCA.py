@@ -32,7 +32,7 @@ def convertDataToZeroMean(data):
 
   assert zeroMean.shape == data.shape
 
-  return mean, zeroMeanData
+  return mean, zeroMean
 
 
 """
