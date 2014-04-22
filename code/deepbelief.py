@@ -393,6 +393,7 @@ class DBN(object):
     for i in xrange(len(self.biases)):
       self.biases[i] = batchTrainer.biases[i].get_value()
 
+
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
     for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
@@ -540,8 +541,7 @@ class DBN(object):
     parametersTuples = zip(batchTrainer.params,
                            deltaParams,
                            batchTrainer.oldUpdates,
-                           batchTrainer.oldMeanSquare,
-                           batchTrainer)
+                           batchTrainer.oldMeanSquare)
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       if self.rmsprop:
