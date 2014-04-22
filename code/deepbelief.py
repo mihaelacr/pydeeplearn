@@ -46,11 +46,6 @@ class MiniBatchTrainer(object):
     # gradient
     self.params = self.weights + self.biases
 
-    # Required for setting the norm constraint
-    # Note that only the hidden units have norm constraint
-    # The last layer (softmax) does not have it
-    self.hasNormConstraint = [True] * (nrWeights - 1) + [False] * (nrWeights + 1)
-
     # Required for momentum
     # The updates that were performed in the last batch
     # It is important that the order in which
@@ -398,7 +393,6 @@ class DBN(object):
     for i in xrange(len(self.biases)):
       self.biases[i] = batchTrainer.biases[i].get_value()
 
-
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
     for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
@@ -547,9 +541,9 @@ class DBN(object):
                            deltaParams,
                            batchTrainer.oldUpdates,
                            batchTrainer.oldMeanSquare,
-                           batchTrainer.hasNormConstraint)
+                           batchTrainer)
 
-    for param, delta, oldUpdate, oldMeanSquare, hasNormConstraint in parametersTuples:
+    for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
         paramUpdate = - (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
@@ -572,10 +566,9 @@ class DBN(object):
     parametersTuples = zip(batchTrainer.params,
                            deltaParams,
                            batchTrainer.oldUpdates,
-                           batchTrainer.oldMeanSquare,
-                           batchTrainer.hasNormConstraint)
+                           batchTrainer.oldMeanSquare)
 
-    for param, delta, oldUpdate, oldMeanSquare, hasNormConstraint in parametersTuples:
+    for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       paramUpdate = momentum * oldUpdate
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
