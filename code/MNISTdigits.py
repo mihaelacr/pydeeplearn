@@ -12,6 +12,7 @@ import ann
 import utils
 import PCA
 
+import DimensionalityReduction
 
 from common import *
 
@@ -230,7 +231,7 @@ def annMNIST():
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10
     net = ann.ANN(5, [784, 1000, 1000, 1000, 10],
-                 supervisedLearningRate=0.01,
+                 supervisedLearningRate=0.001,
                  nesterovMomentum=args.nesterov,
                  rmsprop=args.rmsprop,
                  hiddenDropout=0.5,
@@ -378,6 +379,31 @@ def pcaMain():
   print train[0].shape
 
   pcaOnMnist(train, dimension=100)
+
+def ldaMain():
+  training = args.trainSize
+  testing = args.testSize
+
+  train, trainLabels =\
+      readmnist.read(0, training, bTrain=True, path="MNIST")
+  testVectors, testLabels =\
+      readmnist.read(0, testing, bTrain=False, path="MNIST")
+  print train[0].shape
+
+  # You need to transpose the data, here we have the data on rows
+  transposedTrain = train.T
+  principalVectors = DimensionalityReduction.LDA(transposedTrain, dimension=100)
+  meanData = transposedTrain.mean(axis=1)
+
+  # Project
+  projections = np.dot(principalVectors, testing.T - meanData)
+
+  # Reconstruct
+  reconstructions = np.dot(principalVectors, projections) + meanData
+
+  projections = projections.T
+
+  reconstructions = reconstructions.T
 
 def main():
   import random

@@ -99,7 +99,7 @@ class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, learningRate, hiddenDropout,
                 visibleDropout, rmsprop=True, nesterov=True,
-                initialWeights=None, initialBiases=None, pretrainingEpochs=1):
+                initialWeights=None, initialBiases=None, trainingEpochs=1):
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
     # dropout = 1 means no dropout, keep all the weights
@@ -112,7 +112,7 @@ class RBM(object):
     self.nesterov = nesterov
     self.weights = initialWeights
     self.biases = initialBiases
-    self.pretrainingEpochs = pretrainingEpochs
+    self.trainingEpochs = trainingEpochs
 
   def train(self, data, miniBatchSize=10):
     print "rbm learningRate"
@@ -182,7 +182,7 @@ class RBM(object):
 
     nrMiniBatches = len(data) / miniBatchSize
 
-    for epoch in xrange(self.pretrainingEpochs):
+    for epoch in xrange(self.trainingEpochs):
       for miniBatchIndex in range(nrMiniBatches):
         iteration = miniBatchIndex + epoch * nrMiniBatches
         momentum = np.float32(min(np.float32(0.5) + iteration * np.float32(0.01),
