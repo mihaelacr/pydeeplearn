@@ -201,10 +201,8 @@ class DBN(object):
                       visibleDropout=self.rbmVisibleDropout,
                       nesterov=self.rbmNesterovMomentum,
                       initialWeights=initialWeights,
-                      initialBiases=initialBiases)
-
-      for i in xrange(self.preTrainEpochs):
-        net.train(currentData)
+                      initialBiases=initialBiases,
+                      pretrainingEpochs=1)
 
       # TODO: should it really be testWeights?
       w = net.testWeights
@@ -408,10 +406,9 @@ class DBN(object):
     for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
 
-      for batchNr in xrange(self.nrMiniBatches):
-        iteration = epoch * self.nrMiniBatches + batchNr
-        momentum = np.float32(min(np.float32(0.5) + iteration * np.float32(0.01),
+      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
                      np.float32(0.99)))
+      for batchNr in xrange(self.nrMiniBatches):
         trainModel(batchNr, momentum)
 
     print "number of epochs"

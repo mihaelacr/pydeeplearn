@@ -99,7 +99,7 @@ class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, learningRate, hiddenDropout,
                 visibleDropout, rmsprop=True, nesterov=True,
-                initialWeights=None, initialBiases=None):
+                initialWeights=None, initialBiases=None, pretrainingEpochs=1):
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
     # dropout = 1 means no dropout, keep all the weights
@@ -112,6 +112,7 @@ class RBM(object):
     self.nesterov = nesterov
     self.weights = initialWeights
     self.biases = initialBiases
+    self.pretrainingEpochs = pretrainingEpochs
 
   def train(self, data, miniBatchSize=10):
     print "rbm learningRate"
@@ -164,14 +165,14 @@ class RBM(object):
           }
         )
 
-      def train_function(miniBatchIndex, momentum, cdSteps):
+      def trainFunction(miniBatchIndex, momentum, cdSteps):
         momentum_function(momentum)
         after_momentum_updates(miniBatchIndex, cdSteps, momentum)
 
     else:
       updates = self.buildUpdates(batchTrainer, momentum, batchLearningRate, cdSteps)
 
-      train_function = theano.function(
+      trainFunction = theano.function(
         inputs=[miniBatchIndex, momentum, cdSteps],
         outputs=[], # TODO: output error
         updates=updates,
@@ -181,16 +182,17 @@ class RBM(object):
 
     nrMiniBatches = len(data) / miniBatchSize
 
-    for miniBatchIndex in range(nrMiniBatches):
+    for epoch in self.pretrainingEpochs:
+      for miniBatchIndex in range(nrMiniBatches):
 
-      momentum = np.float32(min(np.float32(0.5) + miniBatchIndex * np.float32(0.01),
-                     np.float32(0.90)))
-      if miniBatchIndex < 10:
-        step = 1
-      else:
-        step = 3
+        momentum = np.float32(min(np.float32(0.5) + miniBatchIndex * np.float32(0.01),
+                       np.float32(0.90)))
+        if miniBatchIndex < 10:
+          step = 1
+        else:
+          step = 3
 
-      train_function(miniBatchIndex, momentum, step)
+        trainFunction(miniBatchIndex, momentum, step)
 
     self.weights = batchTrainer.weights.get_value()
     self.biases = [batchTrainer.biasVisible.get_value(),
