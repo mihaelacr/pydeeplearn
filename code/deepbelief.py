@@ -408,10 +408,10 @@ class DBN(object):
     for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
 
-      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
-                     np.float32(0.99)))
-
       for batchNr in xrange(self.nrMiniBatches):
+        iteration = epoch * self.nrMiniBatches + batchNr
+        momentum = np.float32(min(np.float32(0.5) + iteration * np.float32(0.01),
+                     np.float32(0.99)))
         trainModel(batchNr, momentum)
 
     print "number of epochs"
@@ -428,10 +428,10 @@ class DBN(object):
     while epoch < maxEpochs and count < 8:
       print "epoch " + str(epoch)
 
-      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
-                     np.float32(0.99)))
-
       for batchNr in xrange(self.nrMiniBatches):
+        iteration = epoch * self.nrMiniBatches + batchNr
+        momentum = np.float32(min(np.float32(0.5) + iteration * np.float32(0.01),
+                     np.float32(0.99)))
         trainModel(batchNr, momentum)
 
       meanValidation = np.mean(validateModel(), axis=0)

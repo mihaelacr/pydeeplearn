@@ -182,12 +182,12 @@ class RBM(object):
     nrMiniBatches = len(data) / miniBatchSize
 
     for miniBatchIndex in range(nrMiniBatches):
-      # TODO: also linear change, also 1- momentum
+
+      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
+                     np.float32(0.90)))
       if miniBatchIndex < 10:
-        momentum = np.float32(0.5)
         step = 1
       else:
-        momentum = np.float32(0.98)
         step = 3
 
       train_function(miniBatchIndex, momentum, step)
