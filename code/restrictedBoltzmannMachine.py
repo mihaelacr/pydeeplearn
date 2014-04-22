@@ -183,7 +183,7 @@ class RBM(object):
 
     for miniBatchIndex in range(nrMiniBatches):
 
-      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
+      momentum = np.float32(min(np.float32(0.5) + miniBatchIndex * np.float32(0.01),
                      np.float32(0.90)))
       if miniBatchIndex < 10:
         step = 1
