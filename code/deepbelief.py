@@ -17,8 +17,6 @@ from common import *
 from debug import *
 
 DEBUG = False
-# TODO: the random stream can be put in the
-# class: maybe that is faster?
 
 class MiniBatchTrainer(object):
 

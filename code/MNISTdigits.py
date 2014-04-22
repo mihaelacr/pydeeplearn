@@ -8,8 +8,10 @@ import cPickle as pickle
 import readmnist
 import restrictedBoltzmannMachine as rbm
 import deepbelief as db
+import ann
 import utils
 import PCA
+
 
 from common import *
 
@@ -19,6 +21,8 @@ parser.add_argument('--save',dest='save',action='store_true', default=False,
 parser.add_argument('--train',dest='train',action='store_true', default=False,
                     help=("if true, the network is trained from scratch from the"
                           "traning data"))
+parser.add_argument('--ann',dest='ann',action='store_true', default=False,
+                    help=("if true, we train an ann not a dbn"))
 parser.add_argument('--pca', dest='pca',action='store_true', default=False,
                     help=("if true, the code for running PCA on the data is run"))
 parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
@@ -210,6 +214,80 @@ def cvMNIST():
 def getClassificationError(predicted, actual):
   return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
 
+def annMNIST():
+  training = args.trainSize
+  testing = args.testSize
+
+  trainVectors, trainLabels =\
+      readmnist.read(0, training, bTrain=True, path="MNIST")
+  testVectors, testLabels =\
+      readmnist.read(0, testing, bTrain=False, path="MNIST")
+  print trainVectors[0].shape
+
+  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
+
+  trainingScaledVectors = trainVectors / 255.0
+  testingScaledVectors = testVectors / 255.0
+
+  vectorLabels = labelsToVectors(trainLabels, 10)
+
+  if args.train:
+    # Try 1200, 1200, 1200
+    # [784, 500, 500, 2000, 10
+    net = ann.ANN(5, [784, 1000, 1000, 1000, 10],
+                 supervisedLearningRate=0.001,
+                 nesterovMomentum=args.nesterov,
+                 rmsprop=args.rmsprop,
+                 hiddenDropout=0.5,
+                 visibleDropout=0.8,
+                 normConstraint=15)
+    net.train(trainingScaledVectors, vectorLabels,
+              maxEpochs=args.maxEpochs, validation=args.validation)
+  else:
+    # Take the saved network and use that for reconstructions
+    f = open(args.netFile, "rb")
+    net = pickle.load(f)
+    f.close()
+
+
+  probs, predicted = net.classify(testingScaledVectors)
+  correct = 0
+  errorCases = []
+  for i in xrange(testing):
+    print "predicted"
+    print "probs"
+    print probs[i]
+    print predicted[i]
+    print "actual"
+    actual = testLabels[i]
+    print actual
+    if predicted[i] == actual:
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  print "correct"
+  print correct
+
+  # for w in net.weights:
+  #   print w
+
+  # for b in net.biases:
+  #   print b
+
+
+  # t = visualizeWeights(net.weights[0].T, trainImages[0].(28, 28), (10,10))
+  # plt.imshow(t, cmap=plt.cm.gray)
+  # plt.show()
+  # print "done"
+
+  if args.save:
+    f = open(args.netFile, "wb")
+    pickle.dump(net, f)
+    f.close()
+
+
+
 def deepbeliefMNIST():
   training = args.trainSize
   testing = args.testSize
@@ -312,7 +390,7 @@ def main():
   print "FIXING RANDOMNESS"
   random.seed(6)
   np.random.seed(6)
-  if args.db + args.pca + args.rbm + args.cv!= 1:
+  if args.db + args.pca + args.rbm + args.cv + args.ann != 1:
     raise Exception("You decide on one main method to run")
 
   if args.db:
@@ -323,6 +401,8 @@ def main():
     rbmMain()
   if args.cv:
     cvMNIST()
+  if args.ann:
+    annMain()
 
 
 if __name__ == '__main__':
