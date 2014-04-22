@@ -174,7 +174,7 @@ def cvMNIST():
   bestError = np.inf
   params = [5, 10, 15]
 
-  params =[0.1, 0.5, 0.05]
+  params =[1.0, 0.5, 0.1]
   nrFolds = len(params)
   foldSize = training / nrFolds
 
@@ -182,8 +182,8 @@ def cvMNIST():
     # Train the net
     # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                  unsupervisedLearningRate=1.0,
-                  supervisedLearningRate=params[i],
+                  unsupervisedLearningRate=params[i],
+                  supervisedLearningRate=0.1,
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   rmsprop=args.rmsprop,
