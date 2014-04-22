@@ -230,7 +230,7 @@ def annMNIST():
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10
     net = ann.ANN(5, [784, 1000, 1000, 1000, 10],
-                 supervisedLearningRate=0.001,
+                 supervisedLearningRate=0.01,
                  nesterovMomentum=args.nesterov,
                  rmsprop=args.rmsprop,
                  hiddenDropout=0.5,
@@ -281,7 +281,6 @@ def annMNIST():
     f = open(args.netFile, "wb")
     pickle.dump(net, f)
     f.close()
-
 
 
 def deepbeliefMNIST():
