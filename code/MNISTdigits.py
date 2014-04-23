@@ -165,6 +165,12 @@ def cvMNIST():
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
+  if args.relu:
+    activationFunction = relu
+  else:
+    activationFunction = T.nnet.sigmoid
+
+
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testVectors / 255.0
 
@@ -187,6 +193,7 @@ def cvMNIST():
                   supervisedLearningRate=params[i][1],
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
+                  activationFunction=activationFunction,
                   rmsprop=args.rmsprop,
                   hiddenDropout=0.5,
                   rbmHiddenDropout=0.5,
