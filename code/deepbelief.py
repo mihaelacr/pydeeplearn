@@ -148,8 +148,8 @@ class DBN(object):
                 rbmHiddenDropout=0.5,
                 visibleDropout=0.8,
                 rbmVisibleDropout=1,
-                weightDecayL1=0.001,
-                weightDecayL2=0.001,
+                weightDecayL1=0.0001,
+                weightDecayL2=0.0001,
                 preTrainEpochs=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
