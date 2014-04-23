@@ -321,12 +321,21 @@ def deepbeliefMNIST():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
+  if arg.relu:
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.05
+  else:
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.05
+
+
+
   if args.train:
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                 unsupervisedLearningRate=0.05,
-                 supervisedLearningRate=0.05,
+                 unsupervisedLearningRate=unsupervisedLearningRate,
+                 supervisedLearningRate=supervisedLearningRate,
                  activationFunction=activationFunction,
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
