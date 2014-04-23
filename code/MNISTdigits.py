@@ -181,7 +181,8 @@ def cvMNIST():
   bestError = np.inf
 
   if args.relu:
-    params =[(0.01, 0.01) , (0.01, 0.05), (0.05, 0.1), (0.05, 0.05)]
+    # params =[(0.01, 0.01) , (0.01, 0.05), (0.05, 0.1), (0.05, 0.05)]
+    params =[(0.01, 0.01) , (0.001, 0.01), (0.01, 0.001), (0.001, 0.001)]
   else:
     params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.1), (0.05, 0.05)]
 
@@ -220,8 +221,8 @@ def cvMNIST():
       bestError = error
       bestFold = i
 
-  print "best fold was" + str(bestFold)
-  print "bestParameter" + str(params[bestFold])
+  print "best fold was " + str(bestFold)
+  print "bestParameter " + str(params[bestFold])
 
 
 def getClassificationError(predicted, actual):
