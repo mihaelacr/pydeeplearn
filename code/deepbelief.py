@@ -197,7 +197,6 @@ class DBN(object):
 
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                       activationFunction=self.activationFunction,
-                      classificationActivationFunction=self.classificationActivationFunction,
                       learningRate=self.unsupervisedLearningRate,
                       hiddenDropout=self.rbmHiddenDropout,
                       visibleDropout=self.rbmVisibleDropout,
@@ -330,6 +329,8 @@ class DBN(object):
     y = T.matrix('y', dtype=theanoFloat)
 
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
+                                    activationFunction=self.activationFunction,
+                                    classificationActivationFunction=self.classificationActivationFunction,
                                     initialWeights=self.weights,
                                     initialBiases=self.biases,
                                     visibleDropout=0.8,
