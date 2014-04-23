@@ -21,7 +21,7 @@ EXPENSIVE_CHECKS_ON = False
 
 class RBMMiniBatchTrainer(object):
 
-  def __init__(self, input, initialWeights, initialBiases,
+  def __init__(self, input, initialWeights, initialBiases, activationFunction,
              visibleDropout, hiddenDropout):
 
     self.visible = input
@@ -67,13 +67,13 @@ class RBMMiniBatchTrainer(object):
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneSampleStep(visibleSample):
-      hiddenActivations = T.nnet.sigmoid(T.dot(visibleSample, self.weights) + self.biasHidden)
+      hiddenActivations = activationFunction(T.dot(visibleSample, self.weights) + self.biasHidden)
       hiddenActivationsDropped = hiddenActivations * dropoutMaskHidden
       hidden = self.theano_rng.binomial(size=hiddenActivationsDropped.shape,
                                           n=1, p=hiddenActivationsDropped,
                                           dtype=theanoFloat)
 
-      visibleRec = T.nnet.sigmoid(T.dot(hidden, self.weights.T) + self.biasVisible)
+      visibleRec = activationFunction(T.dot(hidden, self.weights.T) + self.biasVisible)
       return [hiddenActivationsDropped, visibleRec]
 
     results, updates = theano.scan(OneSampleStep,
@@ -87,7 +87,7 @@ class RBMMiniBatchTrainer(object):
 
     # Do not sample for the last one, in order to get less sampling noise
     # TODO: drop these as well?
-    hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
+    hiddenRec = activationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     self.hiddenReconstruction = hiddenRec
 
 
@@ -96,8 +96,10 @@ class RBMMiniBatchTrainer(object):
 """
 class RBM(object):
 
-  def __init__(self, nrVisible, nrHidden, learningRate, hiddenDropout,
-                visibleDropout, rmsprop=True, nesterov=True,
+  def __init__(self, nrVisible, nrHidden, learningRate,
+                hiddenDropout, visibleDropout,
+                activationFunction=T.nnet.sigmoid,
+                rmsprop=True, nesterov=True,
                 initialWeights=None, initialBiases=None, trainingEpochs=1):
                 # TODO: also check how the gradient works for RBMS
                 # l1WeigthtDecay=0.001, l2WeightDecay=0.002):
@@ -113,6 +115,7 @@ class RBM(object):
     self.nesterov = nesterov
     self.weights = initialWeights
     self.biases = initialBiases
+    self.activationFunction = activationFunction
     self.trainingEpochs = trainingEpochs
 
   def train(self, data, miniBatchSize=10):
@@ -145,6 +148,7 @@ class RBM(object):
 
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                        initialWeights=self.weights,
+                                       activationFunction=self.activationFunction,
                                        initialBiases=self.biases,
                                        visibleDropout=0.8,
                                        hiddenDropout=0.5)
