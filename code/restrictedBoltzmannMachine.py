@@ -67,7 +67,7 @@ class RBMMiniBatchTrainer(object):
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneSampleStep(visibleSample):
-      hiddenActivations = activationFunction(T.dot(visibleSample, self.weights) + self.biasHidden)
+      hiddenActivations = T.nnet.sigmoid(T.dot(visibleSample, self.weights) + self.biasHidden)
       hiddenActivationsDropped = hiddenActivations * dropoutMaskHidden
       hidden = self.theano_rng.binomial(size=hiddenActivationsDropped.shape,
                                           n=1, p=hiddenActivationsDropped,
@@ -87,7 +87,7 @@ class RBMMiniBatchTrainer(object):
 
     # Do not sample for the last one, in order to get less sampling noise
     # TODO: drop these as well?
-    hiddenRec = activationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
+    hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     self.hiddenReconstruction = hiddenRec
 
 
