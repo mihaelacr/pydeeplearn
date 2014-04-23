@@ -76,7 +76,7 @@ class RBMMiniBatchTrainer(object):
       hiddenActivations = hiddenActivationFunction(T.dot(visibleSample, self.weights) + self.biasHidden)
       hiddenActivationsDropped = hiddenActivations * dropoutMaskHidden
       # Sample only for stochastic binary units not relu
-      if RBMMiniBatchTrainer.STOCHASTICHIDDEN[hiddenActivationFunction]:
+      if STOCHASTICHIDDEN[hiddenActivationFunction]:
         hidden = self.theano_rng.binomial(size=hiddenActivationsDropped.shape,
                                             n=1, p=hiddenActivationsDropped,
                                             dtype=theanoFloat)
