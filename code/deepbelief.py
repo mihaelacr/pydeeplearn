@@ -148,6 +148,8 @@ class DBN(object):
                 rbmHiddenDropout=0.5,
                 visibleDropout=0.8,
                 rbmVisibleDropout=1,
+                weightDecayL1=0.001,
+                weightDecayL2=0.001,
                 preTrainEpochs=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
@@ -163,6 +165,8 @@ class DBN(object):
     self.nesterovMomentum = nesterovMomentum
     self.rbmNesterovMomentum = rbmNesterovMomentum
     self.rmsprop = rmsprop
+    self.weightDecayL1 = weightDecayL1
+    self.weightDecayL2 = weightDecayL2
     self.preTrainEpochs = preTrainEpochs
 
 
@@ -334,8 +338,7 @@ class DBN(object):
     # comps, updates_ = theano.map(fn=lambda x: T.sum(T.abs_(x)), sequences=[t])
     error = T.sum(batchTrainer.cost(y))
     for w in batchTrainer.weights:
-      error+= 0.001 * T.sum(T.abs_(w))
-
+      error+= self.weightDecayL1 * T.sum(T.abs_(w)) + self.weightDecayL2 * T.sum(param ** 2)
 
     if DEBUG:
       mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
