@@ -195,8 +195,10 @@ class DBN(object):
         initialWeights = None
         initialBiases = None
 
+      # TODO: do I really have to use the same activation function for both?
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                      activationFunction=self.activationFunction,
+                      visibleActivationFunction=self.activationFunction,
+                      hiddenActivationFunction=self.activationFunction,
                       learningRate=self.unsupervisedLearningRate,
                       hiddenDropout=self.rbmHiddenDropout,
                       visibleDropout=self.rbmVisibleDropout,

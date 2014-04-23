@@ -21,7 +21,13 @@ EXPENSIVE_CHECKS_ON = False
 
 class RBMMiniBatchTrainer(object):
 
-  def __init__(self, input, initialWeights, initialBiases, activationFunction,
+  stochasticHidden = {
+    relu : False,
+    T.nnet.sigmoid: True
+  }
+
+  def __init__(self, input, initialWeights, initialBiases,
+             visibleActivationFunction, hiddenActivationFunction,
              visibleDropout, hiddenDropout):
 
     self.visible = input
@@ -67,13 +73,17 @@ class RBMMiniBatchTrainer(object):
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneSampleStep(visibleSample):
-      hiddenActivations = T.nnet.sigmoid(T.dot(visibleSample, self.weights) + self.biasHidden)
+      hiddenActivations = hiddenActivationFunction(T.dot(visibleSample, self.weights) + self.biasHidden)
       hiddenActivationsDropped = hiddenActivations * dropoutMaskHidden
-      hidden = self.theano_rng.binomial(size=hiddenActivationsDropped.shape,
-                                          n=1, p=hiddenActivationsDropped,
-                                          dtype=theanoFloat)
+      # Sample only for stochastic binary units not relu
+      if RBMMiniBatchTrainer.stochasticHidden[hiddenActivationFunction]:
+        hidden = self.theano_rng.binomial(size=hiddenActivationsDropped.shape,
+                                            n=1, p=hiddenActivationsDropped,
+                                            dtype=theanoFloat)
+      else:
+        hidden = hiddenActivationsDropped
 
-      visibleRec = activationFunction(T.dot(hidden, self.weights.T) + self.biasVisible)
+      visibleRec = visibleActivationFunction(T.dot(hidden, self.weights.T) + self.biasVisible)
       return [hiddenActivationsDropped, visibleRec]
 
     results, updates = theano.scan(OneSampleStep,
@@ -98,7 +108,8 @@ class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, learningRate,
                 hiddenDropout, visibleDropout,
-                activationFunction=T.nnet.sigmoid,
+                visibleActivationFunction=T.nnet.sigmoid,
+                hiddenActivationFunction=T.nnet.sigmoid,
                 rmsprop=True, nesterov=True,
                 initialWeights=None, initialBiases=None, trainingEpochs=1):
                 # TODO: also check how the gradient works for RBMS
@@ -115,7 +126,8 @@ class RBM(object):
     self.nesterov = nesterov
     self.weights = initialWeights
     self.biases = initialBiases
-    self.activationFunction = activationFunction
+    self.visibleActivationFunction = visibleActivationFunction
+    self.hiddenActivationFunction = hiddenActivationFunction
     self.trainingEpochs = trainingEpochs
 
   def train(self, data, miniBatchSize=10):
@@ -148,7 +160,8 @@ class RBM(object):
 
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                        initialWeights=self.weights,
-                                       activationFunction=self.activationFunction,
+                                       visibleActivationFunction=self.visibleActivationFunction,
+                                       hiddenActivationFunction=self.hiddenActivationFunction,
                                        initialBiases=self.biases,
                                        visibleDropout=0.8,
                                        hiddenDropout=0.5)
@@ -328,7 +341,8 @@ class RBM(object):
 
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                     initialWeights=self.testWeights,
-                                    activationFunction=self.activationFunction,
+                                    visibleActivationFunction=self.visibleActivationFunction,
+                                    hiddenActivationFunction=self.hiddenActivationFunction,
                                     initialBiases=self.biases,
                                     visibleDropout=1,
                                     hiddenDropout=1)
@@ -353,7 +367,8 @@ class RBM(object):
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                     initialWeights=self.testWeights,
                                     initialBiases=self.biases,
-                                    activationFunction=self.activationFunction,
+                                    visibleActivationFunction=self.visibleActivationFunction,
+                                    hiddenActivationFunction=self.hiddenActivationFunction,
                                     visibleDropout=1,
                                     hiddenDropout=1)
     reconstruct = theano.function(
