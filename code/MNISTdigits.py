@@ -291,7 +291,7 @@ def annMNIST():
     f.close()
 
 
-def deepbeliefMNIST(activationFunction=T.nnet.sigmoid):
+def deepbeliefMNIST():
   training = args.trainSize
   testing = args.testSize
 
@@ -303,6 +303,12 @@ def deepbeliefMNIST(activationFunction=T.nnet.sigmoid):
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
+  if args.relu:
+    activationFunction = relu
+  else:
+    activationFunction = T.nnet.sigmoid
+
+  # TODO: do not divide for RELU
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testVectors / 255.0
 
