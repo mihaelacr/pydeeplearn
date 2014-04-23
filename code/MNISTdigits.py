@@ -501,20 +501,20 @@ def main():
   if args.db + args.pca + args.rbm + args.cv + args.ann + args.lda!= 1:
     raise Exception("You decide on one main method to run")
 
-  # if args.db:
-  #   deepbeliefMNIST()
-  # if args.pca:
-  #   pcaMain()
-  # if args.rbm:
-  #   rbmMain()
-  # if args.cv:
-  #   cvMNIST()
-  # if args.ann:
-  #   annMNIST()
-  # if args.lda:
-  #   ldaMain()
+  if args.db:
+    deepbeliefMNIST()
+  if args.pca:
+    pcaMain()
+  if args.rbm:
+    rbmMain()
+  if args.cv:
+    cvMNIST()
+  if args.ann:
+    annMNIST()
+  if args.lda:
+    ldaMain()
 
-  pcadbn(dimension=700)
+  # pcadbn(dimension=700)
 
 if __name__ == '__main__':
   main()
