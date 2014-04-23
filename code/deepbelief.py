@@ -108,7 +108,7 @@ class MiniBatchTrainer(object):
       dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
-      currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
+      currentLayerValues = dropout_mask * self.activationFunction(linearSum)
 
     # Last layer operations
     w = self.weights[nrWeights - 1]
