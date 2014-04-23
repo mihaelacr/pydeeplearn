@@ -123,8 +123,9 @@ class MiniBatchTrainer(object):
 
   # TODO: clean up, just a rough version to see what works
   def cost(self, y):
-    c1 = T.sum(theano.map(fn= lambda x: T.sum(T.abs_(x)), sequences=self.weights))
-    return T.nnet.categorical_crossentropy(self.output, y) + 0.001 * c1
+    comps, updates = theano.map(fn=lambda x: T.sum(T.abs_(x)), sequences=self.weights)
+
+    return T.nnet.categorical_crossentropy(self.output, y) + 0.001 * T.sum(comps)
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
