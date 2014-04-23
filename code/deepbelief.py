@@ -333,9 +333,8 @@ class DBN(object):
     # t = T.as_tensor_variable(batchTrainer.weights)
     # comps, updates_ = theano.map(fn=lambda x: T.sum(T.abs_(x)), sequences=[t])
     c = 0.0
-    for c in batchTrainer.weights:
-      c+= T.abs_(x)
-
+    for w in batchTrainer.weights:
+      c+= T.abs_(w)
 
     error = T.sum(batchTrainer.cost(y)) + c
 
