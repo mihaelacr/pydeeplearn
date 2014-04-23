@@ -22,6 +22,7 @@ class MiniBatchTrainer(object):
 
   # TODO: maybe creating the ring here might be better?
   def __init__(self, input, nrLayers, initialWeights, initialBiases,
+               activationFunction, classificationActivationFunction,
                visibleDropout, hiddenDropout):
     self.input = input
 
@@ -107,17 +108,13 @@ class MiniBatchTrainer(object):
       dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
-      currentLayerValues = dropout_mask * T.nnet.sigmoid(linearSum)
+      currentLayerValues = dropout_mask * activationFunction(linearSum)
 
     # Last layer operations
     w = self.weights[nrWeights - 1]
     b = self.biases[nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
-    # Do not use theano's softmax, it is numerically unstable
-    # and it causes Nans to appear
-    # Semantically this is the same
-    e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
-    currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
+    currentLayerValues = classificationActivationFunction(linearSum)
 
     self.output = currentLayerValues
 
@@ -132,12 +129,13 @@ class DBN(object):
   Arguments:
     nrLayers: the number of layers of the network. In case of discriminative
         traning, also contains the classifcation layer
-        (the last softmax layer)
         type: integer
     layerSizes: the sizes of the individual layers.
         type: list of integers of size nrLayers
   """
   def __init__(self, nrLayers, layerSizes,
+                activationFunction=T.nnet.sigmoid,
+                classificationActivationFunction=softmax,
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,
                 nesterovMomentum=True,
@@ -168,6 +166,8 @@ class DBN(object):
     self.weightDecayL1 = weightDecayL1
     self.weightDecayL2 = weightDecayL2
     self.preTrainEpochs = preTrainEpochs
+    self.activationFunction = activationFunction
+    self.classificationActivationFunction = classificationActivationFunction
 
 
   def pretrain(self, data, unsupervisedData):
@@ -196,6 +196,8 @@ class DBN(object):
         initialBiases = None
 
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
+                      activationFunction=self.activationFunction,
+                      classificationActivationFunction=self.classificationActivationFunction,
                       learningRate=self.unsupervisedLearningRate,
                       hiddenDropout=self.rbmHiddenDropout,
                       visibleDropout=self.rbmVisibleDropout,
