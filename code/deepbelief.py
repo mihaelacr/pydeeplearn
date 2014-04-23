@@ -330,7 +330,7 @@ class DBN(object):
                                     hiddenDropout=0.5)
 
     # the error is the sum of the errors in the individual cases
-    comps, updates_ = theano.map(fn=lambda x: T.sum(T.abs_(x)), sequences=batchTrainer.weights)
+    comps, updates_ = theano.map(fn=lambda x: T.sum(T.abs_(x)), sequences=[batchTrainer.weights])
     error = T.sum(batchTrainer.cost(y)) + T.sum(comps)
 
     if DEBUG:
