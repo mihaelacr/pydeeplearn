@@ -321,7 +321,7 @@ def deepbeliefMNIST():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  if arg.relu:
+  if args.relu:
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.05
   else:
