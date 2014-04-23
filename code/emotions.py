@@ -55,6 +55,8 @@ parser.add_argument('--facedetection', dest='facedetection',action='store_true',
                     help=("if true, do face detection"))
 parser.add_argument('--maxEpochs', type=int, default=1000,
                     help='the maximum number of supervised epochs')
+parser.add_argument('--miniBatchSize', type=int, default=10,
+                    help='the number of training points in a mini batch')
 parser.add_argument('--validation',dest='validation',action='store_true', default=False,
                     help="if true, the network is trained using a validation set")
 
@@ -169,6 +171,7 @@ def deepBeliefKanadeCV(big=False):
                nesterovMomentum=args.nesterov,
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
+               miniBatchSize=args.miniBatchSize,
                hiddenDropout=0.5,
                rbmHiddenDropout=0.5,
                visibleDropout=0.8,
@@ -240,6 +243,7 @@ def deepBeliefKanade(big=False):
              nesterovMomentum=args.nesterov,
              rbmNesterovMomentum=args.rbmnesterov,
              rmsprop=args.rmsprop,
+             miniBatchSize=args.miniBatchSize,
              hiddenDropout=0.5,
              rbmHiddenDropout=0.5,
              visibleDropout=0.8,
