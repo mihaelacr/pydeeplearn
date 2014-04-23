@@ -328,6 +328,7 @@ class RBM(object):
 
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                     initialWeights=self.testWeights,
+                                    activationFunction=self.activationFunction,
                                     initialBiases=self.biases,
                                     visibleDropout=1,
                                     hiddenDropout=1)
@@ -352,6 +353,7 @@ class RBM(object):
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                     initialWeights=self.testWeights,
                                     initialBiases=self.biases,
+                                    activationFunction=self.activationFunction,
                                     visibleDropout=1,
                                     hiddenDropout=1)
     reconstruct = theano.function(
