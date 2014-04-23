@@ -115,14 +115,16 @@ class MiniBatchTrainer(object):
     linearSum = T.dot(currentLayerValues, w) + b
     # Do not use theano's softmax, it is numerically unstable
     # and it causes Nans to appear
-    # Note that semantically this is the same
+    # Semantically this is the same
     e_x = T.exp(linearSum - linearSum.max(axis=1, keepdims=True))
     currentLayerValues = e_x / e_x.sum(axis=1, keepdims=True)
 
     self.output = currentLayerValues
 
+  # TODO: clean up, just a rough version to see what works
   def cost(self, y):
-    return T.nnet.categorical_crossentropy(self.output, y)
+    c1 = T.sum(T.map(fn= lambda x: T.sum(T.abs_(x)), sequences=self.weights))
+    return T.nnet.categorical_crossentropy(self.output, y) + 0.001 * c1
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
