@@ -91,7 +91,6 @@ class RBMMiniBatchTrainer(object):
     self.hiddenReconstruction = hiddenRec
 
 
-# TODO: different learning rates for weights and biases
 """
  Represents a RBM
 """
