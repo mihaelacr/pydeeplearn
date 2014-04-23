@@ -609,6 +609,8 @@ class DBN(object):
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.classifcationWeights,
                                     initialBiases=self.classifcationBiases,
+                                    activationFunction=self.activationFunction,
+                                    classificationActivationFunction=self.classificationActivationFunction,
                                     visibleDropout=1,
                                     hiddenDropout=1)
 
