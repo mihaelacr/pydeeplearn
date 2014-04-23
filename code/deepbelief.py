@@ -123,9 +123,7 @@ class MiniBatchTrainer(object):
 
   # TODO: clean up, just a rough version to see what works
   def cost(self, y):
-    comps, updates = theano.map(fn=lambda x: T.sum(T.abs_(x)), sequences=self.weights)
-
-    return T.nnet.categorical_crossentropy(self.output, y) + 0.001 * T.sum(comps)
+    return T.nnet.categorical_crossentropy(self.output, y)
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
@@ -332,7 +330,8 @@ class DBN(object):
                                     hiddenDropout=0.5)
 
     # the error is the sum of the errors in the individual cases
-    error = T.sum(batchTrainer.cost(y))
+    comps, updates_ = theano.map(fn=lambda x: T.sum(T.abs_(x)), sequences=batchTrainer.weights)
+    error = T.sum(batchTrainer.cost(y)) + T.sum(comps)
 
     if DEBUG:
       mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
