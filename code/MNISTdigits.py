@@ -181,7 +181,8 @@ def cvMNIST():
   bestFold = -1
   bestError = np.inf
 
-  params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.01), (0.05, 0.05)]
+  # params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.1), (0.05, 0.05)]
+  params =[(0.01, 0.01) , (0.01, 0.05), (0.05, 0.1), (0.05, 0.05)]
   nrFolds = len(params)
   foldSize = training / nrFolds
 
