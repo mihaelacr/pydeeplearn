@@ -13,6 +13,9 @@ theanoFloat  = theano.config.floatX
 """In all the above topLayer does not mean the top most layer, but rather the
 layer above the current one."""
 
+# TODO: different activation function and try relu
+# and fix this
+
 from common import *
 from debug import *
 

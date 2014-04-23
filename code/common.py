@@ -77,3 +77,7 @@ def shuffle(data, labels):
   shuffledLabels = np.array([labels[i] for i in indexShuffle])
 
   return shuffledData, shuffledLabels
+
+# Recitified linear unit
+def relu(var):
+  return T.max(var, 0)

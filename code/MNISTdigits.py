@@ -45,6 +45,8 @@ parser.add_argument('--rbmrmsprop', dest='rbmrmsprop',action='store_true', defau
                     help=("if true, rmsprop is used when training the rbms."))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
+parser.add_argument('--relu', dest='relu',action='store_true', default=False,
+                    help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--trainSize', type=int, default=10000,
                     help='the number of tranining cases to be considered')
 parser.add_argument('--testSize', type=int, default=1000,
@@ -289,7 +291,7 @@ def annMNIST():
     f.close()
 
 
-def deepbeliefMNIST():
+def deepbeliefMNIST(activationFunction=T.nnet.sigmoid):
   training = args.trainSize
   testing = args.testSize
 
@@ -312,6 +314,7 @@ def deepbeliefMNIST():
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                  unsupervisedLearningRate=0.05,
                  supervisedLearningRate=0.05,
+                 activationFunction=activationFunction,
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
@@ -452,7 +455,7 @@ def pcadbn(dimension=700):
   print correct
 
 
-
+# TODO: fix? or check
 def ldaMain():
   training = args.trainSize
   testing = args.testSize
