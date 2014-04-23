@@ -330,9 +330,14 @@ class DBN(object):
                                     hiddenDropout=0.5)
 
     # the error is the sum of the errors in the individual cases
-    t = T.as_tensor_variable(batchTrainer.weights)
-    comps, updates_ = theano.map(fn=lambda x: T.sum(T.abs_(x)), sequences=[t])
-    error = T.sum(batchTrainer.cost(y)) + T.sum(comps)
+    # t = T.as_tensor_variable(batchTrainer.weights)
+    # comps, updates_ = theano.map(fn=lambda x: T.sum(T.abs_(x)), sequences=[t])
+    c = 0.0
+    for c in batchTrainer.weights:
+      c+= T.abs_(x)
+
+
+    error = T.sum(batchTrainer.cost(y)) + c
 
     if DEBUG:
       mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
