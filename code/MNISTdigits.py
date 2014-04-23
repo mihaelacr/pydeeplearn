@@ -308,7 +308,7 @@ def deepbeliefMNIST():
   else:
     activationFunction = T.nnet.sigmoid
 
-  # TODO: do not divide for RELU
+  # TODO: do not divide for RELU?
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testVectors / 255.0
 
