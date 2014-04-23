@@ -18,13 +18,13 @@ theanoFloat  = theano.config.floatX
 EXPENSIVE_CHECKS_ON = False
 
 # I need a mini batch trainer for this
-
-class RBMMiniBatchTrainer(object):
-
-  stochasticHidden = {
+STOCHASTICHIDDEN = {
     relu : False,
     T.nnet.sigmoid: True
   }
+
+class RBMMiniBatchTrainer(object):
+
 
   def __init__(self, input, initialWeights, initialBiases,
              visibleActivationFunction, hiddenActivationFunction,
@@ -76,7 +76,7 @@ class RBMMiniBatchTrainer(object):
       hiddenActivations = hiddenActivationFunction(T.dot(visibleSample, self.weights) + self.biasHidden)
       hiddenActivationsDropped = hiddenActivations * dropoutMaskHidden
       # Sample only for stochastic binary units not relu
-      if RBMMiniBatchTrainer.stochasticHidden[hiddenActivationFunction]:
+      if RBMMiniBatchTrainer.STOCHASTICHIDDEN[hiddenActivationFunction]:
         hidden = self.theano_rng.binomial(size=hiddenActivationsDropped.shape,
                                             n=1, p=hiddenActivationsDropped,
                                             dtype=theanoFloat)
@@ -140,7 +140,11 @@ class RBM(object):
     if not self.initialized:
       if self.weights == None and self.biases == None:
         self.weights = initializeWeights(self.nrVisible, self.nrHidden)
-        self.biases = intializeBiases(data, self.nrHidden)
+        if STOCHASTICHIDDEN[self.hiddenActivationFunction]:
+          self.biases = intializeBiasesBinary(data, self.nrHidden)
+        else:
+          # TODO: think of this
+          self.biases = np.zeros(self.nrHidden)
       self.initialized = True
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
@@ -387,7 +391,8 @@ class RBM(object):
 def initializeWeights(nrVisible, nrHidden):
   return np.asarray(np.random.normal(0, 0.01, (nrVisible, nrHidden)), dtype=theanoFloat)
 
-def intializeBiases(data, nrHidden):
+# This only works for stochastic binary units
+def intializeBiasesBinary(data, nrHidden):
   # get the procentage of data points that have the i'th unit on
   # and set the visible vias to log (p/(1-p))
   percentages = data.mean(axis=0, dtype=theanoFloat)
