@@ -144,7 +144,7 @@ class RBM(object):
           self.biases = intializeBiasesBinary(data, self.nrHidden)
         else:
           # TODO: think of this
-          self.biases = np.zeros(self.nrHidden)
+          self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
       self.initialized = True
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
@@ -399,5 +399,10 @@ def intializeBiasesBinary(data, nrHidden):
   vectorized = np.vectorize(safeLogFraction, otypes=[np.float32])
   visibleBiases = vectorized(percentages)
 
+  hiddenBiases = np.zeros(nrHidden, dtype=theanoFloat)
+  return np.array([visibleBiases, hiddenBiases])
+
+def initializeBiasesReal(nrVisible, nrHidden):
+  visibleBiases = np.zeros(nrVisible, dtype=theanoFloat)
   hiddenBiases = np.zeros(nrHidden, dtype=theanoFloat)
   return np.array([visibleBiases, hiddenBiases])
