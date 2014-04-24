@@ -393,7 +393,7 @@ class DBN(object):
         outputs=batchTrainer.cost(y),
         givens={x: validationData,
                 y: validationLabels})
-      self.trainLoopWithValidation(trainModel, validateModel, maxEpochs)
+      self.trainModelGetBestWeights(trainModel, validateModel, maxEpochs)
     else:
       if validationData is not None or validationLabels is not None:
         raise Exception(("You provided validation data but requested a train method "
