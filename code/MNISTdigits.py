@@ -102,7 +102,7 @@ def rbmMain(reconstructRandom=False):
     nrHidden = 500
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1,
-                  BINARY[activationFunction],
+                  binary=1-args.relu,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
@@ -242,7 +242,7 @@ def cvMNIST():
     # Train the net
     # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                  BINARY[activationFunction],
+                  binary=1-args.relu,
                   unsupervisedLearningRate=params[i][0],
                   supervisedLearningRate=params[i][1],
                   nesterovMomentum=args.nesterov,
@@ -390,7 +390,7 @@ def deepbeliefMNIST():
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                 BINARY[activationFunction],
+                 binary=1-args.relu,
                  unsupervisedLearningRate=unsupervisedLearningRate,
                  supervisedLearningRate=supervisedLearningRate,
                  activationFunction=activationFunction,
@@ -516,7 +516,7 @@ def pcadbn(dimension=69):
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10
     net = db.DBN(5, [dimension, 200, 200, 200, 10],
-                 BINARY[activationFunction],
+                 binary=1-args.relu,
                  unsupervisedLearningRate=0.05,
                  supervisedLearningRate=0.05,
                  nesterovMomentum=args.nesterov,
