@@ -200,7 +200,7 @@ def getEigenFaces(pcaMethod, images, dimension=None):
   return (eigenFaces, vectors)
 
 
-def reduce(principalComponents, vectors, mean):
+def reduce(principalComponents, vectors, mean, noSame=True):
   assert len(principalComponents) > 0
 
   print principalComponents[0].shape
@@ -209,15 +209,18 @@ def reduce(principalComponents, vectors, mean):
 
   vectors = vectors - mean[np.newaxis, :]
   lowDimRepresentation  = np.dot(vectors, principalComponents.T)
-  # lowDimRepresentation = map(lambda x : vectors.dot(x), principalComponents)
-  # sameDimRepresentation = \
-  #   sum([ x * y for x, y in zip(principalComponents, lowDimRepresentation)])
-  # TODO: do this with einsum
-  sameDimRepresentation = lowDimRepresentation[:, np.newaxis] * principalComponents.T
-  sameDimRepresentation = sameDimRepresentation.sum(axis=2)
-  sameDimRepresentation +=  mean[np.newaxis, :]
-  # TODO: create the proper thing here so that you can
-  # easily see what the ouput is
+  if not noSame:
+    # lowDimRepresentation = map(lambda x : vectors.dot(x), principalComponents)
+    # sameDimRepresentation = \
+    #   sum([ x * y for x, y in zip(principalComponents, lowDimRepresentation)])
+    # TODO: do this with einsum
+    sameDimRepresentation = lowDimRepresentation[:, np.newaxis] * principalComponents.T
+    sameDimRepresentation = sameDimRepresentation.sum(axis=2)
+    sameDimRepresentation +=  mean[np.newaxis, :]
+    # TODO: create the proper thing here so that you can
+    # easily see what the ouput is
+  else:
+    sameDimRepresentation = None
   return  (lowDimRepresentation, sameDimRepresentation)
 
 
