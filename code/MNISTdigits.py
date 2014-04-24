@@ -429,12 +429,11 @@ def pcadbn(dimension=700):
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testVectors / 255.0
 
-  # transpose the the input data to work with
-  trainingScaledVectors = trainingScaledVectors.T
+  trainingScaledVectors = trainingScaledVectors
   mean, principalComponents = PCA.pca(trainingScaledVectors, dimension)
   reducedTrain, _ = PCA.reduce(principalComponents, trainingScaledVectors, mean)
 
-  reducedTrain = reducedTrain.T
+  reducedTrain = reducedTrain
   scaledPCA = []
   for x in reducedTrain:
     # Scale the results so that they are in between 0 and 1
