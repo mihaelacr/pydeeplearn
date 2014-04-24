@@ -13,6 +13,7 @@ import utils
 import PCA
 
 from sklearn import lda
+from sklearn.decomposition import PCA
 
 import DimensionalityReduction
 
@@ -139,13 +140,46 @@ def rbmMain(reconstructRandom=False):
     pickle.dump(net, f)
 
 
-def pcaOnMnist(training, dimension=700):
-  mean, principalComponents = PCA.pca(training, dimension)
-  low, same = PCA.reduce(principalComponents, training, mean)
+def pcaSklearn(training, dimension=700):
+  pca = PCA(n_components=dimension)
+  pca.fit(training)
+  low = pca.transform(training)
+  same = pca.inverse_transform(low)
+
+  print "low[0].shape"
+  print low[0].shape
 
   image2DInitial = vectorToImage(training[0], (28,28))
   print same[0].shape
   image2D = vectorToImage(same[0], (28,28))
+
+  image2DLow = vectorToImage(low[0], (20,20))
+  plt.imshow(image2DLow, cmap=plt.cm.gray)
+  plt.show()
+
+
+  plt.imshow(image2DInitial, cmap=plt.cm.gray)
+  plt.show()
+  plt.imshow(image2D, cmap=plt.cm.gray)
+  plt.show()
+  print "done"
+  return low
+
+def pcaOnMnist(training, dimension=700):
+  mean, principalComponents = PCA.pca(training, dimension)
+  low, same = PCA.reduce(principalComponents, training, mean, noSame=False)
+
+  print "low[0].shape"
+  print low[0].shape
+
+  image2DInitial = vectorToImage(training[0], (28,28))
+  print same[0].shape
+  image2D = vectorToImage(same[0], (28,28))
+
+  image2DLow = vectorToImage(low[0], (20,20))
+  plt.imshow(image2DLow, cmap=plt.cm.gray)
+  plt.show()
+
 
   plt.imshow(image2DInitial, cmap=plt.cm.gray)
   plt.show()
@@ -226,6 +260,7 @@ def cvMNIST():
 
   print "best fold was " + str(bestFold)
   print "bestParameter " + str(params[bestFold])
+  print "bestError" + str(bestError)
 
 
 def getClassificationError(predicted, actual):
@@ -415,7 +450,7 @@ def pcaMain():
       readmnist.read(0, testing, bTrain=False, path="MNIST")
   print train[0].shape
 
-  pcaOnMnist(train, dimension=100)
+  pcaSklearn(train, dimension=400)
 
 def pcadbn(dimension=700):
   training = args.trainSize
@@ -428,8 +463,8 @@ def pcadbn(dimension=700):
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
   # Should you rescale here as well? Probably not
-  trainingScaledVectors = trainVectors / 255.0
-  testingScaledVectors = testVectors / 255.0
+  trainingScaledVectors = trainVectors
+  testingScaledVectors = testVectors
 
   mean, principalComponents = PCA.pca(trainingScaledVectors, dimension)
   # If we do not have enough data we have to reduce the dimension
