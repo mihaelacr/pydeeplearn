@@ -59,6 +59,8 @@ parser.add_argument('--miniBatchSize', type=int, default=10,
                     help='the number of training points in a mini batch')
 parser.add_argument('--validation',dest='validation',action='store_true', default=False,
                     help="if true, the network is trained using a validation set")
+parser.add_argument('--relu', dest='relu',action='store_true', default=False,
+                    help=("if true, trains the RBM or DBN with a rectified linear unit"))
 
 # DEBUG mode?
 parser.add_argument('--debug', dest='debug',action='store_false', default=False,
@@ -72,6 +74,8 @@ db.DEBUG = args.debug
 
 SMALL_SIZE = ((40, 30))
 
+BINARY = {T.nnet.sigmoid : True}.get(False)
+
 
 def rbmEmotions(big=False, reconstructRandom=False):
   data, labels = readKanade(big)
@@ -79,6 +83,11 @@ def rbmEmotions(big=False, reconstructRandom=False):
   print data.shape
 
   trainData = data[0:-1, :]
+
+  if args.relu:
+    activationFunction = relu
+  else:
+    activationFunction = T.nnet.sigmoid
 
   # Train the network
   if args.train:
@@ -88,7 +97,11 @@ def rbmEmotions(big=False, reconstructRandom=False):
     nrVisible = len(data[0])
     nrHidden = 800
     # use 1 dropout to test the rbm for now
-    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1, rmsprop=args.rbmrmsprop,
+    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1,
+                  BINARY[activationFunction],
+                  visibleActivationFunction=activationFunction,
+                  hiddenActivationFunction=activationFunction,
+                  rmsprop=args.rbmrmsprop,
                   nesterov=args.rbmnesterov)
     net.train(trainData)
     t = visualizeWeights(net.weights.T, SMALL_SIZE, (10,10))
@@ -150,6 +163,11 @@ def deepBeliefKanadeCV(big=False):
   print "labels.shape"
   print labels.shape
 
+  if args.relu:
+    activationFunction = relu
+  else:
+    activationFunction = T.nnet.sigmoid
+
   # TODO: try boosting for CV in order to increase the number of folds
   params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.01), (0.05, 0.05)]
   unsupervisedData = buildUnsupervisedDataSet()
@@ -166,6 +184,8 @@ def deepBeliefKanadeCV(big=False):
 
     # TODO: this might require more thought
     net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
+               BINARY[activationFunction],
+               activationFunction=activationFunction,
                unsupervisedLearningRate=params[fold][0],
                supervisedLearningRate=params[fold][1],
                nesterovMomentum=args.nesterov,
@@ -232,11 +252,18 @@ def deepBeliefKanade(big=False):
   for train, test in kf:
     break
 
+  if args.relu:
+    activationFunction = relu
+  else:
+    activationFunction = T.nnet.sigmoid
+
   trainData = data[train]
   trainLabels = labels[train]
 
   # TODO: this might require more thought
   net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
+             BINARY[activationFunction],
+             activationFunction=activationFunction,
              unsupervisedLearningRate=0.05,
              # is this not a bad learning rate?
              supervisedLearningRate=0.01,
