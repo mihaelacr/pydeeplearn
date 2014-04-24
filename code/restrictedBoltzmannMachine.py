@@ -310,8 +310,11 @@ class RBM(object):
     else:
       wUpdate = (1.0 - momentum) * batchLearningRate * delta
 
+    wUpdate -= weightDecay * batchTrainer.oldDParams[0]
+
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDParams[0], wUpdate + wUpdateMomentum))
+
 
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
     if self.rmsprop:
