@@ -75,6 +75,8 @@ args = parser.parse_args()
 # Set the debug mode in the deep belief net
 db.DEBUG = args.debug
 
+BINARY = {T.nnet.sigmoid : True}.get(False)
+
 def rbmMain(reconstructRandom=False):
   trainVectors, trainLabels =\
       readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
@@ -83,6 +85,13 @@ def rbmMain(reconstructRandom=False):
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
+
+
+  if args.relu:
+    activationFunction = relu
+  else:
+    activationFunction = T.nnet.sigmoid
+
 
   # Train the network
   if args.train:
@@ -93,6 +102,9 @@ def rbmMain(reconstructRandom=False):
     nrHidden = 500
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1,
+                  BINARY[activationFunction],
+                  visibleActivationFunction=activationFunction,
+                  hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
@@ -230,6 +242,7 @@ def cvMNIST():
     # Train the net
     # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
+                  BINARY[activationFunction],
                   unsupervisedLearningRate=params[i][0],
                   supervisedLearningRate=params[i][1],
                   nesterovMomentum=args.nesterov,
@@ -376,6 +389,7 @@ def deepbeliefMNIST():
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
+                 BINARY[activationFunction],
                  unsupervisedLearningRate=unsupervisedLearningRate,
                  supervisedLearningRate=supervisedLearningRate,
                  activationFunction=activationFunction,
@@ -501,6 +515,7 @@ def pcadbn(dimension=69):
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10
     net = db.DBN(5, [dimension, 200, 200, 200, 10],
+                 BINARY[activationFunction],
                  unsupervisedLearningRate=0.05,
                  supervisedLearningRate=0.05,
                  nesterovMomentum=args.nesterov,

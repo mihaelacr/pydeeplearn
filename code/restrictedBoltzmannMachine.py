@@ -17,12 +17,6 @@ theanoFloat  = theano.config.floatX
 
 EXPENSIVE_CHECKS_ON = False
 
-# This will break when you have a new activation function
-STOCHASTICHIDDEN = {
-    relu : False,
-    T.nnet.sigmoid: True
-  }
-
 class RBMMiniBatchTrainer(object):
 
 
@@ -76,7 +70,7 @@ class RBMMiniBatchTrainer(object):
       hiddenActivations = hiddenActivationFunction(T.dot(visibleSample, self.weights) + self.biasHidden)
       hiddenActivationsDropped = hiddenActivations * dropoutMaskHidden
       # Sample only for stochastic binary units not relu
-      if STOCHASTICHIDDEN[hiddenActivationFunction]:
+      if self.binary:
         hidden = self.theano_rng.binomial(size=hiddenActivationsDropped.shape,
                                             n=1, p=hiddenActivationsDropped,
                                             dtype=theanoFloat)
@@ -108,6 +102,7 @@ class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, learningRate,
                 hiddenDropout, visibleDropout,
+                binary,
                 visibleActivationFunction=T.nnet.sigmoid,
                 hiddenActivationFunction=T.nnet.sigmoid,
                 rmsprop=True, nesterov=True,
@@ -131,6 +126,7 @@ class RBM(object):
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
     self.trainingEpochs = trainingEpochs
+    self.binary = binary
 
   def train(self, data, miniBatchSize=10):
     print "rbm learningRate"
@@ -142,7 +138,7 @@ class RBM(object):
     if not self.initialized:
       if self.weights == None and self.biases == None:
         self.weights = initializeWeights(self.nrVisible, self.nrHidden)
-        if STOCHASTICHIDDEN[self.hiddenActivationFunction]:
+        if self.binary:
           # TODO: I think this makes no sense
           self.biases = intializeBiasesBinary(data, self.nrHidden)
         else:

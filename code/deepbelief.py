@@ -134,6 +134,7 @@ class DBN(object):
         type: list of integers of size nrLayers
   """
   def __init__(self, nrLayers, layerSizes,
+                binary,
                 activationFunction=T.nnet.sigmoid,
                 classificationActivationFunction=softmax,
                 unsupervisedLearningRate=0.01,
@@ -168,6 +169,7 @@ class DBN(object):
     self.preTrainEpochs = preTrainEpochs
     self.activationFunction = activationFunction
     self.classificationActivationFunction = classificationActivationFunction
+    self.binary = binary
 
 
   def pretrain(self, data, unsupervisedData):
@@ -197,6 +199,7 @@ class DBN(object):
 
       # TODO: do I really have to use the same activation function for both?
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
+                      self.binary,
                       visibleActivationFunction=self.activationFunction,
                       hiddenActivationFunction=self.activationFunction,
                       learningRate=self.unsupervisedLearningRate,
