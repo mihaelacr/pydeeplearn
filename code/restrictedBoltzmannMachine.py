@@ -22,9 +22,10 @@ class RBMMiniBatchTrainer(object):
 
   def __init__(self, input, initialWeights, initialBiases,
              visibleActivationFunction, hiddenActivationFunction,
-             visibleDropout, hiddenDropout):
+             visibleDropout, hiddenDropout, binary):
 
     self.visible = input
+    self.binary = binary
     self.cdSteps = theano.shared(value=np.int32(1))
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
@@ -167,7 +168,8 @@ class RBM(object):
                                        hiddenActivationFunction=self.hiddenActivationFunction,
                                        initialBiases=self.biases,
                                        visibleDropout=0.8,
-                                       hiddenDropout=0.5)
+                                       hiddenDropout=0.5,
+                                       binary=self.binary)
 
     if self.nesterov:
       preDeltaUpdates, updates = self.buildNesterovUpdates(batchTrainer,
@@ -352,8 +354,9 @@ class RBM(object):
                                     visibleActivationFunction=self.visibleActivationFunction,
                                     hiddenActivationFunction=self.hiddenActivationFunction,
                                     initialBiases=self.biases,
-                                    visibleDropout=1,
-                                    hiddenDropout=1)
+                                    visibleDropout=1.0,
+                                    hiddenDropout=1.0,
+                                    binary=self.binary)
 
     representHidden = theano.function(
             inputs=[],
@@ -377,8 +380,9 @@ class RBM(object):
                                     initialBiases=self.biases,
                                     visibleActivationFunction=self.visibleActivationFunction,
                                     hiddenActivationFunction=self.hiddenActivationFunction,
-                                    visibleDropout=1,
-                                    hiddenDropout=1)
+                                    visibleDropout=1.0,
+                                    hiddenDropout=1.0,
+                                    binary=self.binary)
     reconstruct = theano.function(
             inputs=[],
             outputs=batchTrainer.visibleReconstruction,
