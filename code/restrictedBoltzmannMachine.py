@@ -111,9 +111,10 @@ class RBM(object):
                 visibleActivationFunction=T.nnet.sigmoid,
                 hiddenActivationFunction=T.nnet.sigmoid,
                 rmsprop=True, nesterov=True,
+                weightDecay=0.001,
+                l1WeigthtDecay=0.001, l2WeightDecay=0.002,
                 initialWeights=None, initialBiases=None, trainingEpochs=1):
                 # TODO: also check how the gradient works for RBMS
-                # l1WeigthtDecay=0.001, l2WeightDecay=0.002):
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
     # dropout = 1 means no dropout, keep all the weights
@@ -247,6 +248,8 @@ class RBM(object):
       updates.append((batchTrainer.oldMeanW, meanW))
     else:
       wUpdate += (1.0 - momentum) * batchLearningRate * delta
+
+    wUpdate -= weightDecay * batchTrainer.oldDParams[0]
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDParams[0], wUpdate))
