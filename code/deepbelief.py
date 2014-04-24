@@ -513,6 +513,8 @@ class DBN(object):
     print "best epoch"
     print bestEpoch
 
+    print validationErrors
+
   def trainModelPatience(self, trainModel, validateModel, maxEpochs):
     bestValidationError = np.inf
     epoch = 0
