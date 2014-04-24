@@ -278,7 +278,7 @@ class DBN(object):
     sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
     sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
     # Does backprop for the data and a the end sets the weights
-    self.fineTune(sharedData, sharedLabels, validation,
+    self.fineTune(sharedData, sharedLabels, True,
                   sharedValidationData, sharedValidationLabels, maxEpochs)
 
     # Get the classification weights

@@ -82,3 +82,7 @@ def shuffle(data, labels):
 def relu(var):
   # TODO: might have to add the gaussain noise
   return T.maximum(var, 0)
+
+def noisyRelu(var):
+  # TODO: might have to add the gaussain noise
+  return T.maximum(var, 0)
