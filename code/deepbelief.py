@@ -237,7 +237,7 @@ class DBN(object):
     Choose a percentage (percentValidation) of the data given to be
     validation data, used for early stopping of the model.
   """
-  def train(self, data, labels, maxEpochs, validation=True, percentValidation=0.1,
+  def train(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
             unsupervisedData=None):
 
     if validation:
