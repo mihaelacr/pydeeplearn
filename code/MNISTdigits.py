@@ -469,6 +469,9 @@ def pcadbn(dimension=700):
   pca = PCA(n_components=dimension)
   pca.fit(trainingScaledVectors)
   reducedTrain = pca.transform(trainingScaledVectors)
+  reducedTest = pca.transform(testingScaledVectors)
+
+
 
   # mean, principalComponents = PCA.pca(trainingScaledVectors, dimension)
   # # If we do not have enough data we have to reduce the dimension
@@ -476,13 +479,23 @@ def pcadbn(dimension=700):
   # dimension = len(principalComponents)
   # reducedTrain, _ = PCA.reduce(principalComponents, trainingScaledVectors, mean)
 
+  # reducedTest, _ = PCA.reduce(principalComponents, testingScaledVectors, mean)
+  # scaledTestPCA = []
 
-  scaledPCA = []
+  scaled  = []
+  for x in reducedTest:
+    # Scale the results so that they are in between 0 and 1
+    scaled += [utils.scale_to_unit_interval(x)]
+
+  reducedTest = np.array(scaled)
+
+  scaled  = []
   for x in reducedTrain:
     # Scale the results so that they are in between 0 and 1
-    scaledPCA += [utils.scale_to_unit_interval(x)]
+    scaled += [utils.scale_to_unit_interval(x)]
 
-  scaledPCA = np.array(scaledPCA)
+  reducedTrain = np.array(scaled)
+
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
@@ -500,7 +513,7 @@ def pcadbn(dimension=700):
                  visibleDropout=0.8,
                  rbmVisibleDropout=0.9,
                  preTrainEpochs=args.preTrainEpochs)
-    net.train(scaledPCA, vectorLabels,
+    net.train(reducedTrain, vectorLabels,
               maxEpochs=args.maxEpochs, validation=args.validation)
   else:
     # Take the saved network and use that for reconstructions
@@ -508,15 +521,8 @@ def pcadbn(dimension=700):
     net = pickle.load(f)
     f.close()
 
-  reducedTest, _ = PCA.reduce(principalComponents, testingScaledVectors, mean)
-  scaledTestPCA = []
-  for x in reducedTrain:
-    # Scale the results so that they are in between 0 and 1
-    scaledTestPCA += [utils.scale_to_unit_interval(x)]
 
-  scaledTestPCA = np.array(scaledTestPCA)
-
-  probs, predicted = net.classify(scaledTestPCA)
+  probs, predicted = net.classify(reducedTest)
   correct = 0
   errorCases = []
   for i in xrange(testing):
