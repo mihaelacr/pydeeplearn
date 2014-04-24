@@ -508,7 +508,7 @@ class DBN(object):
     epoch = 0
     doneTraining = False
     improvmentTreshold = 0.995
-    patience = 10 # do at least 10 passes trough the data no matter what
+    patience = 10 * self.nrMiniBatches # do at least 10 passes trough the data no matter what
 
     while (epoch < maxEpochs) and not doneTraining:
       # Train the net with all data
@@ -518,22 +518,23 @@ class DBN(object):
                      np.float32(0.99)))
 
       for batchNr in xrange(self.nrMiniBatches):
+        iteration = epoch * self.nrMiniBatches  + batchNr
         trainModel(batchNr, momentum)
 
-      # why axis = 0? this should be a number?!
-      meanValidation = np.mean(validateModel, maxEpochs())
+        # why axis = 0? this should be a number?!
+        meanValidation = np.mean(validateModel, maxEpochs)
 
-      print 'meanValidation'
-      print meanValidation
-      if meanValidation < bestValidationError:
-        # If we have improved well enough, then increase the patience
-        if meanValidation < bestValidationError * improvmentTreshold:
-          print "increasing patience"
-          patience = max(patience, epoch * 2)
+      # print 'meanValidation'
+      # print meanValidation
+        if meanValidation < bestValidationError:
+          # If we have improved well enough, then increase the patience
+          if meanValidation < bestValidationError * improvmentTreshold:
+            print "increasing patience"
+            patience = max(patience, iteration * 2)
 
-        bestValidationError = meanValidation
+          bestValidationError = meanValidation
 
-      if patience <= epoch:
+      if patience <= iteration:
         doneTraining = True
 
       epoch += 1
