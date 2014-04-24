@@ -466,11 +466,15 @@ def pcadbn(dimension=700):
   trainingScaledVectors = trainVectors
   testingScaledVectors = testVectors
 
-  mean, principalComponents = PCA.pca(trainingScaledVectors, dimension)
-  # If we do not have enough data we have to reduce the dimension
-  # to how many non zero eigen vector we have
-  dimension = len(principalComponents)
-  reducedTrain, _ = PCA.reduce(principalComponents, trainingScaledVectors, mean)
+  pca = PCA(n_components=dimension)
+  pca.fit(trainingScaledVectors)
+  reducedTrain = pca.transform(trainingScaledVectors)
+
+  # mean, principalComponents = PCA.pca(trainingScaledVectors, dimension)
+  # # If we do not have enough data we have to reduce the dimension
+  # # to how many non zero eigen vector we have
+  # dimension = len(principalComponents)
+  # reducedTrain, _ = PCA.reduce(principalComponents, trainingScaledVectors, mean)
 
 
   scaledPCA = []
