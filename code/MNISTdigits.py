@@ -365,7 +365,7 @@ def deepbeliefMNIST():
 
   if args.relu:
 
-    unsupervisedLearningRate = 1e-05
+    unsupervisedLearningRate = 5e-06
     supervisedLearningRate = 0.001
   else:
     unsupervisedLearningRate = 0.05
