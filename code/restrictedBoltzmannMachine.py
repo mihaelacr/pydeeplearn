@@ -406,6 +406,7 @@ def intializeBiasesBinary(data, nrHidden):
   hiddenBiases = np.zeros(nrHidden, dtype=theanoFloat)
   return np.array([visibleBiases, hiddenBiases])
 
+# TODO: Try random small numbers?
 def initializeBiasesReal(nrVisible, nrHidden):
   visibleBiases = np.zeros(nrVisible, dtype=theanoFloat)
   hiddenBiases = np.zeros(nrHidden, dtype=theanoFloat)
