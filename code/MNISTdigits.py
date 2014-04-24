@@ -435,8 +435,10 @@ def pcadbn(dimension=700):
   reducedTrain = reducedTrain.T
   scaledPCA = []
   for x in reducedTrain:
-    # Scale the results of the units
+    # Scale the results so that they are in between 0 and 1
     scaledPCA += [utils.scale_to_unit_interval(x)]
+
+  scaledPCA = np.array(scaledPCA)
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
@@ -454,7 +456,7 @@ def pcadbn(dimension=700):
                  visibleDropout=0.8,
                  rbmVisibleDropout=0.9,
                  preTrainEpochs=args.preTrainEpochs)
-    net.train(trainingScaledVectors, vectorLabels,
+    net.train(scaledPCA, vectorLabels,
               maxEpochs=args.maxEpochs, validation=args.validation)
   else:
     # Take the saved network and use that for reconstructions
@@ -462,8 +464,15 @@ def pcadbn(dimension=700):
     net = pickle.load(f)
     f.close()
 
+  reducedTest, _ = PCA.reduce(principalComponents, testingScaledVectors, mean)
+  scaledTestPCA = []
+  for x in reducedTrain:
+    # Scale the results so that they are in between 0 and 1
+    scaledTestPCA += [utils.scale_to_unit_interval(x)]
 
-  probs, predicted = net.classify(testingScaledVectors)
+  scaledTestPCA = np.array(scaledTestPCA)
+
+  probs, predicted = net.classify(scaledTestPCA)
   correct = 0
   errorCases = []
   for i in xrange(testing):
