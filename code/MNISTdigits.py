@@ -35,6 +35,8 @@ parser.add_argument('--db', dest='db',action='store_true', default=False,
                           "data is run"))
 parser.add_argument('--lda', dest='lda',action='store_true', default=False,
                     help=("if true, runs LDA main"))
+parser.add_argument('--pcadbn', dest='pcadbn',action='store_true', default=False,
+                    help=("if true, runs dbn with pca performed first main"))
 parser.add_argument('--nesterov', dest='nesterov',action='store_true', default=False,
                     help=("if true, the deep belief net is trained using nesterov momentum"))
 parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
@@ -543,7 +545,7 @@ def main():
   print "FIXING RANDOMNESS"
   random.seed(6)
   np.random.seed(6)
-  if args.db + args.pca + args.rbm + args.cv + args.ann + args.lda!= 1:
+  if args.db + args.pca + args.rbm + args.cv + args.ann + args.lda + args.pcadbn!= 1:
     raise Exception("You decide on one main method to run")
 
   if args.db:
@@ -558,8 +560,8 @@ def main():
     annMNIST()
   if args.lda:
     ldaMain()
-
-  # pcadbn(dimension=700)
+  if args.pcadbn:
+    pcadbn(dimension=700)
 
 if __name__ == '__main__':
   main()
