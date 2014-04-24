@@ -393,7 +393,7 @@ class DBN(object):
         outputs=batchTrainer.cost(y),
         givens={x: validationData,
                 y: validationLabels})
-      self.trainModelGetBestWeights(trainModel, validateModel, maxEpochs)
+      self.trainModelGetBestWeights(batchTrainer, trainModel, validateModel, maxEpochs)
     else:
       if validationData is not None or validationLabels is not None:
         raise Exception(("You provided validation data but requested a train method "
@@ -464,7 +464,7 @@ class DBN(object):
   # A more mild version would be to actually take 3 conescutive ones
   # that give the best average (to ensure you are not in a luck place)
   # and take the best of them
-  def trainModelGetBestWeights(self, trainModel, validateModel, maxEpochs):
+  def trainModelGetBestWeights(self, batchTrainer, trainModel, validateModel, maxEpochs):
     bestValidationError = np.inf
 
     validationErrors = []
