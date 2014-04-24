@@ -366,7 +366,8 @@ def deepbeliefMNIST():
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
   if args.relu:
-    activationFunction = makeNoisyRelu()
+    # activationFunction = makeNoisyRelu()
+    activationFunction = relu
   else:
     activationFunction = T.nnet.sigmoid
 
