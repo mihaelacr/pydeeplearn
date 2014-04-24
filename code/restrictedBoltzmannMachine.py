@@ -142,7 +142,7 @@ class RBM(object):
         self.weights = initializeWeights(self.nrVisible, self.nrHidden)
         if STOCHASTICHIDDEN[self.hiddenActivationFunction]:
           # TODO: I think this makes no sense
-          self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
+          self.biases = intializeBiasesBinary(data, self.nrHidden)
         else:
           # TODO: think of this
           self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
