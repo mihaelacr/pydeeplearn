@@ -206,7 +206,7 @@ class DBN(object):
                       nesterov=self.rbmNesterovMomentum,
                       initialWeights=initialWeights,
                       initialBiases=initialBiases,
-                      trainingEpochs=1)
+                      trainingEpochs=self.preTrainEpochs)
       net.train(currentData)
 
       w = net.testWeights

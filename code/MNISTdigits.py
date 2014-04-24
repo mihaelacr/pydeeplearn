@@ -424,12 +424,19 @@ def pcadbn(dimension=700):
       readmnist.read(0, testing, bTrain=False, path="MNIST")
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
-
-  mean, principalComponents = PCA.pca(trainVectors, dimension)
-  reducedTrain, _ = PCA.reduce(principalComponents, training, mean)
-
-  trainingScaledVectors = reducedTrain / 255.0
+  trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testVectors / 255.0
+
+  # transpose the the input data to work with
+  trainingScaledVectors = trainingScaledVectors.T
+  mean, principalComponents = PCA.pca(trainingScaledVectors, dimension)
+  reducedTrain, _ = PCA.reduce(principalComponents, trainingScaledVectors, mean)
+
+  reducedTrain = reducedTrain.T
+  scaledPCA = []
+  for x in reducedTrain:
+    # Scale the results of the units
+    scaledPCA += [utils.scale_to_unit_interval(x)]
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
