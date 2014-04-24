@@ -488,7 +488,7 @@ class DBN(object):
         bestValidationError = meanValidation
         # Save the weights which are the best ones
         bestWeights = batchTrainer.weights
-        bestBiases = biases.biases
+        bestBiases = batchTrainer.biases
 
     # If we have improved at all during training
     if bestWeights is not None and bestBiases is not None:

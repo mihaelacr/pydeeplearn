@@ -83,6 +83,9 @@ def relu(var):
   # TODO: might have to add the gaussain noise
   return var * (var > 0.0)
 
+def cappedRelu(var):
+  pass
+
 def noisyRelu(var):
   # TODO: might have to add the gaussain noise
   return T.maximum(var, 0)
