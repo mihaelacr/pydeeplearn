@@ -81,7 +81,7 @@ def shuffle(data, labels):
 # Recitified linear unit
 def relu(var):
   # TODO: might have to add the gaussain noise
-  return T.maximum(var, 0)
+  return var * (var > 0.0)
 
 def noisyRelu(var):
   # TODO: might have to add the gaussain noise
