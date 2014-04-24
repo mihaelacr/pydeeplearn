@@ -102,7 +102,7 @@ class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, learningRate,
                 hiddenDropout, visibleDropout,
-                binary,
+                binary=True,
                 visibleActivationFunction=T.nnet.sigmoid,
                 hiddenActivationFunction=T.nnet.sigmoid,
                 rmsprop=True, nesterov=True,

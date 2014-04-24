@@ -199,10 +199,10 @@ class DBN(object):
 
       # TODO: do I really have to use the same activation function for both?
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                      self.binary,
+                      learningRate=self.unsupervisedLearningRate,
+                      binary=self.binary,
                       visibleActivationFunction=self.activationFunction,
                       hiddenActivationFunction=self.activationFunction,
-                      learningRate=self.unsupervisedLearningRate,
                       hiddenDropout=self.rbmHiddenDropout,
                       visibleDropout=self.rbmVisibleDropout,
                       rmsprop=True, # TODO: argument here as well?
