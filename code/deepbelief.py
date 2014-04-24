@@ -251,7 +251,7 @@ class DBN(object):
       validationData = data[validationIndices, :]
       validationLabels = labels[validationIndices, :]
 
-      self.trainWithGivenValidationSet(trainingData, trainingLabels, validation,
+      self.trainWithGivenValidationSet(trainingData, trainingLabels,
                                        validationData, validationLabels, maxEpochs,
                                        unsupervisedData)
     else:
