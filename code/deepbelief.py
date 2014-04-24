@@ -344,7 +344,7 @@ class DBN(object):
     error = T.sum(batchTrainer.cost(y))
     for w in batchTrainer.weights:
       # error+= self.weightDecayL1 * T.sum(T.abs_(w)) + self.weightDecayL2 * T.sum(w ** 2)
-      error += self.weightDecayL2 * T.sum(w ** 2)
+      # error += self.weightDecayL2 * T.sum(w ** 2)
 
     if DEBUG:
       mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
