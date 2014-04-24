@@ -127,6 +127,7 @@ class RBM(object):
     self.nesterov = nesterov
     self.weights = initialWeights
     self.biases = initialBiases
+    self.weightDecay = weightDecay
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
     self.trainingEpochs = trainingEpochs
@@ -249,7 +250,7 @@ class RBM(object):
     else:
       wUpdate += (1.0 - momentum) * batchLearningRate * delta
 
-    wUpdate -= weightDecay * batchTrainer.oldDParams[0]
+    wUpdate -= self.weightDecay * batchTrainer.oldDParams[0]
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDParams[0], wUpdate))
@@ -310,7 +311,7 @@ class RBM(object):
     else:
       wUpdate = (1.0 - momentum) * batchLearningRate * delta
 
-    wUpdate -= weightDecay * batchTrainer.oldDParams[0]
+    wUpdate -= self.weightDecay * batchTrainer.oldDParams[0]
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDParams[0], wUpdate + wUpdateMomentum))
