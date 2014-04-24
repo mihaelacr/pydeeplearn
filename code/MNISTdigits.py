@@ -452,7 +452,7 @@ def pcaMain():
 
   pcaSklearn(train, dimension=400)
 
-def pcadbn(dimension=700):
+def pcadbn(dimension=69):
   training = args.trainSize
   testing = args.testSize
 
@@ -470,8 +470,6 @@ def pcadbn(dimension=700):
   pca.fit(trainingScaledVectors)
   reducedTrain = pca.transform(trainingScaledVectors)
   reducedTest = pca.transform(testingScaledVectors)
-
-
 
   # mean, principalComponents = PCA.pca(trainingScaledVectors, dimension)
   # # If we do not have enough data we have to reduce the dimension
@@ -502,7 +500,7 @@ def pcadbn(dimension=700):
   if args.train:
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10
-    net = db.DBN(5, [dimension, 1000, 1000, 1000, 10],
+    net = db.DBN(5, [dimension, 200, 200, 200, 10],
                  unsupervisedLearningRate=0.05,
                  supervisedLearningRate=0.05,
                  nesterovMomentum=args.nesterov,
@@ -609,7 +607,7 @@ def main():
   if args.lda:
     ldaMain()
   if args.pcadbn:
-    pcadbn(dimension=700)
+    pcadbn()
 
 if __name__ == '__main__':
   main()
