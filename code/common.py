@@ -80,12 +80,17 @@ def shuffle(data, labels):
 
 # Recitified linear unit
 def relu(var):
-  # TODO: might have to add the gaussain noise
   return var * (var > 0.0)
 
 def cappedRelu(var):
-  pass
+  return var * (var > 0.0) * (var < 6.0)
 
-def noisyRelu(var):
+def noisyRelu(var, theano_rng):
   # TODO: might have to add the gaussain noise
-  return T.maximum(var, 0)
+  var += theano_rng.normal()
+  return var * (var > 0.0)
+
+def makeNoisyRelu():
+  rng = RandomStreams(seed=np.random.randint(1, 1000))
+
+  return lambda var: noisyRelu(var, rng)

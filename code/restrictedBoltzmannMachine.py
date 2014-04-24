@@ -17,7 +17,7 @@ theanoFloat  = theano.config.floatX
 
 EXPENSIVE_CHECKS_ON = False
 
-# I need a mini batch trainer for this
+# This will break when you have a new activation function
 STOCHASTICHIDDEN = {
     relu : False,
     T.nnet.sigmoid: True

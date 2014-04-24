@@ -471,6 +471,7 @@ class DBN(object):
 
     bestWeights = None
     bestBiases = None
+    bestEpoch = 0
 
     for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
@@ -489,8 +490,11 @@ class DBN(object):
         # Save the weights which are the best ones
         bestWeights = batchTrainer.weights
         bestBiases = batchTrainer.biases
+        bestEpoch = epoch
 
     # If we have improved at all during training
+    # not sure if things work well like this with theano stuff
+    # maybe I need an update
     if bestWeights is not None and bestBiases is not None:
       batchTrainer.weights = bestWeights
       batchTrainer.biases = bestBiases
@@ -502,6 +506,9 @@ class DBN(object):
 
     print "number of epochs"
     print epoch
+
+    print "best epoch"
+    print bestEpoch
 
   def trainModelPatience(self, trainModel, validateModel, maxEpochs):
     bestValidationError = np.inf
