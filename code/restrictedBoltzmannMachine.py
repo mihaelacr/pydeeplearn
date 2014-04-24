@@ -393,8 +393,8 @@ def initializeWeights(nrVisible, nrHidden):
 
 # This only works for stochastic binary units
 def intializeBiasesBinary(data, nrHidden):
-  # get the procentage of data points that have the i'th unit on
-  # and set the visible vias to log (p/(1-p))
+  # get the percentage of data points that have the i'th unit on
+  # and set the visible bias to log (p/(1-p))
   percentages = data.mean(axis=0, dtype=theanoFloat)
   vectorized = np.vectorize(safeLogFraction, otypes=[np.float32])
   visibleBiases = vectorized(percentages)
