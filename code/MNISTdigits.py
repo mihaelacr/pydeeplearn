@@ -426,14 +426,14 @@ def pcadbn(dimension=700):
       readmnist.read(0, testing, bTrain=False, path="MNIST")
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
+  # Should you rescale here as well? Probably not
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testVectors / 255.0
 
-  trainingScaledVectors = trainingScaledVectors
   mean, principalComponents = PCA.pca(trainingScaledVectors, dimension)
   reducedTrain, _ = PCA.reduce(principalComponents, trainingScaledVectors, mean)
 
-  reducedTrain = reducedTrain
+  print reducedTrain.shape
   scaledPCA = []
   for x in reducedTrain:
     # Scale the results so that they are in between 0 and 1
