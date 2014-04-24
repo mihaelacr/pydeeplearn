@@ -431,9 +431,12 @@ def pcadbn(dimension=700):
   testingScaledVectors = testVectors / 255.0
 
   mean, principalComponents = PCA.pca(trainingScaledVectors, dimension)
+  # If we do not have enough data we have to reduce the dimension
+  # to how many non zero eigen vector we have
+  dimension = len(principalComponents)
   reducedTrain, _ = PCA.reduce(principalComponents, trainingScaledVectors, mean)
 
-  print reducedTrain.shape
+
   scaledPCA = []
   for x in reducedTrain:
     # Scale the results so that they are in between 0 and 1
