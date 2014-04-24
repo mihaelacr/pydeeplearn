@@ -1,5 +1,6 @@
 import numpy as np
 import utils
+from theano.tensor.shared_randomstreams import RandomStreams
 from theano import tensor as T
 
 
