@@ -256,6 +256,8 @@ def cvMNIST():
                   rmsprop=args.rmsprop,
                   hiddenDropout=0.5,
                   rbmHiddenDropout=0.5,
+                  weightDecayL1=0,
+                  weightDecayL2=0,
                   visibleDropout=0.8,
                   rbmVisibleDropout=0.9,
                   miniBatchSize=args.miniBatchSize,
@@ -387,7 +389,7 @@ def deepbeliefMNIST():
     unsupervisedLearningRate = 5e-06
     supervisedLearningRate = 0.001
   else:
-    unsupervisedLearningRate = 0.05
+    unsupervisedLearningRate = 0.075
     supervisedLearningRate = 0.05
 
 
@@ -406,6 +408,8 @@ def deepbeliefMNIST():
                  rbmHiddenDropout=0.5,
                  visibleDropout=0.8,
                  rbmVisibleDropout=0.9,
+                 weightDecayL1=0,
+                 weightDecayL2=0,
                  preTrainEpochs=args.preTrainEpochs)
     net.train(trainingScaledVectors, vectorLabels,
               maxEpochs=args.maxEpochs, validation=args.validation)
@@ -530,6 +534,8 @@ def pcadbn(dimension=69):
                  hiddenDropout=0.5,
                  rbmHiddenDropout=0.5,
                  visibleDropout=0.8,
+                 weightDecayL1=0,
+                 weightDecayL2=0,
                  rbmVisibleDropout=0.9,
                  preTrainEpochs=args.preTrainEpochs)
     net.train(reducedTrain, vectorLabels,
