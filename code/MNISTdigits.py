@@ -624,7 +624,6 @@ def cvMNISTGaussian():
   testingScaledVectors = scale(trainVectors)
   print testingScaledVectors
 
-
   vectorLabels = labelsToVectors(trainLabels, 10)
 
   permutation = np.random.permutation(range(training))
@@ -675,7 +674,7 @@ def cvMNISTGaussian():
 
   print "best fold was " + str(bestFold)
   print "bestParameter " + str(params[bestFold])
-  print "bestError" + str(bestError)
+  print "bestError " + str(bestError)
 
 
 # TODO: fix this (look at the ML coursework for it)
