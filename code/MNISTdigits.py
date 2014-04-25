@@ -89,7 +89,7 @@ def rbmMain(reconstructRandom=False):
 
   if args.relu:
     activationFunction = relu
-    learningRate = 1e-05
+    learningRate = 5e-06
   else:
     learningRate = 0.01
     activationFunction = T.nnet.sigmoid
