@@ -92,7 +92,7 @@ def rbmMain(reconstructRandom=False):
     learningRate = 5e-05
     binary=False
   else:
-    learningRate = 0.05
+    learningRate = 0.3
     binary=True
     activationFunction = T.nnet.sigmoid
 
