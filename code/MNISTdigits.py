@@ -96,7 +96,6 @@ def rbmMain(reconstructRandom=False):
     binary=True
     activationFunction = T.nnet.sigmoid
 
-
   # Train the network
   if args.train:
     # The number of hidden units is taken from a deep learning tutorial
@@ -237,7 +236,9 @@ def cvMNIST():
     # params =[(0.0001, 0.01), (0.00001, 0.001), (0.00001, 0.0001), (0.0001, 0.1)]
     params =[(1e-05, 0.001), (5e-06, 0.001), (5e-05, 0.001)]
   else:
-    params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.1), (0.05, 0.05)]
+    # TODO: try 0.08
+    # params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.1), (0.05, 0.05)]
+    params =[(0.05, 0.05) , (0.05, 0.075), (0.075, 0.05), (0.075, 0.075)]
 
   nrFolds = len(params)
   foldSize = training / nrFolds
