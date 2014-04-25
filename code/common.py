@@ -95,3 +95,12 @@ def makeNoisyRelu():
   rng = RandomStreams(seed=np.random.randint(1, 1000))
 
   return lambda var: noisyRelu(var, rng)
+
+def noisyReluSigmoid(var, theano_rng):
+  var += theano_rng.normal(mean=0.0, std=T.nnet.sigmoid(var))
+  return var * (var > 0.0)
+
+def makeNoisyReluSigmoid():
+  rng = RandomStreams(seed=np.random.randint(1, 1000))
+
+  return lambda var: noisyReluSigmoid(var, rng)
