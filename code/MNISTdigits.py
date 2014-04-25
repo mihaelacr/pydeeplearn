@@ -48,7 +48,7 @@ parser.add_argument('--rbmrmsprop', dest='rbmrmsprop',action='store_true', defau
                     help=("if true, rmsprop is used when training the rbms."))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
-parser.add_argument('--cvgauassian', dest='cvgauassian',action='store_true', default=False,
+parser.add_argument('--cvgauss', dest='cvgauss',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data with gaussian visible units"))
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
@@ -629,7 +629,7 @@ def main():
   random.seed(6)
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv +\
-      args.ann + args.lda + args.pcadbn + args.cvgauassian!= 1:
+      args.ann + args.lda + args.pcadbn + args.cvgauss!= 1:
     raise Exception("You decide on one main method to run")
 
   if args.db:
@@ -646,7 +646,7 @@ def main():
     ldaMain()
   if args.pcadbn:
     pcadbn()
-  if args.cvgauassian:
+  if args.cvgauss:
     cvMNISTGaussian()
 
 if __name__ == '__main__':
