@@ -97,7 +97,7 @@ def makeNoisyRelu():
   return lambda var: noisyRelu(var, rng)
 
 def noisyReluSigmoid(var, theano_rng):
-  var += theano_rng.normal(avg=0.0, std=T.nnet.sigmoid(var))
+  var += theano_rng.normal(avg=0.0, std=T.nnet.ultra_fast_sigmoid(var))
   return var * (var > 0.0)
 
 def makeNoisyReluSigmoid():
