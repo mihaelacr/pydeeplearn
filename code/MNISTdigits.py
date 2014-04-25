@@ -630,7 +630,7 @@ def cvMNISTGaussian():
   bestFold = -1
   bestError = np.inf
 
-  params = [(1e-05, 0.001), (5e-06, 0.001), (5e-05, 0.001)]
+  params = [(1e-03, 0.001), (5e-03, 0.001), (5e-03, 0.001)]
 
   nrFolds = len(params)
   foldSize = training / nrFolds
