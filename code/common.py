@@ -2,7 +2,10 @@ import numpy as np
 import utils
 from theano.tensor.shared_randomstreams import RandomStreams
 from theano import tensor as T
+from sklearn import preprocessing
 
+def scale(data):
+  return preprocessing.scale(data)
 
 def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,
@@ -102,5 +105,5 @@ def makeNoisyReluSigmoid():
 
   return lambda var: noisyReluSigmoid(var, rng)
 
-def id(var):
+def identity(var):
   return var
