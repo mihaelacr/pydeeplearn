@@ -4,6 +4,9 @@ processing the outputs into a more understandable way.
 
 For example ``tile_raster_images`` helps in generating a easy to grasp
 image from a set of samples or weights.
+
+
+CODE OBTAINED FROM: http://deeplearning.net/tutorial/code/utils.py
 """
 import numpy
 
