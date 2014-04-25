@@ -617,9 +617,11 @@ def cvMNISTGaussian():
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
+  trainVectors = np.array(trainVectors, dtype='float')
   trainingScaledVectors = scale(trainVectors)
   print trainingScaledVectors
-  testingScaledVectors = scale(trainLabels)
+  trainVectors = np.array(trainVectors, dtype='float')
+  testingScaledVectors = scale(trainVectors)
   print testingScaledVectors
 
 
