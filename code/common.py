@@ -46,9 +46,6 @@ def sampleAll(probs):
 def enum(**enums):
   return type('Enum', (), enums)
 
-# Create an enum for visible and hidden, for
-Layer = enum(VISIBLE=0, HIDDEN=1)
-
 def rmse(prediction, actual):
   return np.linalg.norm(prediction - actual) / np.sqrt(len(prediction))
 
@@ -104,3 +101,6 @@ def makeNoisyReluSigmoid():
   rng = RandomStreams(seed=np.random.randint(1, 1000))
 
   return lambda var: noisyReluSigmoid(var, rng)
+
+def id(var):
+  return var
