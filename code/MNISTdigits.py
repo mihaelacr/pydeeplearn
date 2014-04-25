@@ -160,8 +160,11 @@ def rbmMainGauss(reconstructRandom=False):
   testingVectors, testLabels =\
       readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
 
+  trainVectors = np.array(trainVectors, dtype='float')
   trainingScaledVectors = scale(trainVectors)
-  testingScaledVectors = scale(trainLabels)
+
+  testVectors = np.array(testVectors, dtype='float')
+  testingScaledVectors = scale(testVectors)
 
   # Train the network
   if args.train:
@@ -544,8 +547,11 @@ def deepbeliefMNISTGaussian():
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
+  trainVectors = np.array(trainVectors, dtype='float')
   trainingScaledVectors = scale(trainVectors)
-  testingScaledVectors = scale(trainLabels)
+
+  testVectors = np.array(testVectors, dtype='float')
+  testingScaledVectors = scale(testVectors)
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
