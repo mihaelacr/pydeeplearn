@@ -552,8 +552,8 @@ def cvMNISTGaussian():
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
-  trainingScaledVectors = trainVectors / 255.0
-  testingScaledVectors = testVectors / 255.0
+  trainingScaledVectors = scale(trainVectors)
+  testingScaledVectors = scale(trainLabels)
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
