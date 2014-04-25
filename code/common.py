@@ -88,7 +88,7 @@ def cappedRelu(var):
 
 def noisyRelu(var, theano_rng):
   # TODO: might have to add the gaussain noise
-  var += theano_rng.normal(mean=0.0, std=1.0)
+  var += theano_rng.normal(avg=0.0, std=1.0)
   return var * (var > 0.0)
 
 def makeNoisyRelu():
@@ -97,7 +97,7 @@ def makeNoisyRelu():
   return lambda var: noisyRelu(var, rng)
 
 def noisyReluSigmoid(var, theano_rng):
-  var += theano_rng.normal(mean=0.0, std=T.nnet.sigmoid(var))
+  var += theano_rng.normal(avg=0.0, std=T.nnet.sigmoid(var))
   return var * (var > 0.0)
 
 def makeNoisyReluSigmoid():

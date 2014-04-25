@@ -88,7 +88,7 @@ def rbmMain(reconstructRandom=False):
 
   # TODO: the reconstruction for relu still looks weird
   if args.relu:
-    activationFunction = relu
+    activationFunction = makeNoisyReluSigmoid()
     learningRate = 5e-05
   else:
     learningRate = 0.01
