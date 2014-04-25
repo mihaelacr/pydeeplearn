@@ -12,11 +12,6 @@ import ann
 import utils
 import PCA
 
-from sklearn import lda
-from sklearn.decomposition import PCA
-
-import DimensionalityReduction
-
 from common import *
 
 parser = argparse.ArgumentParser(description='digit recognition')
@@ -24,15 +19,17 @@ parser.add_argument('--save',dest='save',action='store_true', default=False,
                     help="if true, the network is serialized and saved")
 parser.add_argument('--train',dest='train',action='store_true', default=False,
                     help=("if true, the network is trained from scratch from the"
-                          "traning data"))
+                          "training data"))
 parser.add_argument('--ann',dest='ann',action='store_true', default=False,
                     help=("if true, we train an ann not a dbn"))
 parser.add_argument('--pca', dest='pca',action='store_true', default=False,
                     help=("if true, the code for running PCA on the data is run"))
 parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
-                    help=("if true, the code for traning an rbm on the data is run"))
+                    help=("if true, the code for training an rbm on the data is run"))
+parser.add_argument('--rbmGauss', dest='rbmGauss',action='store_true', default=False,
+                    help=("if true, the code for training an rbm on the data is run"))
 parser.add_argument('--db', dest='db',action='store_true', default=False,
-                    help=("if true, the code for traning a deepbelief net on the"
+                    help=("if true, the code for training a deepbelief net on the"
                           "data is run"))
 parser.add_argument('--lda', dest='lda',action='store_true', default=False,
                     help=("if true, runs LDA main"))
@@ -108,6 +105,74 @@ def rbmMain(reconstructRandom=False):
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
                   binary=binary,
+                  visibleActivationFunction=activationFunction,
+                  hiddenActivationFunction=activationFunction,
+                  rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
+    net.train(trainingScaledVectors)
+    t = visualizeWeights(net.weights.T, (28,28), (10,10))
+  else:
+    # Take the saved network and use that for reconstructions
+    f = open(args.netFile, "rb")
+    t = pickle.load(f)
+    net = pickle.load(f)
+    f.close()
+
+  # Reconstruct an image and see that it actually looks like a digit
+  test = testingScaledVectors[0,:]
+
+  # get a random image and see it looks like
+  if reconstructRandom:
+    test = np.random.random_sample(test.shape)
+
+  # Show the initial image first
+  recon = net.reconstruct(test.reshape(1, test.shape[0]))
+  plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.savefig('initial7.png', transparent=True)
+  # plt.show()
+
+  # Show the reconstruction
+  recon = net.reconstruct(test.reshape(1, test.shape[0]))
+  plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.savefig('reconstruct7withall.png', transparent=True)
+
+  # plt.show()
+
+  # Show the weights and their form in a tile fashion
+  # Plot the weights
+  plt.imshow(t, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.savefig('weights2srmsprop.png', transparent=True)
+  # plt.show()
+
+  print "done"
+
+  if args.save:
+    f = open(args.netFile, "wb")
+    pickle.dump(t, f)
+    pickle.dump(net, f)
+
+
+def rbmMainGauss(reconstructRandom=False):
+  trainVectors, trainLabels =\
+      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
+  testingVectors, testLabels =\
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+
+  trainingScaledVectors = scale(trainVectors)
+  testingScaledVectors = scale(trainLabels)
+
+  # Train the network
+  if args.train:
+    # The number of hidden units is taken from a deep learning tutorial
+    # The data are the values of the images have to be normalized before being
+    # presented to the network
+    nrVisible = len(trainingScaledVectors[0])
+    nrHidden = 500
+    # use 1 dropout to test the rbm for now
+    net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
+                  binary=False,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
@@ -629,7 +694,7 @@ def main():
   random.seed(6)
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv +\
-      args.ann + args.lda + args.pcadbn + args.cvgauss!= 1:
+      args.ann + args.lda + args.pcadbn + args.cvgauss + args.rbmGauss!= 1:
     raise Exception("You decide on one main method to run")
 
   if args.db:
@@ -648,6 +713,8 @@ def main():
     pcadbn()
   if args.cvgauss:
     cvMNISTGaussian()
+  if args.rbm:
+    rbmMainGauss()
 
 if __name__ == '__main__':
   main()
