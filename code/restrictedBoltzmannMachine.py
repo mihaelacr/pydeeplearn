@@ -366,10 +366,6 @@ class RBM(object):
 
     return representHidden()
 
-    # return lastLayers, np.argmax(lastLayers, axis=1)
-    # return updateLayer(Layer.HIDDEN, dataInstances, self.biases,
-    #                    self.testWeights, True)
-
   def reconstruct(self, dataInstances):
     dataInstacesConverted = np.asarray(dataInstances, dtype=theanoFloat)
 
