@@ -136,6 +136,8 @@ class DBN(object):
   def __init__(self, nrLayers, layerSizes,
                 binary,
                 activationFunction=T.nnet.sigmoid,
+                rbmActivationFunctionVisible=T.nnet.sigmoid,
+                rbmActivationFunctionHidden=T.nnet.sigmoid,
                 classificationActivationFunction=softmax,
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,
@@ -168,6 +170,8 @@ class DBN(object):
     self.weightDecayL2 = weightDecayL2
     self.preTrainEpochs = preTrainEpochs
     self.activationFunction = activationFunction
+    self.rbmActivationFunctionHidden = rbmActivationFunctionHidden
+    self.rbmActivationFunctionVisible = rbmActivationFunctionVisible
     self.classificationActivationFunction = classificationActivationFunction
     self.binary = binary
 
@@ -201,8 +205,8 @@ class DBN(object):
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                       learningRate=self.unsupervisedLearningRate,
                       binary=self.binary,
-                      visibleActivationFunction=self.activationFunction,
-                      hiddenActivationFunction=self.activationFunction,
+                      visibleActivationFunction=self.rbmActivationFunctionVisible,
+                      hiddenActivationFunction=self.rbmActivationFunctionHidden,
                       hiddenDropout=self.rbmHiddenDropout,
                       visibleDropout=self.rbmVisibleDropout,
                       rmsprop=True, # TODO: argument here as well?
