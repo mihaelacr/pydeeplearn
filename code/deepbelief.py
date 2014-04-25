@@ -20,7 +20,6 @@ DEBUG = False
 
 class MiniBatchTrainer(object):
 
-  # TODO: maybe creating the ring here might be better?
   def __init__(self, input, nrLayers, initialWeights, initialBiases,
                activationFunction, classificationActivationFunction,
                visibleDropout, hiddenDropout):
@@ -99,8 +98,6 @@ class MiniBatchTrainer(object):
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
-      # TODO: make this a function that you pass around
-      # it is important to make the classification activation functions outside
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
         # Use hiddenDropout: give the next layer only some of the units
@@ -118,7 +115,6 @@ class MiniBatchTrainer(object):
 
     self.output = currentLayerValues
 
-  # TODO: clean up, just a rough version to see what works
   def cost(self, y):
     return T.nnet.categorical_crossentropy(self.output, y)
 
@@ -185,7 +181,6 @@ class DBN(object):
     currentData = data
 
     if unsupervisedData is not None:
-      # TODO: does it really work like this in numpy
       print "adding unsupervisedData"
       currentData = np.vstack((currentData, unsupervisedData))
 
@@ -201,7 +196,6 @@ class DBN(object):
         initialWeights = None
         initialBiases = None
 
-      # TODO: do I really have to use the same activation function for both?
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                       learningRate=self.unsupervisedLearningRate,
                       binary=self.binary,
