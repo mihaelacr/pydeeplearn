@@ -89,7 +89,9 @@ def rbmMain(reconstructRandom=False):
 
   if args.relu:
     activationFunction = relu
+    learningRate = 1e-05
   else:
+    learningRate = 0.01
     activationFunction = T.nnet.sigmoid
 
 
@@ -101,7 +103,7 @@ def rbmMain(reconstructRandom=False):
     nrVisible = len(trainingScaledVectors[0])
     nrHidden = 500
     # use 1 dropout to test the rbm for now
-    net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1,
+    net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
                   binary=1-args.relu,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
