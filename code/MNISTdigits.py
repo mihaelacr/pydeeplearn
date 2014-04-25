@@ -538,7 +538,7 @@ def deepbeliefMNISTGaussian():
 
   trainVectors, trainLabels =\
       readmnist.read(0, training, bTrain=True, path="MNIST")
-  testVectors, testLabels =\
+  testVectors, b =\
       readmnist.read(0, testing, bTrain=False, path="MNIST")
   print trainVectors[0].shape
 
@@ -582,6 +582,7 @@ def deepbeliefMNISTGaussian():
 
 
   probs, predicted = net.classify(testingScaledVectors)
+  print type(predicted)
   correct = 0
   errorCases = []
   for i in xrange(testing):
@@ -623,6 +624,7 @@ def cvMNISTGaussian():
   trainVectors = np.array(trainVectors, dtype='float')
   testingScaledVectors = scale(trainVectors)
   print testingScaledVectors
+  print type(testingScaledVectors)
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
