@@ -74,8 +74,6 @@ db.DEBUG = args.debug
 
 SMALL_SIZE = ((40, 30))
 
-BINARY = {T.nnet.sigmoid : True}.get(False)
-
 
 def rbmEmotions(big=False, reconstructRandom=False):
   data, labels = readKanade(big)
@@ -98,7 +96,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
     nrHidden = 800
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, 0.01, 1, 1,
-                  BINARY[activationFunction],
+                  binary=1-args.relu,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop,
@@ -184,7 +182,7 @@ def deepBeliefKanadeCV(big=False):
 
     # TODO: this might require more thought
     net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
-               BINARY[activationFunction],
+               binary=1-args.relu,
                activationFunction=activationFunction,
                unsupervisedLearningRate=params[fold][0],
                supervisedLearningRate=params[fold][1],
@@ -262,7 +260,7 @@ def deepBeliefKanade(big=False):
 
   # TODO: this might require more thought
   net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
-             BINARY[activationFunction],
+             binary=1-args.relu,
              activationFunction=activationFunction,
              unsupervisedLearningRate=0.05,
              # is this not a bad learning rate?
