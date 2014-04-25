@@ -88,7 +88,7 @@ def cappedRelu(var):
 
 def noisyRelu(var, theano_rng):
   # TODO: might have to add the gaussain noise
-  var += theano_rng.normal()
+  var += theano_rng.normal(0, 1)
   return var * (var > 0.0)
 
 def makeNoisyRelu():
