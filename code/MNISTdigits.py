@@ -86,10 +86,10 @@ def rbmMain(reconstructRandom=False):
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
 
-
+  # TODO: the reconstruction for relu still looks weird
   if args.relu:
     activationFunction = relu
-    learningRate = 5e-06
+    learningRate = 1e-06
   else:
     learningRate = 0.01
     activationFunction = T.nnet.sigmoid
