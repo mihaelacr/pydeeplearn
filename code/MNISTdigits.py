@@ -90,8 +90,10 @@ def rbmMain(reconstructRandom=False):
   if args.relu:
     activationFunction = makeNoisyReluSigmoid()
     learningRate = 5e-05
+    binary=False
   else:
     learningRate = 0.01
+    binary=True
     activationFunction = T.nnet.sigmoid
 
 
@@ -104,7 +106,7 @@ def rbmMain(reconstructRandom=False):
     nrHidden = 500
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
-                  binary=1-args.relu,
+                  binary=binary,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
