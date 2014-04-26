@@ -1,10 +1,5 @@
-"""Implementation of restricted boltzmann machine
+"""Implementation of restricted Boltzmann machine."""
 
-You need to be able to deal with different energy functions
-This allows you to deal with real valued units.
-
-TODO: monitor overfitting
-"""
 import numpy as np
 from common import *
 
@@ -14,10 +9,8 @@ from theano.tensor.shared_randomstreams import RandomStreams
 
 theanoFloat  = theano.config.floatX
 
-EXPENSIVE_CHECKS_ON = False
 
 class RBMMiniBatchTrainer(object):
-
 
   def __init__(self, input, initialWeights, initialBiases,
              visibleActivationFunction, hiddenActivationFunction,
@@ -28,6 +21,7 @@ class RBMMiniBatchTrainer(object):
     self.cdSteps = theano.shared(value=np.int32(1))
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
+    # Weights and biases
     self.weights = theano.shared(value=np.asarray(initialWeights,
                                   dtype=theanoFloat),
                         name='W')
@@ -38,6 +32,7 @@ class RBMMiniBatchTrainer(object):
                                          dtype=theanoFloat),
                         name='bhid')
 
+    # Old weight and biases updates (required for momentum)
     self.oldDw = theano.shared(value=np.zeros(shape=initialWeights.shape,
                                            dtype=theanoFloat))
     self.oldDVis = theano.shared(value=np.zeros(shape=initialBiases[0].shape,
@@ -45,6 +40,7 @@ class RBMMiniBatchTrainer(object):
     self.oldDHid = theano.shared(value=np.zeros(shape=initialBiases[1].shape,
                                            dtype=theanoFloat))
 
+    # Old weight and biases mean squares (required for rmsprop)
     self.oldMeanW = theano.shared(value=np.zeros(shape=initialWeights.shape,
                                            dtype=theanoFloat))
     self.oldMeanVis = theano.shared(value=np.zeros(shape=initialBiases[0].shape,
@@ -52,16 +48,17 @@ class RBMMiniBatchTrainer(object):
     self.oldMeanHid = theano.shared(value=np.zeros(shape=initialBiases[1].shape,
                                            dtype=theanoFloat))
 
-    # Create the dropout for the visible layer
+    # Create dropout mask for the visible layer
     dropoutMaskVisible = self.theano_rng.binomial(size=self.visible.shape,
                                           n=1, p=visibleDropout,
                                           dtype=theanoFloat)
-
-    droppedOutVisible = dropoutMaskVisible * self.visible
+    # Create dropout mask for the hidden layer
     dropoutMaskHidden = self.theano_rng.binomial(
                               size=(input.shape[0], initialBiases[1].shape[0]),
                               n=1, p=hiddenDropout,
                               dtype=theanoFloat)
+
+    droppedOutVisible = dropoutMaskVisible * self.visible
 
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
@@ -93,7 +90,6 @@ class RBMMiniBatchTrainer(object):
     hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     # TODO: rethink maybe.
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
-
 
 """
  Represents a RBM
@@ -172,12 +168,12 @@ class RBM(object):
     if self.nesterov:
       preDeltaUpdates, updates = self.buildNesterovUpdates(batchTrainer,
         momentum, batchLearningRate, cdSteps)
-      momentum_function = theano.function(
+      updateWeightWithMomentum = theano.function(
         inputs=[momentum],
         outputs=[],
         updates=preDeltaUpdates
         )
-      after_momentum_updates = theano.function(
+      updateWeightWithDelta = theano.function(
         inputs=[miniBatchIndex, cdSteps, momentum],
         outputs=[],
         updates=updates,
@@ -187,8 +183,8 @@ class RBM(object):
         )
 
       def trainFunction(miniBatchIndex, momentum, cdSteps):
-        momentum_function(momentum)
-        after_momentum_updates(miniBatchIndex, cdSteps, momentum)
+        updateWeightWithMomentum(momentum)
+        updateWeightWithDelta(miniBatchIndex, cdSteps, momentum)
 
     else:
       updates = self.buildUpdates(batchTrainer, momentum, batchLearningRate, cdSteps)
@@ -313,7 +309,6 @@ class RBM(object):
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDw, wUpdate + wUpdateMomentum))
-
 
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
     if self.rmsprop:
