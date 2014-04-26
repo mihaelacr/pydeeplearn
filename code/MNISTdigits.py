@@ -31,10 +31,9 @@ parser.add_argument('--rbmGauss', dest='rbmGauss',action='store_true', default=F
 parser.add_argument('--db', dest='db',action='store_true', default=False,
                     help=("if true, the code for training a deepbelief net on the"
                           "data is run"))
-parser.add_argument('--lda', dest='lda',action='store_true', default=False,
-                    help=("if true, runs LDA main"))
-parser.add_argument('--pcadbn', dest='pcadbn',action='store_true', default=False,
-                    help=("if true, runs dbn with pca performed first main"))
+parser.add_argument('--dbgauss', dest='dbgauss',action='store_true', default=False,
+                    help=(("if true, a dbn is trained with gaussian visible units for rbms"
+                      "and relu for hidden units")))
 parser.add_argument('--nesterov', dest='nesterov',action='store_true', default=False,
                     help=("if true, the deep belief net is trained using nesterov momentum"))
 parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
@@ -555,8 +554,8 @@ def deepbeliefMNISTGaussian():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  unsupervisedLearningRate = 5e-06
-  supervisedLearningRate = 0.001
+  unsupervisedLearningRate = 0.001
+  supervisedLearningRate = 0.005
 
   if args.train:
     # Try 1200, 1200, 1200
@@ -707,7 +706,7 @@ def main():
   random.seed(6)
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv +\
-      args.ann + args.lda + args.pcadbn + args.cvgauss + args.rbmGauss!= 1:
+      args.ann + args.cvgauss + args.rbmGauss!= 1:
     raise Exception("You decide on one main method to run")
 
   if args.db:
@@ -720,14 +719,12 @@ def main():
     cvMNIST()
   if args.ann:
     annMNIST()
-  if args.lda:
-    ldaMain()
-  if args.pcadbn:
-    pcadbn()
   if args.cvgauss:
     cvMNISTGaussian()
   if args.rbm:
     rbmMainGauss()
+  if args.dbgauss:
+    deepbeliefMNISTGaussian()
 
 if __name__ == '__main__':
   main()
