@@ -461,8 +461,8 @@ def deepbeliefMNIST():
     unsupervisedLearningRate = 5e-06
     supervisedLearningRate = 0.001
   else:
-    unsupervisedLearningRate = 0.05
-    supervisedLearningRate = 0.075
+    unsupervisedLearningRate = 0.01
+    supervisedLearningRate = 0.05
 
 
   if args.train:
@@ -637,7 +637,7 @@ def cvMNISTGaussian():
   bestError = np.inf
 
   # 1e-03, 1e-03: best params
-  # params = [(1e-03, 0.001), (5e-03, 0.001), (5e-03, 0.001)]
+  # params = [(1e-03, 0.001), (5e-03, 0.001), (5cvMNISTGaussiane-03, 0.001)]
   params = [(1e-03, 1e-03), (1e-04, 1e-03), (5e-04, 1e-03)]
   # params = [(1e-03, 1e-03), (1e-03, 1e-04), (1e-04, 1e-03), (1e-04, 1e-04)]
 
