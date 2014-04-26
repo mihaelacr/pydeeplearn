@@ -218,7 +218,7 @@ class RBM(object):
 
     # If you use visible dropout and you apply it everywhere should it also
     # not be * visible dropout
-    self.testWeights = self.weights * self.hiddenDropout
+    self.testWeights = self.weights * self.hiddenDropout * self.visibleDropout
 
     print "reconstruction Error"
     print self.reconstructionError(data)
