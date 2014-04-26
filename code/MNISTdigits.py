@@ -556,7 +556,7 @@ def deepbeliefMNISTGaussian():
   vectorLabels = labelsToVectors(trainLabels, 10)
 
   unsupervisedLearningRate = 0.001
-  supervisedLearningRate = 0.005
+  supervisedLearningRate = 0.001
 
   if args.train:
     # Try 1200, 1200, 1200
@@ -638,7 +638,7 @@ def cvMNISTGaussian():
 
   # 1e-03, 1e-03: best params
   # params = [(1e-03, 0.001), (5e-03, 0.001), (5e-03, 0.001)]
-  params = [(1e-03, 1e-03), (5e-03, 1e-03), (1e-03, 5e-03), (5e-03, 5e-03)]
+  params = [(1e-03, 1e-03), (1e-04, 1e-03), (5e-04, 1e-03)]
   # params = [(1e-03, 1e-03), (1e-03, 1e-04), (1e-04, 1e-03), (1e-04, 1e-04)]
 
   nrFolds = len(params)
