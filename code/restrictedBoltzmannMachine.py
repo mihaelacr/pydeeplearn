@@ -53,11 +53,11 @@ class RBMMiniBatchTrainer(object):
                                            dtype=theanoFloat))
 
     # Create the dropout for the visible layer
-    dropoutMask = self.theano_rng.binomial(size=self.visible.shape,
+    dropoutMaskVisible = self.theano_rng.binomial(size=self.visible.shape,
                                           n=1, p=visibleDropout,
                                           dtype=theanoFloat)
 
-    droppedOutVisible = dropoutMask * self.visible
+    droppedOutVisible = dropoutMaskVisible * self.visible
     dropoutMaskHidden = self.theano_rng.binomial(
                               size=(input.shape[0], initialBiases[1].shape[0]),
                               n=1, p=hiddenDropout,
@@ -77,11 +77,13 @@ class RBMMiniBatchTrainer(object):
         hidden = hiddenActivations
 
       linearSum = T.dot(hidden, self.weights.T) + self.biasVisible
-      visibleRec = visibleActivationFunction(linearSum) * dropoutMask
+      visibleRec = visibleActivationFunction(linearSum) * dropoutMaskVisible
       return [hiddenActivations, visibleRec]
 
     [hiddenSeq, visibleSeq], updates = theano.scan(OneCDStep,
                           outputs_info=[None, droppedOutVisible],
+                          non_sequences=[dropoutMaskHidden, dropoutMaskVisible,
+                                        self.weights, self.biasHidden, self.biasVisible],
                           n_steps=self.cdSteps)
 
     self.updates = updates
@@ -122,7 +124,7 @@ class RBM(object):
     self.nesterov = nesterov
     self.weights = initialWeights
     self.biases = initialBiases
-    self.weightDecay = weightDecay
+    self.weightDecay = np.float32(weightDecay)
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
     self.trainingEpochs = trainingEpochs
