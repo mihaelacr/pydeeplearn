@@ -82,8 +82,6 @@ class RBMMiniBatchTrainer(object):
 
     [hiddenSeq, visibleSeq], updates = theano.scan(OneCDStep,
                           outputs_info=[None, droppedOutVisible],
-                          non_sequences=[dropoutMaskHidden, dropoutMaskVisible,
-                                        self.weights, self.biasHidden, self.biasVisible],
                           n_steps=self.cdSteps)
 
     self.updates = updates
@@ -109,7 +107,6 @@ class RBM(object):
                 hiddenActivationFunction=T.nnet.sigmoid,
                 rmsprop=True, nesterov=True,
                 weightDecay=0.001,
-                l1WeigthtDecay=0.001, l2WeightDecay=0.002,
                 initialWeights=None, initialBiases=None, trainingEpochs=1):
                 # TODO: also check how the gradient works for RBMS
     # dropout = 1 means no dropout, keep all the weights
