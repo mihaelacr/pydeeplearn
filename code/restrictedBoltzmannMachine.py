@@ -14,7 +14,6 @@ from theano.tensor.shared_randomstreams import RandomStreams
 
 theanoFloat  = theano.config.floatX
 
-
 EXPENSIVE_CHECKS_ON = False
 
 class RBMMiniBatchTrainer(object):
@@ -77,7 +76,8 @@ class RBMMiniBatchTrainer(object):
         hidden = hiddenActivationsDropped
 
       visibleRec = visibleActivationFunction(T.dot(hidden, self.weights.T) + self.biasVisible)
-      # visibleRec = visibleRec * dropout
+      # TODO?
+      visibleRec = visibleRec * dropout
       return [hiddenActivationsDropped, visibleRec]
 
     results, updates = theano.scan(OneSampleStep,
