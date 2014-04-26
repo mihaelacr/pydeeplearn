@@ -68,7 +68,7 @@ class RBMMiniBatchTrainer(object):
     def OneCDStep(visibleSample):
       linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
       hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
-      # Sample only for stochastic binary units not relu
+      # Sample only for stochastic binary units
       if self.binary:
         hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
                                             n=1, p=hiddenActivations,
@@ -80,15 +80,14 @@ class RBMMiniBatchTrainer(object):
       visibleRec = visibleActivationFunction(linearSum) * dropoutMask
       return [hiddenActivations, visibleRec]
 
-
-    results, updates = theano.scan(OneCDStep,
+    [hiddenSeq, visibleSeq], updates = theano.scan(OneCDStep,
                           outputs_info=[None, droppedOutVisible],
                           n_steps=self.cdSteps)
 
     self.updates = updates
 
-    self.hiddenActivations = results[0][0]
-    self.visibleReconstruction = results[1][-1]
+    self.hiddenActivations = hiddenSeq[0]
+    self.visibleReconstruction = visibleSeq[-1]
 
     # Do not sample for the last one, in order to get less sampling noise
     hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
