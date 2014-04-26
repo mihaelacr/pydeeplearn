@@ -62,7 +62,7 @@ class RBMMiniBatchTrainer(object):
 
     droppedOutVisible = dropoutMask * self.visible
     dropoutMaskHidden = self.theano_rng.binomial(
-                              size=(input.shape[0],initialBiases[1].shape[0]),
+                              size=(input.shape[0], initialBiases[1].shape[0]),
                               n=1, p=hiddenDropout,
                               dtype=theanoFloat)
     # This does not sample the visible layers, but samples
@@ -79,6 +79,7 @@ class RBMMiniBatchTrainer(object):
         hidden = hiddenActivationsDropped
 
       visibleRec = visibleActivationFunction(T.dot(hidden, self.weights.T) + self.biasVisible)
+      # visibleRec = visibleRec * dropout
       return [hiddenActivationsDropped, visibleRec]
 
     results, updates = theano.scan(OneSampleStep,
@@ -87,13 +88,13 @@ class RBMMiniBatchTrainer(object):
 
     self.updates = updates
 
-    self.hidden = results[0][0]
+    self.hiddenActivations = results[0][0]
     self.visibleReconstruction = results[1][-1]
 
     # Do not sample for the last one, in order to get less sampling noise
-    # TODO: drop these as well?
     hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
-    self.hiddenReconstruction = hiddenRec
+    # TODO: rethink maybe.
+    self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
 
 
 """
@@ -235,7 +236,7 @@ class RBM(object):
     updates = []
     # The theano people do not need this because they use gradient
     # I wonder how that works
-    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hidden)
+    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hiddenActivations)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
     delta = positiveDifference - negativeDifference
@@ -265,7 +266,7 @@ class RBM(object):
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
     updates.append((batchTrainer.oldDParams[1], biasVisUpdate))
 
-    hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
+    hiddenBiasDiff = T.sum(batchTrainer.hiddenActivations - batchTrainer.hiddenReconstruction, axis=0)
     biasHidUpdate = momentum * batchTrainer.oldDParams[2]
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
@@ -298,7 +299,7 @@ class RBM(object):
     updates = []
     # The theano people do not need this because they use gradient
     # I wonder how that works
-    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hidden)
+    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hiddenActivations)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
     delta = positiveDifference - negativeDifference
@@ -326,7 +327,7 @@ class RBM(object):
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
     updates.append((batchTrainer.oldDParams[1], biasVisUpdate + biasVisUpdateMomentum))
 
-    hiddenBiasDiff = T.sum(batchTrainer.hidden - batchTrainer.hiddenReconstruction, axis=0)
+    hiddenBiasDiff = T.sum(batchTrainer.hiddenActivations - batchTrainer.hiddenReconstruction, axis=0)
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
       biasHidUpdate = (1.0 - momentum) * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
@@ -358,9 +359,11 @@ class RBM(object):
                                     hiddenDropout=1.0,
                                     binary=self.binary)
 
+    # These are not sampled, so maybe I want then to be sampled here
+    # when I put them as input in the new layer?
     representHidden = theano.function(
             inputs=[],
-            outputs=batchTrainer.hidden,
+            outputs=batchTrainer.hiddenActivations,
             updates=batchTrainer.updates,
             givens={x: dataInstacesConverted})
 
