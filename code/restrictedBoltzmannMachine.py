@@ -77,7 +77,7 @@ class RBMMiniBatchTrainer(object):
 
       visibleRec = visibleActivationFunction(T.dot(hidden, self.weights.T) + self.biasVisible)
       # TODO?
-      visibleRec = visibleRec * droppedMask
+      visibleRec = visibleRec * dropoutMask
       return [hiddenActivationsDropped, visibleRec]
 
     results, updates = theano.scan(OneSampleStep,
