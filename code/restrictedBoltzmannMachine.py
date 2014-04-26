@@ -52,16 +52,6 @@ class RBMMiniBatchTrainer(object):
     self.oldMeanHid = theano.shared(value=np.zeros(shape=initialBiases[1].shape,
                                            dtype=theanoFloat))
 
-    # Create the dropout for the visible layer
-    dropoutMask = self.theano_rng.binomial(size=self.visible.shape,
-                                          n=1, p=visibleDropout,
-                                          dtype=theanoFloat)
-
-    droppedOutVisible = dropoutMask * self.visible
-    dropoutMaskHidden = self.theano_rng.binomial(
-                              size=(input.shape[0], initialBiases[1].shape[0]),
-                              n=1, p=hiddenDropout,
-                              dtype=theanoFloat)
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneSampleStep(visibleSample):
@@ -79,6 +69,17 @@ class RBMMiniBatchTrainer(object):
       # TODO?
       visibleRec = visibleRec * dropoutMask
       return [hiddenActivationsDropped, visibleRec]
+
+    # Create the dropout for the visible layer
+    dropoutMask = self.theano_rng.binomial(size=self.visible.shape,
+                                          n=1, p=visibleDropout,
+                                          dtype=theanoFloat)
+
+    droppedOutVisible = dropoutMask * self.visible
+    dropoutMaskHidden = self.theano_rng.binomial(
+                              size=(input.shape[0], initialBiases[1].shape[0]),
+                              n=1, p=hiddenDropout,
+                              dtype=theanoFloat)
 
     results, updates = theano.scan(OneSampleStep,
                           outputs_info=[None, droppedOutVisible],
@@ -249,7 +250,7 @@ class RBM(object):
     else:
       wUpdate += (1.0 - momentum) * batchLearningRate * delta
 
-    wUpdate -= self.weightDecay * batchTrainer.oldDw
+    wUpdate -= batchLearningRate * self.weightDecay * batchTrainer.oldDw
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDw, wUpdate))
