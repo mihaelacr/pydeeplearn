@@ -187,8 +187,9 @@ class DBN(object):
 
     for i in xrange(nrRbms):
       # If the network can be initialized from the previous one,
-      # do so, by using the transpose
+      # do so, by using the transpose of the already trained net
       if i > 0 and self.layerSizes[i+1] == self.layerSizes[i-1]:
+        print "in if"
         initialWeights = lastRbmTrainWeights.T
         initialBiases = lastRbmBiases
       else:
@@ -214,7 +215,7 @@ class DBN(object):
       # Only add the biases for the hidden unit
       b = net.biases[1]
       lastRbmBiases = net.biases
-      # DO not take the test weight, take the training ones
+      # Do not take the test weight, take the training ones
       lastRbmTrainWeights = net.weights
       self.biases += [b]
 
