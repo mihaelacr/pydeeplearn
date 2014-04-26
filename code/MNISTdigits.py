@@ -555,7 +555,7 @@ def deepbeliefMNISTGaussian():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  unsupervisedLearningRate = 0.001
+  unsupervisedLearningRate = 0.0005
   supervisedLearningRate = 0.001
 
   if args.train:
