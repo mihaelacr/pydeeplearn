@@ -338,7 +338,7 @@ class DBN(object):
                                     hiddenDropout=0.5)
 
     # the error is the sum of the errors in the individual cases
-    # also add some regularization costs
+    # also adds some regularization costs
     error = T.sum(batchTrainer.cost(y))
     for w in batchTrainer.weights:
       error+= self.weightDecayL1 * T.sum(abs(w)) + self.weightDecayL2 * T.sum(w ** 2)
@@ -352,13 +352,13 @@ class DBN(object):
     if self.nesterovMomentum:
       preDeltaUpdates, updates = self.buildUpdatesNesterov(batchTrainer, momentum,
                     batchLearningRate, error)
-      momentum_step = theano.function(
+      updateParamsWithMomentum = theano.function(
           inputs=[momentum],
           outputs=[],
           updates=preDeltaUpdates,
           mode = mode)
 
-      update_params = theano.function(
+      updateParamsWithGradient = theano.function(
           inputs =[miniBatchIndex, momentum],
           outputs=error,
           updates=updates,
@@ -368,8 +368,8 @@ class DBN(object):
           mode=mode)
 
       def trainModel(miniBatchIndex, momentum):
-        momentum_step(momentum)
-        return update_params(miniBatchIndex, momentum)
+        updateParamsWithMomentum(momentum)
+        return updateParamsWithGradient(miniBatchIndex, momentum)
     else:
 
       updates = self.buildUpdatesSimpleMomentum(batchTrainer, momentum,
@@ -388,8 +388,8 @@ class DBN(object):
     # Let's create the function that validates the model!
       validateModel = theano.function(inputs=[],
         outputs=batchTrainer.cost(y),
-        givens={x: validationData,
-                y: validationLabels})
+        givens={x: validationData, y: validationLabels})
+
       self.trainModelGetBestWeights(batchTrainer, trainModel, validateModel, maxEpochs)
     else:
       if validationData is not None or validationLabels is not None:
@@ -614,14 +614,13 @@ class DBN(object):
 
     # Use the classification weights because now we have hiddenDropout
     # Ensure that you have no hiddenDropout in classification
-    # TODO: are the variables still shared? or can we make a new one?
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
                                     initialWeights=self.classifcationWeights,
                                     initialBiases=self.classifcationBiases,
                                     activationFunction=self.activationFunction,
                                     classificationActivationFunction=self.classificationActivationFunction,
-                                    visibleDropout=1,
-                                    hiddenDropout=1)
+                                    visibleDropout=1.0,
+                                    hiddenDropout=1.0)
 
     classify = theano.function(
             inputs=[],
