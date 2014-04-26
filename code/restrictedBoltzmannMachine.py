@@ -90,7 +90,7 @@ class RBMMiniBatchTrainer(object):
     self.visibleReconstruction = visibleSeq[-1]
 
     # Do not sample for the last one, in order to get less sampling noise
-    hiddenRec = T.nnet.sigmoid(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
+    hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     # TODO: rethink maybe.
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
 
