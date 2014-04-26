@@ -346,9 +346,9 @@ class RBM(object):
 
     batchTrainer = RBMMiniBatchTrainer(input=x,
                                     initialWeights=self.testWeights,
+                                    initialBiases=self.biases,
                                     visibleActivationFunction=self.visibleActivationFunction,
                                     hiddenActivationFunction=self.hiddenActivationFunction,
-                                    initialBiases=self.biases,
                                     visibleDropout=1.0,
                                     hiddenDropout=1.0,
                                     binary=self.binary)

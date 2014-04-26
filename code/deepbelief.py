@@ -3,7 +3,6 @@ import numpy as np
 import restrictedBoltzmannMachine as rbm
 import theano
 from theano import tensor as T
-from theano.ifelse import ifelse as theanoifelse
 from theano.tensor.shared_randomstreams import RandomStreams
 
 import matplotlib.pyplot as plt
@@ -48,9 +47,8 @@ class MiniBatchTrainer(object):
 
     # Required for momentum
     # The updates that were performed in the last batch
-    # It is important that the order in which
-    # we add the oldUpdates is the same as which we add the params
-    # TODO: add an assertion for this
+    # It is important that the order in which we add the oldUpdates is the same
+    # as which we add the params
     self.oldUpdates = []
     for i in xrange(nrWeights):
       oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
@@ -79,20 +77,19 @@ class MiniBatchTrainer(object):
                         name='oldDb')
       self.oldMeanSquare.append(oldDb)
 
-
     # Create a theano random number generator
     # Required to sample units for dropout
     # If it is not shared, does it update when we do the
     # when we go to another function call?
-    self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
+    self.theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
 
     # Sample from the visible layer
     # Get the mask that is used for the visible units
-    dropout_mask = self.theano_rng.binomial(n=1, p=visibleDropout,
+    dropoutMask = self.theanoRng.binomial(n=1, p=visibleDropout,
                                             size=self.input.shape,
                                             dtype=theanoFloat)
 
-    currentLayerValues = self.input * dropout_mask
+    currentLayerValues = self.input * dropoutMask
 
     for stage in xrange(nrWeights -1):
       w = self.weights[stage]
@@ -100,14 +97,13 @@ class MiniBatchTrainer(object):
       linearSum = T.dot(currentLayerValues, w) + b
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
-        # Use hiddenDropout: give the next layer only some of the units
-        # from this layer
-      dropout_mask = self.theano_rng.binomial(n=1, p=hiddenDropout,
+      # dropout: give the next layer only some of the units from this layer
+      dropoutMaskHidden = self.theanoRng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
-      currentLayerValues = dropout_mask * activationFunction(linearSum)
+      currentLayerValues = dropoutMaskHidden * activationFunction(linearSum)
 
-    # Last layer operations
+    # Last layer operations, no dropout in the output
     w = self.weights[nrWeights - 1]
     b = self.biases[nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
@@ -185,6 +181,8 @@ class DBN(object):
       currentData = np.vstack((currentData, unsupervisedData))
 
     print "pre-training with a data set of size", len(currentData)
+
+    lastRbmBiases = None
 
     for i in xrange(nrRbms):
       # If the network can be initialized from the previous one,
