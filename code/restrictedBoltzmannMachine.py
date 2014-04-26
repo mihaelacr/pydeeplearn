@@ -52,24 +52,6 @@ class RBMMiniBatchTrainer(object):
     self.oldMeanHid = theano.shared(value=np.zeros(shape=initialBiases[1].shape,
                                            dtype=theanoFloat))
 
-    # This does not sample the visible layers, but samples
-    # The hidden layers up to the last one, like Hinton suggests
-    def OneSampleStep(visibleSample):
-      hiddenActivations = hiddenActivationFunction(T.dot(visibleSample, self.weights) + self.biasHidden)
-      hiddenActivationsDropped = hiddenActivations * dropoutMaskHidden
-      # Sample only for stochastic binary units not relu
-      if self.binary:
-        hidden = self.theano_rng.binomial(size=hiddenActivationsDropped.shape,
-                                            n=1, p=hiddenActivationsDropped,
-                                            dtype=theanoFloat)
-      else:
-        hidden = hiddenActivationsDropped
-
-      visibleRec = visibleActivationFunction(T.dot(hidden, self.weights.T) + self.biasVisible)
-      # TODO?
-      visibleRec = visibleRec * dropoutMask
-      return [hiddenActivationsDropped, visibleRec]
-
     # Create the dropout for the visible layer
     dropoutMask = self.theano_rng.binomial(size=self.visible.shape,
                                           n=1, p=visibleDropout,
@@ -81,7 +63,25 @@ class RBMMiniBatchTrainer(object):
                               n=1, p=hiddenDropout,
                               dtype=theanoFloat)
 
-    results, updates = theano.scan(OneSampleStep,
+    # This does not sample the visible layers, but samples
+    # The hidden layers up to the last one, like Hinton suggests
+    def OneCDStep(visibleSample):
+      linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
+      hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
+      # Sample only for stochastic binary units not relu
+      if self.binary:
+        hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
+                                            n=1, p=hiddenActivations,
+                                            dtype=theanoFloat)
+      else:
+        hidden = hiddenActivations
+
+      linearSum = T.dot(hidden, self.weights.T) + self.biasVisible
+      visibleRec = visibleActivationFunction(linearSum) * dropoutMask
+      return [hiddenActivations, visibleRec]
+
+
+    results, updates = theano.scan(OneCDStep,
                           outputs_info=[None, droppedOutVisible],
                           n_steps=self.cdSteps)
 
@@ -311,7 +311,7 @@ class RBM(object):
     else:
       wUpdate = (1.0 - momentum) * batchLearningRate * delta
 
-    wUpdate -= self.weightDecay * batchTrainer.oldDw
+    wUpdate -= batchLearningRate * self.weightDecay * batchTrainer.oldDw
 
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDw, wUpdate + wUpdateMomentum))
