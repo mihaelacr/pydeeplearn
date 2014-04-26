@@ -706,7 +706,7 @@ def main():
   random.seed(6)
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv +\
-      args.ann + args.cvgauss + args.rbmGauss!= 1:
+      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss != 1:
     raise Exception("You decide on one main method to run")
 
   if args.db:
