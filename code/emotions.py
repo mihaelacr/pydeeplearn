@@ -259,8 +259,14 @@ def deepBeliefKanade(big=False):
 
   if args.relu:
     activationFunction = relu
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.95
   else:
     activationFunction = T.nnet.sigmoid
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.95
 
   trainData = data[train]
   trainLabels = labels[train]
@@ -269,9 +275,10 @@ def deepBeliefKanade(big=False):
   net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
              binary=1-args.relu,
              activationFunction=activationFunction,
-             unsupervisedLearningRate=0.05,
+             unsupervisedLearningRate=unsupervisedLearningRate,
              # is this not a bad learning rate?
-             supervisedLearningRate=0.01,
+             supervisedLearningRate=supervisedLearningRate,
+             momentumMax=momentumMax,
              nesterovMomentum=args.nesterov,
              rbmNesterovMomentum=args.rbmnesterov,
              rmsprop=args.rmsprop,
