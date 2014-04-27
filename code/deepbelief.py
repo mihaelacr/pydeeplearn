@@ -463,8 +463,9 @@ class DBN(object):
     try:
       plt.plot([trainingErrors, validationErrors])
       plt.show()
-    except Exception:
+    except Exception as e:
       print "validation error plot not made"
+      print e
 
     print "number of epochs"
     print epoch
@@ -514,8 +515,9 @@ class DBN(object):
     try:
       plt.plot([trainingErrors, validationErrors])
       plt.show()
-    except Exception:
+    except Exception as e:
       print "validation error plot not made"
+      print e
 
     print "number of epochs"
     print epoch
