@@ -339,7 +339,7 @@ def cvMNIST():
 
     proabilities, predicted = net.classify(scaledData[testing])
 
-    testLabels = trainLabels[testing]
+    testLabels = labels[testing]
     # Test it with the testing data and measure the missclassification error
     error = getClassificationError(predicted, testLabels)
 
