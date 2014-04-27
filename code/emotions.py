@@ -420,7 +420,7 @@ def readCroppedYale(equalize=True):
 
   images = []
   for f in imageFiles:
-    img = io.imread(f)
+    img = cv2.imread(f, cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
     if equalize:
       img = equalize(img)
@@ -441,7 +441,7 @@ def readAttData():
 
   images = []
   for f in imageFiles:
-    img = io.imread(f)
+    img = cv2.imread(f, cv2.CV_LOAD_IMAGE_GRAYSCALE)
     if args.equalize:
       img = equalize(img)
     img = resize(img, SMALL_SIZE)
@@ -471,11 +471,13 @@ def readCropEqualize(path, extension, doRecognition, equalize=True,
         continue
 
       print fullPath
-      img = io.imread(fullPath)
+      img = cv2.imread(fullPath, cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
-      if isColoured:
-        img = color.rgb2gray(img)
-        img = np.array(img * 255, dtype='uint8')
+      # if isColoured:
+      #   # TODO: do I always have to multiply by 255 in this case?
+      #   # I think I need to do that for face detection
+      #   img = color.rgb2gray(img)
+      #   img = np.array(img * 255, dtype='uint8')
 
       if equalize:
         img = equalize(img)
@@ -505,7 +507,7 @@ def readCropEqualize(path, extension, doRecognition, equalize=True,
       for f in fnmatch.filter(files, '*.' + extension)]
 
     for f in imageFiles:
-      img = io.imread(f)
+      img = cv2.imread(f, cv2.CV_LOAD_IMAGE_GRAYSCALE)
       if type(img[0,0]) == np.uint8:
         print "rescaling unit"
       # if not (img.min() >=0.0 and img.max()<=1.000008):
