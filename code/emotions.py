@@ -60,6 +60,8 @@ parser.add_argument('--miniBatchSize', type=int, default=10,
                     help='the number of training points in a mini batch')
 parser.add_argument('--validation',dest='validation',action='store_true', default=False,
                     help="if true, the network is trained using a validation set")
+parser.add_argument('--equalize',dest='equalize',action='store_true', default=False,
+                    help="if true, the input images are equalized before being fed into the net")
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 
@@ -391,7 +393,7 @@ def readCroppedYale(equalize=True):
 
   return np.array(images)
 
-def readAttData(equalize=True):
+def readAttData():
   PATH = "/data/mcr10/att"
   # PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
 
@@ -402,7 +404,7 @@ def readAttData(equalize=True):
   images = []
   for f in imageFiles:
     img = io.imread(f)
-    if equalize:
+    if args.equalize:
       img = cv2.equalizeHist(img)
     img = resize(img, SMALL_SIZE)
     images += [img.reshape(-1)]
@@ -480,17 +482,20 @@ def readCropEqualize(path, extension, doRecognition, equalize=True,
 def readJaffe():
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
-  return readCropEqualize(PATH , "tiff", args.facedetection, isColoured=False)
+  return readCropEqualize(PATH , "tiff", args.facedetection, equalize=args.equalize,
+                          isColoured=False)
 
 def readNottingham():
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
-  return readCropEqualize(PATH, "gif", args.facedetection, isColoured=False)
+  return readCropEqualize(PATH, "gif", args.facedetection, equalize=args.equalize,
+                          isColoured=False)
 
 def readAberdeen():
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
-  return readCropEqualize(PATH, "jpg", args.facedetection, isColoured=True)
+  return readCropEqualize(PATH, "jpg", args.facedetection, equalize=args.equalize,
+                           isColoured=True)
 
 def main():
   # deepBeliefKanade()
