@@ -167,7 +167,6 @@ def rbmMainGauss(reconstructRandom=False):
   testVectors = np.array(testVectors, dtype='float')
   testingScaledVectors = scale(testVectors)
 
-
   learningRate = 0.5
   # Train the network
   if args.train:
@@ -179,8 +178,8 @@ def rbmMainGauss(reconstructRandom=False):
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
                   binary=False,
-                  visibleActivationFunction=activationFunction,
-                  hiddenActivationFunction=activationFunction,
+                  visibleActivationFunction=identity,
+                  hiddenActivationFunction=makeNoisyReluSigmoid(),
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
@@ -202,14 +201,14 @@ def rbmMainGauss(reconstructRandom=False):
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
   plt.axis('off')
-  plt.savefig('initial7.png', transparent=True)
+  plt.savefig('initial7relu.png', transparent=True)
   # plt.show()
 
   # Show the reconstruction
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
   plt.axis('off')
-  plt.savefig('reconstruct7withall.png', transparent=True)
+  plt.savefig('reconstruct7withallrelu.png', transparent=True)
 
   # plt.show()
 
@@ -217,7 +216,7 @@ def rbmMainGauss(reconstructRandom=False):
   # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
   plt.axis('off')
-  plt.savefig('weights2srmsprop.png', transparent=True)
+  plt.savefig('weights2srmsproprelu.png', transparent=True)
   # plt.show()
 
   print "done"
