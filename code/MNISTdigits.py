@@ -278,12 +278,12 @@ def pcaOnMnist(training, dimension=700):
 def cvMNIST():
   training = args.trainSize
 
-  trainVectors, trainLabels =\
+  data, labels =\
       readmnist.read(0, training, bTrain=True, path="MNIST")
 
-  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
-  trainingScaledVectors = trainVectors / 255.0
-  vectorLabels = labelsToVectors(trainLabels, 10)
+  data, labels = shuffle(data, labels)
+  scaledData = data / 255.0
+  vectorLabels = labelsToVectors(labels, 10)
 
   if args.relu:
     activationFunction = relu
@@ -312,8 +312,8 @@ def cvMNIST():
     # Train the net
     # Try 1200, 1200, 1200
 
-    trainData = trainingScaledVectors[train]
-    trainLabels = vectorLabels[train]
+    trainData = scaledData[training]
+    trainLabels = vectorLabels[training]
 
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                   binary=1-args.relu,
@@ -337,7 +337,7 @@ def cvMNIST():
     net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
               validation=args.validation)
 
-    proabilities, predicted = net.classify(trainingScaledVectors[testing])
+    proabilities, predicted = net.classify(scaledData[testing])
 
     testLabels = trainLabels[testing]
     # Test it with the testing data and measure the missclassification error
