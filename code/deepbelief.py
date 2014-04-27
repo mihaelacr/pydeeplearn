@@ -489,7 +489,7 @@ class DBN(object):
         trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
         trainingErrors += [trainingErrorBatch]
 
-      meanValidation = np.mean(validateModel(), axis=0)
+      meanValidation = validateModel() / self.miniBatchSize
       validationErrors += [meanValidation]
 
       if meanValidation < bestValidationError:
@@ -537,8 +537,7 @@ class DBN(object):
         iteration = epoch * self.nrMiniBatches  + batchNr
         trainModel(batchNr, momentum)
 
-        # why axis = 0? this should be a number?!
-        meanValidation = np.mean(validateModel, maxEpochs)
+        meanValidation = validateModel() / self.miniBatchSize
 
       # print 'meanValidation'
       # print meanValidation
