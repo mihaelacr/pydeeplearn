@@ -17,6 +17,7 @@ from skimage.transform import resize
 from skimage import io
 from skimage import color
 import os
+import cv2
 
 import facedetection
 
@@ -478,17 +479,17 @@ def readCropEqualize(path, extension, doRecognition, equalize=True,
 def readJaffe():
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
-  return readAndCrop(PATH , "tiff", args.facedetection, isColoured=False)
+  return readCropEqualize(PATH , "tiff", args.facedetection, isColoured=False)
 
 def readNottingham():
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
-  return readAndCrop(PATH, "gif", args.facedetection, isColoured=False)
+  return readCropEqualize(PATH, "gif", args.facedetection, isColoured=False)
 
 def readAberdeen():
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
-  return readAndCrop(PATH, "jpg", args.facedetection, isColoured=True)
+  return readCropEqualize(PATH, "jpg", args.facedetection, isColoured=True)
 
 def main():
   # deepBeliefKanade()
