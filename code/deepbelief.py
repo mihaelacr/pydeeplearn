@@ -463,6 +463,10 @@ class DBN(object):
     try:
       plt.plot(trainingErrors, label="Training error")
       plt.plot(validationErrors, label="Validation error")
+      plt.xlabel('Epoch')
+      plt.ylabel('Cross entropy average error')
+      plt.title('Training and validation error during DBN training')
+      plt.legend()
       plt.show()
     except Exception as e:
       print "validation error plot not made"
@@ -523,6 +527,10 @@ class DBN(object):
     try:
       plt.plot(trainingErrors, label='Training error')
       plt.plot(validationErrors, label='Validation error')
+      plt.xlabel('Epoch')
+      plt.ylabel('Cross entropy average error')
+      plt.title('Training and validation error during DBN training')
+      plt.legend()
       plt.show()
     except Exception as e:
       print "validation error plot not made"
