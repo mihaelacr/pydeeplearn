@@ -447,7 +447,7 @@ class DBN(object):
         momentum = self.momentumForEpochFunction(self.momentumMax, iteration)
 
         trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
-        trainingErrors += [trainingErrorBatch]
+      trainingErrors += [trainingErrorBatch]
 
       meanValidation = validateModel() / self.miniBatchSize
       validationErrors += [meanValidation]
@@ -500,7 +500,8 @@ class DBN(object):
 
       for batchNr in xrange(self.nrMiniBatches):
         trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
-        trainingErrors += [trainingErrorBatch]
+
+      trainingErrors += [trainingErrorBatch]
 
       meanValidation = validateModel() / self.miniBatchSize
       validationErrors += [meanValidation]
