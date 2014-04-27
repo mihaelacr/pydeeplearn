@@ -158,7 +158,7 @@ def rbmMain(reconstructRandom=False):
 def rbmMainGauss(reconstructRandom=False):
   trainVectors, trainLabels =\
       readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
-  testingVectors, testLabels =\
+  testVectors, testLabels =\
       readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
 
   trainVectors = np.array(trainVectors, dtype='float')
