@@ -432,12 +432,13 @@ def readCropEqualize(path, extension, doRecognition, equalize=True,
 
       print fullPath
       img = io.imread(fullPath)
-      if equalize:
-        img = cv2.equalizeHist(img)
 
       if isColoured:
         img = color.rgb2gray(img)
         img = np.array(img * 255, dtype='uint8')
+
+      if equalize:
+        img = cv2.equalizeHist(img)
 
       face = facedetection.cropFace(img)
       if not face == None:
