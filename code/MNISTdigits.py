@@ -305,7 +305,7 @@ def cvMNIST():
     params =[(0.05, 0.075), (0.05, 0.1), (0.01, 0.05)]
 
   nrFolds = len(params)
-  kf = cross_validation.KFold(n=training, k=nrFolds)
+  kf = cross_validation.KFold(n=training, n_folds=nrFolds)
 
   i = 0
   for training, testing in kf:
