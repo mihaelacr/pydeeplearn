@@ -332,51 +332,79 @@ def buildUnsupervisedDataSet():
     readAberdeen()))
 
 
-def readKanade(big=False, folds=None):
-  if big:
-    files = glob.glob('kanade_150*.pickle')
+def readKanade(big=False, folds=None, equalize=args.equalize):
+  if not equalize:
+    if big:
+      files = glob.glob('kanade_150*.pickle')
+    else:
+      files = glob.glob('kanade_f*.pickle')
+
+    if not folds:
+      folds = range(1, 6)
+
+    # Read the data from them. Sort out the files that do not have
+    # the folds that we want
+    # TODO: do this better (with regex in the file name)
+    # DO not reply on the order returned
+    files = [ files[x -1] for x in folds]
+
+    data = np.array([])
+    labels = np.array([])
+
+    # TODO: do proper CV in which you use 4 folds for training and one for testing
+    # at that time
+    dataFolds = []
+    labelFolds = []
+    for filename in files:
+      with open(filename, "rb") as  f:
+        # Sort out the labels from the data
+        # TODO: run the readKanade again tomorrow and change these idnices here
+        dataAndLabels = pickle.load(f)
+        foldData = dataAndLabels[:, 0:-1]
+        print "foldData.shape"
+        print foldData.shape
+        foldLabels = dataAndLabels[:,-1]
+        dataFolds.append(foldData)
+        foldLabels = np.array(map(int, foldLabels))
+
+        vectorLabels = labelsToVectors(foldLabels -1, 7)
+        labelFolds.append(vectorLabels)
+
+        print "foldLabels.shape"
+        print vectorLabels.shape
+
+
+    data = np.vstack(tuple(dataFolds))
+    labels = np.vstack(tuple(labelFolds))
   else:
-    files = glob.glob('kanade_f*.pickle')
+    if big:
+      fileName = 'equalized_kanade_big.pickle'
+    else:
+      fileName = 'equalized_kanade_small.pickle'
 
-  if not folds:
-    folds = range(1, 6)
+    if not os.path.exists(fileName):
+      equalizeKanade(big)
 
-  # Read the data from them. Sort out the files that do not have
-  # the folds that we want
-  # TODO: do this better (with regex in the file name)
-  # DO not reply on the order returned
-  files = [ files[x -1] for x in folds]
+    with open(fileName, "wb") as  f:
+      data = pickle.load(f)
+      labels = pickle.load(f)
 
-  data = np.array([])
-  labels = np.array([])
-  # TODO: do LDA on the training data
-
-  # TODO: do proper CV in which you use 4 folds for training and one for testing
-  # at that time
-  dataFolds = []
-  labelFolds = []
-  for filename in files:
-    with open(filename, "rb") as  f:
-      # Sort out the labels from the data
-      # TODO: run the readKanade again tomorrow and change these idnices here
-      dataAndLabels = pickle.load(f)
-      foldData = dataAndLabels[:, 0:-1]
-      print "foldData.shape"
-      print foldData.shape
-      foldLabels = dataAndLabels[:,-1]
-      dataFolds.append(foldData)
-      foldLabels = np.array(map(int, foldLabels))
-
-      vectorLabels = labelsToVectors(foldLabels -1, 7)
-      labelFolds.append(vectorLabels)
-
-      print "foldLabels.shape"
-      print vectorLabels.shape
-
-
-  data =  np.vstack(tuple(dataFolds))
-  labels = np.vstack(tuple(labelFolds))
   return data, labels
+
+
+def equalizeKanade(big=False):
+  data, labels = readKanade(big=big, equalize=False)
+
+  if big:
+      fileName = 'equalized_kanade_big.pickle'
+  else:
+      fileName = 'equalized_kanade_small.pickle'
+
+  data = np.array(map(lambda x: equalize(x), data))
+
+  with open(fileName, "wb") as f:
+    pickle.dump(data, f)
+    pickle.dump(labels, f)
 
 # TODO: get big, small as argument in order to be able to fit the resizing
 def readCroppedYale(equalize=True):
