@@ -440,13 +440,11 @@ class DBN(object):
     while epoch < maxEpochs and count < 8:
       print "epoch " + str(epoch)
 
+      momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
+
       for batchNr in xrange(self.nrMiniBatches):
-        iteration = epoch * self.nrMiniBatches + batchNr
-
-        # TODO: really iteration here?
-        momentum = self.momentumForEpochFunction(self.momentumMax, iteration)
-
         trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
+
       trainingErrors += [trainingErrorBatch]
 
       meanValidation = validateModel()
