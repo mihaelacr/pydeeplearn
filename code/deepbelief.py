@@ -341,8 +341,9 @@ class DBN(object):
                                     hiddenDropout=0.5)
 
     # the error is the sum of the errors in the individual cases
-    # also adds some regularization costs
-    error = T.sum(batchTrainer.cost(y))
+    trainingError = T.sum(batchTrainer.cost(y))
+    # also add some regularization costs
+    error = trainingError
     for w in batchTrainer.weights:
       error+= self.weightDecayL1 * T.sum(abs(w)) + self.weightDecayL2 * T.sum(w ** 2)
 
@@ -363,7 +364,7 @@ class DBN(object):
 
       updateParamsWithGradient = theano.function(
           inputs =[miniBatchIndex, momentum],
-          outputs=error,
+          outputs=trainingError,
           updates=updates,
           givens={
               x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
@@ -379,7 +380,7 @@ class DBN(object):
                     batchLearningRate, error)
       trainModel = theano.function(
             inputs=[miniBatchIndex, momentum],
-            outputs=error,
+            outputs=trainingError,
             updates=updates,
             givens={
                 x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
@@ -390,7 +391,7 @@ class DBN(object):
     if validation:
     # Let's create the function that validates the model!
       validateModel = theano.function(inputs=[],
-        outputs=batchTrainer.cost(y),
+        outputs=T.sum(batchTrainer.cost(y)),
         givens={x: validationData, y: validationLabels})
 
       self.trainModelGetBestWeights(batchTrainer, trainModel, validateModel, maxEpochs)
@@ -428,6 +429,7 @@ class DBN(object):
     epoch = 0
 
     validationErrors = []
+    trainingErrors = []
 
     while epoch < maxEpochs and count < 8:
       print "epoch " + str(epoch)
@@ -436,9 +438,11 @@ class DBN(object):
         iteration = epoch * self.nrMiniBatches + batchNr
         momentum = np.float32(min(np.float32(0.5) + iteration * np.float32(0.01),
                      np.float32(0.99)))
-        trainModel(batchNr, momentum)
 
-      meanValidation = np.mean(validateModel(), axis=0)
+        trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
+        trainingErrors += [trainingErrorBatch]
+
+      meanValidation = validateModel() / self.miniBatchSize
       validationErrors += [meanValidation]
 
       if meanValidation > lastValidationError:
@@ -450,7 +454,7 @@ class DBN(object):
       epoch +=1
 
     try:
-      plt.plot(validationErrors)
+      plt.plot(trainingErrors, validationErrors)
       plt.show()
     except Exception:
       print "validation error plot not made"
@@ -468,6 +472,8 @@ class DBN(object):
     bestValidationError = np.inf
 
     validationErrors = []
+    trainingErrors = []
+
 
     bestWeights = None
     bestBiases = None
@@ -480,7 +486,8 @@ class DBN(object):
                      np.float32(0.99)))
 
       for batchNr in xrange(self.nrMiniBatches):
-        trainModel(batchNr, momentum)
+        trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
+        trainingErrors += [trainingErrorBatch]
 
       meanValidation = np.mean(validateModel(), axis=0)
       validationErrors += [meanValidation]
@@ -499,7 +506,7 @@ class DBN(object):
       batchTrainer.weights = bestWeights
       batchTrainer.biases = bestBiases
     try:
-      plt.plot(validationErrors)
+      plt.plot(trainingErrors, validationErrors)
       plt.show()
     except Exception:
       print "validation error plot not made"

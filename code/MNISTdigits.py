@@ -578,6 +578,7 @@ def deepbeliefMNISTGaussian():
                  weightDecayL1=0,
                  weightDecayL2=0,
                  preTrainEpochs=args.preTrainEpochs)
+
     net.train(trainingScaledVectors, vectorLabels,
               maxEpochs=args.maxEpochs, validation=args.validation)
   else:
@@ -665,7 +666,9 @@ def cvMNISTGaussian():
                   rbmVisibleDropout=0.9,
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs)
+
     foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
+
     net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
               maxEpochs=args.maxEpochs,
               validation=args.validation)
