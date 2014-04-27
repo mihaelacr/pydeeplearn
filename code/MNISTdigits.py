@@ -718,7 +718,7 @@ def main():
     annMNIST()
   if args.cvgauss:
     cvMNISTGaussian()
-  if args.rbm:
+  if args.rbmGauss:
     rbmMainGauss()
   if args.dbgauss:
     deepbeliefMNISTGaussian()
