@@ -87,7 +87,6 @@ def cappedRelu(var):
   return var * (var > 0.0) * (var < 6.0)
 
 def noisyRelu(var, theano_rng):
-  # TODO: might have to add the gaussain noise
   var += theano_rng.normal(avg=0.0, std=1.0)
   return var * (var > 0.0)
 
@@ -107,3 +106,17 @@ def makeNoisyReluSigmoid():
 
 def identity(var):
   return var
+
+
+def getMomentumForEpochLinearIncrease(momentumMax, epoch):
+  return np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
+                     np.float32(momentumMax)))
+
+# This is called once per epoch so doing the
+# conversion again and again is not a problem
+# I do not like this hardcoding business for the GPU: TODO
+def getMomentumForEpochSimple(momentumMax, epoch):
+  if epoch < 10:
+    return np.float32(0.5)
+  else:
+    return np.float32(momentumMax)

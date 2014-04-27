@@ -135,6 +135,9 @@ class DBN(object):
                 supervisedLearningRate=0.05,
                 nesterovMomentum=True,
                 rbmNesterovMomentum=True,
+                momentumFactorForLearningRate=True,
+                momentumMax=0.9,
+                momentumForEpochFunction=getMomentumForEpochLinearIncrease,
                 rmsprop=True,
                 miniBatchSize=10,
                 hiddenDropout=0.5,
@@ -165,6 +168,9 @@ class DBN(object):
     self.rbmActivationFunctionHidden = rbmActivationFunctionHidden
     self.rbmActivationFunctionVisible = rbmActivationFunctionVisible
     self.classificationActivationFunction = classificationActivationFunction
+    self.momentumFactorForLearningRate = momentumFactorForLearningRate
+    self.momentumMax = momentumMax
+    self.momentumForEpochFunction = momentumForEpochFunction
     self.binary = binary
 
 
@@ -414,8 +420,8 @@ class DBN(object):
     for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
 
-      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
-                     np.float32(0.99)))
+      momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
+
       for batchNr in xrange(self.nrMiniBatches):
         trainModel(batchNr, momentum)
 
@@ -436,8 +442,9 @@ class DBN(object):
 
       for batchNr in xrange(self.nrMiniBatches):
         iteration = epoch * self.nrMiniBatches + batchNr
-        momentum = np.float32(min(np.float32(0.5) + iteration * np.float32(0.01),
-                     np.float32(0.99)))
+
+        # TODO: really iteration here?
+        momentum = self.momentumForEpochFunction(self.momentumMax, iteration)
 
         trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
         trainingErrors += [trainingErrorBatch]
@@ -482,8 +489,7 @@ class DBN(object):
     for epoch in xrange(maxEpochs):
       print "epoch " + str(epoch)
 
-      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
-                     np.float32(0.99)))
+      momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
       for batchNr in xrange(self.nrMiniBatches):
         trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
@@ -530,8 +536,7 @@ class DBN(object):
       # Train the net with all data
       print "epoch " + str(epoch)
 
-      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.01),
-                     np.float32(0.99)))
+      momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
       for batchNr in xrange(self.nrMiniBatches):
         iteration = epoch * self.nrMiniBatches  + batchNr
@@ -561,6 +566,11 @@ class DBN(object):
   def buildUpdatesNesterov(self, batchTrainer, momentum,
                   batchLearningRate, error):
 
+    if self.momentumFactorForLearningRate:
+      lrFactor = 1.0 - momentum
+    else:
+      lrFactor = 1.0
+
     preDeltaUpdates = []
     for param, oldUpdate in zip(batchTrainer.params, batchTrainer.oldUpdates):
       preDeltaUpdates.append((param, param + momentum * oldUpdate))
@@ -577,10 +587,10 @@ class DBN(object):
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-        paramUpdate = - (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+        paramUpdate = - lrFactor * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
         updates.append((oldMeanSquare, meanSquare))
       else:
-        paramUpdate = - (1.0 - momentum) * batchLearningRate * delta
+        paramUpdate = - lrFactor * batchLearningRate * delta
 
       newParam = param + paramUpdate
 
@@ -591,6 +601,11 @@ class DBN(object):
 
   def buildUpdatesSimpleMomentum(self, batchTrainer, momentum,
                   batchLearningRate, error):
+
+    if self.momentumFactorForLearningRate:
+      lrFactor = 1.0 - momentum
+    else:
+      lrFactor = 1.0
 
     deltaParams = T.grad(error, batchTrainer.params)
     updates = []
@@ -603,10 +618,10 @@ class DBN(object):
       paramUpdate = momentum * oldUpdate
       if self.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-        paramUpdate += - (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+        paramUpdate += - lrFactor * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
         updates.append((oldMeanSquare, meanSquare))
       else:
-        paramUpdate += - (1.0 - momentum) * batchLearningRate * delta
+        paramUpdate += - lrFactor * batchLearningRate * delta
 
       newParam = param + paramUpdate
 
