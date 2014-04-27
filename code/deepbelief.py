@@ -400,7 +400,7 @@ class DBN(object):
         outputs=T.mean(batchTrainer.cost(y)),
         givens={x: validationData, y: validationLabels})
 
-      self.trainLoopWithValidation(trainModel, validateModel, maxEpochs)
+      self.trainModelPatience(trainModel, validateModel, maxEpochs)
     else:
       if validationData is not None or validationLabels is not None:
         raise Exception(("You provided validation data but requested a train method "
