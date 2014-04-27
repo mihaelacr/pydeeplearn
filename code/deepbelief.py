@@ -461,8 +461,8 @@ class DBN(object):
       epoch +=1
 
     try:
-      plt.plot(trainingErrors)
-      plt.plot(validationErrors)
+      plt.plot(trainingErrors, label="Training error")
+      plt.plot(validationErrors, label="Validation error")
       plt.show()
     except Exception as e:
       print "validation error plot not made"
@@ -521,8 +521,8 @@ class DBN(object):
       batchTrainer.weights = bestWeights
       batchTrainer.biases = bestBiases
     try:
-      plt.plot(trainingErrors)
-      plt.plot(validationErrors)
+      plt.plot(trainingErrors, label='Training error')
+      plt.plot(validationErrors, label='Validation error')
       plt.show()
     except Exception as e:
       print "validation error plot not made"
