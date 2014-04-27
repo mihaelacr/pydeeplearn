@@ -460,6 +460,7 @@ class DBN(object):
 
       epoch +=1
 
+    # if run remotely without a display
     try:
       plt.plot(trainingErrors, label="Training error")
       plt.plot(validationErrors, label="Validation error")
@@ -471,6 +472,14 @@ class DBN(object):
     except Exception as e:
       print "validation error plot not made"
       print "error ", e
+
+      plt.plot(trainingErrors, label="Training error")
+      plt.plot(validationErrors, label="Validation error")
+      plt.xlabel('Epoch')
+      plt.ylabel('Cross entropy average error')
+      plt.title('Training and validation error during DBN training')
+      plt.legend()
+      plt.savefig("validationandtrainingerror.png" , transparent=True)
 
       print "printing validation errors and training errors instead"
       print "validationErrors"
@@ -535,6 +544,14 @@ class DBN(object):
     except Exception as e:
       print "validation error plot not made"
       print "error ", e
+
+      plt.plot(trainingErrors, label="Training error")
+      plt.plot(validationErrors, label="Validation error")
+      plt.xlabel('Epoch')
+      plt.ylabel('Cross entropy average error')
+      plt.title('Training and validation error during DBN training')
+      plt.legend()
+      plt.savefig("validationandtrainingerror.png" , transparent=True)
 
       print "printing validation errors and training errors instead"
       print "validationErrors"
