@@ -467,6 +467,12 @@ class DBN(object):
       print "validation error plot not made"
       print "error ", e
 
+      print "printing validation errors and training errors instead"
+      print "validationErrors"
+      print validationErrors
+      print "trainingErrors"
+      print trainingErrors
+
     print "number of epochs"
     print epoch
 
@@ -519,13 +525,18 @@ class DBN(object):
       print "validation error plot not made"
       print "error ", e
 
+      print "printing validation errors and training errors instead"
+      print "validationErrors"
+      print validationErrors
+      print "trainingErrors"
+      print trainingErrors
+
     print "number of epochs"
     print epoch
 
     print "best epoch"
     print bestEpoch
 
-    print validationErrors
 
   def trainModelPatience(self, trainModel, validateModel, maxEpochs):
     bestValidationError = np.inf
