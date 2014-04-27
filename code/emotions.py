@@ -167,7 +167,10 @@ def deepBeliefKanadeCV(big=False):
     activationFunction = T.nnet.sigmoid
 
   # TODO: try boosting for CV in order to increase the number of folds
-  params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.01), (0.05, 0.05)]
+  params =[(0.1, 0.1, 0.9), (0.1, 0.05, 0.9), (0.05, 0.01, 0.9), (0.05, 0.05, 0.9),
+           (0.1, 0.1, 0.95), (0.1, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
+           (0.1, 0.1, 0.99), (0.1, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
+
   unsupervisedData = buildUnsupervisedDataSet()
 
   kf = cross_validation.KFold(n=len(data), k=len(params))
@@ -186,6 +189,7 @@ def deepBeliefKanadeCV(big=False):
                activationFunction=activationFunction,
                unsupervisedLearningRate=params[fold][0],
                supervisedLearningRate=params[fold][1],
+               momentumMax=params[i][2],
                nesterovMomentum=args.nesterov,
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
