@@ -311,6 +311,10 @@ def cvMNIST():
   for training, testing in kf:
     # Train the net
     # Try 1200, 1200, 1200
+
+    trainData = trainingScaledVectors[train]
+    trainLabels = vectorLabels[train]
+
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                   binary=1-args.relu,
                   unsupervisedLearningRate=params[i][0],
@@ -330,13 +334,12 @@ def cvMNIST():
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs)
 
-    net.train(trainingScaledVectors[training], vectorLabels[training],
-              maxEpochs=args.maxEpochs,
+    net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
               validation=args.validation)
 
     proabilities, predicted = net.classify(trainingScaledVectors[testing])
 
-    testLabels = vectorLabels[testing]
+    testLabels = trainLabels[testing]
     # Test it with the testing data and measure the missclassification error
     error = getClassificationError(predicted, testLabels)
 
@@ -613,25 +616,16 @@ def deepbeliefMNISTGaussian():
 
 def cvMNISTGaussian():
   training = args.trainSize
-  testing = args.testSize
 
   trainVectors, trainLabels =\
       readmnist.read(0, training, bTrain=True, path="MNIST")
-  testVectors, testLabels =\
-      readmnist.read(0, testing, bTrain=False, path="MNIST")
-  print trainVectors[0].shape
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
   trainVectors = np.array(trainVectors, dtype='float')
   trainingScaledVectors = scale(trainVectors)
-
-  testVectors = np.array(testVectors, dtype='float')
-  testingScaledVectors = scale(testVectors)
-
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  permutation = np.random.permutation(range(training))
   bestFold = -1
   bestError = np.inf
 
