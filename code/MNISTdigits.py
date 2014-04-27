@@ -298,12 +298,15 @@ def cvMNIST():
   if args.relu:
     # params =[(0.01, 0.01) , (0.01, 0.05), (0.05, 0.1), (0.05, 0.05)]
     # params =[(0.0001, 0.01), (0.00001, 0.001), (0.00001, 0.0001), (0.0001, 0.1)]
-    params =[(1e-05, 0.001), (5e-06, 0.001), (5e-05, 0.001)]
+    params =[(1e-05, 0.001, 0.9), (5e-06, 0.001, 0.9), (5e-05, 0.001, 0.9)]
+    params =[(1e-05, 0.001, 0.95), (5e-06, 0.001, 0.95), (5e-05, 0.001, 0.95)]
+    params =[(1e-05, 0.001, 0.99), (5e-06, 0.001, 0.99), (5e-05, 0.001, 0.99)]
   else:
-    # TODO: try 0.08
     # params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.1), (0.05, 0.05)]
     # params =[(0.05, 0.05) , (0.05, 0.075), (0.075, 0.05), (0.075, 0.075)]
-    params =[(0.05, 0.075), (0.05, 0.1), (0.01, 0.05)]
+    params =[(0.05, 0.075, 0.9), (0.05, 0.1, 0.9), (0.01, 0.05, 0.9),
+             (0.05, 0.075, 0.95), (0.05, 0.1, 0.95), (0.01, 0.05, 0.95),
+             (0.05, 0.075, 0.99), (0.05, 0.1, 0.99), (0.01, 0.05, 0.99)]
 
   nrFolds = len(params)
   kf = cross_validation.KFold(n=training, n_folds=nrFolds)
@@ -320,6 +323,7 @@ def cvMNIST():
                   binary=1-args.relu,
                   unsupervisedLearningRate=params[i][0],
                   supervisedLearningRate=params[i][1],
+                  momentumMax=params[i][2],
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   activationFunction=activationFunction,
@@ -463,8 +467,11 @@ def deepbeliefMNIST():
     unsupervisedLearningRate = 5e-06
     supervisedLearningRate = 0.001
   else:
-    unsupervisedLearningRate = 0.01
-    supervisedLearningRate = 0.05
+    # unsupervisedLearningRate = 0.01
+    # supervisedLearningRate = 0.05
+
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
 
 
   if args.train:
@@ -632,7 +639,9 @@ def cvMNISTGaussian():
 
   # 1e-03, 1e-03: best params
   # params = [(1e-03, 0.001), (5e-03, 0.001), (5cvMNISTGaussiane-03, 0.001)]
-  params = [(1e-03, 1e-03), (1e-04, 1e-03), (5e-04, 1e-03)]
+  params = [(1e-03, 1e-03, 0.9), (1e-04, 1e-03, 0.9), (5e-04, 1e-03, 0.9),
+            (1e-03, 1e-03, 0.95), (1e-04, 1e-03, 0.95), (5e-04, 1e-03, 0.95),
+            (1e-03, 1e-03, 0.99), (1e-04, 1e-03, 0.99), (5e-04, 1e-03, 0.99)]
   # params = [(1e-03, 1e-03), (1e-03, 1e-04), (1e-04, 1e-03), (1e-04, 1e-04)]
 
   nrFolds = len(params)
@@ -645,6 +654,7 @@ def cvMNISTGaussian():
                   binary=False,
                   unsupervisedLearningRate=params[i][0],
                   supervisedLearningRate=params[i][1],
+                  momentumMax=params[i][2],
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   activationFunction=relu,
