@@ -167,6 +167,8 @@ def rbmMainGauss(reconstructRandom=False):
   testVectors = np.array(testVectors, dtype='float')
   testingScaledVectors = scale(testVectors)
 
+
+  learningRate = 0.5
   # Train the network
   if args.train:
     # The number of hidden units is taken from a deep learning tutorial
