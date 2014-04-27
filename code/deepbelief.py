@@ -397,7 +397,7 @@ class DBN(object):
     if validation:
     # Let's create the function that validates the model!
       validateModel = theano.function(inputs=[],
-        outputs=T.sum(batchTrainer.cost(y)),
+        outputs=T.mean(batchTrainer.cost(y)),
         givens={x: validationData, y: validationLabels})
 
       self.trainModelGetBestWeights(batchTrainer, trainModel, validateModel, maxEpochs)
@@ -449,7 +449,7 @@ class DBN(object):
         trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
       trainingErrors += [trainingErrorBatch]
 
-      meanValidation = validateModel() / self.miniBatchSize
+      meanValidation = validateModel()
       validationErrors += [meanValidation]
 
       if meanValidation > lastValidationError:
@@ -508,7 +508,7 @@ class DBN(object):
 
       trainingErrors += [trainingErrorBatch]
 
-      meanValidation = validateModel() / self.miniBatchSize
+      meanValidation = validateModel()
       validationErrors += [meanValidation]
 
       if meanValidation < bestValidationError:
@@ -566,7 +566,7 @@ class DBN(object):
         iteration = epoch * self.nrMiniBatches  + batchNr
         trainModel(batchNr, momentum)
 
-        meanValidation = validateModel() / self.miniBatchSize
+        meanValidation = validateModel()
 
       # print 'meanValidation'
       # print meanValidation
