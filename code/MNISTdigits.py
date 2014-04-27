@@ -307,7 +307,7 @@ def cvMNIST():
   nrFolds = len(params)
   kf = cross_validation.KFold(n=training, k=nrFolds)
 
-
+  i = 0
   for training, testing in kf:
     # Train the net
     # Try 1200, 1200, 1200
@@ -346,6 +346,7 @@ def cvMNIST():
     if error < bestError:
       bestError = error
       bestFold = i
+    i += 1
 
   print "best fold was " + str(bestFold)
   print "bestParameter " + str(params[bestFold])
