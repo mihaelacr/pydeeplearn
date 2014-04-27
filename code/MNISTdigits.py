@@ -12,6 +12,8 @@ import ann
 import utils
 import PCA
 
+from sklearn import cross_validation
+
 from common import *
 
 parser = argparse.ArgumentParser(description='digit recognition')
@@ -275,15 +277,13 @@ def pcaOnMnist(training, dimension=700):
 
 def cvMNIST():
   training = args.trainSize
-  testing = args.testSize
 
   trainVectors, trainLabels =\
       readmnist.read(0, training, bTrain=True, path="MNIST")
-  testVectors, testLabels =\
-      readmnist.read(0, testing, bTrain=False, path="MNIST")
-  print trainVectors[0].shape
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
+  trainingScaledVectors = trainVectors / 255.0
+  vectorLabels = labelsToVectors(trainLabels, 10)
 
   if args.relu:
     activationFunction = relu
@@ -291,12 +291,6 @@ def cvMNIST():
     activationFunction = T.nnet.sigmoid
 
 
-  trainingScaledVectors = trainVectors / 255.0
-  testingScaledVectors = testVectors / 255.0
-
-  vectorLabels = labelsToVectors(trainLabels, 10)
-
-  permutation = np.random.permutation(range(training))
   bestFold = -1
   bestError = np.inf
 
@@ -311,9 +305,11 @@ def cvMNIST():
     params =[(0.05, 0.075), (0.05, 0.1), (0.01, 0.05)]
 
   nrFolds = len(params)
+  kf = cross_validation.KFold(n=len(data), k=len(nrFolds))
+
   foldSize = training / nrFolds
 
-  for i in xrange(nrFolds):
+  for training, testing in kf:
     # Train the net
     # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
@@ -334,12 +330,14 @@ def cvMNIST():
                   rbmVisibleDropout=0.9,
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs)
-    foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
-    net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
+
+    net.train(trainingScaledVectors[training], vectorLabels[training],
               maxEpochs=args.maxEpochs,
               validation=args.validation)
 
-    proabilities, predicted = net.classify(testingScaledVectors)
+    proabilities, predicted = net.classify(trainingScaledVectors[testing])
+
+    testLabels = vectorLabels[testing]
     # Test it with the testing data and measure the missclassification error
     error = getClassificationError(predicted, testLabels)
 
