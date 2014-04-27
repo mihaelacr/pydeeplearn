@@ -366,7 +366,7 @@ def readKanade(big=False, folds=None):
   return data, labels
 
 # TODO: get big, small as argument in order to be able to fit the resizing
-def readCroppedYale():
+def readCroppedYale(equalize=True):
   # PATH = "/data/mcr10/yaleb/CroppedYale"
   PATH = "/home/aela/uni/project/CroppedYale"
 
@@ -380,13 +380,17 @@ def readCroppedYale():
   images = []
   for f in imageFiles:
     img = io.imread(f)
+
+    if equalize:
+      img = cv2.equalizeHist(img)
+
     img = resize(img, SMALL_SIZE)
 
     images += [img.reshape(-1)]
 
   return np.array(images)
 
-def readAttData():
+def readAttData(equalize=True):
   PATH = "/data/mcr10/att"
   # PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
 
@@ -397,13 +401,16 @@ def readAttData():
   images = []
   for f in imageFiles:
     img = io.imread(f)
+    if equalize:
+      img = cv2.equalizeHist(img)
     img = resize(img, SMALL_SIZE)
     images += [img.reshape(-1)]
 
 
   return np.array(images)
 
-def readAndCrop(path, extension, doRecognition, isColoured=False):
+def readCropEqualize(path, extension, doRecognition, equalize=True,
+                     isColoured=False):
   dirforres = "detection-cropped"
   pathForCropped = os.path.join(path, dirforres)
 
@@ -424,6 +431,9 @@ def readAndCrop(path, extension, doRecognition, isColoured=False):
 
       print fullPath
       img = io.imread(fullPath)
+      if equalize:
+        img = cv2.equalizeHist(img)
+
       if isColoured:
         img = color.rgb2gray(img)
         img = np.array(img * 255, dtype='uint8')

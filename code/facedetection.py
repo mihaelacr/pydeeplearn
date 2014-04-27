@@ -14,7 +14,7 @@ def cropFace(image, rescaleForReconigtion=2):
   imageScaled = cv2.resize(image, (image.shape[0] / rescaleForReconigtion ,
                             image.shape[1] / rescaleForReconigtion))
 
-
+  # The image might already be equalized, so no need for that here
   gray = cv2.equalizeHist(imageScaled)
   # maybe 4 here will help more because you get more 2s and less 0
   rects = cascade.detectMultiScale(gray, 1.2, 4)
