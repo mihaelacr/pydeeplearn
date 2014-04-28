@@ -426,7 +426,7 @@ def readCroppedYale(equalize=True):
 
   images = []
   for f in imageFiles:
-    img = cv2.imread(f, cv2.CV_LOAD_IMAGE_GRAYSCALE)
+    img = cv2.imread(f, 0)
 
     if equalize:
       img = equalize(img)
@@ -447,7 +447,7 @@ def readAttData():
 
   images = []
   for f in imageFiles:
-    img = cv2.imread(f, cv2.CV_LOAD_IMAGE_GRAYSCALE)
+    img = cv2.imread(f, 0)
     if args.equalize:
       img = equalize(img)
     img = resize(img, SMALL_SIZE)
@@ -477,7 +477,7 @@ def readCropEqualize(path, extension, doRecognition, equalize=True,
         continue
 
       print fullPath
-      img = cv2.imread(fullPath, cv2.CV_LOAD_IMAGE_GRAYSCALE)
+      img = cv2.imread(fullPath, 0)
 
       # if isColoured:
       #   # TODO: do I always have to multiply by 255 in this case?
@@ -513,7 +513,7 @@ def readCropEqualize(path, extension, doRecognition, equalize=True,
       for f in fnmatch.filter(files, '*.' + extension)]
 
     for f in imageFiles:
-      img = cv2.imread(f, cv2.CV_LOAD_IMAGE_GRAYSCALE)
+      img = cv2.imread(f, 0)
       if type(img[0,0]) == np.uint8:
         print "rescaling unit"
         img = img / 255.0
