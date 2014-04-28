@@ -293,7 +293,9 @@ class DBN(object):
 
     self.pretrain(data, unsupervisedData)
 
-    self.nrMiniBatches = len(data) / self.miniBatchSize
+    self.nrMiniBatchesTrain = len(data) / self.miniBatchSize
+
+    self.miniBatchSizeValidate = len(validationData) / self.miniBatchSize
 
     sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
     sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
@@ -311,7 +313,7 @@ class DBN(object):
 
     self.pretrain(data, unsupervisedData)
 
-    self.nrMiniBatches = len(data) / self.miniBatchSize
+    self.nrMiniBatchesTrain = len(data) / self.miniBatchSize
 
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels, False, None, None, maxEpochs)
@@ -408,9 +410,11 @@ class DBN(object):
 
     if validation:
     # Let's create the function that validates the model!
-      validateModel = theano.function(inputs=[],
+      validateModel = theano.function(inputs=[miniBatchIndex],
         outputs=T.mean(batchTrainer.cost(y)),
-        givens={x: validationData, y: validationLabels})
+        givens={
+          x: validationData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+          y: validationLabels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
 
       self.trainModelPatience(trainModel, validateModel, maxEpochs)
     else:
@@ -434,7 +438,7 @@ class DBN(object):
 
       momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
-      for batchNr in xrange(self.nrMiniBatches):
+      for batchNr in xrange(self.nrMiniBatchesTrain):
         trainModel(batchNr, momentum)
 
     print "number of epochs"
@@ -454,12 +458,13 @@ class DBN(object):
 
       momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
-      for batchNr in xrange(self.nrMiniBatches):
+      for batchNr in xrange(self.nrMiniBatchesTrain):
         trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
 
       trainingErrors += [trainingErrorBatch]
 
-      meanValidation = validateModel()
+      meanValidations = map(validateModel, xrange(self.miniBatchSizeValidate))
+      meanValidation = sum(meanValidation) / len(meanValidations)
       validationErrors += [meanValidation]
 
       if meanValidation > lastValidationError:
@@ -521,12 +526,14 @@ class DBN(object):
 
       momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
-      for batchNr in xrange(self.nrMiniBatches):
+      for batchNr in xrange(self.nrMiniBatchesTrain):
         trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
 
       trainingErrors += [trainingErrorBatch]
 
-      meanValidation = validateModel()
+      meanValidations = map(validateModel, xrange(self.miniBatchSizeValidate))
+      meanValidation = sum(meanValidation) / len(meanValidations)
+
       validationErrors += [meanValidation]
 
       if meanValidation < bestValidationError:
@@ -580,7 +587,7 @@ class DBN(object):
     epoch = 0
     doneTraining = False
     improvmentTreshold = 0.995
-    patience = 10 * self.nrMiniBatches # do at least 10 passes trough the data no matter what
+    patience = 10 * self.nrMiniBatchesTrain # do at least 10 passes trough the data no matter what
 
     while (epoch < maxEpochs) and not doneTraining:
       # Train the net with all data
@@ -588,11 +595,12 @@ class DBN(object):
 
       momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
-      for batchNr in xrange(self.nrMiniBatches):
-        iteration = epoch * self.nrMiniBatches  + batchNr
+      for batchNr in xrange(self.nrMiniBatchesTrain):
+        iteration = epoch * self.nrMiniBatchesTrain  + batchNr
         trainModel(batchNr, momentum)
 
-        meanValidation = validateModel()
+        meanValidations = map(validateModel, xrange(self.miniBatchSizeValidate))
+        meanValidation = sum(meanValidation) / len(meanValidations)
 
         if meanValidation < bestValidationError:
           # If we have improved well enough, then increase the patience
