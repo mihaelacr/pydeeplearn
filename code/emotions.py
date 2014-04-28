@@ -390,6 +390,7 @@ def readKanade(big=False, folds=None, equalize=args.equalize):
     else:
       fileName = 'equalized_kanade_small.pickle'
 
+    # If there are no files with the equalized data, make one now
     if not os.path.exists(fileName):
       equalizeKanade(big)
 
@@ -398,7 +399,7 @@ def readKanade(big=False, folds=None, equalize=args.equalize):
       labels = pickle.load(f)
 
   # For now: check that the data is binary
-  assert np.all(np.min(data, axis=1) > 0) and np.all(np.max(data, axis=1) < 1.0 + 1e-8)
+  assert np.all(np.min(data, axis=1) >= 0.0) and np.all(np.max(data, axis=1) < 1.0 + 1e-8)
 
   return data, labels
 
