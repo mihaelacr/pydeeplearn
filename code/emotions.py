@@ -81,11 +81,13 @@ SMALL_SIZE = ((40, 30))
 def equalizeImg(x):
   return cv2.equalizeHist(x)
 
-def equalizeAndReshape(x):
+def equalizeFromFloat(x):
   x = x * 255
   x = np.asarray(x, dtype='uint8')
   y = x.reshape(SMALL_SIZE)
-  return equalizeImg(y).reshape(-1)
+  y =  equalizeImg(y).reshape(-1)
+  return y / 255.0
+
 
 def rbmEmotions(big=False, reconstructRandom=False):
   data, labels = readKanade(big)
@@ -412,7 +414,7 @@ def equalizeKanade(big=False):
 
   # plt.imshow(data[0].reshape(SMALL_SIZE))
   # plt.show()
-  data = np.array(map(lambda x: equalizeAndReshape(x), data))
+  data = np.array(map(lambda x: equalizeFromFloat(x), data))
 
   with open(fileName, "wb") as f:
     pickle.dump(data, f)
