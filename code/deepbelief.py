@@ -295,7 +295,7 @@ class DBN(object):
 
     self.nrMiniBatchesTrain = len(data) / self.miniBatchSize
 
-    self.miniBatchSizeValidate = len(validationData) / self.miniBatchSize
+    self.nrMiniBatchesValidate = len(validationData) / (self.miniBatchSize * 10.0)
 
     sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
     sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
@@ -463,7 +463,7 @@ class DBN(object):
 
       trainingErrors += [trainingErrorBatch]
 
-      meanValidations = map(validateModel, xrange(self.miniBatchSizeValidate))
+      meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
       meanValidation = sum(meanValidation) / len(meanValidations)
       validationErrors += [meanValidation]
 
@@ -531,7 +531,7 @@ class DBN(object):
 
       trainingErrors += [trainingErrorBatch]
 
-      meanValidations = map(validateModel, xrange(self.miniBatchSizeValidate))
+      meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
       meanValidation = sum(meanValidation) / len(meanValidations)
 
       validationErrors += [meanValidation]
@@ -599,7 +599,7 @@ class DBN(object):
         iteration = epoch * self.nrMiniBatchesTrain  + batchNr
         trainModel(batchNr, momentum)
 
-        meanValidations = map(validateModel, xrange(self.miniBatchSizeValidate))
+        meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
         meanValidation = sum(meanValidation) / len(meanValidations)
 
         if meanValidation < bestValidationError:
