@@ -81,6 +81,7 @@ SMALL_SIZE = ((40, 30))
 def equalize(x):
   y = x.reshape(SMALL_SIZE)
   print y
+  print y.shape
   return cv2.equalizeHist(y).reshape(-1)
 
 def rbmEmotions(big=False, reconstructRandom=False):
