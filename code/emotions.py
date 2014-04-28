@@ -401,7 +401,10 @@ def equalizeKanade(big=False):
   else:
       fileName = 'equalized_kanade_small.pickle'
 
+
   data = np.array(map(lambda x: equalize(x), data))
+  cv2.imshow(data[0],reshape(SMALL_SIZE))
+  cv2.show()
 
   with open(fileName, "wb") as f:
     pickle.dump(data, f)
