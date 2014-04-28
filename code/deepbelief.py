@@ -694,6 +694,8 @@ class DBN(object):
 
     x = T.matrix('x', dtype=theanoFloat)
 
+    batch = T.lscalar()
+
     # Use the classification weights because now we have hiddenDropout
     # Ensure that you have no hiddenDropout in classification
     batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
@@ -703,24 +705,28 @@ class DBN(object):
                                     classificationActivationFunction=self.classificationActivationFunction,
                                     visibleDropout=1.0,
                                     hiddenDropout=1.0)
-    classify = theano.function(
-            inputs=[],
-            outputs=batchTrainer.output,
-            updates={},
-            givens={x: dataInstacesConverted}
-            )
-
     # classify = theano.function(
-    #         inputs=[batch],
+    #         inputs=[],
     #         outputs=batchTrainer.output,
     #         updates={},
-    #         givens={x: dataInstacesConverted[batch * classifcationBatchSize:(batch + 1) * classifcationBatchSize]}
+    #         givens={x: dataInstacesConverted}
     #         )
+    # lastLayers = classify()
+
+    classify = theano.function(
+            inputs=[batch],
+            outputs=batchTrainer.output,
+            updates={},
+            givens={x: dataInstacesConverted[batch * classifcationBatchSize:(batch + 1) * classifcationBatchSize]}
+            )
     # this times 10 seems still pretty random to me
-    # classifcationBatchSize = min(len(dataInstaces), self.miniBatchSize * 10)
+    classifcationBatchSize = min(len(dataInstaces), self.miniBatchSize * 10)
+    nrBatches = len(dataInstaces) / classifcationBatchSize
     # for batch in len(dataInstaces) / classifcationBatchSize:
     #   lastLayers = classify(lastLayers)
 
-    lastLayers = classify()
+    lastLayers = np.vstack(map(classify, xrange(nrBatches)))
+
+
 
     return lastLayers, np.argmax(lastLayers, axis=1)
