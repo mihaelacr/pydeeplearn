@@ -413,8 +413,6 @@ def equalizeKanade(big=False):
       fileName = 'equalized_kanade_small.pickle'
 
 
-  # plt.imshow(data[0].reshape(SMALL_SIZE))
-  # plt.show()
   data = np.array(map(lambda x: equalizeFromFloat(x), data))
 
   with open(fileName, "wb") as f:

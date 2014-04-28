@@ -470,8 +470,9 @@ def deepbeliefMNIST():
     # unsupervisedLearningRate = 0.01
     # supervisedLearningRate = 0.05
 
-    unsupervisedLearningRate = 0.05
-    supervisedLearningRate = 0.1
+    unsupervisedLearningRate = 0.01
+    supervisedLearningRate = 0.05
+    momentumMax = 0.95
 
 
   if args.train:
@@ -481,6 +482,7 @@ def deepbeliefMNIST():
                  binary=1-args.relu,
                  unsupervisedLearningRate=unsupervisedLearningRate,
                  supervisedLearningRate=supervisedLearningRate,
+                 momentumMax=momentumMax,
                  activationFunction=activationFunction,
                  rbmActivationFunctionVisible=activationFunction,
                  rbmActivationFunctionHidden=activationFunction,
