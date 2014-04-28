@@ -295,7 +295,8 @@ class DBN(object):
 
     self.nrMiniBatchesTrain = len(data) / self.miniBatchSize
 
-    self.nrMiniBatchesValidate = len(validationData) / (self.miniBatchSize * 10)
+    self.miniBatchValidateSize = min(len(validationData), self.miniBatchSize * 10)
+    self.nrMiniBatchesValidate =  self.miniBatchValidateSize / self.miniBatchValidateSize
 
     sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
     sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
@@ -413,8 +414,8 @@ class DBN(object):
       validateModel = theano.function(inputs=[miniBatchIndex],
         outputs=T.mean(batchTrainer.cost(y)),
         givens={
-          x: validationData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-          y: validationLabels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+          x: validationData[miniBatchIndex * self.miniBatchValidateSize:(miniBatchIndex + 1) * self.miniBatchValidateSize],
+          y: validationLabels[miniBatchIndex * self.miniBatchValidateSize:(miniBatchIndex + 1) * self.miniBatchValidateSize]})
 
       self.trainModelPatience(trainModel, validateModel, maxEpochs)
     else:
