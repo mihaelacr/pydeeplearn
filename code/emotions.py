@@ -402,7 +402,7 @@ def equalizeKanade(big=False):
       fileName = 'equalized_kanade_small.pickle'
 
 
-  cv2.imshow(data[0],reshape(SMALL_SIZE))
+  cv2.imshow(data[0].reshape(SMALL_SIZE))
   cv2.show()
   data = np.array(map(lambda x: equalize(x), data))
 
