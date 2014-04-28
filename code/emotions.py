@@ -315,6 +315,7 @@ def deepBeliefKanade(big=False):
     print "predicted"
     print "probs"
     print probs[i]
+    print "predicted"
     print predicted[i]
     print "actual"
     actual = actualLabels[i]

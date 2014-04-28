@@ -361,6 +361,10 @@ class RBM(object):
 
     return representHidden()
 
+    # TODO: you have to take into account that you are passing in too much
+    # data here and it will be too slow
+    # so send the data in via mini bathes for reconstruction as well
+
   def reconstruct(self, dataInstances):
     dataInstacesConverted = np.asarray(dataInstances, dtype=theanoFloat)
 
