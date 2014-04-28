@@ -78,14 +78,14 @@ db.DEBUG = args.debug
 SMALL_SIZE = ((40, 30))
 
 
-def equalize(x):
+def equalizeImg(x):
   return cv2.equalizeHist(x)
 
 def equalizeAndReshape(x):
   x = x * 255
   x = np.asarray(x, dtype='uint8')
   y = x.reshape(SMALL_SIZE)
-  return equalize(y).reshape(-1)
+  return equalizeImg(y).reshape(-1)
 
 def rbmEmotions(big=False, reconstructRandom=False):
   data, labels = readKanade(big)
@@ -432,7 +432,7 @@ def readCroppedYale(equalize=True):
     img = cv2.imread(f, 0)
 
     if equalize:
-      img = equalize(img)
+      img = equalizeImg(img)
 
     img = resize(img, SMALL_SIZE)
 
@@ -452,7 +452,7 @@ def readAttData():
   for f in imageFiles:
     img = cv2.imread(f, 0)
     if args.equalize:
-      img = equalize(img)
+      img = equalizeImg(img)
     img = resize(img, SMALL_SIZE)
     images += [img.reshape(-1)]
 
@@ -489,7 +489,7 @@ def readCropEqualize(path, extension, doRecognition, equalize=True,
       #   img = np.array(img * 255, dtype='uint8')
 
       if equalize:
-        img = equalize(img)
+        img = equalizeImg(img)
 
       face = facedetection.cropFace(img)
       if not face == None:
