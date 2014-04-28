@@ -286,6 +286,8 @@ def deepBeliefKanade(big=False):
   net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
              binary=1-args.relu,
              activationFunction=activationFunction,
+             rbmActivationFunctionVisible=T.nnet.sigmoid,
+             rbmActivationFunctionHidden=T.nnet.sigmoid,
              unsupervisedLearningRate=unsupervisedLearningRate,
              # is this not a bad learning rate?
              supervisedLearningRate=supervisedLearningRate,
@@ -303,7 +305,8 @@ def deepBeliefKanade(big=False):
 
 
   net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
-            validation=args.validation, unsupervisedData=unsupervisedData)
+            validation=args.validation,
+            unsupervisedData=unsupervisedData)
 
   probs, predicted = net.classify(data[test])
 

@@ -295,7 +295,7 @@ class DBN(object):
 
     self.nrMiniBatchesTrain = len(data) / self.miniBatchSize
 
-    self.nrMiniBatchesValidate = len(validationData) / (self.miniBatchSize * 10.0)
+    self.nrMiniBatchesValidate = len(validationData) / (self.miniBatchSize * 10)
 
     sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
     sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
