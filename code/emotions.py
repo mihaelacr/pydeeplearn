@@ -79,9 +79,11 @@ SMALL_SIZE = ((40, 30))
 
 
 def equalize(x):
-  y = x.reshape(SMALL_SIZE)
   print y
   print y.shape
+  x = x * 255
+  x = np.asarray(x, dtype='uint8')
+  y = x.reshape(SMALL_SIZE)
   return cv2.equalizeHist(y).reshape(-1)
 
 def rbmEmotions(big=False, reconstructRandom=False):
@@ -516,7 +518,6 @@ def readCropEqualize(path, extension, doRecognition, equalize=True,
       img = cv2.imread(f, cv2.CV_LOAD_IMAGE_GRAYSCALE)
       if type(img[0,0]) == np.uint8:
         print "rescaling unit"
-      # if not (img.min() >=0.0 and img.max()<=1.000008):
         img = img / 255.0
       images += [img.reshape(-1)]
 
