@@ -464,7 +464,7 @@ class DBN(object):
       trainingErrors += [trainingErrorBatch]
 
       meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
-      meanValidation = sum(meanValidation) / len(meanValidations)
+      meanValidation = sum(meanValidations) / len(meanValidations)
       validationErrors += [meanValidation]
 
       if meanValidation > lastValidationError:
@@ -532,7 +532,7 @@ class DBN(object):
       trainingErrors += [trainingErrorBatch]
 
       meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
-      meanValidation = sum(meanValidation) / len(meanValidations)
+      meanValidation = sum(meanValidations) / len(meanValidations)
 
       validationErrors += [meanValidation]
 
@@ -600,7 +600,7 @@ class DBN(object):
         trainModel(batchNr, momentum)
 
         meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
-        meanValidation = sum(meanValidation) / len(meanValidations)
+        meanValidation = sum(meanValidations) / len(meanValidations)
 
         if meanValidation < bestValidationError:
           # If we have improved well enough, then increase the patience
