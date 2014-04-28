@@ -689,7 +689,8 @@ class DBN(object):
 
 
   def classify(self, dataInstaces):
-    dataInstacesConverted = np.asarray(dataInstaces, dtype=theanoFloat)
+
+    dataInstacesConverted = theano.shared(np.asarray(dataInstaces, dtype=theanoFloat))
 
     x = T.matrix('x', dtype=theanoFloat)
 
@@ -702,12 +703,23 @@ class DBN(object):
                                     classificationActivationFunction=self.classificationActivationFunction,
                                     visibleDropout=1.0,
                                     hiddenDropout=1.0)
-
     classify = theano.function(
             inputs=[],
             outputs=batchTrainer.output,
             updates={},
-            givens={x: dataInstacesConverted})
+            givens={x: dataInstacesConverted}
+            )
+
+    # classify = theano.function(
+    #         inputs=[batch],
+    #         outputs=batchTrainer.output,
+    #         updates={},
+    #         givens={x: dataInstacesConverted[batch * classifcationBatchSize:(batch + 1) * classifcationBatchSize]}
+    #         )
+    # this times 10 seems still pretty random to me
+    # classifcationBatchSize = min(len(dataInstaces), self.miniBatchSize * 10)
+    # for batch in len(dataInstaces) / classifcationBatchSize:
+    #   lastLayers = classify(lastLayers)
 
     lastLayers = classify()
 
