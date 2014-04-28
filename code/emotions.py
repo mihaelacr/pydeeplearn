@@ -388,7 +388,7 @@ def readKanade(big=False, folds=None, equalize=args.equalize):
     if not os.path.exists(fileName):
       equalizeKanade(big)
 
-    with open(fileName, "wb") as  f:
+    with open(fileName, "rb") as  f:
       data = pickle.load(f)
       labels = pickle.load(f)
 
@@ -404,8 +404,8 @@ def equalizeKanade(big=False):
       fileName = 'equalized_kanade_small.pickle'
 
 
-  plt.imshow(data[0].reshape(SMALL_SIZE))
-  plt.show()
+  # plt.imshow(data[0].reshape(SMALL_SIZE))
+  # plt.show()
   data = np.array(map(lambda x: equalize(x), data))
 
   with open(fileName, "wb") as f:
