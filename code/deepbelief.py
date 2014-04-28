@@ -713,6 +713,8 @@ class DBN(object):
     #         )
     # lastLayers = classify()
 
+    classifcationBatchSize = min(len(dataInstaces), self.miniBatchSize * 10)
+
     classify = theano.function(
             inputs=[batch],
             outputs=batchTrainer.output,
@@ -720,7 +722,6 @@ class DBN(object):
             givens={x: dataInstacesConverted[batch * classifcationBatchSize:(batch + 1) * classifcationBatchSize]}
             )
     # this times 10 seems still pretty random to me
-    classifcationBatchSize = min(len(dataInstaces), self.miniBatchSize * 10)
     nrBatches = len(dataInstaces) / classifcationBatchSize
     # for batch in len(dataInstaces) / classifcationBatchSize:
     #   lastLayers = classify(lastLayers)
