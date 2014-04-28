@@ -594,8 +594,6 @@ class DBN(object):
 
         meanValidation = validateModel()
 
-      # print 'meanValidation'
-      # print meanValidation
         if meanValidation < bestValidationError:
           # If we have improved well enough, then increase the patience
           if meanValidation < bestValidationError * improvmentTreshold:
