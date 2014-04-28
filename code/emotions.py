@@ -550,13 +550,13 @@ def main():
   # readJaffe()
   # readAttData()
   # readAberdeen()
-  readKanade()
-  # if args.rbm:
-  #   rbmEmotions()
-  # elif args.cv:
-  #   deepBeliefKanadeCV()
-  # elif args.db:
-  #   deepBeliefKanade()
+  # readKanade()
+  if args.rbm:
+    rbmEmotions()
+  elif args.cv:
+    deepBeliefKanadeCV()
+  elif args.db:
+    deepBeliefKanade()
 
 
 # You can also group the emotions into positive and negative to see
