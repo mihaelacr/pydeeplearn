@@ -4,7 +4,6 @@ import cPickle as pickle
 import matplotlib.pyplot as plt
 
 
-
 SMALL_SIZE = (40, 30)
 BIG_SIZE = (200, 150)
 

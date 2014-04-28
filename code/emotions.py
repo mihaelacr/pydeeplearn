@@ -79,7 +79,8 @@ SMALL_SIZE = ((40, 30))
 
 
 def equalize(x):
-  return cv2.equalizeHist(x)
+  y = x.reshape(SMALL_SIZE)
+  return cv2.equalizeHist(y).reshape(-1)
 
 def rbmEmotions(big=False, reconstructRandom=False):
   data, labels = readKanade(big)
@@ -545,12 +546,13 @@ def main():
   # readJaffe()
   # readAttData()
   # readAberdeen()
-  if args.rbm:
-    rbmEmotions()
-  elif args.cv:
-    deepBeliefKanadeCV()
-  elif args.db:
-    deepBeliefKanade()
+  readKanade()
+  # if args.rbm:
+  #   rbmEmotions()
+  # elif args.cv:
+  #   deepBeliefKanadeCV()
+  # elif args.db:
+  #   deepBeliefKanade()
 
 
 # You can also group the emotions into positive and negative to see
