@@ -395,6 +395,9 @@ def readKanade(big=False, folds=None, equalize=args.equalize):
       data = pickle.load(f)
       labels = pickle.load(f)
 
+  # For now: check that the data is binary
+  assert np.all(np.min(data, axis=1) > 0) and np.all(np.max(data, axis=1) < 1.0 + 1e-8)
+
   return data, labels
 
 

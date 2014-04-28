@@ -248,6 +248,18 @@ class DBN(object):
   def train(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
             unsupervisedData=None):
 
+    # Do a small check to see if the data is in between (0, 1)
+    # if we claim we have binary stochastic units
+    if self.binary:
+      mins = data.min(axis=1)
+      maxs = data.max(axis=1)
+      assert np.all(mins >=0.0) and np.all(maxs < 1.0 + 1e-8)
+
+      if unsupervisedData is not None:
+        mins = unsupervisedData.min(axis=1)
+        maxs = unsupervisedData.max(axis=1)
+        assert np.all(mins) >=0.0 and np.all(maxs) < 1.0 + 1e-8
+
     if validation:
       nrInstances = len(data)
       validationIndices = np.random.choice(xrange(nrInstances),
