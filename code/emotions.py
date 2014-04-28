@@ -79,8 +79,6 @@ SMALL_SIZE = ((40, 30))
 
 
 def equalize(x):
-  print y
-  print y.shape
   x = x * 255
   x = np.asarray(x, dtype='uint8')
   y = x.reshape(SMALL_SIZE)
