@@ -486,12 +486,6 @@ def readCropEqualize(path, extension, doRecognition, equalize=True,
       print fullPath
       img = cv2.imread(fullPath, 0)
 
-      # if isColoured:
-      #   # TODO: do I always have to multiply by 255 in this case?
-      #   # I think I need to do that for face detection
-      #   img = color.rgb2gray(img)
-      #   img = np.array(img * 255, dtype='uint8')
-
       if equalize:
         img = equalizeImg(img)
 
