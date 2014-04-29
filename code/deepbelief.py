@@ -720,3 +720,40 @@ class DBN(object):
             )
     lastLayers = classify()
     return lastLayers, np.argmax(lastLayers, axis=1)
+
+
+  """The speed of this function could be improved but since it is never called
+  during training and it is for illustrative purposes that should not be a problem. """
+  def sample(self, nrSamples):
+    nrRbms = self.nrLayers - 2
+
+    # Create a random samples of the size of the last layer
+    if self.binary:
+      samples = np.random.rand(nrSamples, self.layerSizes[-2])
+    else:
+      samples = np.random.randint(255, size=(nrSamples, self.layerSizes[-2]))
+
+    # You have to do it  in decreasing order
+    for i in xrange(nrRbms -1, 0, -1):
+      # If the network can be initialized from the previous one,
+      # do so, by using the transpose of the already trained net
+      net = rbm.RBM(self.layerSizes[i], self.layerSizes[i-1],
+                      learningRate=self.unsupervisedLearningRate,
+                      binary=self.binary,
+                      visibleActivationFunction=self.rbmActivationFunctionVisible,
+                      hiddenActivationFunction=self.rbmActivationFunctionHidden,
+                      hiddenDropout=1.0,
+                      visibleDropout=1.0,
+                      rmsprop=True, # TODO: argument here as well?
+                      nesterov=self.rbmNesterovMomentum,
+                      initialWeights=self.classifcationWeights[i-1].T,
+                      initialBiases=[self.biases[i-1][1],self.biases[i-1][0]])
+
+      # Do 20 layers of gibbs sampling for the last layer
+      if i == nrRbms - 1:
+        samples = net.reconstruct(samples, 20)
+
+      # Do pass trough the net
+      samples = net.hiddenRepresentation(samples)
+
+    return samples

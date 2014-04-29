@@ -14,11 +14,11 @@ class RBMMiniBatchTrainer(object):
 
   def __init__(self, input, initialWeights, initialBiases,
              visibleActivationFunction, hiddenActivationFunction,
-             visibleDropout, hiddenDropout, binary):
+             visibleDropout, hiddenDropout, binary, cdSteps):
 
     self.visible = input
     self.binary = binary
-    self.cdSteps = theano.shared(value=np.int32(1))
+    self.cdSteps = theano.shared(value=np.int32(cdSteps))
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
     # Weights and biases
@@ -111,7 +111,6 @@ class RBM(object):
     self.visibleDropout = visibleDropout
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
-    self.initialized = False
     self.learningRate = learningRate
     self.rmsprop = rmsprop
     self.nesterov = nesterov
@@ -123,6 +122,21 @@ class RBM(object):
     self.trainingEpochs = trainingEpochs
     self.binary = binary
 
+    # Initialize the weights
+    if self.weights == None and self.biases == None:
+      self.weights = initializeWeights(self.nrVisible, self.nrHidden)
+      if self.binary:
+        # TODO: I think this makes no sense
+        self.biases = intializeBiasesBinary(data, self.nrHidden)
+      else:
+        # TODO: think of this
+        self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
+
+    # Initialize the test weights to the weights
+    # this will change in case the training starts
+    # and dropout is used
+    self.testWeights = self.weights
+
   def train(self, data, miniBatchSize=10):
     print "rbm learningRate"
     print self.learningRate
@@ -130,16 +144,6 @@ class RBM(object):
     print "data set size for restricted boltzmann machine"
     print len(data)
 
-    if not self.initialized:
-      if self.weights == None and self.biases == None:
-        self.weights = initializeWeights(self.nrVisible, self.nrHidden)
-        if self.binary:
-          # TODO: I think this makes no sense
-          self.biases = intializeBiasesBinary(data, self.nrHidden)
-        else:
-          # TODO: think of this
-          self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
-      self.initialized = True
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
 
@@ -163,7 +167,8 @@ class RBM(object):
                                        initialBiases=self.biases,
                                        visibleDropout=0.8,
                                        hiddenDropout=0.5,
-                                       binary=self.binary)
+                                       binary=self.binary,
+                                       cdSteps=1)
 
     if self.nesterov:
       preDeltaUpdates, updates = self.buildNesterovUpdates(batchTrainer,
@@ -351,7 +356,8 @@ class RBM(object):
                                     hiddenActivationFunction=self.hiddenActivationFunction,
                                     visibleDropout=1.0,
                                     hiddenDropout=1.0,
-                                    binary=self.binary)
+                                    binary=self.binary,
+                                    cdSteps=1)
 
     representHidden = theano.function(
             inputs=[],
@@ -365,7 +371,7 @@ class RBM(object):
     # data here and it will be too slow
     # so send the data in via mini bathes for reconstruction as well
 
-  def reconstruct(self, dataInstances):
+  def reconstruct(self, dataInstances, cdSteps=1):
     dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
     x = T.matrix('x', dtype=theanoFloat)
@@ -377,7 +383,8 @@ class RBM(object):
                                     hiddenActivationFunction=self.hiddenActivationFunction,
                                     visibleDropout=1.0,
                                     hiddenDropout=1.0,
-                                    binary=self.binary)
+                                    binary=self.binary,
+                                    cdSteps=cdSteps)
     reconstruct = theano.function(
             inputs=[],
             outputs=batchTrainer.visibleReconstruction,
