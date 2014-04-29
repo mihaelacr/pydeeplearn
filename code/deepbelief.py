@@ -595,7 +595,6 @@ class DBN(object):
     bestValidationError = np.inf
     epoch = 0
     doneTraining = False
-    improvmentTreshold = 0.995
     patience = 10 * self.nrMiniBatchesTrain # do at least 10 passes trough the data no matter what
 
     try:
@@ -614,7 +613,7 @@ class DBN(object):
 
           if meanValidation < bestValidationError:
             # If we have improved well enough, then increase the patience
-            if meanValidation < bestValidationError * improvmentTreshold:
+            if meanValidation < bestValidationError:
               print "increasing patience"
               patience = max(patience, iteration * 2)
 
