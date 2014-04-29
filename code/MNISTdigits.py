@@ -155,6 +155,14 @@ def rbmMain(reconstructRandom=False):
     pickle.dump(net, f)
 
 
+def makeMNISTpic():
+  f = lambda x: readmnist.read(0, 1000, digits=[x], path="MNIST")[0][0].reshape((28,28))
+  img = np.hstack(map(f, xrange(10)))
+  print img.shape
+  plt.imshow(img, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.show()
+
 def rbmMainGauss(reconstructRandom=False):
   trainVectors, trainLabels =\
       readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
