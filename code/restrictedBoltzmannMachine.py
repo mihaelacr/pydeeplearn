@@ -340,7 +340,7 @@ class RBM(object):
     return preDeltaUpdates, updates
 
   def hiddenRepresentation(self, dataInstances):
-    dataInstacesConverted = np.asarray(dataInstances, dtype=theanoFloat)
+    dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
     x = T.matrix('x', dtype=theanoFloat)
 
@@ -366,7 +366,7 @@ class RBM(object):
     # so send the data in via mini bathes for reconstruction as well
 
   def reconstruct(self, dataInstances):
-    dataInstacesConverted = np.asarray(dataInstances, dtype=theanoFloat)
+    dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
     x = T.matrix('x', dtype=theanoFloat)
 
