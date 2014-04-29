@@ -79,6 +79,8 @@ SMALL_SIZE = ((40, 30))
 
 
 def equalizeImg(x):
+  # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+  # return clahe.apply(img)
   return cv2.equalizeHist(x)
 
 def equalizeFromFloat(x):
