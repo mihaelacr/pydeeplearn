@@ -434,13 +434,17 @@ class DBN(object):
 
 
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
-    for epoch in xrange(maxEpochs):
-      print "epoch " + str(epoch)
+    try:
+      for epoch in xrange(maxEpochs):
+        print "epoch " + str(epoch)
 
-      momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
+        momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
-      for batchNr in xrange(self.nrMiniBatchesTrain):
-        trainModel(batchNr, momentum)
+        for batchNr in xrange(self.nrMiniBatchesTrain):
+          trainModel(batchNr, momentum)
+    except KeyboardInterrupt:
+      print "you have interrupted training"
+      print "we will continue testing with the state of the network as it is"
 
     print "number of epochs"
     print epoch
@@ -454,27 +458,31 @@ class DBN(object):
     validationErrors = []
     trainingErrors = []
 
-    while epoch < maxEpochs and count < 8:
-      print "epoch " + str(epoch)
+    try:
+      while epoch < maxEpochs and count < 8:
+        print "epoch " + str(epoch)
 
-      momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
+        momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
-      for batchNr in xrange(self.nrMiniBatchesTrain):
-        trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
+        for batchNr in xrange(self.nrMiniBatchesTrain):
+          trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
 
-      trainingErrors += [trainingErrorBatch]
+        trainingErrors += [trainingErrorBatch]
 
-      meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
-      meanValidation = sum(meanValidations) / len(meanValidations)
-      validationErrors += [meanValidation]
+        meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
+        meanValidation = sum(meanValidations) / len(meanValidations)
+        validationErrors += [meanValidation]
 
-      if meanValidation > lastValidationError:
-          count +=1
-      else:
-          count = 0
-      lastValidationError = meanValidation
+        if meanValidation > lastValidationError:
+            count +=1
+        else:
+            count = 0
+        lastValidationError = meanValidation
 
-      epoch +=1
+        epoch +=1
+    except KeyboardInterrupt:
+      print "you have interrupted training"
+      print "we will continue testing with the state of the network as it is"
 
     # if run remotely without a display
     try:
@@ -590,31 +598,35 @@ class DBN(object):
     improvmentTreshold = 0.995
     patience = 10 * self.nrMiniBatchesTrain # do at least 10 passes trough the data no matter what
 
-    while (epoch < maxEpochs) and not doneTraining:
-      # Train the net with all data
-      print "epoch " + str(epoch)
+    try:
+      while (epoch < maxEpochs) and not doneTraining:
+        # Train the net with all data
+        print "epoch " + str(epoch)
 
-      momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
+        momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
-      for batchNr in xrange(self.nrMiniBatchesTrain):
-        iteration = epoch * self.nrMiniBatchesTrain  + batchNr
-        trainModel(batchNr, momentum)
+        for batchNr in xrange(self.nrMiniBatchesTrain):
+          iteration = epoch * self.nrMiniBatchesTrain  + batchNr
+          trainModel(batchNr, momentum)
 
-        meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
-        meanValidation = sum(meanValidations) / len(meanValidations)
+          meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
+          meanValidation = sum(meanValidations) / len(meanValidations)
 
-        if meanValidation < bestValidationError:
-          # If we have improved well enough, then increase the patience
-          if meanValidation < bestValidationError * improvmentTreshold:
-            print "increasing patience"
-            patience = max(patience, iteration * 2)
+          if meanValidation < bestValidationError:
+            # If we have improved well enough, then increase the patience
+            if meanValidation < bestValidationError * improvmentTreshold:
+              print "increasing patience"
+              patience = max(patience, iteration * 2)
 
-          bestValidationError = meanValidation
+            bestValidationError = meanValidation
 
-      if patience <= iteration:
-        doneTraining = True
+        if patience <= iteration:
+          doneTraining = True
 
-      epoch += 1
+        epoch += 1
+    except KeyboardInterrupt:
+      print "you have interrupted training"
+      print "we will continue testing with the state of the network as it is"
 
     print "number of epochs"
     print epoch
