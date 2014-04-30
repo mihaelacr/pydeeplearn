@@ -120,7 +120,7 @@ class ClassifierBatch(object):
                activationFunction, classificationActivationFunction):
 
     self.input = input
-    self.classificationWeights = weights * dropoutMultiplier
+    self.classificationWeights = map(lambda x: x * dropoutMultiplier, weights)
 
     nrWeights = nrLayers - 1
 
