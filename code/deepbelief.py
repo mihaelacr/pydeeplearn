@@ -698,10 +698,15 @@ class DBN(object):
     else:
       samples = np.random.randint(255, size=(nrSamples, self.layerSizes[-2]))
 
+
+
     # You have to do it  in decreasing order
     for i in xrange(nrRbms -1, 0, -1):
       # If the network can be initialized from the previous one,
       # do so, by using the transpose of the already trained net
+
+      weigths = self.classifcationWeights[i-1].T
+      biases = np.array([self.biases[i-1][1],self.biases[i-1][0]])
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i-1],
                       learningRate=self.unsupervisedLearningRate,
                       binary=self.binary,
@@ -711,12 +716,15 @@ class DBN(object):
                       visibleDropout=1.0,
                       rmsprop=True, # TODO: argument here as well?
                       nesterov=self.rbmNesterovMomentum,
-                      initialWeights=self.classifcationWeights[i-1].T,
-                      initialBiases=[self.biases[i-1][1],self.biases[i-1][0]])
+                      initialWeights=weigths,
+                      initialBiases=biases)
 
       # Do 20 layers of gibbs sampling for the last layer
+      print samples.shape
+      print biases.shape
+      print biases[1].shape
       if i == nrRbms - 1:
-        samples = net.reconstruct(samples, 20)
+        samples = net.reconstruct(samples, cdSteps=20)
 
       # Do pass trough the net
       samples = net.hiddenRepresentation(samples)
