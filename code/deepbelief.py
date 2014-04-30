@@ -178,6 +178,7 @@ class DBN(object):
 
     self.weights = []
     self.biases = []
+    self.generativeBiases = []
 
     currentData = data
 
@@ -222,6 +223,7 @@ class DBN(object):
       # Do not take the test weight, take the training ones
       lastRbmTrainWeights = net.weights
       self.biases += [b]
+      self.generativeBiases += [net.biases[0]]
 
       # Let's update the current representation given to the next RBM
       currentData = net.hiddenRepresentation(currentData)
@@ -698,15 +700,13 @@ class DBN(object):
     else:
       samples = np.random.randint(255, size=(nrSamples, self.layerSizes[-2]))
 
-
-
     # You have to do it  in decreasing order
     for i in xrange(nrRbms -1, 0, -1):
       # If the network can be initialized from the previous one,
       # do so, by using the transpose of the already trained net
 
       weigths = self.classifcationWeights[i-1].T
-      biases = np.array([self.biases[i-1][1],self.biases[i-1][0]])
+      biases = np.array([self.biases[i-1], self.generativeBiases[i-1]])
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i-1],
                       learningRate=self.unsupervisedLearningRate,
                       binary=self.binary,
