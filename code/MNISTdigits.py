@@ -236,6 +236,67 @@ def rbmMainGauss(reconstructRandom=False):
     pickle.dump(net, f)
 
 
+def makeNicePlots():
+  trainVectors, trainLabels =\
+      readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
+  testingVectors, testLabels =\
+      readmnist.read(0, args.testSize, digits=[2], bTrain=False, path="MNIST")
+
+  trainingScaledVectors = trainVectors / 255.0
+  testingScaledVectors = testingVectors / 255.0
+
+  # TODO: the reconstruction for relu still looks weird
+  learningRate = 0.3
+  binary=True
+  activationFunction = T.nnet.sigmoid
+
+  # Train the network
+  if args.train:
+    # The number of hidden units is taken from a deep learning tutorial
+    # The data are the values of the images have to be normalized before being
+    # presented to the network
+    nrVisible = len(trainingScaledVectors[0])
+    nrHidden = 500
+    # use 1 dropout to test the rbm for now
+    net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
+                  binary=binary,
+                  visibleActivationFunction=activationFunction,
+                  hiddenActivationFunction=activationFunction,
+                  rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
+    net.train(trainingScaledVectors)
+    t = visualizeWeights(net.weights.T, (28,28), (10,10))
+  else:
+    # Take the saved network and use that for reconstructions
+    f = open(args.netFile, "rb")
+    t = pickle.load(f)
+    net = pickle.load(f)
+    f.close()
+
+  incomingWeightVector  = net.weights.T[0]
+
+  testVec = testingScaledVectors[0]
+
+  # reshape this vector to be 28, 28
+  reshapedWeightVector = incomingWeightVector.reshape((28, 28))
+
+  reshapedTestVec = testVec.reshape((28, 28))
+
+  overpose = reshapedWeightVector * reshapedTestVec
+
+  plt.imshow(reshapedWeightVector, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.savefig('weightvectorreshaped.png', transparent=True)
+
+  plt.imshow(reshapedTestVec, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.savefig('reshapedTestVec.png', transparent=True)
+
+  plt.imshow(overpose, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.savefig('overpose.png', transparent=True)
+
+
+
 def pcaSklearn(training, dimension=700):
   pca = PCA(n_components=dimension)
   pca.fit(training)
@@ -727,22 +788,24 @@ def main():
       args.ann + args.cvgauss + args.rbmGauss + args.dbgauss != 1:
     raise Exception("You decide on one main method to run")
 
-  if args.db:
-    deepbeliefMNIST()
-  if args.pca:
-    pcaMain()
-  if args.rbm:
-    rbmMain()
-  if args.cv:
-    cvMNIST()
-  if args.ann:
-    annMNIST()
-  if args.cvgauss:
-    cvMNISTGaussian()
-  if args.rbmGauss:
-    rbmMainGauss()
-  if args.dbgauss:
-    deepbeliefMNISTGaussian()
+  makeNicePlots()
+  # makeMNISTpic()
+  # if args.db:
+  #   deepbeliefMNIST()
+  # if args.pca:
+  #   pcaMain()
+  # if args.rbm:
+  #   rbmMain()
+  # if args.cv:
+  #   cvMNIST()
+  # if args.ann:
+  #   annMNIST()
+  # if args.cvgauss:
+  #   cvMNISTGaussian()
+  # if args.rbmGauss:
+  #   rbmMainGauss()
+  # if args.dbgauss:
+  #   deepbeliefMNISTGaussian()
 
 if __name__ == '__main__':
   main()
