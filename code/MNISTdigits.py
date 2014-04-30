@@ -46,8 +46,6 @@ parser.add_argument('--rbmrmsprop', dest='rbmrmsprop',action='store_true', defau
                     help=("if true, rmsprop is used when training the rbms."))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
-parser.add_argument('--cv', dest='cv',action='store_true', default=False,
-                    help=("if true, performs cv on the MNIST data"))
 parser.add_argument('--display', dest='display',action='store_true', default=False,
                     help=("if true saves images of the net weights and samples from the net"))
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
