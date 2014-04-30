@@ -112,6 +112,38 @@ class MiniBatchTrainer(object):
   def cost(self, y):
     return T.nnet.categorical_crossentropy(self.output, y)
 
+class ClassifierBatch(object):
+
+  # TODO: investigate a bit the sharing thing
+  def __init__(self, input, nrLayers, weights, biases,
+               dropoutMultiplier,
+               activationFunction, classificationActivationFunction):
+
+    self.input = input
+    self.classificationWeights = self.weights * dropoutMultiplier
+
+    nrWeights = nrLayers - 1
+
+    currentLayerValues = input
+
+    for stage in xrange(nrWeights -1):
+      w = classificationWeights[stage]
+      b = biases[stage]
+      linearSum = T.dot(currentLayerValues, w) + b
+      currentLayerValues = activationFunction(linearSum)
+
+    # Last layer operations, no dropout in the output
+    w = classificationWeights[nrWeights - 1]
+    b = biases[nrWeights - 1]
+    linearSum = T.dot(currentLayerValues, w) + b
+    currentLayerValues = classificationActivationFunction(linearSum)
+
+    self.output = currentLayerValues
+
+  def cost(self, y):
+    return T.nnet.categorical_crossentropy(self.output, y)
+
+
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
 
@@ -303,10 +335,6 @@ class DBN(object):
     self.fineTune(sharedData, sharedLabels, True,
                   sharedValidationData, sharedValidationLabels, maxEpochs)
 
-    # Get the classification weights
-    self.classifcationWeights = map(lambda x: x * self.hiddenDropout, self.weights)
-    self.classifcationBiases = self.biases
-
   def trainNoValidation(self, data, labels, maxEpochs, unsupervisedData):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
@@ -317,10 +345,6 @@ class DBN(object):
 
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels, False, None, None, maxEpochs)
-
-    # Get the classification weights
-    self.classifcationWeights = map(lambda x: x * self.hiddenDropout, self.weights)
-    self.classifcationBiases = self.biases
 
 
   """Fine tunes the weigths and biases using backpropagation.
@@ -360,6 +384,14 @@ class DBN(object):
                                     visibleDropout=self.visibleDropout,
                                     hiddenDropout=self.hiddenDropout)
 
+    classifier = ClassifierBatch(input=x, nrLayers=self.nrLayers,
+                                 activationFunction=self.activationFunction,
+                                 classificationActivationFunction=self.classificationActivationFunction,
+                                 dropoutMultiplier=self.hiddenDropout,
+                                 weights=batchTrainer.weights,
+                                 biases=batchTrainer.biases)
+
+    # TODO: remove training error from this
     # the error is the sum of the errors in the individual cases
     trainingError = T.sum(batchTrainer.cost(y))
     # also add some regularization costs
@@ -411,7 +443,7 @@ class DBN(object):
     if validation:
     # Let's create the function that validates the model!
       validateModel = theano.function(inputs=[miniBatchIndex],
-        outputs=T.mean(batchTrainer.cost(y)),
+        outputs=T.mean(classifier.cost(y)),
         givens={
           x: validationData[miniBatchIndex * self.miniBatchValidateSize:(miniBatchIndex + 1) * self.miniBatchValidateSize],
           y: validationLabels[miniBatchIndex * self.miniBatchValidateSize:(miniBatchIndex + 1) * self.miniBatchValidateSize]})
@@ -425,11 +457,14 @@ class DBN(object):
       self.trainLoopModelFixedEpochs(batchTrainer, trainModel, maxEpochs)
 
     # Set up the weights in the dbn object
-    for i in xrange(len(self.weights)):
-      self.weights[i] = batchTrainer.weights[i].get_value()
+    self.x = x
+    self.classifier = classifier
 
-    for i in xrange(len(self.biases)):
-      self.biases[i] = batchTrainer.biases[i].get_value()
+    self.weights = map(lambda x: x.get_value(), batchTrainer.weights)
+    self.biases = map(lambda x: x.get_value(), batchTrainer.biases)
+
+    self.classificationWeights = map(lambda x: x.get_value(),
+                                      classifier.classificationWeights)
 
 
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
@@ -666,24 +701,13 @@ class DBN(object):
   def classify(self, dataInstaces):
     dataInstacesConverted = theano.shared(np.asarray(dataInstaces, dtype=theanoFloat))
 
-    x = T.matrix('x', dtype=theanoFloat)
-
-    # Use the classification weights because now we have hiddenDropout
-    # Ensure that you have no hiddenDropout in classification
-    batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
-                                    initialWeights=self.classifcationWeights,
-                                    initialBiases=self.classifcationBiases,
-                                    activationFunction=self.activationFunction,
-                                    classificationActivationFunction=self.classificationActivationFunction,
-                                    visibleDropout=1.0,
-                                    hiddenDropout=1.0)
-    classify = theano.function(
+    classifyFunction = theano.function(
             inputs=[],
-            outputs=batchTrainer.output,
+            outputs=self.classifier.output,
             updates={},
-            givens={x: dataInstacesConverted}
+            givens={self.x: dataInstacesConverted}
             )
-    lastLayers = classify()
+    lastLayers = classifyFunction()
     return lastLayers, np.argmax(lastLayers, axis=1)
 
 
@@ -703,7 +727,7 @@ class DBN(object):
       # If the network can be initialized from the previous one,
       # do so, by using the transpose of the already trained net
 
-      weigths = self.classifcationWeights[i-1].T
+      weigths = self.classificationWeights[i-1].T
       biases = np.array([self.biases[i-1], self.generativeBiases[i-1]])
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i-1],
                       learningRate=self.unsupervisedLearningRate,
@@ -741,7 +765,7 @@ class DBN(object):
     for i in xrange(nrRbms -1):
       # If the network can be initialized from the previous one,
       # do so, by using the transpose of the already trained net
-      weigths = self.classifcationWeights[i-1].T
+      weigths = self.classificationWeights[i-1].T
       biases = np.array([self.generativeBiases[i-1], self.biases[i-1]])
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                       learningRate=self.unsupervisedLearningRate,
