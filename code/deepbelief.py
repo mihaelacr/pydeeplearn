@@ -171,7 +171,6 @@ class DBN(object):
     self.momentumForEpochFunction = momentumForEpochFunction
     self.binary = binary
 
-
   def pretrain(self, data, unsupervisedData):
     nrRbms = self.nrLayers - 2
 
@@ -358,8 +357,8 @@ class DBN(object):
                                     classificationActivationFunction=self.classificationActivationFunction,
                                     initialWeights=self.weights,
                                     initialBiases=self.biases,
-                                    visibleDropout=0.8,
-                                    hiddenDropout=0.5)
+                                    visibleDropout=self.visibleDropout,
+                                    hiddenDropout=self.hiddenDropout)
 
     # the error is the sum of the errors in the individual cases
     trainingError = T.sum(batchTrainer.cost(y))
