@@ -822,7 +822,7 @@ def main():
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv +\
       args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display != 1:
-    raise Exception("You decide on one main method to run")
+    raise Exception("You have to decide on one main method to run")
 
   # makeNicePlots()
   # makeMNISTpic()
