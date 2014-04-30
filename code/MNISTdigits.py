@@ -191,7 +191,7 @@ def displayWeightsAndDbSample():
 
 
   # then sample from the net
-  samples = net.sample(10)
+  samples = dbnNet.sample(10)
   reshaped = map(lambda x: x.reshape(28, 28), samples)
   reshaped = np.hstack(reshaped)
 
