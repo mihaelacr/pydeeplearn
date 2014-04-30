@@ -127,13 +127,13 @@ class ClassifierBatch(object):
     currentLayerValues = input
 
     for stage in xrange(nrWeights -1):
-      w = classificationWeights[stage]
+      w = self.classificationWeights[stage]
       b = biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
       currentLayerValues = activationFunction(linearSum)
 
     # Last layer operations, no dropout in the output
-    w = classificationWeights[nrWeights - 1]
+    w = self.classificationWeights[nrWeights - 1]
     b = biases[nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
     currentLayerValues = classificationActivationFunction(linearSum)
