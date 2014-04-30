@@ -87,7 +87,6 @@ class MiniBatchTrainer(object):
     dropoutMask = self.theanoRng.binomial(n=1, p=visibleDropout,
                                             size=self.input.shape,
                                             dtype=theanoFloat)
-
     currentLayerValues = self.input * dropoutMask
 
     for stage in xrange(nrWeights -1):
@@ -730,3 +729,35 @@ class DBN(object):
       samples = net.hiddenRepresentation(samples)
 
     return samples
+
+  """The speed of this function could be improved but since it is never called
+  during training and it is for illustrative purposes that should not be a problem. """
+  def getHiddenActivations(self, data):
+    nrRbms = self.nrLayers - 2
+
+    activations = data
+    activationsList = []
+
+    # You have to do it  in decreasing order
+    for i in xrange(nrRbms -1):
+      # If the network can be initialized from the previous one,
+      # do so, by using the transpose of the already trained net
+      weigths = self.classifcationWeights[i-1].T
+      biases = np.array([self.generativeBiases[i-1], self.biases[i-1]])
+      net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
+                      learningRate=self.unsupervisedLearningRate,
+                      binary=self.binary,
+                      visibleActivationFunction=self.rbmActivationFunctionVisible,
+                      hiddenActivationFunction=self.rbmActivationFunctionHidden,
+                      hiddenDropout=1.0,
+                      visibleDropout=1.0,
+                      rmsprop=True, # TODO: argument here as well?
+                      nesterov=self.rbmNesterovMomentum,
+                      initialWeights=weigths,
+                      initialBiases=biases)
+
+      # Do pass trough the net
+      activations = net.hiddenRepresentation(activations)
+      activationsList += [activations]
+
+    return activationsList
