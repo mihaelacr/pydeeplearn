@@ -44,6 +44,8 @@ parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=Fal
                     help=("if true, rmsprop is used when training the deep belief net."))
 parser.add_argument('--rbmrmsprop', dest='rbmrmsprop',action='store_true', default=False,
                     help=("if true, rmsprop is used when training the rbms."))
+parser.add_argument('--cvgauss', dest='cvgauss',action='store_true', default=False,
+                    help=("if true, performs cv on the MNIST data with gaussian units"))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
 parser.add_argument('--display', dest='display',action='store_true', default=False,
