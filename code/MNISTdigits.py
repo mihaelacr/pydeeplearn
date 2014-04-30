@@ -178,7 +178,7 @@ def displayWeightsAndDbSample():
   with open(args.netFile, "rb") as f:
     dbnNet = pickle.load(f)
 
-  for i in xrange(dbnNet.nrLayers):
+  for i in xrange(dbnNet.nrLayers - 1):
     w = dbnNet.weights[i]
     if i == 0:
       t = visualizeWeights(w.T, (28,28), (1,10))
