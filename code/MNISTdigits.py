@@ -132,6 +132,12 @@ def rbmMain(reconstructRandom=False):
   plt.savefig('initial7.png', transparent=True)
   # plt.show()
 
+  hidden = net.hiddenRepresentation(test.reshape(1, test.shape[0]))
+  plt.imshow(vectorToImage(hidden, (28,28)), cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.savefig('hiddenfeatures7.png', transparent=True)
+
+
   # Show the reconstruction
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
@@ -163,6 +169,31 @@ def makeMNISTpic():
   plt.axis('off')
   plt.savefig('MNISTdigits.png', transparent=True)
   # plt.show()
+
+def displayWeightsAndDbSample(dbnNet, testing):
+  # First let's display the nets layer weights:
+
+  for i in xrange(dbnNet.nrLayers):
+    w = dbnNet.weights[i]
+    if i == 0:
+      t = visualizeWeights(w.T, (28,28), (1,10))
+    else:
+      t = visualizeWeights(w.T, (40, 25), (1, 10))
+
+    plt.imshow(t, cmap=plt.cm.gray)
+    plt.axis('off')
+    plt.savefig('weightslayer' + str(i) +'.png', transparent=True)
+
+
+  # then sample from the net
+  samples = net.sample(10)
+  reshaped = map(lambda x: x.reshape(28, 28), samples)
+  reshaped = np.hstack(reshaped)
+
+  plt.imshow(reshaped, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.savefig('samples.png', transparent=True)
+
 
 def rbmMainGauss(reconstructRandom=False):
   trainVectors, trainLabels =\
@@ -788,24 +819,24 @@ def main():
       args.ann + args.cvgauss + args.rbmGauss + args.dbgauss != 1:
     raise Exception("You decide on one main method to run")
 
-  makeNicePlots()
+  # makeNicePlots()
   # makeMNISTpic()
-  # if args.db:
-  #   deepbeliefMNIST()
-  # if args.pca:
-  #   pcaMain()
-  # if args.rbm:
-  #   rbmMain()
-  # if args.cv:
-  #   cvMNIST()
-  # if args.ann:
-  #   annMNIST()
-  # if args.cvgauss:
-  #   cvMNISTGaussian()
-  # if args.rbmGauss:
-  #   rbmMainGauss()
-  # if args.dbgauss:
-  #   deepbeliefMNISTGaussian()
+  if args.db:
+    deepbeliefMNIST()
+  if args.pca:
+    pcaMain()
+  if args.rbm:
+    rbmMain()
+  if args.cv:
+    cvMNIST()
+  if args.ann:
+    annMNIST()
+  if args.cvgauss:
+    cvMNISTGaussian()
+  if args.rbmGauss:
+    rbmMainGauss()
+  if args.dbgauss:
+    deepbeliefMNISTGaussian()
 
 if __name__ == '__main__':
   main()
