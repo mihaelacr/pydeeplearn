@@ -125,12 +125,13 @@ class RBM(object):
     # Initialize the weights
     if self.weights == None and self.biases == None:
       self.weights = initializeWeights(self.nrVisible, self.nrHidden)
-      if self.binary:
-        # TODO: I think this makes no sense
-        self.biases = intializeBiasesBinary(data, self.nrHidden)
-      else:
-        # TODO: think of this
-        self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
+      self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
+      # if self.binary:
+      #   # TODO: I think this makes no sense
+      #   self.biases = intializeBiasesBinary(data, self.nrHidden)
+      # else:
+      #   # TODO: think of this
+      #   self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
 
     # Initialize the test weights to the weights
     # this will change in case the training starts
