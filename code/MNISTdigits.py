@@ -46,8 +46,10 @@ parser.add_argument('--rbmrmsprop', dest='rbmrmsprop',action='store_true', defau
                     help=("if true, rmsprop is used when training the rbms."))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
-parser.add_argument('--cvgauss', dest='cvgauss',action='store_true', default=False,
-                    help=("if true, performs cv on the MNIST data with gaussian visible units"))
+parser.add_argument('--cv', dest='cv',action='store_true', default=False,
+                    help=("if true, performs cv on the MNIST data"))
+parser.add_argument('--display', dest='display',action='store_true', default=False,
+                    help=("if true saves images of the net weights and samples from the net"))
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--trainSize', type=int, default=10000,
@@ -170,8 +172,11 @@ def makeMNISTpic():
   plt.savefig('MNISTdigits.png', transparent=True)
   # plt.show()
 
-def displayWeightsAndDbSample(dbnNet, testing):
+
+def displayWeightsAndDbSample():
   # First let's display the nets layer weights:
+  with open(args.netFile, "rb") as f:
+    dbnNet = pickle.load(f)
 
   for i in xrange(dbnNet.nrLayers):
     w = dbnNet.weights[i]
@@ -816,7 +821,7 @@ def main():
   random.seed(6)
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv +\
-      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss != 1:
+      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display!= 1:
     raise Exception("You decide on one main method to run")
 
   # makeNicePlots()
@@ -837,6 +842,8 @@ def main():
     rbmMainGauss()
   if args.dbgauss:
     deepbeliefMNISTGaussian()
+  if args.display:
+    displayWeightsAndDbSample()
 
 if __name__ == '__main__':
   main()
