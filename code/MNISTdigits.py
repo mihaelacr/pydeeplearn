@@ -246,8 +246,8 @@ def makeNicePlots():
   testingScaledVectors = testingVectors / 255.0
 
   # TODO: the reconstruction for relu still looks weird
-  learningRate = 0.3
-  binary=True
+  learningRate = 0.1
+  binary = True
   activationFunction = T.nnet.sigmoid
 
   # Train the network
