@@ -3,6 +3,8 @@ import utils
 from theano.tensor.shared_randomstreams import RandomStreams
 from theano import tensor as T
 from sklearn import preprocessing
+import matplotlib.pyplot as plt
+
 
 def scale(data):
   return preprocessing.scale(data)
@@ -120,3 +122,55 @@ def getMomentumForEpochSimple(momentumMax, epoch):
     return np.float32(0.5)
   else:
     return np.float32(momentumMax)
+
+
+def plotTrainingAndValidationErros(trainingErrors, validationErrors):
+  # if run remotely without a display
+  try:
+    plt.plot(trainingErrors, label="Training error")
+    plt.plot(validationErrors, label="Validation error")
+    plt.xlabel('Epoch')
+    plt.ylabel('Cross entropy average error')
+    plt.title('Training and validation error during DBN training')
+    plt.legend()
+    plt.show()
+  except Exception as e:
+    print "validation error plot not made"
+    print "error ", e
+
+    plt.plot(trainingErrors, label="Training error")
+    plt.plot(validationErrors, label="Validation error")
+    plt.xlabel('Epoch')
+    plt.ylabel('Cross entropy average error')
+    plt.title('Training and validation error during DBN training')
+    plt.legend()
+    plt.savefig("validationandtrainingerror.png" , transparent=True)
+
+    print "printing validation errors and training errors instead"
+    print "validationErrors"
+    print validationErrors
+    print "trainingErrors"
+    print trainingErrors
+
+def plotTraningError(trainingErrors):
+  try:
+    plt.plot(trainingErrors, label="Training error")
+    plt.xlabel('Epoch')
+    plt.ylabel('Cross entropy average error')
+    plt.title('Training error during DBN training')
+    plt.legend()
+    plt.show()
+  except Exception as e:
+    print "plot not made"
+    print "error ", e
+
+    plt.plot(trainingErrors, label="Training error")
+    plt.xlabel('Epoch')
+    plt.ylabel('Cross entropy average error')
+    plt.title('Training error during DBN training')
+    plt.legend()
+    plt.savefig("trainingerror.png" , transparent=True)
+
+    print "printing training errors "
+    print "trainingErrors"
+    print trainingErrors

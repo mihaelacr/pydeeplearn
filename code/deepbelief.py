@@ -5,7 +5,6 @@ import theano
 from theano import tensor as T
 from theano.tensor.shared_randomstreams import RandomStreams
 
-import matplotlib.pyplot as plt
 
 theanoFloat  = theano.config.floatX
 
@@ -434,6 +433,8 @@ class DBN(object):
 
 
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
+    trainingErrors = []
+
     try:
       for epoch in xrange(maxEpochs):
         print "epoch " + str(epoch)
@@ -441,10 +442,13 @@ class DBN(object):
         momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
         for batchNr in xrange(self.nrMiniBatchesTrain):
-          trainModel(batchNr, momentum)
+          trainError = trainModel(batchNr, momentum) / self.miniBatchSize
+          trainingErrors += [trainError]
     except KeyboardInterrupt:
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
+
+    plotTraningError(trainingErrors)
 
     print "number of epochs"
     print epoch
@@ -484,35 +488,11 @@ class DBN(object):
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
 
-    # if run remotely without a display
-    try:
-      plt.plot(trainingErrors, label="Training error")
-      plt.plot(validationErrors, label="Validation error")
-      plt.xlabel('Epoch')
-      plt.ylabel('Cross entropy average error')
-      plt.title('Training and validation error during DBN training')
-      plt.legend()
-      plt.show()
-    except Exception as e:
-      print "validation error plot not made"
-      print "error ", e
-
-      plt.plot(trainingErrors, label="Training error")
-      plt.plot(validationErrors, label="Validation error")
-      plt.xlabel('Epoch')
-      plt.ylabel('Cross entropy average error')
-      plt.title('Training and validation error during DBN training')
-      plt.legend()
-      plt.savefig("validationandtrainingerror.png" , transparent=True)
-
-      print "printing validation errors and training errors instead"
-      print "validationErrors"
-      print validationErrors
-      print "trainingErrors"
-      print trainingErrors
+    plotTrainingAndValidationErros(trainingErrors, validationErrors)
 
     print "number of epochs"
     print epoch
+
 
 
   # A very greedy approach to training
@@ -558,31 +538,8 @@ class DBN(object):
     if bestWeights is not None and bestBiases is not None:
       batchTrainer.weights = bestWeights
       batchTrainer.biases = bestBiases
-    try:
-      plt.plot(trainingErrors, label='Training error')
-      plt.plot(validationErrors, label='Validation error')
-      plt.xlabel('Epoch')
-      plt.ylabel('Cross entropy average error')
-      plt.title('Training and validation error during DBN training')
-      plt.legend()
-      plt.show()
-    except Exception as e:
-      print "validation error plot not made"
-      print "error ", e
 
-      plt.plot(trainingErrors, label="Training error")
-      plt.plot(validationErrors, label="Validation error")
-      plt.xlabel('Epoch')
-      plt.ylabel('Cross entropy average error')
-      plt.title('Training and validation error during DBN training')
-      plt.legend()
-      plt.savefig("validationandtrainingerror.png" , transparent=True)
-
-      print "printing validation errors and training errors instead"
-      print "validationErrors"
-      print validationErrors
-      print "trainingErrors"
-      print trainingErrors
+    plotTrainingAndValidationErros(trainingErrors, validationErrors)
 
     print "number of epochs"
     print epoch
@@ -597,6 +554,9 @@ class DBN(object):
     doneTraining = False
     patience = 10 * self.nrMiniBatchesTrain # do at least 10 passes trough the data no matter what
 
+    validationErrors = []
+    trainingErrors = []
+
     try:
       while (epoch < maxEpochs) and not doneTraining:
         # Train the net with all data
@@ -606,10 +566,13 @@ class DBN(object):
 
         for batchNr in xrange(self.nrMiniBatchesTrain):
           iteration = epoch * self.nrMiniBatchesTrain  + batchNr
-          trainModel(batchNr, momentum)
+          trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
 
           meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
           meanValidation = sum(meanValidations) / len(meanValidations)
+
+          validationErrors += [meanValidation]
+          trainingErrors += [trainingErrorBatch]
 
           if meanValidation < bestValidationError:
             # If we have improved well enough, then increase the patience
@@ -626,6 +589,8 @@ class DBN(object):
     except KeyboardInterrupt:
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
+
+    plotTrainingAndValidationErros(trainingErrors, validationErrors)
 
     print "number of epochs"
     print epoch
