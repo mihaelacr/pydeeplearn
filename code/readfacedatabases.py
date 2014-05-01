@@ -10,6 +10,10 @@ import cv2
 import facedetection
 import fnmatch
 
+import matplotlib.image as io
+# from skimage import io
+# from skimage import color
+from skimage.transform import resize
 
 from common import *
 
@@ -45,6 +49,7 @@ def equalizeKanade(big=False):
     pickle.dump(data, f)
     pickle.dump(labels, f)
 
+# TODO: add equalize argument
 def readMultiPIE(show=False):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
@@ -132,7 +137,7 @@ def readKanade(big=False, folds=None, equalize=False):
 
 
 # TODO: get big, small as argument in order to be able to fit the resizing
-def readCroppedYale(equalize=True):
+def readCroppedYale(equalize):
   # PATH = "/data/mcr10/yaleb/CroppedYale"
   PATH = "/home/aela/uni/project/CroppedYale"
 
@@ -242,13 +247,13 @@ def readJaffe(detectFaces, equalize):
   return readCropEqualize(PATH , "tiff", detectFaces, equalize=equalize,
                           isColoured=False)
 
-def readNottingham(detectFaces):
+def readNottingham(detectFaces, equalize):
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
   return readCropEqualize(PATH, "gif", detectFaces, equalize=equalize,
                           isColoured=False)
 
-def readAberdeen(detectFaces):
+def readAberdeen(detectFaces, equalize):
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
   return readCropEqualize(PATH, "jpg", detectFaces, equalize=equalize,
