@@ -463,8 +463,8 @@ class DBN(object):
     self.weights = map(lambda x: x.get_value(), batchTrainer.weights)
     self.biases = map(lambda x: x.get_value(), batchTrainer.biases)
 
-    self.classificationWeights = map(lambda x: x.get_value(),
-                                      classifier.classificationWeights)
+    self.classificationWeights = map(lambda x: x * self.hiddenDropout,
+                                      self.weights)
 
 
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
