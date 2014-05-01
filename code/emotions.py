@@ -26,9 +26,12 @@ parser.add_argument('--train',dest='train',action='store_true', default=False,
                           "traning data"))
 parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
                     help=("if true, the code for traning an rbm on the data is run"))
-parser.add_argument('--db', dest='db',action='store_true', default=False,
-                    help=("if true, the code for traning a deepbelief net on the"
-                          "data is run"))
+parser.add_argument('--dbKanade', dest='dbKanade',action='store_true', default=False,
+                    help=("if true, the code for training a deepbelief net on the"
+                          "data is run, where the supervised data is the Kanade DB"))
+parser.add_argument('--dbPIE', dest='dbPIE',action='store_true', default=False,
+                    help=("if true, the code for training a deepbelief net on the"
+                          "data is run, where the supervised data is the PIE DB"))
 parser.add_argument('--trainSize', type=int, default=10000,
                     help='the number of tranining cases to be considered')
 parser.add_argument('--testSize', type=int, default=1000,
@@ -336,7 +339,6 @@ def buildSupervisedDataSet():
   labels = labelsKanade + labelsMPie
   return data, labels
 
-
 def deepbeliefMultiPIE(big=False):
   data, labels = readMultiPIE(big,None)
 
@@ -423,8 +425,10 @@ def main():
     rbmEmotions()
   elif args.cv:
     deepbeliefKanadeCV()
-  elif args.db:
+  elif args.dbKanade:
     deepbeliefKanade()
+  elif args.dbPIE:
+    deepbeliefMultiPIE()
 
 
 # You can also group the emotions into positive and negative to see
