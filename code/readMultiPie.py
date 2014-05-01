@@ -24,7 +24,7 @@ def read(path, show=False):
             if show:
               plt.imshow(image)
               plt.show()
-  return imgs, labels
+  return np.array(imgs), labels
 
 if __name__ == '__main__':
   path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
