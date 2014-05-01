@@ -328,13 +328,95 @@ def buildUnsupervisedDataSetForKanadeLabelled():
 #dataset
 def buildSupervisedDataSet():
   dataKanade, labelsKanade = readKanade()
-  dataMPie, labelsMPie = readMultipie()
+  dataMPie, labelsMPie = readMultiPIE()
   print dataMPie.shape
   print dataKanade.shape
 
   data = np.vstack((dataKanade, dataMPie))
   labels = labelsKanade + labelsMPie
   return data, labels
+
+
+def deepbeliefMultiPIE(big=False):
+  data, labels = readMultiPIE(big,None)
+
+  data, labels = shuffle(data, labels)
+
+  print "data.shape"
+  print data.shape
+  print "labels.shape"
+  print labels.shape
+
+  # Random data for training and testing
+  kf = cross_validation.KFold(n=len(data), n_folds=5)
+  for train, test in kf:
+    break
+
+  if args.relu:
+    activationFunction = relu
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.95
+  else:
+    activationFunction = T.nnet.sigmoid
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.9
+
+  trainData = data[train]
+  trainLabels = labels[train]
+
+  # TODO: this might require more thought
+  net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
+             binary=1-args.relu,
+             activationFunction=activationFunction,
+             rbmActivationFunctionVisible=T.nnet.sigmoid,
+             rbmActivationFunctionHidden=T.nnet.sigmoid,
+             unsupervisedLearningRate=unsupervisedLearningRate,
+             # is this not a bad learning rate?
+             supervisedLearningRate=supervisedLearningRate,
+             momentumMax=momentumMax,
+             nesterovMomentum=args.nesterov,
+             rbmNesterovMomentum=args.rbmnesterov,
+             rmsprop=args.rmsprop,
+             miniBatchSize=args.miniBatchSize,
+             hiddenDropout=0.5,
+             rbmHiddenDropout=0.5,
+             visibleDropout=0.8,
+             rbmVisibleDropout=1)
+
+  unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
+
+
+  net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
+            validation=args.validation,
+            unsupervisedData=unsupervisedData)
+
+  probs, predicted = net.classify(data[test])
+
+  actualLabels = labels[test]
+  correct = 0
+  errorCases = []
+
+  for i in xrange(len(test)):
+    print "predicted"
+    print "probs"
+    print probs[i]
+    print "predicted"
+    print predicted[i]
+    print "actual"
+    actual = actualLabels[i]
+    print np.argmax(actual)
+    if predicted[i] == np.argmax(actual):
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  print "correct"
+  print correct
+
+  print "percentage correct"
+  print correct  * 1.0/ len(test)
 
 def main():
   if args.rbm:
