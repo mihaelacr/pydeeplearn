@@ -310,6 +310,8 @@ def makeNicePlots():
 
   incomingWeightVector  = net.weights.T[0]
 
+  print " testingVectors[0]"
+  print testingVectors[0]
   testVec = testingScaledVectors[0]
 
   # reshape this vector to be 28, 28
