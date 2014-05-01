@@ -26,8 +26,9 @@ def read(path, show=False):
               plt.show()
   return imgs, labels
 
-path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
-read(path, show=True)
+if __name__ == '__main__':
+  path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+  read(path, show=True)
 
 
 
