@@ -327,15 +327,15 @@ def makeNicePlots():
   print "overpose"
   print overpose
 
-  plt.imshow(reshapedWeightVector, cmap=plt.cm.gray)
+  plt.imshow(np.absolute(reshapedWeightVector), cmap=plt.cm.gray)
   plt.axis('off')
   plt.savefig('weightvectorreshaped.png', transparent=True)
 
-  plt.imshow(reshapedTestVec, cmap=plt.cm.gray)
+  plt.imshow(np.absolute(reshapedTestVec), cmap=plt.cm.gray)
   plt.axis('off')
   plt.savefig('reshapedTestVec.png', transparent=True)
 
-  plt.imshow(overpose, cmap=plt.cm.gray)
+  plt.imshow(np.absolute(overpose), cmap=plt.cm.gray)
   plt.axis('off')
   plt.savefig('overpose.png', transparent=True)
 
