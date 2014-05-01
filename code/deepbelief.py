@@ -440,6 +440,13 @@ class DBN(object):
 
       theano.printing.pydotprint(trainModel)
 
+      trainingErrorNoDropout = theano.function(
+            inputs=[miniBatchIndex],
+            outputs=T.mean(classifier.cost(y)),
+            givens={
+                x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+
     if validation:
     # Let's create the function that validates the model!
       validateModel = theano.function(inputs=[miniBatchIndex],
@@ -448,7 +455,7 @@ class DBN(object):
           x: validationData[miniBatchIndex * self.miniBatchValidateSize:(miniBatchIndex + 1) * self.miniBatchValidateSize],
           y: validationLabels[miniBatchIndex * self.miniBatchValidateSize:(miniBatchIndex + 1) * self.miniBatchValidateSize]})
 
-      self.trainModelPatience(trainModel, validateModel, maxEpochs)
+      self.trainModelPatience(trainModel, validateModel, maxEpochs, trainingErrorNoDropout)
     else:
       if validationData is not None or validationLabels is not None:
         raise Exception(("You provided validation data but requested a train method "
@@ -583,7 +590,7 @@ class DBN(object):
     print bestEpoch
 
 
-  def trainModelPatience(self, trainModel, validateModel, maxEpochs):
+  def trainModelPatience(self, trainModel, validateModel, maxEpochs, trainNoDropout):
     bestValidationError = np.inf
     epoch = 0
     doneTraining = False
@@ -591,6 +598,7 @@ class DBN(object):
 
     validationErrors = []
     trainingErrors = []
+    trainingErrorNoDropout = []
 
     try:
       while (epoch < maxEpochs) and not doneTraining:
@@ -608,6 +616,7 @@ class DBN(object):
 
           validationErrors += [meanValidation]
           trainingErrors += [trainingErrorBatch]
+          trainingErrorNoDropout +=  trainNoDropout(batchNr)
 
           if meanValidation < bestValidationError:
             # If we have improved well enough, then increase the patience
@@ -625,7 +634,7 @@ class DBN(object):
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
 
-    plotTrainingAndValidationErros(trainingErrors, validationErrors)
+    plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
 
     print "number of epochs"
     print epoch
