@@ -353,7 +353,7 @@ def buildSupervisedDataSet():
   dataKanade, labelsKanade = readKanade()
   dataMPie, labelsMPie = readMultiPie.read(multiPiePath)
 
-  data = np.vstack(dataKanade, dataMPie)
+  data = np.vstack((dataKanade, dataMPie))
   labels = labelsKanade + labelsMPie
   return data, labels
 
