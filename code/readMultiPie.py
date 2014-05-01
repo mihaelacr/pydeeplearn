@@ -19,11 +19,11 @@ def read(path, show=False):
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
             image = image.reshape(30,40).T
-            imgs += [image]
-            labels += [expression]
             if show:
               plt.imshow(image)
               plt.show()
+            imgs += [image.reshape(-1)]
+            labels += [expression]
   return np.array(imgs), labels
 
 if __name__ == '__main__':

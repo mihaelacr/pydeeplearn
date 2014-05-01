@@ -169,8 +169,8 @@ def rbmEmotions(big=False, reconstructRandom=False):
   Arguments:
     big: should the big or small images be used?
 """
-def deepbeliefEmotionsCV(big=False):
-  data, labels = buildSupervisedDataSet()
+def deepbeliefKanadeCV(big=False):
+  data, labels = readKanade(big, None)
 
   data, labels = shuffle(data, labels)
 
@@ -189,7 +189,7 @@ def deepbeliefEmotionsCV(big=False):
            (0.1, 0.1, 0.95), (0.1, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
            (0.1, 0.1, 0.99), (0.1, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
 
-  unsupervisedData = buildUnsupervisedDataSet()
+  unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
 
   kf = cross_validation.KFold(n=len(data), k=len(params))
   bestCorrect = 0
@@ -258,8 +258,8 @@ def deepbeliefEmotionsCV(big=False):
   print bestProbs
 
 
-def deepbeliefEmotions(big=False):
-  data, labels = buildSupervisedDataSet()
+def deepbeliefKanade(big=False):
+  data, labels = readKanade(big,None)
 
   data, labels = shuffle(data, labels)
 
@@ -306,7 +306,7 @@ def deepbeliefEmotions(big=False):
              visibleDropout=0.8,
              rbmVisibleDropout=1)
 
-  unsupervisedData = buildUnsupervisedDataSet()
+  unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
 
 
   net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
@@ -340,22 +340,33 @@ def deepbeliefEmotions(big=False):
   print correct  * 1.0/ len(test)
 
 
-def buildUnsupervisedDataSet():
+def buildUnsupervisedDataSetForKanadeLabelled():
   return np.vstack((
     # readCroppedYale(),
     readAttData(),
     readJaffe(),
     # readNottingham(),
-    readAberdeen()))
+    readAberdeen(),
+    readMultipie()[0]))
 
+# TODO: you need to be able to map the emotions between each other
+# but it might be the case that you won't get higher results which such a big
+#dataset
 def buildSupervisedDataSet():
-  multiPiePath = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   dataKanade, labelsKanade = readKanade()
-  dataMPie, labelsMPie = readMultiPie.read(multiPiePath)
+  dataMPie, labelsMPie = readMultipie()
+  print dataMPie.shape
+  print dataKanade.shape
 
   data = np.vstack((dataKanade, dataMPie))
   labels = labelsKanade + labelsMPie
   return data, labels
+
+
+def readMultipie():
+  multiPiePath = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
+  # multiPiePath = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+  return readMultiPie.read(multiPiePath)
 
 
 def readKanade(big=False, folds=None, equalize=args.equalize):
@@ -562,7 +573,7 @@ def readAberdeen():
                            isColoured=True)
 
 def main():
-  # deepbeliefEmotions()
+  # deepbeliefKanade()
 
   # readNottingham()
   # readCroppedYale()
@@ -573,9 +584,9 @@ def main():
   if args.rbm:
     rbmEmotions()
   elif args.cv:
-    deepbeliefEmotionsCV()
+    deepbeliefKanadeCV()
   elif args.db:
-    deepbeliefEmotions()
+    deepbeliefKanade()
 
 
 # You can also group the emotions into positive and negative to see
