@@ -326,8 +326,11 @@ def buildUnsupervisedDataSetForKanadeLabelled():
     readAberdeen(args.facedetection, args.equalize),
     readMultiPIE()[0]))
 
+def buildSupervisedDataSetForPIE():
+  return None
+
 # TODO: you need to be able to map the emotions between each other
-# but it might be the case that you won't get higher results which such a big
+# but it might be the case that ybuildSupervisedDataSetForPIEou won't get higher results which such a big
 #dataset
 def buildSupervisedDataSet():
   dataKanade, labelsKanade = readKanade()
@@ -387,7 +390,7 @@ def deepbeliefMultiPIE(big=False):
              visibleDropout=0.8,
              rbmVisibleDropout=1)
 
-  unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
+  unsupervisedData = buildSupervisedDataSetForPIE()
 
 
   net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
