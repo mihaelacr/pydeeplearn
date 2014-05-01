@@ -616,7 +616,7 @@ class DBN(object):
 
           validationErrors += [meanValidation]
           trainingErrors += [trainingErrorBatch]
-          trainingErrorNoDropout +=  trainNoDropout(batchNr)
+          trainingErrorNoDropout +=  [trainNoDropout(batchNr)]
 
           if meanValidation < bestValidationError:
             # If we have improved well enough, then increase the patience
