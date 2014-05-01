@@ -440,12 +440,12 @@ class DBN(object):
 
       theano.printing.pydotprint(trainModel)
 
-      trainingErrorNoDropout = theano.function(
-            inputs=[miniBatchIndex],
-            outputs=T.mean(classifier.cost(y)),
-            givens={
-                x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+    trainingErrorNoDropout = theano.function(
+          inputs=[miniBatchIndex],
+          outputs=T.mean(classifier.cost(y)),
+          givens={
+              x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+              y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
 
     if validation:
     # Let's create the function that validates the model!
