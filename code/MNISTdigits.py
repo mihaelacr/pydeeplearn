@@ -832,26 +832,26 @@ def main():
       args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display != 1:
     raise Exception("You have to decide on one main method to run")
 
-  makeNicePlots()
-  # # makeMNISTpic()
-  # if args.db:
-  #   deepbeliefMNIST()
-  # if args.pca:
-  #   pcaMain()
-  # if args.rbm:
-  #   rbmMain()
-  # if args.cv:
-  #   cvMNIST()
-  # if args.ann:
-  #   annMNIST()
-  # if args.cvgauss:
-  #   cvMNISTGaussian()
-  # if args.rbmGauss:
-  #   rbmMainGauss()
-  # if args.dbgauss:
-  #   deepbeliefMNISTGaussian()
-  # if args.display:
-  #   displayWeightsAndDbSample()
+  # makeNicePlots()
+  # makeMNISTpic()
+  if args.db:
+    deepbeliefMNIST()
+  if args.pca:
+    pcaMain()
+  if args.rbm:
+    rbmMain()
+  if args.cv:
+    cvMNIST()
+  if args.ann:
+    annMNIST()
+  if args.cvgauss:
+    cvMNISTGaussian()
+  if args.rbmGauss:
+    rbmMainGauss()
+  if args.dbgauss:
+    deepbeliefMNISTGaussian()
+  if args.display:
+    displayWeightsAndDbSample()
 
 if __name__ == '__main__':
   main()
