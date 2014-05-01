@@ -340,7 +340,7 @@ def buildSupervisedDataSet():
   return data, labels
 
 def deepbeliefMultiPIE(big=False):
-  data, labels = readMultiPIE(big,None)
+  data, labels = readMultiPIE()
 
   data, labels = shuffle(data, labels)
 
