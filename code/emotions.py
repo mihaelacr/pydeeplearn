@@ -326,11 +326,11 @@ def buildUnsupervisedDataSetForKanadeLabelled():
     readAberdeen(args.facedetection, args.equalize),
     readMultiPIE()[0]))
 
-def buildSupervisedDataSetForPIE():
+def buildUnsupervisedDataSetForPIE():
   return None
 
 # TODO: you need to be able to map the emotions between each other
-# but it might be the case that ybuildSupervisedDataSetForPIEou won't get higher results which such a big
+# but it might be the case that you won't get higher results which such a big
 #dataset
 def buildSupervisedDataSet():
   dataKanade, labelsKanade = readKanade()
@@ -390,7 +390,7 @@ def deepbeliefMultiPIE(big=False):
              visibleDropout=0.8,
              rbmVisibleDropout=1)
 
-  unsupervisedData = buildSupervisedDataSetForPIE()
+  unsupervisedData = buildUnsupervisedDataSetForPIE()
 
 
   net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
@@ -422,6 +422,96 @@ def deepbeliefMultiPIE(big=False):
 
   print "percentage correct"
   print correct  * 1.0/ len(test)
+
+def deepbeliefPIECV(big=False):
+  data, labels = readMultiPIE()
+
+  data, labels = shuffle(data, labels)
+
+  print "data.shape"
+  print data.shape
+  print "labels.shape"
+  print labels.shape
+
+  if args.relu:
+    activationFunction = relu
+  else:
+    activationFunction = T.nnet.sigmoid
+
+  # TODO: try boosting for CV in order to increase the number of folds
+  params =[(0.1, 0.1, 0.9), (0.1, 0.05, 0.9), (0.05, 0.01, 0.9), (0.05, 0.05, 0.9),
+           (0.1, 0.1, 0.95), (0.1, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
+           (0.1, 0.1, 0.99), (0.1, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
+
+  unsupervisedData = buildUnsupervisedDataSetForPIE()
+
+  kf = cross_validation.KFold(n=len(data), k=len(params))
+  bestCorrect = 0
+  bestProbs = 0
+
+  fold = 0
+  for train, test in kf:
+
+    trainData = data[train]
+    trainLabels = labels[train]
+
+    # TODO: this might require more thought
+    net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
+               binary=1-args.relu,
+               activationFunction=activationFunction,
+               unsupervisedLearningRate=params[fold][0],
+               supervisedLearningRate=params[fold][1],
+               momentumMax=params[fold][2],
+               nesterovMomentum=args.nesterov,
+               rbmNesterovMomentum=args.rbmnesterov,
+               rmsprop=args.rmsprop,
+               miniBatchSize=args.miniBatchSize,
+               hiddenDropout=0.5,
+               rbmHiddenDropout=0.5,
+               visibleDropout=0.8,
+               rbmVisibleDropout=1)
+
+    net.train(trainData, trainLabels,
+              maxEpochs=args.maxEpochs,
+              validation=args.validation,
+              unsupervisedData=unsupervisedData)
+
+    probs, predicted = net.classify(data[test])
+
+    actualLabels = labels[test]
+    correct = 0
+    errorCases = []
+
+    for i in xrange(len(test)):
+      print "predicted"
+      print "probs"
+      print probs[i]
+      print predicted[i]
+      print "actual"
+      actual = actualLabels[i]
+      print np.argmax(actual)
+      if predicted[i] == np.argmax(actual):
+        correct += 1
+      else:
+        errorCases.append(i)
+
+    print "correct for " + str(params[fold])
+    print correct
+
+    if bestCorrect < correct:
+      bestCorrect = correct
+      bestParam = params[fold]
+      bestProbs = correct * 1.0 / len(test)
+
+    fold += 1
+
+  print "bestParam"
+  print bestParam
+
+  print "bestProbs"
+  print bestProbs
+
+
 
 def main():
   if args.rbm:
