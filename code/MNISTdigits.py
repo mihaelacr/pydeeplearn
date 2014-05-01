@@ -316,12 +316,15 @@ def makeNicePlots():
 
   # reshape this vector to be 28, 28
   reshapedWeightVector = incomingWeightVector.reshape((28, 28))
+  print "reshapedWeightVector"
   print reshapedWeightVector
 
   reshapedTestVec = testVec.reshape((28, 28))
-  print reshapedWeightVector
+  print "reshapedTestVec"
+  print reshapedTestVec
 
   overpose = reshapedWeightVector * reshapedTestVec
+  print "overpose"
   print overpose
 
   plt.imshow(reshapedWeightVector, cmap=plt.cm.gray)
