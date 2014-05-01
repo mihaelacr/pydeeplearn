@@ -170,7 +170,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
     big: should the big or small images be used?
 """
 def deepbeliefEmotionsCV(big=False):
-  data, labels = buildSupervisedDataSet(big)
+  data, labels = buildSupervisedDataSet()
 
   data, labels = shuffle(data, labels)
 
@@ -259,7 +259,7 @@ def deepbeliefEmotionsCV(big=False):
 
 
 def deepbeliefEmotions(big=False):
-  data, labels = buildSupervisedDataSet(big, None)
+  data, labels = buildSupervisedDataSet()
 
   data, labels = shuffle(data, labels)
 
