@@ -20,6 +20,7 @@ import os
 import cv2
 
 import facedetection
+import readMultiPie
 
 
 import deepbelief as db
@@ -76,6 +77,7 @@ args = parser.parse_args()
 db.DEBUG = args.debug
 
 SMALL_SIZE = ((40, 30))
+
 
 
 def equalizeImg(x):
@@ -167,8 +169,8 @@ def rbmEmotions(big=False, reconstructRandom=False):
   Arguments:
     big: should the big or small images be used?
 """
-def deepBeliefKanadeCV(big=False):
-  data, labels = readKanade(big)
+def deepbeliefEmotionsCV(big=False):
+  data, labels = buildSupervisedDataSet(big)
 
   data, labels = shuffle(data, labels)
 
@@ -256,8 +258,8 @@ def deepBeliefKanadeCV(big=False):
   print bestProbs
 
 
-def deepBeliefKanade(big=False):
-  data, labels = readKanade(big, None)
+def deepbeliefEmotions(big=False):
+  data, labels = buildSupervisedDataSet(big, None)
 
   data, labels = shuffle(data, labels)
 
@@ -345,6 +347,15 @@ def buildUnsupervisedDataSet():
     readJaffe(),
     # readNottingham(),
     readAberdeen()))
+
+def buildSupervisedDataSet():
+  multiPiePath = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
+  dataKanade, labelsKanade = readKanade()
+  dataMPie, labelsMPie = readMultiPie.read(multiPiePath)
+
+  data = np.vstack(dataKanade, dataMPie)
+  labels = labelsKanade + labelsMPie
+  return data, labels
 
 
 def readKanade(big=False, folds=None, equalize=args.equalize):
@@ -551,7 +562,7 @@ def readAberdeen():
                            isColoured=True)
 
 def main():
-  # deepBeliefKanade()
+  # deepbeliefEmotions()
 
   # readNottingham()
   # readCroppedYale()
@@ -562,9 +573,9 @@ def main():
   if args.rbm:
     rbmEmotions()
   elif args.cv:
-    deepBeliefKanadeCV()
+    deepbeliefEmotionsCV()
   elif args.db:
-    deepBeliefKanade()
+    deepbeliefEmotions()
 
 
 # You can also group the emotions into positive and negative to see
