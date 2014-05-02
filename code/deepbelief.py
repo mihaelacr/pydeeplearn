@@ -796,15 +796,15 @@ class DBN(object):
     return activationsList
 
 
-def hiddenActivations(self, data):
-  dataInstacesConverted = theano.shared(np.asarray(dataInstaces, dtype=theanoFloat))
+  def hiddenActivations(self, data):
+    dataInstacesConverted = theano.shared(np.asarray(dataInstaces, dtype=theanoFloat))
 
-  classifyFunction = theano.function(
-            inputs=[],
-            outputs=self.classifier.output,
-            updates={},
-            givens={self.x: dataInstacesConverted})
+    classifyFunction = theano.function(
+              inputs=[],
+              outputs=self.classifier.output,
+              updates={},
+              givens={self.x: dataInstacesConverted})
 
-  classifyFunction()
+    classifyFunction()
 
-  return self.classifier.lastHiddenActivations
+    return self.classifier.lastHiddenActivations
