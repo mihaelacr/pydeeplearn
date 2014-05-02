@@ -173,6 +173,44 @@ def makeMNISTpic():
   # plt.show()
 
 
+def getMissclassifiedDigits():
+  # First let's display the nets layer weights:
+  with open(args.netFile, "rb") as f:
+    dbnNet = pickle.load(f)
+
+  testVectors, testLabels =\
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+
+  testVectors = testVectors / 255.0
+
+  _, predictedLabels = dbnNet.classify(testVectors)
+
+  missclassified = []
+  actualLabels = []
+  wrongPredictedLabels = []
+  count = 0
+  i = 0
+  while  count < 10:
+    if not predictedLabels[i] == testLabels[i]:
+      missclassified += [testVectors[i].reshape((28, 28))]
+      actualLabels += [testLabels[i]]
+      wrongPredictedLabels += predictedLabels[i]
+      count += 1
+
+    i+= 1
+
+  misspreditctedimg = np.vstack(missclassified)
+  plt.imshow(img, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.savefig('misspredictedMNISTdigits.png', transparent=True)
+
+
+  print "predicted"
+  print wrongPredictedLabels
+
+  print "actual"
+  print actualLabels
+
 def displayWeightsAndDbSample():
   # First let's display the nets layer weights:
   with open(args.netFile, "rb") as f:
