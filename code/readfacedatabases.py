@@ -263,6 +263,3 @@ if __name__ == '__main__':
   path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   readMultiPIE(path, show=True)
 
-
-
-

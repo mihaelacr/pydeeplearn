@@ -138,6 +138,10 @@ def plotTrainingAndValidationErros(trainingErrors, validationErrors):
     print "validation error plot not made"
     print "error ", e
 
+    # If we had an error we are either not sshed with -X
+    # or we are in a detached screen session.
+    # so turn the io off and save the pic
+    plt.ioff()
     plt.plot(trainingErrors, label="Training error")
     plt.plot(validationErrors, label="Validation error")
     plt.xlabel('Epoch')
