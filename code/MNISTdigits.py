@@ -624,7 +624,7 @@ def svmMNIST():
     dbnNet = pickle.load(f)
 
   trainVectors, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, bTrain=True, path="MNIST")
 
   testVectors, testLabels =\
       readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
