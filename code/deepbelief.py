@@ -771,11 +771,11 @@ class DBN(object):
     activationsList = []
 
     # You have to do it  in decreasing order
-    for i in xrange(nrRbms -1):
+    for i in xrange(nrRbms):
       # If the network can be initialized from the previous one,
       # do so, by using the transpose of the already trained net
-      weigths = self.classificationWeights[i-1].T
-      biases = np.array([self.generativeBiases[i-1], self.biases[i-1]])
+      weigths = self.classificationWeights[i].T
+      biases = np.array([self.generativeBiases[i], self.biases[i]])
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                       learningRate=self.unsupervisedLearningRate,
                       binary=self.binary,
