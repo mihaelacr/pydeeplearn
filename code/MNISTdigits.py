@@ -12,6 +12,8 @@ import ann
 import utils
 import PCA
 
+
+from sklearn import svm
 from sklearn import cross_validation
 
 from common import *
@@ -614,6 +616,29 @@ def annMNIST():
     f = open(args.netFile, "wb")
     pickle.dump(net, f)
     f.close()
+
+def svmMNIST():
+  with open(args.netFile, "rb") as f:
+    dbnNet = pickle.load(f)
+
+  trainVectors, trainLabels =\
+      readmnist.read(0, training, bTrain=True, path="MNIST")
+
+  testVectors, testLabels =\
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+
+  trainingScaledVectors = trainVectors / 255.0
+  testingScaledVectors = testVectors / 255.0
+
+  classifier = svm.SVC()
+
+  trainHiddenRepresentations = dbnNet.getHiddenActivations(trainingScaledVectors)[-1]
+  classifier.fit(trainHiddenRepresentations, trainLabels)
+
+  testHiddenRepresentation = dbnNet.getHiddenActivations(testingScaledVectors)[-1]
+  predicted = clf.predict(testHiddenRepresentation)
+
+  print getClassificationError(predicted, testLabels)
 
 
 def deepbeliefMNIST():
