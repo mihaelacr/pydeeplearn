@@ -797,7 +797,7 @@ class DBN(object):
 
 
   def hiddenActivations(self, data):
-    dataInstacesConverted = theano.shared(np.asarray(dataInstaces, dtype=theanoFloat))
+    dataInstacesConverted = theano.shared(np.asarray(data, dtype=theanoFloat))
 
     classifyFunction = theano.function(
               inputs=[],
