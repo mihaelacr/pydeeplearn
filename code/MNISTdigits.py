@@ -634,13 +634,22 @@ def svmMNIST():
 
   classifier = svm.SVC()
 
-  trainHiddenRepresentations = dbnNet.getHiddenActivations(trainingScaledVectors)[-1]
+  # trainHiddenRepresentations = dbnNet.getHiddenActivations(trainingScaledVectors)[-1]
+  # classifier.fit(trainHiddenRepresentations, trainLabels)
+
+  # testHiddenRepresentation = dbnNet.getHiddenActivations(testingScaledVectors)[-1]
+  # predicted = classifier.predict(testHiddenRepresentation)
+
+  # print getClassificationError(predicted, testLabels)
+
+  trainHiddenRepresentations = dbnNet.hiddenActivations(trainingScaledVectors)
   classifier.fit(trainHiddenRepresentations, trainLabels)
 
-  testHiddenRepresentation = dbnNet.getHiddenActivations(testingScaledVectors)[-1]
+  testHiddenRepresentation = dbnNet.hiddenActivations(testingScaledVectors)
   predicted = classifier.predict(testHiddenRepresentation)
 
   print getClassificationError(predicted, testLabels)
+
 
 
 def deepbeliefMNIST():
