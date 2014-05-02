@@ -208,8 +208,8 @@ def displayWeightsAndDbSample():
   activations = activationList[-1]
 
   nice = []
-  for action in activationList:
-    reshaped = map(lambda x: x.reshape(25, 40), activations)
+  for activation in activationList:
+    reshaped = map(lambda x: x.reshape(25, 40), activation)
     reshaped = np.hstack(reshaped)
     nice += [reshaped]
 
