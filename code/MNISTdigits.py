@@ -205,7 +205,7 @@ def displayWeightsAndDbSample():
   testVectors = testVectors / 255.0
   activationList = dbnNet.getHiddenActivations(testVectors)
 
-  activations = np.hstack(activationList[-1])
+  activations = activationList[-1]
   reshaped = map(lambda x: x.reshape(20, 50), activations)
 
   plt.imshow(reshaped, cmap=plt.cm.gray)
