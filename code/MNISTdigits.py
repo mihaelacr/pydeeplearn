@@ -199,6 +199,8 @@ def getMissclassifiedDigits():
 
     i+= 1
 
+  print "worked on " + str(i) + "examples before finding 10 wrong"
+
   misspreditctedimg = np.hstack(missclassified)
   plt.imshow(misspreditctedimg, cmap=plt.cm.gray)
   plt.axis('off')
