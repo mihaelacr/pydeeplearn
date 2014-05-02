@@ -132,6 +132,7 @@ class ClassifierBatch(object):
       linearSum = T.dot(currentLayerValues, w) + b
       currentLayerValues = activationFunction(linearSum)
 
+    self.lastHiddenActivations = currentLayerValues
     # Last layer operations, no dropout in the output
     w = self.classificationWeights[nrWeights - 1]
     b = biases[nrWeights - 1]
@@ -793,3 +794,17 @@ class DBN(object):
       activationsList += [activations]
 
     return activationsList
+
+
+def hiddenActivations(self, data):
+  dataInstacesConverted = theano.shared(np.asarray(dataInstaces, dtype=theanoFloat))
+
+  classifyFunction = theano.function(
+            inputs=[],
+            outputs=self.classifier.output,
+            updates={},
+            givens={self.x: dataInstacesConverted})
+
+  classifyFunction()
+
+  return self.classifier.lastHiddenActivations
