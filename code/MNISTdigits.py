@@ -638,7 +638,7 @@ def svmMNIST():
   classifier.fit(trainHiddenRepresentations, trainLabels)
 
   testHiddenRepresentation = dbnNet.getHiddenActivations(testingScaledVectors)[-1]
-  predicted = clf.predict(testHiddenRepresentation)
+  predicted = classifier.predict(testHiddenRepresentation)
 
   print getClassificationError(predicted, testLabels)
 
