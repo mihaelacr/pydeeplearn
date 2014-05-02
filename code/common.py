@@ -168,6 +168,7 @@ def plotTraningError(trainingErrors):
     print "plot not made"
     print "error ", e
 
+    plt.ioff()
     plt.plot(trainingErrors, label="Training error")
     plt.xlabel('Epoch')
     plt.ylabel('Cross entropy average error')
