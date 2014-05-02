@@ -26,6 +26,8 @@ parser.add_argument('--pca', dest='pca',action='store_true', default=False,
                     help=("if true, the code for running PCA on the data is run"))
 parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
                     help=("if true, the code for traning an rbm on the data is run"))
+parser.add_argument('--rbmPCD', dest='rbmPCD',action='store_true', default=False,
+                    help=("if true, the code for traning an rbm on the data is run"))
 parser.add_argument('--db', dest='db',action='store_true', default=False,
                     help=("if true, the code for traning a deepbelief net on the"
                           "data is run"))
@@ -79,19 +81,22 @@ def rbmMain(reconstructRandom=True):
 
 
   # Show the initial image first
-  recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
   plt.show()
 
   # Show the reconstruction
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
-  plt.show()
+  plt.axis('off')
+  plt.savefig('1.png', transparent=True)
+  # plt.show()
 
   # Show the weights and their form in a tile fashion
   # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
-  plt.show()
+  plt.axis('off')
+  plt.savefig('weights.png', transparent=True)
+
   print "done"
 
   if args.save:
@@ -102,9 +107,9 @@ def rbmMain(reconstructRandom=True):
 
 def rbmMainPCD():
   trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
   testingVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=[2],bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None,bTrain=False, path="MNIST")
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -131,13 +136,18 @@ def rbmMainPCD():
   # Reconstruct a training image and see that it actually looks like a digit
   test = testingScaledVectors[0,:]
 
+  plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
+  plt.show()
+
   recon = net.reconstruct(test.reshape(1, test.shape[0]))
   plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
   plt.show()
 
   # Show the weights and their form in a tile fashion
   plt.imshow(t, cmap=plt.cm.gray)
-  plt.show()
+  plt.axis('off')
+  plt.savefig('weightsPCDall.png', transparent=True)
+
   print "done"
 
   if args.save:
@@ -294,15 +304,17 @@ def pcaMain():
   pcaOnMnist(train, dimension=100)
 
 def main():
-  if args.db + args.pca + args.rbm != 1:
+  if args.db + args.pca + args.rbm + args.rbmPCD != 1:
     raise Exception("You decide on one main method to run")
 
   if args.db:
     deepbeliefMNIST()
   if args.pca:
     pcaMain()
-  if args.rbm:
+  if args.rbmPCD:
     rbmMainPCD()
+  if args.rbm:
+    rbmMain()
 
 
 if __name__ == '__main__':

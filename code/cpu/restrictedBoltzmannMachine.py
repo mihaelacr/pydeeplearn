@@ -265,7 +265,7 @@ def PCD(data, biases, weights, activationFun, dropout,
   # dropoutData = data * on
   dropoutData = data
 
-  epsilon = 0.001
+  epsilon = 0.01
   decayFactor = 0.0002
   weightDecay = True
   reconstructionStep = 50
