@@ -200,7 +200,7 @@ def getMissclassifiedDigits():
     i+= 1
 
   misspreditctedimg = np.vstack(missclassified)
-  plt.imshow(img, cmap=plt.cm.gray)
+  plt.imshow(misspreditctedimg, cmap=plt.cm.gray)
   plt.axis('off')
   plt.savefig('misspredictedMNISTdigits.png', transparent=True)
 
