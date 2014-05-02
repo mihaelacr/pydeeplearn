@@ -302,7 +302,7 @@ def main():
   if args.pca:
     pcaMain()
   if args.rbm:
-    rbmMain()
+    rbmMainPCD()
 
 
 if __name__ == '__main__':
