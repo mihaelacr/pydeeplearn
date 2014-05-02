@@ -190,7 +190,7 @@ def getMissclassifiedDigits():
   wrongPredictedLabels = []
   count = 0
   i = 0
-  while  count < 10:
+  while count < 10 and i < args.testSize:
     if not predictedLabels[i] == testLabels[i]:
       missclassified += [testVectors[i].reshape((28, 28))]
       actualLabels += [testLabels[i]]
@@ -199,11 +199,10 @@ def getMissclassifiedDigits():
 
     i+= 1
 
-  misspreditctedimg = np.vstack(missclassified)
+  misspreditctedimg = np.hstack(missclassified)
   plt.imshow(misspreditctedimg, cmap=plt.cm.gray)
   plt.axis('off')
   plt.savefig('misspredictedMNISTdigits.png', transparent=True)
-
 
   print "predicted"
   print wrongPredictedLabels
