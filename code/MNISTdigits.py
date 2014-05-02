@@ -199,6 +199,16 @@ def displayWeightsAndDbSample():
   plt.axis('off')
   plt.savefig('samples.png', transparent=True)
 
+  testVectors, testLabels =\
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+
+  activationList = dbnNet.getHiddenActivations(testVectors)
+
+  reshaped = np.hstack(activationList[-1])
+  plt.imshow(reshaped, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.savefig('activations.png', transparent=True)
+
 
 def rbmMainGauss(reconstructRandom=False):
   trainVectors, trainLabels =\
