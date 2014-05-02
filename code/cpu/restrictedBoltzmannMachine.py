@@ -11,6 +11,8 @@ from common import *
 EXPENSIVE_CHECKS_ON = False
 
 # TODO: different learning rates for weights and biases
+# TODO: nesterov method for momentum
+# TODO: rmsprop
 """
  Represents a RBM
 """
@@ -34,9 +36,9 @@ class RBM(object):
     if not self.initialized:
       self.weights = self.initializeWeights(self.nrVisible, self.nrHidden)
       self.biases = self.intializeBiases(data, self.nrHidden)
-      self.data = data
-    else:
-      self.data = np.concatenate(self.data, data)
+      # self.data = data
+    # else:
+      # self.data = np.concatenate(self.data, data)
 
     self.biases, self.weights = self.trainingFunction(data,
                                                       self.biases,
@@ -251,5 +253,125 @@ def updateLayer(layer, otherLayerValues, biases, weights, activationFun,
 # Another training algorithm. Slower than Contrastive divergence, but
 # gives better results. Not used in practice as it is too slow.
 # This is what Hinton said but it is not OK due to NIPS paper
-def PCD():
-  pass
+# This is huge code copy paste but keep it like this for now
+def PCD(data, biases, weights, activationFun, dropout,
+                          visibleDropout, miniBatchSize=10):
+  N = len(data)
+  epochs = N / miniBatchSize
+
+  # sample the probabily distributions allow you to chose from the
+  # visible units for dropout
+  # on = sample(visibleDropout, data.shape)
+  # dropoutData = data * on
+  dropoutData = data
+
+  epsilon = 0.001
+  decayFactor = 0.0002
+  weightDecay = True
+  reconstructionStep = 50
+
+  oldDeltaWeights = np.zeros(weights.shape)
+  oldDeltaVisible = np.zeros(biases[0].shape)
+  oldDeltaHidden = np.zeros(biases[1].shape)
+
+  batchLearningRate = epsilon / miniBatchSize
+  print "batchLearningRate"
+  print batchLearningRate
+
+  # make this an argument or something
+  nrFantasyParticles = miniBatchSize
+
+  fantVisible = np.random.randint(2, size=(nrFantasyParticles, weights.shape[0]))
+  fantHidden = np.random.randint(2, size=(nrFantasyParticles, weights.shape[1]))
+
+  fantasyParticles = (fantVisible, fantHidden)
+  steps = 10
+
+  for epoch in xrange(epochs):
+    batchData = dropoutData[epoch * miniBatchSize: (epoch + 1) * miniBatchSize, :]
+    if epoch < epochs / 100:
+      momentum = 0.5
+    else:
+      momentum = 0.95
+
+    if EXPENSIVE_CHECKS_ON:
+      if epoch % reconstructionStep == 0:
+        print "reconstructionError"
+        print reconstructionError(biases, weights, data, activationFun)
+
+    print fantasyParticles[0]
+    print fantasyParticles[1]
+    weightsDiff, visibleBiasDiff, hiddenBiasDiff, fantasyParticles =\
+            modelAndDataSampleDiffsPCD(batchData, biases, weights,
+            activationFun, dropout, steps, fantasyParticles)
+
+    # Update the weights
+    # data - model
+    # Positive phase - negative
+    # Weight decay factor
+    deltaWeights = (batchLearningRate * weightsDiff
+                    - epsilon * weightDecay * decayFactor * weights)
+
+    deltaVisible = batchLearningRate * visibleBiasDiff
+    deltaHidden  = batchLearningRate * hiddenBiasDiff
+
+    deltaWeights += momentum * oldDeltaWeights
+    deltaVisible += momentum * oldDeltaVisible
+    deltaHidden += momentum * oldDeltaHidden
+
+    oldDeltaWeights = deltaWeights
+    oldDeltaVisible = deltaVisible
+    oldDeltaHidden = deltaHidden
+
+    # Update the weighths
+    weights += deltaWeights
+    # Update the visible biases
+    biases[0] += deltaVisible
+
+    # Update the hidden biases
+    biases[1] += deltaHidden
+
+  print reconstructionError(biases, weights, data, activationFun)
+  return biases, weights
+
+
+# Same modelAndDataSampleDiff but for persistent contrastive divergence
+# First run it without dropout
+def modelAndDataSampleDiffsPCD(batchData, biases, weights, activationFun,
+                            dropout, steps, fantasyParticles):
+  # Reconstruct the hidden weigs from the data
+  hidden = updateLayer(Layer.HIDDEN, batchData, biases, weights, activationFun,
+                       binary=True)
+
+  # Chose the units to be active at this point
+  # different sets for each element in the mini batches
+  # on = sample(dropout, hidden.shape)
+  # dropoutHidden = on * hidden
+  # hiddenReconstruction = dropoutHidden
+
+  for i in xrange(steps):
+    visibleReconstruction = updateLayer(Layer.VISIBLE, fantasyParticles[1],
+                                        biases, weights, activationFun,
+                                        binary=False)
+    hiddenReconstruction = updateLayer(Layer.HIDDEN, visibleReconstruction,
+                                       biases, weights, activationFun,
+                                       binary=True)
+
+    # sample the hidden units active (for dropout)
+    # hiddenReconstruction = hiddenReconstruction * on
+
+  fantasyParticles = (visibleReconstruction, hiddenReconstruction)
+
+  # here it should be hidden * on - hiddenReconstruction
+  # also below in the hidden bias
+  weightsDiff = np.dot(batchData.T, hidden) -\
+                np.dot(visibleReconstruction.T, hiddenReconstruction)
+  assert weightsDiff.shape == weights.shape
+
+  visibleBiasDiff = np.sum(batchData - visibleReconstruction, axis=0)
+  assert visibleBiasDiff.shape == biases[0].shape
+
+  hiddenBiasDiff = np.sum(hidden - hiddenReconstruction, axis=0)
+  assert hiddenBiasDiff.shape == biases[1].shape
+
+  return weightsDiff, visibleBiasDiff, hiddenBiasDiff, fantasyParticles
