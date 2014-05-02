@@ -206,17 +206,23 @@ def displayWeightsAndDbSample():
   activationList = dbnNet.getHiddenActivations(testVectors)
 
   activations = activationList[-1]
-  reshaped = map(lambda x: x.reshape(25, 40), activations)
-  reshaped = np.hstack(reshaped)
+
+  nice = []
+  for action in activationList:
+    reshaped = map(lambda x: x.reshape(25, 40), activations)
+    reshaped = np.hstack(reshaped)
+    nice += [reshaped]
+
+  nice = np.vstack(nice)
 
   plt.imshow(activations[0].reshape(25,40), cmap=plt.cm.gray)
   plt.axis('off')
   plt.savefig('activationsingle.png', transparent=True)
 
 
-  plt.imshow(reshaped, cmap=plt.cm.gray)
+  plt.imshow(nice, cmap=plt.cm.gray)
   plt.axis('off')
-  plt.savefig('activations.png', transparent=True)
+  plt.savefig('allactivations.png', transparent=True)
 
 
 def rbmMainGauss(reconstructRandom=False):
