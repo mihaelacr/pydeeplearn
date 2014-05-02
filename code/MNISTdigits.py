@@ -207,6 +207,8 @@ def displayWeightsAndDbSample():
 
   activations = activationList[-1]
   reshaped = map(lambda x: x.reshape(20, 50), activations)
+  reshaped = np.hstack(reshaped)
+
 
   plt.imshow(reshaped, cmap=plt.cm.gray)
   plt.axis('off')
