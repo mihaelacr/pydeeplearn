@@ -100,6 +100,52 @@ def rbmMain(reconstructRandom=True):
     pickle.dump(net, f)
 
 
+def rbmMainPCD():
+  trainVectors, trainLabels =\
+      readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
+  testingVectors, testLabels =\
+      readmnist.read(0, args.testSize, digits=[2],bTrain=False, path="MNIST")
+
+  trainingScaledVectors = trainVectors / 255.0
+  testingScaledVectors = testingVectors / 255.0
+
+  # Train the network
+  if args.train:
+    # The number of hidden units is taken from a deep learning tutorial
+    # The data are the values of the images have to be normalized before being
+    # presented to the network
+    nrVisible = len(trainingScaledVectors[0])
+    nrHidden = 500
+    # use 1 dropout to test the rbm for now
+    # net = rbm.RBM(nrVisible, nrHidden, rbm.contrastiveDivergence, 1, 1)
+    net = rbm.RBM(nrVisible, nrHidden, rbm.PCD, 1, 1)
+    net.train(trainingScaledVectors)
+    t = visualizeWeights(net.weights.T, (28,28), (10,10))
+  else:
+    # Take the saved network and use that for reconstructions
+    f = open(args.netFile, "rb")
+    t = pickle.load(f)
+    net = pickle.load(f)
+    f.close()
+
+  # Reconstruct a training image and see that it actually looks like a digit
+  test = testingScaledVectors[0,:]
+
+  recon = net.reconstruct(test.reshape(1, test.shape[0]))
+  plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
+  plt.show()
+
+  # Show the weights and their form in a tile fashion
+  plt.imshow(t, cmap=plt.cm.gray)
+  plt.show()
+  print "done"
+
+  if args.save:
+    f = open(args.netFile, "wb")
+    pickle.dump(t, f)
+    pickle.dump(net, f)
+
+
 def shuffle(data, labels):
   indexShuffle = np.random.permutation(len(data))
   shuffledData = np.array([data[i] for i in indexShuffle])
