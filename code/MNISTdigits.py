@@ -202,6 +202,7 @@ def displayWeightsAndDbSample():
   testVectors, testLabels =\
       readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
 
+  testVectors = testVectors / 255.0
   activationList = dbnNet.getHiddenActivations(testVectors)
 
   reshaped = np.hstack(activationList[-1])
