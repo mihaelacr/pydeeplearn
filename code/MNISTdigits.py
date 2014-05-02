@@ -194,7 +194,7 @@ def getMissclassifiedDigits():
     if not predictedLabels[i] == testLabels[i]:
       missclassified += [testVectors[i].reshape((28, 28))]
       actualLabels += [testLabels[i]]
-      wrongPredictedLabels += predictedLabels[i]
+      wrongPredictedLabels += [predictedLabels[i]]
       count += 1
 
     i+= 1
