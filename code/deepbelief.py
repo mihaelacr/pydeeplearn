@@ -112,6 +112,8 @@ class MiniBatchTrainer(object):
   def cost(self, y):
     return T.nnet.categorical_crossentropy(self.output, y)
 
+
+
 class ClassifierBatch(object):
 
   # TODO: investigate a bit the sharing thing
@@ -121,7 +123,7 @@ class ClassifierBatch(object):
 
     self.input = input
 
-    self.classificationWeights = visibleDropoutMultiplier * weights[0]
+    self.classificationWeights = [visibleDropoutMultiplier * weights[0]]
     self.classificationWeights += map(lambda x: x * hiddenDropoutMultiplier, weights[1:])
 
     nrWeights = nrLayers - 1
