@@ -166,9 +166,9 @@ def deepbeliefKanadeCV(big=False):
     activationFunction = T.nnet.sigmoid
 
   # TODO: try boosting for CV in order to increase the number of folds
-  params =[(0.1, 0.1, 0.9), (0.1, 0.05, 0.9), (0.05, 0.01, 0.9), (0.05, 0.05, 0.9),
-           (0.1, 0.1, 0.95), (0.1, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
-           (0.1, 0.1, 0.99), (0.1, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
+  params =[(0.1, 0.1, 0.9), (0.1,  0.5, 0.9),  (0.5, 0.1, 0.9),  (0.5, 0.5, 0.9),
+           (0.1, 0.1, 0.95), (0.1, 0.5, 0.95), (0.5, 0.1, 0.95), (0.5, 0.5, 0.95),
+           (0.1, 0.1, 0.99), (0.1, 0.5, 0.99), (0.5, 0.1, 0.99), (0.5, 0.5, 0.99)]
 
   unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
 
