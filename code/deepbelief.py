@@ -116,11 +116,13 @@ class ClassifierBatch(object):
 
   # TODO: investigate a bit the sharing thing
   def __init__(self, input, nrLayers, weights, biases,
-               dropoutMultiplier,
+               visibleDropoutMultiplier, hiddenDropoutMultiplier,
                activationFunction, classificationActivationFunction):
 
     self.input = input
-    self.classificationWeights = map(lambda x: x * dropoutMultiplier, weights)
+
+    self.classificationWeights = visibleDropoutMultiplier * weights[0]
+    self.classificationWeights += map(lambda x: x * hiddenDropoutMultiplier, weights[1:])
 
     nrWeights = nrLayers - 1
 
@@ -388,7 +390,8 @@ class DBN(object):
     classifier = ClassifierBatch(input=x, nrLayers=self.nrLayers,
                                  activationFunction=self.activationFunction,
                                  classificationActivationFunction=self.classificationActivationFunction,
-                                 dropoutMultiplier=self.hiddenDropout,
+                                 visibleDropoutMultiplier=self.visibleDropout,
+                                 hiddenDropoutMultiplier=self.hiddenDropout,
                                  weights=batchTrainer.weights,
                                  biases=batchTrainer.biases)
 
