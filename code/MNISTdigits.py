@@ -11,7 +11,7 @@ import deepbelief as db
 import ann
 import utils
 import PCA
-
+import svm
 
 from sklearn import cross_validation
 
