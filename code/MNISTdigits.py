@@ -13,7 +13,6 @@ import utils
 import PCA
 
 
-from sklearn import svm
 from sklearn import cross_validation
 
 from common import *
@@ -632,28 +631,8 @@ def svmMNIST():
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testVectors / 255.0
 
-  classifier = svm.SVC()
-
-  # trainHiddenRepresentations = dbnNet.getHiddenActivations(trainingScaledVectors)[-1]
-  # classifier.fit(trainHiddenRepresentations, trainLabels)
-
-  # testHiddenRepresentation = dbnNet.getHiddenActivations(testingScaledVectors)[-1]
-  # predicted = classifier.predict(testHiddenRepresentation)
-
-  # print getClassificationError(predicted, testLabels)
-
-  trainHiddenRepresentations = dbnNet.hiddenActivations(trainingScaledVectors)
-
-  trainHiddenRepresentations = scale(trainHiddenRepresentations)
-  classifier.fit(trainHiddenRepresentations, trainLabels)
-
-  testHiddenRepresentation = scale(testHiddenRepresentation)
-  testHiddenRepresentation = dbnNet.hiddenActivations(testingScaledVectors)
-  predicted = classifier.predict(testHiddenRepresentation)
-
-  print getClassificationError(predicted, testLabels)
-
-
+  svm.SVMCV(dbnNet, trainingScaledVectors, testingScaledVectors,
+                            trainLabels, testLabels)
 
 def deepbeliefMNIST():
   training = args.trainSize

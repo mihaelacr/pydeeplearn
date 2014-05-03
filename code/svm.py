@@ -1,4 +1,4 @@
-from sklearn import svm
+from sklearn import svm, grid_search
 
 from common import *
 
@@ -25,5 +25,18 @@ def svmOnHiddenActivations(dbnNet, train, test, trainLabels, testLabels):
   print getClassificationError(predicted, testLabels)
 
 
-def SVMCV():
-  pass
+def SVMCV(dbnNet, train, trainLabels, test, testLabels):
+  trainHiddenRepresentations = dbnNet.hiddenActivations(train)
+  trainHiddenRepresentations = scale(trainHiddenRepresentations)
+
+  trainHiddenRepresentations = scale(trainHiddenRepresentations)
+  parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
+  classifier = svm.SVC()
+  gridseach = grid_search.GridSearchCV(classifier, parameters)
+  gridseach.fit(train, trainLabels)
+
+  testHiddenRepresentation = dbnNet.hiddenActivations(test)
+  testHiddenRepresentation = scale(testHiddenRepresentation)
+  predicted = gridseach.predict(testHiddenRepresentation)
+
+  print getClassificationError(predicted, testLabels)
