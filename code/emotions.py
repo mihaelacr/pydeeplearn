@@ -430,6 +430,10 @@ def deepbeliefPIECV(big=False):
 
   data, labels = shuffle(data, labels)
 
+  first = data[0].reshape(SMALL_SIZE)
+  plt.imshow(first)
+  plt.show()
+
   print "data.shape"
   print data.shape
   print "labels.shape"

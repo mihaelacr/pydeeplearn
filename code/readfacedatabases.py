@@ -70,6 +70,7 @@ def readMultiPIE(show=False):
               plt.show()
             imgs += [image.reshape(-1)]
             labels += [expression]
+
   return np.array(imgs), labelsToVectors(labels, 6)
 
 def readKanade(big=False, folds=None, equalize=False):
