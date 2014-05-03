@@ -124,7 +124,7 @@ class ReconstructerBatch(object):
       return [hiddenActivations, visibleRec]
 
     [hiddenSeq, visibleSeq], updates = theano.scan(OneCDStep,
-                          outputs_info=[None, droppedOutVisible],
+                          outputs_info=[None, self.visible],
                           n_steps=self.cdSteps)
 
     self.updates = updates
