@@ -643,8 +643,11 @@ def svmMNIST():
   # print getClassificationError(predicted, testLabels)
 
   trainHiddenRepresentations = dbnNet.hiddenActivations(trainingScaledVectors)
+
+  trainHiddenRepresentations = scale(trainHiddenRepresentations)
   classifier.fit(trainHiddenRepresentations, trainLabels)
 
+  testHiddenRepresentation = scale(testHiddenRepresentation)
   testHiddenRepresentation = dbnNet.hiddenActivations(testingScaledVectors)
   predicted = classifier.predict(testHiddenRepresentation)
 
