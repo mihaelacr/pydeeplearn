@@ -106,10 +106,12 @@ class ReconstructerBatch(object):
     self.hiddenWeights = weights.T * visibleDropout
     self.visibleWeights = weights * hiddenDropout
 
+    hiddenBias = biases[1]
+    visibleBias = biases[0]
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneCDStep(visibleSample):
-      linearSum = T.dot(visibleSample, self.visibleWeights) + self.biasHidden
+      linearSum = T.dot(visibleSample, self.visibleWeights) + hiddenBias
       hiddenActivations = hiddenActivationFunction(linearSum)
       # Sample only for stochastic binary units
       if self.binary:
@@ -119,7 +121,7 @@ class ReconstructerBatch(object):
       else:
         hidden = hiddenActivations
 
-      linearSum = T.dot(hidden, self.hiddenWeights) + self.biasVisible
+      linearSum = T.dot(hidden, self.hiddenWeights) + visibleBias
       visibleRec = visibleActivationFunction(linearSum)
       return [hiddenActivations, visibleRec]
 
@@ -133,7 +135,7 @@ class ReconstructerBatch(object):
     self.visibleReconstruction = visibleSeq[-1]
 
     # Do not sample for the last one, in order to get less sampling noise
-    hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
+    hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.hiddenWeights) + hiddenBias)
 
     self.hiddenReconstruction = hiddenRec
 
