@@ -327,8 +327,8 @@ def buildUnsupervisedDataSetForKanadeLabelled():
     readAttData(args.equalize),
     readJaffe(args.facedetection, args.equalize),
     # readNottingham(),
-    readAberdeen(args.facedetection, args.equalize)))
-    # readMultiPIE()[0]))
+    readAberdeen(args.facedetection, args.equalize),
+    readMultiPIE()[0]))
 
 def buildUnsupervisedDataSetForPIE():
   return None
