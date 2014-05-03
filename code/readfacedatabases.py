@@ -162,7 +162,7 @@ def readCroppedYale(equalize):
 
   return np.array(images)
 
-def readAttData(equalize):
+def readAttData(equalize=False):
   PATH = "/data/mcr10/att"
   # PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
 
@@ -181,7 +181,7 @@ def readAttData(equalize):
 
   return np.array(images)
 
-def readCropEqualize(path, extension, doRecognition, equalize=True,
+def readCropEqualize(path, extension, doRecognition, equalize=False,
                      isColoured=False):
   dirforres = "detection-cropped"
   pathForCropped = os.path.join(path, dirforres)
