@@ -61,12 +61,12 @@ def readMultiPIE(show=False):
   labels = []
   for subject in xrange(147):
     for pose in xrange(5):
-      for expression in xrange(6):
+      for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
             image = image.reshape(30,40).T
             if show:
-              plt.imshow(image)
+              plt.imshow(image, cmap=plt.cm.gray)
               plt.show()
             imgs += [image.reshape(-1)]
             labels += [expression]
@@ -261,6 +261,6 @@ def readAberdeen(detectFaces, equalize):
                            isColoured=True)
 
 if __name__ == '__main__':
-  path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
-  readMultiPIE(path, show=True)
+  # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+  readMultiPIE(show=True)
 

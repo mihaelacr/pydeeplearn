@@ -349,6 +349,8 @@ def buildSupervisedDataSet():
 def deepbeliefMultiPIE(big=False):
   data, labels = readMultiPIE()
 
+
+
   data, labels = shuffle(data, labels)
 
   print "data.shape"
@@ -431,6 +433,14 @@ def deepbeliefPIECV(big=False):
 
   data, labels = shuffle(data, labels)
 
+  # for d, l in zip(data, labels):
+  #   plt.imshow(d.reshape(SMALL_SIZE), cmap=plt.cm.gray)
+  #   plt.show()
+  #   print "label"
+  #   print l
+
+  print data[0]
+
   print "data.shape"
   print data.shape
   print "labels.shape"
@@ -442,9 +452,9 @@ def deepbeliefPIECV(big=False):
     activationFunction = T.nnet.sigmoid
 
   # TODO: try boosting for CV in order to increase the number of folds
-  params =[(0.01, 0.01, 0.9),  (0.01, 0.05, 0.9),  (0.005, 0.01, 0.9),  (0.005, 0.005, 0.9),
-           (0.01, 0.01, 0.95), (0.01, 0.05, 0.95), (0.005, 0.01, 0.95), (0.005, 0.005, 0.95),
-           (0.01, 0.01, 0.99), (0.01, 0.05, 0.99), (0.005, 0.01, 0.99), (0.005, 0.005, 0.99)]
+  params =[(0.1, 0.1, 0.9),  (0.1, 0.5, 0.9),  (0.5, 0.1, 0.9),  (0.5, 0.5, 0.9),
+           (0.1, 0.1, 0.95), (0.1, 0.5, 0.95), (0.5, 0.1, 0.95), (0.5, 0.5, 0.95),
+           (0.1, 0.1, 0.99), (0.1, 0.5, 0.99), (0.5, 0.1, 0.99), (0.5, 0.5, 0.99)]
 
   unsupervisedData = buildUnsupervisedDataSetForPIE()
 
@@ -462,6 +472,8 @@ def deepbeliefPIECV(big=False):
     net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                binary=1-args.relu,
                activationFunction=activationFunction,
+               rbmActivationFunctionVisible=activationFunction,
+               rbmActivationFunctionHidden=activationFunction,
                unsupervisedLearningRate=params[fold][0],
                supervisedLearningRate=params[fold][1],
                momentumMax=params[fold][2],
@@ -513,7 +525,6 @@ def deepbeliefPIECV(big=False):
 
   print "bestProbs"
   print bestProbs
-
 
 
 def main():

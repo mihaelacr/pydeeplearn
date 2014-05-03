@@ -112,8 +112,6 @@ class MiniBatchTrainer(object):
   def cost(self, y):
     return T.nnet.categorical_crossentropy(self.output, y)
 
-
-
 class ClassifierBatch(object):
 
   # TODO: investigate a bit the sharing thing
