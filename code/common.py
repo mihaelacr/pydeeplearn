@@ -6,6 +6,9 @@ from sklearn import preprocessing
 import matplotlib.pyplot as plt
 
 
+def getClassificationError(predicted, actual):
+  return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
+
 def scale(data):
   return preprocessing.scale(data)
 

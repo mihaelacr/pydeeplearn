@@ -542,8 +542,6 @@ def cvMNIST():
   print "bestError" + str(bestError)
 
 
-def getClassificationError(predicted, actual):
-  return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
 
 def annMNIST():
   training = args.trainSize
