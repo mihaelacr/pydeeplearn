@@ -516,7 +516,7 @@ def cvMNIST():
                   weightDecayL1=0,
                   weightDecayL2=0,
                   visibleDropout=0.8,
-                  rbmVisibleDropout=0.9,
+                  rbmVisibleDropout=0.8,
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs)
 
@@ -682,10 +682,10 @@ def deepbeliefMNIST():
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
-                 hiddenDropout=1.0,
-                 rbmHiddenDropout=1.0,
-                 visibleDropout=1.0,
-                 rbmVisibleDropout=1.0,
+                 hiddenDropout=0.5,
+                 rbmHiddenDropout=0.5,
+                 visibleDropout=0.8,
+                 rbmVisibleDropout=0.8,
                  weightDecayL1=0,
                  weightDecayL2=0,
                  preTrainEpochs=args.preTrainEpochs)
