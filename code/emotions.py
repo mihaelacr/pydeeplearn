@@ -261,9 +261,9 @@ def deepbeliefKanade(big=False):
     momentumMax = 0.95
   else:
     activationFunction = T.nnet.sigmoid
-    unsupervisedLearningRate = 0.1
+    unsupervisedLearningRate = 0.5
     supervisedLearningRate = 0.1
-    momentumMax = 0.99
+    momentumMax = 0.95
 
   trainData = data[train]
   trainLabels = labels[train]
