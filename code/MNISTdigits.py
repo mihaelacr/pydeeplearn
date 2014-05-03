@@ -629,8 +629,8 @@ def svmMNIST():
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testVectors / 255.0
 
-  svm.SVMCV(dbnNet, trainingScaledVectors, testingScaledVectors,
-                            trainLabels, testLabels)
+  svm.SVMCV(dbnNet, trainingScaledVectors, trainLabels,
+            testingScaledVectors, testLabels)
 
 def deepbeliefMNIST():
   training = args.trainSize

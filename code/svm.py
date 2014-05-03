@@ -29,14 +29,14 @@ def SVMCV(dbnNet, train, trainLabels, test, testLabels):
   trainHiddenRepresentations = dbnNet.getHiddenActivations(train)
   trainHiddenRepresentations = scale(trainHiddenRepresentations)
 
-  trainHiddenRepresentations = scale(trainHiddenRepresentations)
+  testHiddenRepresentation = dbnNet.getHiddenActivations(test)
+  testHiddenRepresentation = scale(testHiddenRepresentation)
+
   parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
   classifier = svm.SVC()
   gridseach = grid_search.GridSearchCV(classifier, parameters)
   gridseach.fit(train, trainLabels)
 
-  testHiddenRepresentation = dbnNet.getHiddenActivations(test)
-  testHiddenRepresentation = scale(testHiddenRepresentation)
   predicted = gridseach.predict(testHiddenRepresentation)
 
   print getClassificationError(predicted, testLabels)
