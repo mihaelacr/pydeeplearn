@@ -92,6 +92,7 @@ class RBMMiniBatchTrainer(object):
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
 
 
+# TODO: give just one theano ring to both the reconstruction batch and the trainer
 class ReconstructerBatch(object):
   def __init__(self, input, weights, biases,
              visibleActivationFunction, hiddenActivationFunction,
@@ -216,7 +217,7 @@ class RBM(object):
                                        binary=self.binary,
                                        cdSteps=1)
     reconstructer = ReconstructerBatch(input=x, weights=batchTrainer.weights,
-                                        biases=batchTrainer.biaseses,
+                                        biases=[batchTrainer.biasVisible, batchTrainer.biasHidden],
                                         visibleActivationFunction=self.visibleActivationFunction,
                                         hiddenActivationFunction=self.hiddenActivationFunction,
                                         visibleDropout=self.visibleDropout,

@@ -396,7 +396,6 @@ def deepbeliefMultiPIE(big=False):
 
   unsupervisedData = buildUnsupervisedDataSetForPIE()
 
-
   net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
             validation=args.validation,
             unsupervisedData=unsupervisedData)
