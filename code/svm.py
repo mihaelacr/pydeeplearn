@@ -13,20 +13,20 @@ def svmOnHiddenActivations(dbnNet, train, test, trainLabels, testLabels):
 
   # print getClassificationError(predicted, testLabels)
 
-  trainHiddenRepresentations = dbnNet.hiddenActivations(train)
+  trainHiddenRepresentations = dbnNet.getHiddenActivations(train)
 
   trainHiddenRepresentations = scale(trainHiddenRepresentations)
   classifier.fit(trainHiddenRepresentations, trainLabels)
 
   testHiddenRepresentation = scale(testHiddenRepresentation)
-  testHiddenRepresentation = dbnNet.hiddenActivations(test)
+  testHiddenRepresentation = dbnNet.getHiddenActivations(test)
   predicted = classifier.predict(testHiddenRepresentation)
 
   print getClassificationError(predicted, testLabels)
 
 
 def SVMCV(dbnNet, train, trainLabels, test, testLabels):
-  trainHiddenRepresentations = dbnNet.hiddenActivations(train)
+  trainHiddenRepresentations = dbnNet.getHiddenActivations(train)
   trainHiddenRepresentations = scale(trainHiddenRepresentations)
 
   trainHiddenRepresentations = scale(trainHiddenRepresentations)
@@ -35,7 +35,7 @@ def SVMCV(dbnNet, train, trainLabels, test, testLabels):
   gridseach = grid_search.GridSearchCV(classifier, parameters)
   gridseach.fit(train, trainLabels)
 
-  testHiddenRepresentation = dbnNet.hiddenActivations(test)
+  testHiddenRepresentation = dbnNet.getHiddenActivations(test)
   testHiddenRepresentation = scale(testHiddenRepresentation)
   predicted = gridseach.predict(testHiddenRepresentation)
 
