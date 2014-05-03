@@ -91,6 +91,51 @@ class RBMMiniBatchTrainer(object):
     # TODO: rethink maybe.
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
 
+
+class ReconstructerBatch(object):
+  def __init__(self, input, weights, biases,
+             visibleActivationFunction, hiddenActivationFunction,
+             visibleDropout, hiddenDropout, binary, cdSteps):
+
+    self.visible = input
+    self.binary = binary
+    self.cdSteps = theano.shared(value=np.int32(cdSteps))
+    self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
+
+    self.hiddenWeights = weights.T * visibleDropout
+    self.visibleWeights = weights * hiddenDropout
+
+    # This does not sample the visible layers, but samples
+    # The hidden layers up to the last one, like Hinton suggests
+    def OneCDStep(visibleSample):
+      linearSum = T.dot(visibleSample, self.visibleWeights) + self.biasHidden
+      hiddenActivations = hiddenActivationFunction(linearSum)
+      # Sample only for stochastic binary units
+      if self.binary:
+        hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
+                                            n=1, p=hiddenActivations,
+                                            dtype=theanoFloat)
+      else:
+        hidden = hiddenActivations
+
+      linearSum = T.dot(hidden, self.hiddenWeights) + self.biasVisible
+      visibleRec = visibleActivationFunction(linearSum)
+      return [hiddenActivations, visibleRec]
+
+    [hiddenSeq, visibleSeq], updates = theano.scan(OneCDStep,
+                          outputs_info=[None, droppedOutVisible],
+                          n_steps=self.cdSteps)
+
+    self.updates = updates
+
+    self.hiddenActivations = hiddenSeq[0]
+    self.visibleReconstruction = visibleSeq[-1]
+
+    # Do not sample for the last one, in order to get less sampling noise
+    hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
+
+    self.hiddenReconstruction = hiddenRec
+
 """
  Represents a RBM
 """
@@ -166,10 +211,20 @@ class RBM(object):
                                        visibleActivationFunction=self.visibleActivationFunction,
                                        hiddenActivationFunction=self.hiddenActivationFunction,
                                        initialBiases=self.biases,
-                                       visibleDropout=0.8,
-                                       hiddenDropout=0.5,
+                                       visibleDropout=self.visibleDropout,
+                                       hiddenDropout=self.hiddenDropout,
                                        binary=self.binary,
                                        cdSteps=1)
+    reconstructer = ReconstructerBatch(input=x, weights=batchTrainer.weights,
+                                        biases=batchTrainer.biaseses,
+                                        visibleActivationFunction=self.visibleActivationFunction,
+                                        hiddenActivationFunction=self.hiddenActivationFunction,
+                                        visibleDropout=self.visibleDropout,
+                                        hiddenDropout=self.hiddenDropout,
+                                        binary=self.binary,
+                                        cdSteps=1)
+    self.reconstructer = reconstructer
+    self.x = x
 
     if self.nesterov:
       preDeltaUpdates, updates = self.buildNesterovUpdates(batchTrainer,
@@ -348,23 +403,11 @@ class RBM(object):
   def hiddenRepresentation(self, dataInstances):
     dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
-    x = T.matrix('x', dtype=theanoFloat)
-
-    batchTrainer = RBMMiniBatchTrainer(input=x,
-                                    initialWeights=self.testWeights,
-                                    initialBiases=self.biases,
-                                    visibleActivationFunction=self.visibleActivationFunction,
-                                    hiddenActivationFunction=self.hiddenActivationFunction,
-                                    visibleDropout=1.0,
-                                    hiddenDropout=1.0,
-                                    binary=self.binary,
-                                    cdSteps=1)
-
     representHidden = theano.function(
             inputs=[],
-            outputs=batchTrainer.hiddenActivations,
-            updates=batchTrainer.updates,
-            givens={x: dataInstacesConverted})
+            outputs=self.reconstructer.hiddenActivations,
+            updates=self.reconstructer.updates,
+            givens={self.x: dataInstacesConverted})
 
     return representHidden()
 
@@ -375,24 +418,13 @@ class RBM(object):
   def reconstruct(self, dataInstances, cdSteps=1):
     dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
-    x = T.matrix('x', dtype=theanoFloat)
-
-    batchTrainer = RBMMiniBatchTrainer(input=x,
-                                    initialWeights=self.testWeights,
-                                    initialBiases=self.biases,
-                                    visibleActivationFunction=self.visibleActivationFunction,
-                                    hiddenActivationFunction=self.hiddenActivationFunction,
-                                    visibleDropout=1.0,
-                                    hiddenDropout=1.0,
-                                    binary=self.binary,
-                                    cdSteps=cdSteps)
-    reconstruct = theano.function(
+    reconstructFunction = theano.function(
             inputs=[],
-            outputs=batchTrainer.visibleReconstruction,
-            updates=batchTrainer.updates,
-            givens={x: dataInstacesConverted})
+            outputs=self.reconstructer.visibleReconstruction,
+            updates=self.reconstructer.updates,
+            givens={self.x: dataInstacesConverted})
 
-    return reconstruct()
+    return reconstructFunction()
 
   def reconstructionError(self, dataInstances):
     reconstructions = self.reconstruct(dataInstances)
