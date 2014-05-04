@@ -121,8 +121,8 @@ class ClassifierBatch(object):
 
     self.input = input
 
-    self.classificationWeights = [visibleDropoutMultiplier * weights[0]]
-    self.classificationWeights += map(lambda x: x * hiddenDropoutMultiplier, weights[1:])
+    self.classificationWeights = __classificationWeightsFromTestWeights(weights,
+                             visibleDropoutMultiplier, hiddenDropoutMultiplier)
 
     nrWeights = nrLayers - 1
 
@@ -249,6 +249,7 @@ class DBN(object):
       net.train(currentData)
 
       w = net.testWeights
+      # TODO: think about this + make it for visible dropout in the first layer as well
       self.weights += [w / self.hiddenDropout]
       # Only add the biases for the hidden unit
       b = net.biases[1]
@@ -474,9 +475,14 @@ class DBN(object):
     self.weights = map(lambda x: x.get_value(), batchTrainer.weights)
     self.biases = map(lambda x: x.get_value(), batchTrainer.biases)
 
-    self.classificationWeights = map(lambda x: x * self.hiddenDropout,
-                                      self.weights)
+    self.classificationWeights = __classificationWeightsFromTestWeights(self.weights,
+                                      self.visibleDropout, self.hidden)
 
+  def __classificationWeightsFromTestWeights(weights, visibleDropoutMultiplier, hiddenDropoutMultiplier):
+    classificationWeights = [visibleDropoutMultiplier * weights[0]]
+    classificationWeights += map(lambda x: x * hiddenDropoutMultiplier, weights[1:])
+
+    return classificationWeights
 
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
     trainingErrors = []
