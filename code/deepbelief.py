@@ -253,7 +253,7 @@ class DBN(object):
       net.train(currentData)
 
       # TODO: think about this + make it for visible dropout in the first layer as well
-      self.weights += [net.testWeights[0] / dropoutList[i]]
+      self.weights += [net.testWeights[1] / dropoutList[i]]
       # Only add the biases for the hidden unit
       b = net.biases[1]
       lastRbmBiases = net.biases
