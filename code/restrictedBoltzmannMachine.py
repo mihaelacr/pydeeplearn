@@ -103,7 +103,7 @@ class ReconstructerBatch(object):
     self.cdSteps = theano.shared(value=np.int32(cdSteps))
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
-    self.weightsForVisible, self.weightForHidden = __testWeights(weights,
+    self.weightsForVisible, self.weightForHidden = testWeights(weights,
           visibleDropout=visibleDropout, hiddenDropout=hiddenDropout)
 
     hiddenBias = biases[1]
@@ -288,7 +288,7 @@ class RBM(object):
     print "reconstruction Error"
     print self.reconstructionError(data)
 
-    self.testWeights = __testWeights(self.weights, visibleDropout=self.visibleDropout,
+    self.testWeights = testWeights(self.weights, visibleDropout=self.visibleDropout,
                           hiddenDropout=self.hiddenDropout)
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
@@ -460,5 +460,5 @@ def initializeBiasesReal(nrVisible, nrHidden):
   hiddenBiases = np.zeros(nrHidden, dtype=theanoFloat)
   return np.array([visibleBiases, hiddenBiases])
 
-def __testWeights(weights, visibleDropout, hiddenDropout):
+def testWeights(weights, visibleDropout, hiddenDropout):
     return weights.T * hiddenDropout, weights * visibleDropout

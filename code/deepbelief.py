@@ -121,7 +121,7 @@ class ClassifierBatch(object):
 
     self.input = input
 
-    self.classificationWeights = __classificationWeightsFromTestWeights(weights,
+    self.classificationWeights = classificationWeightsFromTestWeights(weights,
                                             visibleDropout=visibleDropout,
                                             hiddenDropout=hiddenDropout)
 
@@ -479,7 +479,7 @@ class DBN(object):
     self.weights = map(lambda x: x.get_value(), batchTrainer.weights)
     self.biases = map(lambda x: x.get_value(), batchTrainer.biases)
 
-    self.classificationWeights = __classificationWeightsFromTestWeights(self.weights,
+    self.classificationWeights = classificationWeightsFromTestWeights(self.weights,
                                       visibleDropout=self.visibleDropout,
                                       hiddenDropout=self.hiddenDropout)
 
@@ -818,7 +818,7 @@ class DBN(object):
 
     return self.classifier.lastHiddenActivations
 
-def __classificationWeightsFromTestWeights(weights, visibleDropout, hiddenDropout):
+def classificationWeightsFromTestWeights(weights, visibleDropout, hiddenDropout):
   classificationWeights = [visibleDropout * weights[0]]
   classificationWeights += map(lambda x: x * hiddenDropout, weights[1:])
 
