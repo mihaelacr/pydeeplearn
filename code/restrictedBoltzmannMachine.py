@@ -12,14 +12,14 @@ theanoFloat  = theano.config.floatX
 
 class RBMMiniBatchTrainer(object):
 
-  def __init__(self, input, initialWeights, initialBiases,
+  def __init__(self, input, theanoGenerator, initialWeights, initialBiases,
              visibleActivationFunction, hiddenActivationFunction,
              visibleDropout, hiddenDropout, binary, cdSteps):
 
     self.visible = input
     self.binary = binary
     self.cdSteps = theano.shared(value=np.int32(cdSteps))
-    self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
+    self.theanoGenerator = theanoGenerator
 
     # Weights and biases
     self.weights = theano.shared(value=np.asarray(initialWeights,
@@ -49,11 +49,11 @@ class RBMMiniBatchTrainer(object):
                                            dtype=theanoFloat))
 
     # Create dropout mask for the visible layer
-    dropoutMaskVisible = self.theano_rng.binomial(size=self.visible.shape,
+    dropoutMaskVisible = self.theanoGenerator.binomial(size=self.visible.shape,
                                           n=1, p=visibleDropout,
                                           dtype=theanoFloat)
     # Create dropout mask for the hidden layer
-    dropoutMaskHidden = self.theano_rng.binomial(
+    dropoutMaskHidden = self.theanoGenerator.binomial(
                               size=(input.shape[0], initialBiases[1].shape[0]),
                               n=1, p=hiddenDropout,
                               dtype=theanoFloat)
@@ -67,7 +67,7 @@ class RBMMiniBatchTrainer(object):
       hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
       # Sample only for stochastic binary units
       if self.binary:
-        hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
+        hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
                                             n=1, p=hiddenActivations,
                                             dtype=theanoFloat)
       else:
@@ -94,14 +94,14 @@ class RBMMiniBatchTrainer(object):
 
 # TODO: give just one theano ring to both the reconstruction batch and the trainer
 class ReconstructerBatch(object):
-  def __init__(self, input, weights, biases,
+  def __init__(self, input, theanoGenerator, weights, biases,
              visibleActivationFunction, hiddenActivationFunction,
              visibleDropout, hiddenDropout, binary, cdSteps):
 
     self.visible = input
     self.binary = binary
     self.cdSteps = theano.shared(value=np.int32(cdSteps))
-    self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
+    self.theanoGenerator = theanoGenerator
 
     self.weightsForVisible, self.weightForHidden = testWeights(weights,
           visibleDropout=visibleDropout, hiddenDropout=hiddenDropout)
@@ -115,7 +115,7 @@ class ReconstructerBatch(object):
       hiddenActivations = hiddenActivationFunction(linearSum)
       # Sample only for stochastic binary units
       if self.binary:
-        hidden = self.theano_rng.binomial(size=hiddenActivations.shape,
+        hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
                                             n=1, p=hiddenActivations,
                                             dtype=theanoFloat)
       else:
@@ -184,10 +184,13 @@ class RBM(object):
       #   self.biases = intializeBiasesBinary(data, self.nrHidden)
       # else:
       #   # TODO: think of this
-      #   self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
+      #   self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden
+
+    theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
 
     x = T.matrix('x', dtype=theanoFloat)
     batchTrainer = RBMMiniBatchTrainer(input=x,
+                                       theanoGenerator=theanoRng,
                                        initialWeights=weights,
                                        initialBiases=biases,
                                        visibleActivationFunction=self.visibleActivationFunction,
@@ -197,7 +200,9 @@ class RBM(object):
                                        binary=self.binary,
                                        cdSteps=1)
 
-    reconstructer = ReconstructerBatch(input=x, weights=batchTrainer.weights,
+    reconstructer = ReconstructerBatch(input=x,
+                                        theanoGenerator=theanoRng,
+                                        weights=batchTrainer.weights,
                                         biases=[batchTrainer.biasVisible, batchTrainer.biasHidden],
                                         visibleActivationFunction=self.visibleActivationFunction,
                                         hiddenActivationFunction=self.hiddenActivationFunction,
