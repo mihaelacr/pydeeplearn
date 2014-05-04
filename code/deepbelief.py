@@ -116,13 +116,14 @@ class ClassifierBatch(object):
 
   # TODO: investigate a bit the sharing thing
   def __init__(self, input, nrLayers, weights, biases,
-               visibleDropoutMultiplier, hiddenDropoutMultiplier,
+               visibleDropout, hiddenDropout,
                activationFunction, classificationActivationFunction):
 
     self.input = input
 
     self.classificationWeights = __classificationWeightsFromTestWeights(weights,
-                             visibleDropoutMultiplier, hiddenDropoutMultiplier)
+                                            visibleDropout=visibleDropout,
+                                            hiddenDropout=hiddenDropout)
 
     nrWeights = nrLayers - 1
 
@@ -224,6 +225,8 @@ class DBN(object):
     lastRbmBiases = None
     lastRbmTrainWeights = None
 
+    dropoutList = [self.visibleDropout] + [self.hiddenDropout] * (self.nrLayers -1)
+
     for i in xrange(nrRbms):
       # If the network can be initialized from the previous one,
       # do so, by using the transpose of the already trained net
@@ -248,13 +251,13 @@ class DBN(object):
                       trainingEpochs=self.preTrainEpochs)
       net.train(currentData)
 
-      w = net.testWeights
       # TODO: think about this + make it for visible dropout in the first layer as well
-      self.weights += [w / self.hiddenDropout]
+      self.weights += [net.testWeights[0] / dropoutList[i]]
       # Only add the biases for the hidden unit
       b = net.biases[1]
       lastRbmBiases = net.biases
       # Do not take the test weight, take the training ones
+      # because you will continue training with them
       lastRbmTrainWeights = net.weights
       self.biases += [b]
       self.generativeBiases += [net.biases[0]]
@@ -391,8 +394,8 @@ class DBN(object):
     classifier = ClassifierBatch(input=x, nrLayers=self.nrLayers,
                                  activationFunction=self.activationFunction,
                                  classificationActivationFunction=self.classificationActivationFunction,
-                                 visibleDropoutMultiplier=self.visibleDropout,
-                                 hiddenDropoutMultiplier=self.hiddenDropout,
+                                 visibleDropout=self.visibleDropout,
+                                 hiddenDropout=self.hiddenDropout,
                                  weights=batchTrainer.weights,
                                  biases=batchTrainer.biases)
 
@@ -476,11 +479,12 @@ class DBN(object):
     self.biases = map(lambda x: x.get_value(), batchTrainer.biases)
 
     self.classificationWeights = __classificationWeightsFromTestWeights(self.weights,
-                                      self.visibleDropout, self.hidden)
+                                      visibleDropout=self.visibleDropout,
+                                      hiddenDropout=self.hiddenDropout)
 
-  def __classificationWeightsFromTestWeights(weights, visibleDropoutMultiplier, hiddenDropoutMultiplier):
-    classificationWeights = [visibleDropoutMultiplier * weights[0]]
-    classificationWeights += map(lambda x: x * hiddenDropoutMultiplier, weights[1:])
+  def __classificationWeightsFromTestWeights(weights, visibleDropout, hiddenDropout):
+    classificationWeights = [visibleDropout * weights[0]]
+    classificationWeights += map(lambda x: x * hiddenDropout, weights[1:])
 
     return classificationWeights
 

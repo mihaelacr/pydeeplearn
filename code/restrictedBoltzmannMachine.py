@@ -103,8 +103,8 @@ class ReconstructerBatch(object):
     self.cdSteps = theano.shared(value=np.int32(cdSteps))
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
-    self.weightsForVisible = weights.T * hiddenDropout
-    self.weightForHidden = weights * visibleDropout
+    self.weightsForVisible, self.weightForHidden = __testWeights(weights,
+          visibleDropout=visibleDropout, hiddenDropout=hiddenDropout)
 
     hiddenBias = biases[1]
     visibleBias = biases[0]
@@ -170,10 +170,13 @@ class RBM(object):
     self.trainingEpochs = trainingEpochs
     self.binary = binary
 
+    self.__initialize(weights, biases)
+
+  def __initialize(self, weights, biases):
     # Initialize the weights
-    if self.weights == None and self.biases == None:
-      self.weights = initializeWeights(self.nrVisible, self.nrHidden)
-      self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
+    if weights == None and biases == None:
+      weights = initializeWeights(self.nrVisible, self.nrHidden)
+      biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
       # if self.binary:
       #   # TODO: I think this makes no sense
       #   self.biases = intializeBiasesBinary(data, self.nrHidden)
@@ -181,10 +184,29 @@ class RBM(object):
       #   # TODO: think of this
       #   self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
 
-    # Initialize the test weights to the weights
-    # this will change in case the training starts
-    # and dropout is used
-    self.testWeights = self.weights
+    x = T.matrix('x', dtype=theanoFloat)
+    batchTrainer = RBMMiniBatchTrainer(input=x,
+                                       initialWeights=weights,
+                                       initialBiases=biases,
+                                       visibleActivationFunction=self.visibleActivationFunction,
+                                       hiddenActivationFunction=self.hiddenActivationFunction,
+                                       visibleDropout=self.visibleDropout,
+                                       hiddenDropout=self.hiddenDropout,
+                                       binary=self.binary,
+                                       cdSteps=1)
+
+    reconstructer = ReconstructerBatch(input=x, weights=batchTrainer.weights,
+                                        biases=[batchTrainer.biasVisible, batchTrainer.biasHidden],
+                                        visibleActivationFunction=self.visibleActivationFunction,
+                                        hiddenActivationFunction=self.hiddenActivationFunction,
+                                        visibleDropout=self.visibleDropout,
+                                        hiddenDropout=self.hiddenDropout,
+                                        binary=self.binary,
+                                        cdSteps=1)
+    self.reconstructer = reconstructer
+    self.batchTrainer = batchTrainer
+    self.x = x
+
 
   def train(self, data, miniBatchSize=10):
     print "rbm learningRate"
@@ -200,7 +222,8 @@ class RBM(object):
     # Now you have to build the training function
     # and the updates
     # The mini-batch data is a matrix
-    x = T.matrix('x', dtype=theanoFloat)
+
+    batchTrainer = self.batchTrainer
 
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
@@ -208,26 +231,6 @@ class RBM(object):
 
     batchLearningRate = self.learningRate / miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
-
-    batchTrainer = RBMMiniBatchTrainer(input=x,
-                                       initialWeights=self.weights,
-                                       visibleActivationFunction=self.visibleActivationFunction,
-                                       hiddenActivationFunction=self.hiddenActivationFunction,
-                                       initialBiases=self.biases,
-                                       visibleDropout=self.visibleDropout,
-                                       hiddenDropout=self.hiddenDropout,
-                                       binary=self.binary,
-                                       cdSteps=1)
-    reconstructer = ReconstructerBatch(input=x, weights=batchTrainer.weights,
-                                        biases=[batchTrainer.biasVisible, batchTrainer.biasHidden],
-                                        visibleActivationFunction=self.visibleActivationFunction,
-                                        hiddenActivationFunction=self.hiddenActivationFunction,
-                                        visibleDropout=self.visibleDropout,
-                                        hiddenDropout=self.hiddenDropout,
-                                        binary=self.binary,
-                                        cdSteps=1)
-    self.reconstructer = reconstructer
-    self.x = x
 
     if self.nesterov:
       preDeltaUpdates, updates = self.buildNesterovUpdates(batchTrainer,
@@ -280,16 +283,19 @@ class RBM(object):
     self.biases = [batchTrainer.biasVisible.get_value(),
                    batchTrainer.biasHidden.get_value()]
 
-    # If you use visible dropout and you apply it everywhere should it also
-    # not be * visible dropout
-    self.testWeights = self.weights * self.hiddenDropout * self.visibleDropout
-
     print "reconstruction Error"
     print self.reconstructionError(data)
+
+    self.testWeights = __testWeights(self.weights, visibleDropout=self.visibleDropout,
+                          hiddenDropout=self.hiddenDropout)
 
     assert self.weights.shape == (self.nrVisible, self.nrHidden)
     assert self.biases[0].shape[0] == self.nrVisible
     assert self.biases[1].shape[0] == self.nrHidden
+
+
+  def __testWeights(weights, visibleDropout, hiddenDropout):
+    return weights.T * hiddenDropout, weights * visibleDropout
 
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
     updates = []
