@@ -88,11 +88,9 @@ class RBMMiniBatchTrainer(object):
 
     # Do not sample for the last one, in order to get less sampling noise
     hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
-    # TODO: rethink maybe.
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
 
 
-# TODO: give just one theano ring to both the reconstruction batch and the trainer
 class ReconstructerBatch(object):
   def __init__(self, input, theanoGenerator, weights, biases,
              visibleActivationFunction, hiddenActivationFunction,
