@@ -599,18 +599,6 @@ def annMNIST():
   print "correct"
   print correct
 
-  # for w in net.weights:
-  #   print w
-
-  # for b in net.biases:
-  #   print b
-
-
-  # t = visualizeWeights(net.weights[0].T, trainImages[0].(28, 28), (10,10))
-  # plt.imshow(t, cmap=plt.cm.gray)
-  # plt.show()
-  # print "done"
-
   if args.save:
     f = open(args.netFile, "wb")
     pickle.dump(net, f)

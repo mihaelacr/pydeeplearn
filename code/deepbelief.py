@@ -252,6 +252,9 @@ class DBN(object):
                       trainingEpochs=self.preTrainEpochs)
       net.train(currentData)
 
+      # Use the test weights from the rbm, the ones the correspond to the incoming
+      # weights for the hidden units
+      # Then you have to divide by the dropout
       self.weights += [net.testWeights[1] / dropoutList[i]]
       # Only add the biases for the hidden unit
       b = net.biases[1]
@@ -499,7 +502,7 @@ class DBN(object):
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
 
-    # plotTraningError(trainingErrors)
+    plotTraningError(trainingErrors)
 
     print "number of epochs"
     print epoch
