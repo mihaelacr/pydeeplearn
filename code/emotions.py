@@ -47,6 +47,8 @@ parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, do cross validation"))
 parser.add_argument('--cvPIE', dest='cvPIE',action='store_true', default=False,
                     help=("if true, do cross validation"))
+parser.add_argument('--svmPIE', dest='svmPIE',action='store_true', default=False,
+                    help=("if true, do SVM on top of the last hidden features"))
 parser.add_argument('--facedetection', dest='facedetection',action='store_true', default=False,
                     help=("if true, do face detection"))
 parser.add_argument('--maxEpochs', type=int, default=1000,
@@ -524,7 +526,7 @@ def deepbeliefPIECV(big=False):
   print "bestProbs"
   print bestProbs
 
-def svmMNIST():
+def svmPIE():
   with open(args.netFile, "rb") as f:
     dbnNet = pickle.load(f)
 
@@ -555,6 +557,8 @@ def main():
     deepbeliefMultiPIE()
   if args.cvPIE:
     deepbeliefPIECV()
+  if args.svmPIE:
+    svmPIE()
 
 
 # You can also group the emotions into positive and negative to see
