@@ -241,6 +241,7 @@ def readCropEqualize(path, extension, doRecognition, equalize=False,
   print len(images)
   return np.array(images)
 
+
 # This needs some thought: remove the cropped folder from path?
 def readJaffe(detectFaces, equalize):
   PATH = "/data/mcr10/jaffe"

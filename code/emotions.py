@@ -349,8 +349,6 @@ def buildSupervisedDataSet():
 def deepbeliefMultiPIE(big=False):
   data, labels = readMultiPIE()
 
-
-
   data, labels = shuffle(data, labels)
 
   print "data.shape"
@@ -525,6 +523,25 @@ def deepbeliefPIECV(big=False):
 
   print "bestProbs"
   print bestProbs
+
+def svmMNIST():
+  with open(args.netFile, "rb") as f:
+    dbnNet = pickle.load(f)
+
+  data, labels = readMultiPIE()
+
+  # Random data for training and testing
+  kf = cross_validation.KFold(n=len(data), n_folds=5)
+  for train, test in kf:
+    break
+
+  training = data[train]
+  trainLabels = labels[train]
+
+  testing = data[test]
+  testLabels = labels[test]
+
+  svm.SVMCV(dbnNet, training, trainLabels, testing, testLabels)
 
 
 def main():
