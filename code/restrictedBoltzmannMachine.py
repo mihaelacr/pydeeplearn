@@ -103,15 +103,15 @@ class ReconstructerBatch(object):
     self.cdSteps = theano.shared(value=np.int32(cdSteps))
     self.theano_rng = RandomStreams(seed=np.random.randint(1, 1000))
 
-    self.hiddenWeights = weights.T * visibleDropout
-    self.visibleWeights = weights * hiddenDropout
+    self.weightsForVisible = weights.T * hiddenDropout
+    self.weightForHidden = weights * visibleDropout
 
     hiddenBias = biases[1]
     visibleBias = biases[0]
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneCDStep(visibleSample):
-      linearSum = T.dot(visibleSample, self.visibleWeights) + hiddenBias
+      linearSum = T.dot(visibleSample, self.weightForHidden) + hiddenBias
       hiddenActivations = hiddenActivationFunction(linearSum)
       # Sample only for stochastic binary units
       if self.binary:
@@ -121,7 +121,7 @@ class ReconstructerBatch(object):
       else:
         hidden = hiddenActivations
 
-      linearSum = T.dot(hidden, self.hiddenWeights) + visibleBias
+      linearSum = T.dot(hidden, self.weightsForVisible) + visibleBias
       visibleRec = visibleActivationFunction(linearSum)
       return [hiddenActivations, visibleRec]
 
@@ -135,7 +135,7 @@ class ReconstructerBatch(object):
     self.visibleReconstruction = visibleSeq[-1]
 
     # Do not sample for the last one, in order to get less sampling noise
-    hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.hiddenWeights) + hiddenBias)
+    hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weightForHidden) + hiddenBias)
 
     self.hiddenReconstruction = hiddenRec
 
