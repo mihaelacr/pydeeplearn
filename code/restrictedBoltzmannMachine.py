@@ -226,6 +226,7 @@ class RBM(object):
     # The mini-batch data is a matrix
 
     batchTrainer = self.batchTrainer
+    x = self.x
 
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
