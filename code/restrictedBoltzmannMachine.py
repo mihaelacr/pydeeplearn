@@ -151,7 +151,9 @@ class RBM(object):
                 hiddenActivationFunction=T.nnet.sigmoid,
                 rmsprop=True, nesterov=True,
                 weightDecay=0.001,
-                initialWeights=None, initialBiases=None, trainingEpochs=1):
+                initialWeights=None,
+                initialBiases=None,
+                trainingEpochs=1):
                 # TODO: also check how the gradient works for RBMS
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
@@ -170,7 +172,7 @@ class RBM(object):
     self.trainingEpochs = trainingEpochs
     self.binary = binary
 
-    self.__initialize(weights, biases)
+    self.__initialize(initialWeights, initialBiases)
 
   def __initialize(self, weights, biases):
     # Initialize the weights

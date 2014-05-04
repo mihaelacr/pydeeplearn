@@ -225,6 +225,7 @@ class DBN(object):
     lastRbmBiases = None
     lastRbmTrainWeights = None
 
+    # TODO: refactor: make this dropout list more top level and reuse it
     dropoutList = [self.visibleDropout] + [self.hiddenDropout] * (self.nrLayers -1)
 
     for i in xrange(nrRbms):
