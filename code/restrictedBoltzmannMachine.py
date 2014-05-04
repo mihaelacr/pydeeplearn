@@ -296,8 +296,6 @@ class RBM(object):
     assert self.biases[1].shape[0] == self.nrHidden
 
 
-  def __testWeights(weights, visibleDropout, hiddenDropout):
-    return weights.T * hiddenDropout, weights * visibleDropout
 
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
     updates = []
@@ -461,3 +459,6 @@ def initializeBiasesReal(nrVisible, nrHidden):
   visibleBiases = np.zeros(nrVisible, dtype=theanoFloat)
   hiddenBiases = np.zeros(nrHidden, dtype=theanoFloat)
   return np.array([visibleBiases, hiddenBiases])
+
+def __testWeights(weights, visibleDropout, hiddenDropout):
+    return weights.T * hiddenDropout, weights * visibleDropout

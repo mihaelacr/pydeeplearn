@@ -483,11 +483,6 @@ class DBN(object):
                                       visibleDropout=self.visibleDropout,
                                       hiddenDropout=self.hiddenDropout)
 
-  def __classificationWeightsFromTestWeights(weights, visibleDropout, hiddenDropout):
-    classificationWeights = [visibleDropout * weights[0]]
-    classificationWeights += map(lambda x: x * hiddenDropout, weights[1:])
-
-    return classificationWeights
 
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
     trainingErrors = []
@@ -822,3 +817,9 @@ class DBN(object):
     classifyFunction()
 
     return self.classifier.lastHiddenActivations
+
+def __classificationWeightsFromTestWeights(weights, visibleDropout, hiddenDropout):
+  classificationWeights = [visibleDropout * weights[0]]
+  classificationWeights += map(lambda x: x * hiddenDropout, weights[1:])
+
+  return classificationWeights
