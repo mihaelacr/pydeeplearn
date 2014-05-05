@@ -61,6 +61,8 @@ parser.add_argument('--equalize',dest='equalize',action='store_true', default=Fa
                     help="if true, the input images are equalized before being fed into the net")
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
+parser.add_argument('--preTrainEpochs', type=int, default=1,
+                    help='the number of pretraining epochs')
 
 # DEBUG mode?
 parser.add_argument('--debug', dest='debug',action='store_false', default=False,
@@ -198,7 +200,8 @@ def deepbeliefKanadeCV(big=False):
                hiddenDropout=0.5,
                rbmHiddenDropout=0.5,
                visibleDropout=0.8,
-               rbmVisibleDropout=1)
+               rbmVisibleDropout=1,
+               preTrainEpochs=args.preTrainEpochs)
 
     net.train(trainData, trainLabels,
               maxEpochs=args.maxEpochs,
@@ -287,7 +290,8 @@ def deepbeliefKanade(big=False):
              hiddenDropout=0.5,
              rbmHiddenDropout=0.5,
              visibleDropout=0.8,
-             rbmVisibleDropout=1)
+             rbmVisibleDropout=1,
+             preTrainEpochs=args.preTrainEpochs)
 
   unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
 
@@ -394,7 +398,8 @@ def deepbeliefMultiPIE(big=False):
              hiddenDropout=0.5,
              rbmHiddenDropout=0.5,
              visibleDropout=0.8,
-             rbmVisibleDropout=1)
+             rbmVisibleDropout=0.8,
+             preTrainEpochs=args.preTrainEpochs)
 
   unsupervisedData = buildUnsupervisedDataSetForPIE()
 
@@ -476,7 +481,8 @@ def deepbeliefPIECV(big=False):
                hiddenDropout=0.5,
                rbmHiddenDropout=0.5,
                visibleDropout=0.8,
-               rbmVisibleDropout=1)
+               rbmVisibleDropout=1,
+               preTrainEpochs=args.preTrainEpochs)
 
     net.train(trainData, trainLabels,
               maxEpochs=args.maxEpochs,
