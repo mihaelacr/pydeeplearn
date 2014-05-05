@@ -291,7 +291,7 @@ def deepbeliefKanade(big=False):
              hiddenDropout=0.5,
              rbmHiddenDropout=0.5,
              visibleDropout=0.8,
-             rbmVisibleDropout=1,
+             rbmVisibleDropout=0.8,
              preTrainEpochs=args.preTrainEpochs)
 
   unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
