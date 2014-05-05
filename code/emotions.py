@@ -327,9 +327,13 @@ def deepbeliefKanade(big=False):
   print "percentage correct"
   print correct  * 1.0/ len(test)
 
-  confMatrix = confusion_matrix(predicted, actualLabels)
+  confMatrix = confusion_matrix(predicted, np.argmax(actualLabels, axis=1))
   print "confusion matrix"
   print confMatrix
+
+  if args.save:
+    with open(args.netFile, "wb") as f:
+      pickle.dump(net, f)
 
 
 
@@ -387,31 +391,36 @@ def deepbeliefMultiPIE(big=False):
   trainData = data[train]
   trainLabels = labels[train]
 
-  # TODO: this might require more thought
-  net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
-             binary=1-args.relu,
-             activationFunction=activationFunction,
-             rbmActivationFunctionVisible=T.nnet.sigmoid,
-             rbmActivationFunctionHidden=T.nnet.sigmoid,
-             unsupervisedLearningRate=unsupervisedLearningRate,
-             # is this not a bad learning rate?
-             supervisedLearningRate=supervisedLearningRate,
-             momentumMax=momentumMax,
-             nesterovMomentum=args.nesterov,
-             rbmNesterovMomentum=args.rbmnesterov,
-             rmsprop=args.rmsprop,
-             miniBatchSize=args.miniBatchSize,
-             hiddenDropout=0.5,
-             rbmHiddenDropout=0.5,
-             visibleDropout=0.8,
-             rbmVisibleDropout=1,
-             preTrainEpochs=args.preTrainEpochs)
+  if args.train:
+    # TODO: this might require more thought
+    net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
+               binary=1-args.relu,
+               activationFunction=activationFunction,
+               rbmActivationFunctionVisible=T.nnet.sigmoid,
+               rbmActivationFunctionHidden=T.nnet.sigmoid,
+               unsupervisedLearningRate=unsupervisedLearningRate,
+               # is this not a bad learning rate?
+               supervisedLearningRate=supervisedLearningRate,
+               momentumMax=momentumMax,
+               nesterovMomentum=args.nesterov,
+               rbmNesterovMomentum=args.rbmnesterov,
+               rmsprop=args.rmsprop,
+               miniBatchSize=args.miniBatchSize,
+               hiddenDropout=0.5,
+               rbmHiddenDropout=0.5,
+               visibleDropout=0.8,
+               rbmVisibleDropout=1,
+               preTrainEpochs=args.preTrainEpochs)
 
-  unsupervisedData = buildUnsupervisedDataSetForPIE()
+    unsupervisedData = buildUnsupervisedDataSetForPIE()
 
-  net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
-            validation=args.validation,
-            unsupervisedData=unsupervisedData)
+    net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
+              validation=args.validation,
+              unsupervisedData=unsupervisedData)
+  else:
+     # Take the saved network and use that for reconstructions
+    with open(args.netFile, "rb") as f:
+      net = pickle.load(f)
 
   probs, predicted = net.classify(data[test])
 
@@ -444,12 +453,15 @@ def deepbeliefMultiPIE(big=False):
   print predicted.shape
   print actualLabels.shape
 
-  confMatrix = confusion_matrix(predicted, actualLabels)
 
-
+  confMatrix = confusion_matrix(predicted, np.argmax(actualLabels, axis=1))
 
   print "confusion matrix"
   print confMatrix
+
+  if args.save:
+    with open(args.netFile, "wb") as f:
+      pickle.dump(net, f)
 
 def deepbeliefPIECV(big=False):
   data, labels = readMultiPIE()
