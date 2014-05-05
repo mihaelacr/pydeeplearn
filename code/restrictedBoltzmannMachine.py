@@ -445,7 +445,11 @@ class RBM(object):
 
 
 def initializeWeights(nrVisible, nrHidden):
-  return np.asarray(np.random.normal(0, 0.01, (nrVisible, nrHidden)), dtype=theanoFloat)
+  return  numpy.asarray(numpy.random.uniform(
+                      low=-4 * numpy.sqrt(6. / (nrHidden + nrVisible)),
+                      high=4 * numpy.sqrt(6. / (nrHidden + nrVisible)),
+                      size=(nrVisible, nrHidden)), dtype=theanoFloat)
+  # return np.asarray(np.random.normal(0, 0.01, (nrVisible, nrHidden)), dtype=theanoFloat)
 
 # This only works for stochastic binary units
 def intializeBiasesBinary(data, nrHidden):
