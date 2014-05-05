@@ -441,6 +441,12 @@ def deepbeliefMultiPIE(big=False):
 
   confMatrix = confusion_matrix(predicted, actualLabels)
 
+  print type(predicted)
+  print type(actualLabels)
+  print predicted.shape
+  print actualLabels.shape
+
+
   print "confusion matrix"
   print confMatrix
 
