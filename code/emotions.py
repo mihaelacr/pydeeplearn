@@ -404,7 +404,7 @@ def deepbeliefMultiPIE(big=False):
              hiddenDropout=0.5,
              rbmHiddenDropout=0.5,
              visibleDropout=0.8,
-             rbmVisibleDropout=0.8,
+             rbmVisibleDropout=1,
              preTrainEpochs=args.preTrainEpochs)
 
   unsupervisedData = buildUnsupervisedDataSetForPIE()
