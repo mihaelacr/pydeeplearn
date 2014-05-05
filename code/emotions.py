@@ -514,9 +514,9 @@ def deepbeliefPIECV(big=False):
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
                hiddenDropout=0.5,
-               rbmHiddenDropout=0.5,
+               rbmHiddenDropout=1.0,
                visibleDropout=0.8,
-               rbmVisibleDropout=1,
+               rbmVisibleDropout=1.0,
                preTrainEpochs=args.preTrainEpochs)
 
     net.train(trainData, trainLabels,
