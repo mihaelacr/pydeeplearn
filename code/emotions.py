@@ -406,10 +406,10 @@ def deepbeliefMultiPIE(big=False):
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
-               hiddenDropout=0.5,
+               hiddenDropout=1.0,
                rbmHiddenDropout=0.5,
                visibleDropout=0.8,
-               rbmVisibleDropout=0.8,
+               rbmVisibleDropout=1.0,
                preTrainEpochs=args.preTrainEpochs)
 
     unsupervisedData = buildUnsupervisedDataSetForPIE()
