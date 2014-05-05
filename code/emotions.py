@@ -6,6 +6,7 @@ import argparse
 # import DimensionalityReduction
 import cPickle as pickle
 from sklearn import cross_validation
+from sklearn.metrics import confusion_matrix
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -326,6 +327,11 @@ def deepbeliefKanade(big=False):
   print "percentage correct"
   print correct  * 1.0/ len(test)
 
+  confMatrix = confusion_matrix(predicted, actualLabels)
+  print "confusion matrix"
+  print confMatrix
+
+
 
 def buildUnsupervisedDataSetForKanadeLabelled():
   return np.vstack((
@@ -432,6 +438,11 @@ def deepbeliefMultiPIE(big=False):
 
   print "percentage correct"
   print correct  * 1.0/ len(test)
+
+  confMatrix = confusion_matrix(predicted, actualLabels)
+
+  print "confusion matrix"
+  print confMatrix
 
 def deepbeliefPIECV(big=False):
   data, labels = readMultiPIE()
