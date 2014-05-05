@@ -273,6 +273,7 @@ class RBM(object):
     nrMiniBatches = len(data) / miniBatchSize
 
     for epoch in xrange(self.trainingEpochs):
+      print "rbm training epoch", epoch
       for miniBatchIndex in range(nrMiniBatches):
         iteration = miniBatchIndex + epoch * nrMiniBatches
         momentum = np.float32(min(np.float32(0.5) + iteration * np.float32(0.01),
