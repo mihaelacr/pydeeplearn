@@ -14,6 +14,7 @@ import deepbelief as db
 import restrictedBoltzmannMachine as rbm
 
 from common import *
+from theano import tensor as T
 from readfacedatabases import *
 
 parser = argparse.ArgumentParser(description='digit recognition')
@@ -280,7 +281,6 @@ def deepbeliefKanade(big=False):
              rbmActivationFunctionVisible=T.nnet.sigmoid,
              rbmActivationFunctionHidden=T.nnet.sigmoid,
              unsupervisedLearningRate=unsupervisedLearningRate,
-             # is this not a bad learning rate?
              supervisedLearningRate=supervisedLearningRate,
              momentumMax=momentumMax,
              nesterovMomentum=args.nesterov,
@@ -449,9 +449,14 @@ def deepbeliefPIECV(big=False):
     activationFunction = T.nnet.sigmoid
 
   # TODO: try boosting for CV in order to increase the number of folds
-  params =[(0.01, 0.01, 0.9),  (0.01, 0.05, 0.9),  (0.05, 0.01, 0.9),  (0.05, 0.05, 0.9),
-           (0.01, 0.01, 0.95), (0.01, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
-           (0.01, 0.01, 0.99), (0.01, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
+  # params =[(0.01, 0.01, 0.9),  (0.01, 0.05, 0.9),  (0.05, 0.01, 0.9),  (0.05, 0.05, 0.9),
+  #          (0.01, 0.01, 0.95), (0.01, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
+  #          (0.01, 0.01, 0.99), (0.01, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
+
+
+  params =[(0.01, 0.05, 0.9),  (0.05, 0.01, 0.9),
+           (0.01, 0.05, 0.95), (0.05, 0.01, 0.95),
+           (0.01, 0.05, 0.99), (0.05, 0.01, 0.99)]
 
   unsupervisedData = buildUnsupervisedDataSetForPIE()
 
