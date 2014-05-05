@@ -439,12 +439,13 @@ def deepbeliefMultiPIE(big=False):
   print "percentage correct"
   print correct  * 1.0/ len(test)
 
-  confMatrix = confusion_matrix(predicted, actualLabels)
-
   print type(predicted)
   print type(actualLabels)
   print predicted.shape
   print actualLabels.shape
+
+  confMatrix = confusion_matrix(predicted, actualLabels)
+
 
 
   print "confusion matrix"
