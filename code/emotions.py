@@ -386,7 +386,7 @@ def deepbeliefMultiPIE(big=False):
     activationFunction = T.nnet.sigmoid
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
-    momentumMax = 0.9
+    momentumMax = 0.95
 
   trainData = data[train]
   trainLabels = labels[train]
