@@ -386,7 +386,7 @@ def deepbeliefMultiPIE(big=False):
     activationFunction = T.nnet.sigmoid
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
-    momentumMax = 0.95
+    momentumMax = 0.9
 
   trainData = data[train]
   trainLabels = labels[train]
@@ -479,14 +479,14 @@ def deepbeliefPIECV(big=False):
     activationFunction = T.nnet.sigmoid
 
   # TODO: try boosting for CV in order to increase the number of folds
-  # params =[(0.01, 0.01, 0.9),  (0.01, 0.05, 0.9),  (0.05, 0.01, 0.9),  (0.05, 0.05, 0.9),
-  #          (0.01, 0.01, 0.95), (0.01, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
-  #          (0.01, 0.01, 0.99), (0.01, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
+  params =[(0.01, 0.01, 0.9),  (0.01, 0.05, 0.9),  (0.05, 0.01, 0.9),  (0.05, 0.05, 0.9),
+           (0.01, 0.01, 0.95), (0.01, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
+           (0.01, 0.01, 0.99), (0.01, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
 
 
-  params =[(0.05, 0.01, 0.9),  (0.01, 0.05, 0.9),
-           (0.05, 0.01, 0.95), (0.01, 0.05, 0.95),
-           (0.05, 0.01, 0.99), (0.01, 0.05, 0.99)]
+  # params =[(0.05, 0.01, 0.9),  (0.01, 0.05, 0.9),
+  #          (0.05, 0.01, 0.95), (0.01, 0.05, 0.95),
+  #          (0.05, 0.01, 0.99), (0.01, 0.05, 0.99)]
 
   unsupervisedData = buildUnsupervisedDataSetForPIE()
 
@@ -515,8 +515,8 @@ def deepbeliefPIECV(big=False):
                miniBatchSize=args.miniBatchSize,
                hiddenDropout=0.5,
                rbmHiddenDropout=1.0,
-               visibleDropout=0.8,
                rbmVisibleDropout=1.0,
+               visibleDropout=0.8,
                preTrainEpochs=args.preTrainEpochs)
 
     net.train(trainData, trainLabels,

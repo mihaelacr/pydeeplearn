@@ -78,9 +78,13 @@ def zerosFromShape(l):
   return map(lambda x: np.zeros(x.shape), l)
 
 def shuffle(data, labels):
+  shuffledData, shuffledLabels = shuffleList(data, labels)
+  return np.array(shuffledData), np.array(shuffledLabels)
+
+def shuffleList(data, labels):
   indexShuffle = np.random.permutation(len(data))
-  shuffledData = np.array([data[i] for i in indexShuffle])
-  shuffledLabels = np.array([labels[i] for i in indexShuffle])
+  shuffledData = [data[i] for i in indexShuffle]
+  shuffledLabels = [labels[i] for i in indexShuffle]
 
   return shuffledData, shuffledLabels
 

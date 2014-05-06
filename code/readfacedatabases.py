@@ -73,6 +73,28 @@ def readMultiPIE(show=False):
 
   return np.array(imgs), labelsToVectors(labels, 6)
 
+def readMultiPIESubjects():
+  # PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
+  PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+
+  mat = scipy.io.loadmat(PATH)
+  data = mat['a_multipie']
+  subjectsToImgs = {}
+  # For all the subjects
+
+  for subject in xrange(147):
+    subjectsToImgs[subject] = []
+    for pose in xrange(5):
+      for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
+        for illumination in xrange(5):
+            image = np.squeeze(data[subject,pose,expression,illumination,:])
+            image = image.reshape(30,40).T
+            image = image.reshape(-1)
+
+            subjectsToImgs[subject] += [image]
+
+  return subjectsToImgs
+
 def readKanade(big=False, folds=None, equalize=False):
   if not equalize:
     if big:
