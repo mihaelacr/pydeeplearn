@@ -42,7 +42,7 @@ class Trainer(object):
 
     cos = cosineDistance(hiddens1, hiddens2)
 
-    prob = 1.0 /( 1.0 + T.exp(w * cos + b))
+    prob = 1.0 /( 1.0 + T.exp(self.w * cos + self.b))
 
     self.output = prob
 
