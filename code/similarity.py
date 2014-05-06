@@ -30,12 +30,15 @@ class Trainer(object):
     self.b = theano.shared(value=np.float32(0))
     self.net = net
 
+    theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
+
+
     # Do I need to add all biases? Probably only the hidden ones
     self.params = [self.w, self.b, self.net.sharedWeights, self.net.sharedBiases]
 
     # This also has to be some theano graph
-    hiddens1 = self.net.hiddenRepresentation(input1)
-    hiddens2 = self.net.hiddenRepresentation(input2)
+    hiddens1 = self.net.buildReconstructionForSymbolicVariable(input1, theanoRng)
+    hiddens2 = self.net.buildReconstructionForSymbolicVariable(input2, theanoRng)
 
     cos = cosineDistance(hiddens1, hiddens2)
 

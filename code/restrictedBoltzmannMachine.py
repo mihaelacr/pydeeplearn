@@ -448,6 +448,19 @@ class RBM(object):
     reconstructions = self.reconstruct(dataInstances)
     return rmse(reconstructions, dataInstances)
 
+  def buildReconstructionForSymbolicVariable(self, x, theanoRng):
+    reconstructer = ReconstructerBatch(input=x,
+                                        theanoGenerator=theanoRng,
+                                        weights=self.sharedWeights,
+                                        biases=self.sharedBiases,
+                                        visibleActivationFunction=self.visibleActivationFunction,
+                                        hiddenActivationFunction=self.hiddenActivationFunction,
+                                        visibleDropout=self.visibleDropout,
+                                        hiddenDropout=self.hiddenDropout,
+                                        binary=self.binary,
+                                        cdSteps=1)
+    return reconstructer.hiddenActivations
+
 
 def initializeWeights(nrVisible, nrHidden):
   return np.asarray(np.random.normal(0, 0.01, (nrVisible, nrHidden)), dtype=theanoFloat)
