@@ -67,6 +67,10 @@ def similarity(data1, data2, similarities):
                   nesterov=True)
   net.train(data)
 
+  data1  = theano.shared(np.asarray(data1,dtype=theanoFloat))
+  data2  = theano.shared(np.asarray(data2,dtype=theanoFloat))
+  similarities = theano.shared(np.asarray(similarities,dtype=theanoFloat))
+
   # The mini-batch data is a matrix
   x = T.matrix('x', dtype=theanoFloat)
   y = T.matrix('y', dtype=theanoFloat)
@@ -226,6 +230,14 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
 
 def main():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
+
+  # trainData1  = theano.shared(np.asarray(trainData1,dtype=theanoFloat))
+  # trainData2  = theano.shared(np.asarray(trainData2,dtype=theanoFloat))
+  # testData1  = theano.shared(np.asarray(testData1,dtype=theanoFloat))
+  # testData2  = theano.shared(np.asarray(testData2,dtype=theanoFloat))
+  # similaritiesTrain  = theano.shared(np.asarray(similaritiesTrain,dtype=theanoFloat))
+  # similaritiesTest = theano.shared(np.asarray(similaritiesTest,dtype=theanoFloat))
+
   similarity(trainData1, trainData2, similaritiesTrain)
 
 if __name__ == '__main__':
