@@ -207,6 +207,9 @@ class DBN(object):
     self.momentumForEpochFunction = momentumForEpochFunction
     self.binary = binary
 
+    print "hidden dropout in DBN", hiddenDropout
+    print "visible dropout in DBN", visibleDropout
+
   def pretrain(self, data, unsupervisedData):
     nrRbms = self.nrLayers - 2
 
