@@ -155,8 +155,10 @@ class RBM(object):
                 # TODO: also check how the gradient works for RBMS
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
+    print "hidden dropout in RBM" , hiddenDropout
     # dropout = 1 means no dropout, keep all the weights
     self.visibleDropout = visibleDropout
+    print "visible dropout in RBM" , visibleDropout
     self.nrHidden = nrHidden
     self.nrVisible = nrVisible
     self.learningRate = learningRate
