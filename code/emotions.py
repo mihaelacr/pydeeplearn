@@ -479,14 +479,14 @@ def deepbeliefPIECV(big=False):
     activationFunction = T.nnet.sigmoid
 
   # TODO: try boosting for CV in order to increase the number of folds
-  params =[(0.01, 0.01, 0.9),  (0.01, 0.05, 0.9),  (0.05, 0.01, 0.9),  (0.05, 0.05, 0.9),
-           (0.01, 0.01, 0.95), (0.01, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
-           (0.01, 0.01, 0.99), (0.01, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
+  # params =[ (0.01, 0.05, 0.9),  (0.05, 0.01, 0.9),  (0.05, 0.05, 0.9),
+  #           (0.01, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
+  #           (0.01, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
 
 
-  # params =[(0.05, 0.01, 0.9),  (0.01, 0.05, 0.9),
-  #          (0.05, 0.01, 0.95), (0.01, 0.05, 0.95),
-  #          (0.05, 0.01, 0.99), (0.01, 0.05, 0.99)]
+  params =[(0.05, 0.01, 0.9,  0.8, 1.0), (0.01, 0.05, 0.9,  1.0, 1.0), (0.01, 0.05, 0.9,  0.8, 0.5),  (0.01, 0.05, 0.9, 1.0, 0.5),
+           (0.05, 0.01, 0.95, 0.8, 1.0), (0.01, 0.05, 0.95, 1.0, 1.0), (0.01, 0.05, 0.95, 0.8, 0.5), (0.01, 0.05, 0.95, 1.0, 0.5),
+           (0.05, 0.01, 0.99, 0.8, 1.0), (0.01, 0.05, 0.99, 1.0, 1.0), (0.01, 0.05, 0.99, 0.8, 0.5), (0.01, 0.05, 0.99, 1.0, 0.5)]
 
   unsupervisedData = buildUnsupervisedDataSetForPIE()
 
@@ -513,9 +513,9 @@ def deepbeliefPIECV(big=False):
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
-               hiddenDropout=0.5,
                rbmHiddenDropout=1.0,
                rbmVisibleDropout=1.0,
+               hiddenDropout=0.5,
                visibleDropout=0.8,
                preTrainEpochs=args.preTrainEpochs)
 
