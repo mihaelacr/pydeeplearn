@@ -92,7 +92,6 @@ def similarity(data1, data2, similarities):
   # Now you have to define the theano function
   discriminativeTraining = theano.function(
     inputs=[miniBatchIndex],
-    output=[],
     givens={
           x: data1[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
           y: data2[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
