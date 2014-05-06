@@ -406,9 +406,9 @@ def deepbeliefMultiPIE(big=False):
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
-               hiddenDropout=1.0,
-               rbmHiddenDropout=0.5,
                visibleDropout=0.8,
+               hiddenDropout=0.5,
+               rbmHiddenDropout=1.0,
                rbmVisibleDropout=1.0,
                preTrainEpochs=args.preTrainEpochs)
 
