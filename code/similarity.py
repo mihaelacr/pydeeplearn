@@ -103,7 +103,8 @@ def similarity(data1, data2, similarities):
 
   for epoch in xrange(epochs):
     for miniBatch in xrange(nrMiniBatches):
-      discriminativeTraining(miniBatch)
+      bla = discriminativeTraining(miniBatch)
+      print bla
 
   # now you also have to test it somehow
   # so you need to keep some testing data out
