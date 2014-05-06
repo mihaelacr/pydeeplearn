@@ -54,6 +54,8 @@ def similarity(data1, data2, similarities):
   miniBatchSize = 10
   epochs = 10
 
+  miniBatchIndex = T.lscalar()
+
   data = np.vstack([data1, data2])
   activationFunction = T.nnet.sigmoid
 
