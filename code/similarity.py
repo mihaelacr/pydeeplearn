@@ -200,9 +200,6 @@ def splitData():
 
   return trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest
 
-
-
-
 def defineSimilartyMesures():
   None
 
@@ -220,8 +217,8 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
           labels1[train], labels1[test], labels2[train], labels2[test])
 
 def main():
-  splitData()
-
+  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
+  similarity(trainData1, trainData2, similaritiesTrain)
 
 if __name__ == '__main__':
   main()
