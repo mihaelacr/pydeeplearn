@@ -51,7 +51,7 @@ def similarity(data1, data2, similarities):
   data = np.vstack([data1, data2])
   activationFunction = T.nnet.sigmoid
 
-  net = rbm.RBM(nrVisible, nrHidden, 0.001, 1, 1,
+  net = rbm.RBM(1200, 500, 0.001, 1, 1,
                   binary=1-args.relu,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
