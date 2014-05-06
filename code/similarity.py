@@ -55,8 +55,8 @@ def similarity(data1, data2, similarities):
                   binary=1-args.relu,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
-                  rmsprop=args.rbmrmsprop,
-                  nesterov=args.rbmnesterov)
+                  rmsprop=True,
+                  nesterov=True)
   net.train(data)
 
   # The mini-batch data is a matrix
