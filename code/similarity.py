@@ -81,7 +81,7 @@ def similarity(data1, data2, similarities):
   gradients = T.grad(error, trainer.params)
   for param, gradient in zip(trainer.params, gradients):
     newParam = param - learningRate * gradient
-    updates.append(param, newParam)
+    updates.append((param, newParam))
 
   # Now you have to define the theano function
   discriminativeTraining = theano.function(
