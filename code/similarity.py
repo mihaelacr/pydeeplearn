@@ -13,6 +13,8 @@ from sklearn import cross_validation
 from common import *
 from readfacedatabases import *
 
+theanoFloat  = theano.config.floatX
+
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
