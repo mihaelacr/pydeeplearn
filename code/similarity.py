@@ -34,7 +34,7 @@ class Trainer(object):
 
 
     # Do I need to add all biases? Probably only the hidden ones
-    self.params = [self.w, self.b, self.net.sharedWeights, self.net.sharedBiases]
+    self.params = [self.w, self.b, self.net.sharedWeights] + self.net.sharedBiases
 
     # This also has to be some theano graph
     hiddens1 = self.net.buildReconstructionForSymbolicVariable(input1, theanoRng)
