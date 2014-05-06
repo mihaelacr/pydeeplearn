@@ -98,8 +98,8 @@ def similarity(data1, data2, similarities):
   nrMiniBatches = len(data1) / miniBatchSize
 
   for epoch in xrange(epochs):
-    for i in xrange(nrMiniBatches):
-      discriminativeTraining(miniBatchIndex)
+    for miniBatch in xrange(nrMiniBatches):
+      discriminativeTraining(miniBatch)
 
   # now you also have to test it somehow
   # so you need to keep some testing data out
