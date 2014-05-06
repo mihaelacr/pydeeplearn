@@ -288,6 +288,8 @@ class RBM(object):
 
         trainFunction(miniBatchIndex, momentum, step)
 
+    self.sharedWeights = batchTrainer.weights
+    self.sharedBiases = [batchTrainer.biasVisible, batchTrainer.biasHidden]
     self.weights = batchTrainer.weights.get_value()
     self.biases = [batchTrainer.biasVisible.get_value(),
                    batchTrainer.biasHidden.get_value()]
