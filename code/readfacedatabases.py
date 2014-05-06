@@ -74,8 +74,8 @@ def readMultiPIE(show=False):
   return np.array(imgs), labelsToVectors(labels, 6)
 
 def readMultiPIESubjects():
-  # PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
-  PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+  PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
+  # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
 
   mat = scipy.io.loadmat(PATH)
   data = mat['a_multipie']
