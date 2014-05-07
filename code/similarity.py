@@ -62,6 +62,7 @@ def similarity(data1, data2, similarities):
 
   data = np.vstack([data1, data2])
   activationFunction = T.nnet.sigmoid
+  nrMiniBatches = len(data1) / miniBatchSize
 
   net = rbm.RBM(1200, 500, 0.001, 1, 1,
                   binary=1-args.relu,
@@ -105,7 +106,6 @@ def similarity(data1, data2, similarities):
           z: similarities[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
           })
 
-  nrMiniBatches = len(data1) / miniBatchSize
 
   for epoch in xrange(epochs):
     for miniBatch in xrange(nrMiniBatches):
