@@ -121,8 +121,8 @@ class SimilarityNet(object):
 
     # TODO : think of making data1 and data2 shared
     testFunction = theano.function(
-      outputs=[trainer.output],
-      updates=trainer.updates,
+      outputs=[self.trainer.output],
+      updates=self.trainer.updates,
       givens={
             x: testData1[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
             y: testData2[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
