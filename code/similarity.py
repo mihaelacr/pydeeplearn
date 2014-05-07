@@ -114,7 +114,6 @@ class SimilarityNet(object):
     for epoch in xrange(epochs):
       for miniBatch in xrange(nrMiniBatches):
         bla = discriminativeTraining(miniBatch)
-        # print bla
 
   def test(self, testData1, testData2):
     # If it is too slow try adding mini batches
@@ -124,8 +123,8 @@ class SimilarityNet(object):
       outputs=[self.trainer.output],
       updates=self.trainer.updates,
       givens={
-            x: testData1[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
-            y: testData2[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
+            x: testData1,
+            y: testData2,
             })
     return testFunction()
 
