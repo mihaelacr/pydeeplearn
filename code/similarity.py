@@ -56,7 +56,7 @@ class SimilarityNet(object):
 
   # TODO: add sizes and activation functions here as well
   # plus rbm learning rates
-  def __init__(learningRate):
+  def __init__(self, learningRate):
     self.learningRate = learningRate
 
   def _trainRBM(self, data1, data2):
