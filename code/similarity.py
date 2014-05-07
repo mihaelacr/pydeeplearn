@@ -88,6 +88,8 @@ class SimilarityNet(object):
     # The mini-batch data is a matrix
     x = T.matrix('x', dtype=theanoFloat)
     y = T.matrix('y', dtype=theanoFloat)
+    self.x = x
+    self.y = y
 
     z = T.vector('z', dtype=theanoFloat)
 
@@ -123,8 +125,8 @@ class SimilarityNet(object):
       outputs=[self.trainer.output],
       updates=self.trainer.updates,
       givens={
-            x: testData1,
-            y: testData2,
+            self.x: testData1,
+            self.y: testData2,
             })
     return testFunction()
 
