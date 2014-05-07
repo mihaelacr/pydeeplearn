@@ -499,6 +499,7 @@ def deepbeliefPIECV(big=False):
   bestCorrect = 0
   bestProbs = 0
 
+  probsforParms = []
   fold = 0
   for train, test in kf:
 
@@ -550,6 +551,7 @@ def deepbeliefPIECV(big=False):
 
     print "correct for " + str(params[fold])
     print correct
+    probsforParms += [correct]
 
     if bestCorrect < correct:
       bestCorrect = correct
@@ -563,6 +565,10 @@ def deepbeliefPIECV(big=False):
 
   print "bestProbs"
   print bestProbs
+
+
+  for i in xrange(len(params)):
+    print "parameter tuple " + str(params[i]) + " achieved correctness of " + probsforParms[i]
 
 def svmPIE():
   with open(args.netFile, "rb") as f:
