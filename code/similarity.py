@@ -74,7 +74,7 @@ class SimilarityNet(object):
     return net
 
 
-  def train(data1, data2, similarities, miniBatchSize=10, epochs=100):
+  def train(self, data1, data2, similarities, miniBatchSize=10, epochs=100):
     nrMiniBatches = len(data1) / miniBatchSize
     miniBatchIndex = T.lscalar()
 
@@ -116,7 +116,7 @@ class SimilarityNet(object):
         bla = discriminativeTraining(miniBatch)
         print bla
 
-  def test(testData1, testData2):
+  def test(self, testData1, testData2):
     # If it is too slow try adding mini batches
 
     # TODO : think of making data1 and data2 shared
@@ -139,11 +139,11 @@ class SimilarityNet(object):
 
     return updates + trainer.updates
 
+
 def cosineDistance(first, second):
   normFirst = T.sum(T.sqrt(first), axis=1)
   normSecond = T.sum(T.sqrt(second), axis=1)
   return T.sum(first * second, axis=1) / (normFirst * normSecond)
-
 
 # you can create more tuples than just one per image
 # you can put each image in 5 tuples and that will probably owrk better
