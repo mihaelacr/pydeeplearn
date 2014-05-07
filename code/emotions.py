@@ -568,7 +568,7 @@ def deepbeliefPIECV(big=False):
 
 
   for i in xrange(len(params)):
-    print "parameter tuple " + str(params[i]) + " achieved correctness of " + probsforParms[i]
+    print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
 
 def svmPIE():
   with open(args.netFile, "rb") as f:
