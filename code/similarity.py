@@ -124,10 +124,10 @@ class SimilarityNet(object):
     testFunction = theano.function(
       outputs=[self.trainer.output],
       updates=self.trainer.updates,
-      givens={
-            self.x: testData1,
-            self.y: testData2,
+      givens={self.x: testData1,
+            self.y: testData2
             })
+
     return testFunction()
 
   # You can add momentum and all that here as well
