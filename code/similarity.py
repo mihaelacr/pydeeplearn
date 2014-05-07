@@ -169,6 +169,9 @@ def splitData():
   trainData1, testData1, trainData2, testData2, trainSubjects1, testSubjects1,\
         trainSubjects2, testSubjects2 = splitTrainTest(data1, data2, subjects1, subjects2, 5)
 
+  print "trainData1.shape"
+  print trainData1.shape
+
   shuffledData1 = shuffling[0: len(shuffling) / 2]
   shuffledData2 = shuffling[len(shuffling)/2 :]
 
@@ -192,22 +195,34 @@ def splitData():
                       subjectsData1, subjectsData2, 5)
 
   trainData1 = np.vstack((trainData1, trainShuffedData1))
+
+  print "trainData1.shape"
+  print trainData1.shape
+
   trainData2 = np.vstack((trainData2, trainShuffedData2))
 
   testData1 = np.vstack((testData1, testShuffedData1))
   testData2 = np.vstack((testData2, testShuffedData2))
 
-  trainSubjects1 = np.vstack((trainSubjects1, trainShuffledSubjects1))
-  testSubjects1 = np.vstack((testSubjects1, testShuffledSubjects1))
+  trainSubjects1 = np.hstack((trainSubjects1, trainShuffledSubjects1))
+  testSubjects1 = np.hstack((testSubjects1, testShuffledSubjects1))
 
-  trainSubjects2 = np.vstack((trainSubjects2, trainShuffledSubjects2))
-  testSubjects2 = np.vstack((testSubjects2, testShuffledSubjects2))
+  trainSubjects2 = np.hstack((trainSubjects2, trainShuffledSubjects2))
+  testSubjects2 = np.hstack((testSubjects2, testShuffledSubjects2))
 
   assert len(subjects1) == len(subjects2)
   assert len(trainSubjects1) == len(trainSubjects1)
   assert len(testSubjects1) == len(testSubjects2)
-  similaritiesTrain = (trainSubjects1 == trainSubjects1)
+  similaritiesTrain = (trainSubjects1 == trainSubjects2)
   similaritiesTest = (testSubjects1 == testSubjects2)
+
+
+  print "trainSubjects1.shape"
+  print trainSubjects1.shape
+
+  print "similaritiesTrain.shape"
+  print similaritiesTrain.shape
+  print similaritiesTrain
 
   assert len(trainData1) == len(trainData2)
   assert len(testData1) == len(testData2)

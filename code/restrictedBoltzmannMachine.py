@@ -305,7 +305,6 @@ class RBM(object):
     assert self.biases[1].shape[0] == self.nrHidden
 
 
-
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
     updates = []
     # The theano people do not need this because they use gradient
