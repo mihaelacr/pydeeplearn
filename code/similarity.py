@@ -46,6 +46,7 @@ class Trainer(object):
 
     cos = cosineDistance(hiddens1, hiddens2)
 
+    self.updates = self.reconstructer1.updates + self.reconstructer2.updates
     prob = 1.0 /( 1.0 + T.exp(self.w * cos + self.b))
 
     self.output = prob
@@ -77,6 +78,7 @@ def similarity(data1, data2, similarities):
   # The mini-batch data is a matrix
   x = T.matrix('x', dtype=theanoFloat)
   y = T.matrix('y', dtype=theanoFloat)
+
   z = T.vector('z', dtype=theanoFloat)
 
   trainer = Trainer(x, y, net)
@@ -96,7 +98,7 @@ def similarity(data1, data2, similarities):
   discriminativeTraining = theano.function(
     inputs=[miniBatchIndex],
     outputs=[trainer.output],
-    updates=updates,
+    updates=updates + trainer.updates,
     givens={
           x: data1[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
           y: data2[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
@@ -113,7 +115,6 @@ def similarity(data1, data2, similarities):
   # now you also have to test it somehow
   # so you need to keep some testing data out
 
-
 def cosineDistance(first, second):
   normFirst = T.sum(T.sqrt(first), axis=1)
   normSecond = T.sum(T.sqrt(second), axis=1)
@@ -123,7 +124,7 @@ def cosineDistance(first, second):
 # you can create more tuples than just one per image
 # you can put each image in 5 tuples and that will probably owrk better
 # it might be useful to also give the same image twice
-def splitData():
+def splitData(imgsPerSubject=None):
   subjectsToImgs = readMultiPIESubjects()
 
   data1 = []
@@ -136,6 +137,9 @@ def splitData():
   subjects2 = []
 
   for subject, images in subjectsToImgs.iteritems():
+    if imgsPerSubject is not None:
+      images = images[:imgsPerSubject]
+
     lastIndex = len(images)/ 4 + subject % 2
     delta = len(images)/ 4 + (subject + 1) % 2
     last2Index = lastIndex + delta
@@ -249,7 +253,7 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
           labels1[train], labels1[test], labels2[train], labels2[test])
 
 def main():
-  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
+  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData(10)
 
   # trainData1  = theano.shared(np.asarray(trainData1,dtype=theanoFloat))
   # trainData2  = theano.shared(np.asarray(trainData2,dtype=theanoFloat))
