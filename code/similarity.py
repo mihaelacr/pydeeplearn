@@ -284,7 +284,7 @@ def main():
   simNet = SimilarityNet(0.01)
   simNet.train(trainData1, trainData2, similaritiesTrain)
 
-  res = simNet.test(testData2, test)
+  res = simNet.test(testData1, testData2)
   print res
 
 
