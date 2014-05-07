@@ -447,7 +447,7 @@ class RBM(object):
     reconstructions = self.reconstruct(dataInstances)
     return rmse(reconstructions, dataInstances)
 
-  def buildReconstructionForSymbolicVariable(self, x, theanoRng):
+  def buildReconstructerForSymbolicVariable(self, x, theanoRng):
     reconstructer = ReconstructerBatch(input=x,
                                         theanoGenerator=theanoRng,
                                         weights=self.sharedWeights,
@@ -458,7 +458,7 @@ class RBM(object):
                                         hiddenDropout=self.hiddenDropout,
                                         binary=self.binary,
                                         cdSteps=1)
-    return reconstructer.hiddenActivations
+    return reconstructer
 
 
 def initializeWeights(nrVisible, nrHidden):

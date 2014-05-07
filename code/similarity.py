@@ -37,9 +37,12 @@ class Trainer(object):
     # self.params = [self.w, self.b, self.net.sharedWeights] + self.net.sharedBiases
     self.params = [self.w, self.b]
 
+    self.reconstructer1 = self.net.buildReconstructerForSymbolicVariable(input1, theanoRng)
+    self.reconstructer2 = self.net.buildReconstructerForSymbolicVariable(input2, theanoRng)
+
     # This also has to be some theano graph
-    hiddens1 = self.net.buildReconstructionForSymbolicVariable(input1, theanoRng)
-    hiddens2 = self.net.buildReconstructionForSymbolicVariable(input2, theanoRng)
+    hiddens1 = self.reconstructer1.hiddenActivations
+    hiddens2 = self.reconstructer2.hiddenActivations
 
     cos = cosineDistance(hiddens1, hiddens2)
 
