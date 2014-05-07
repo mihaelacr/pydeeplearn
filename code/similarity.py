@@ -52,68 +52,92 @@ class Trainer(object):
     self.output = prob
 
 
-# TODO; you need to make this a class
-# and you need to polish a lot of things
-def similarity(data1, data2, similarities):
-  miniBatchSize = 10
-  epochs = 10
+class SimilarityNet(object):
 
-  miniBatchIndex = T.lscalar()
+  # TODO: add sizes and activation functions here as well
+  # plus rbm learning rates
+  def __init__(learningRate):
+    self.learningRate = learningRate
 
-  data = np.vstack([data1, data2])
-  activationFunction = T.nnet.sigmoid
-  nrMiniBatches = len(data1) / miniBatchSize
+  def _trainRBM(self, data1, data2):
+    data = np.vstack([data1, data2])
+    activationFunction = T.nnet.sigmoid
 
-  net = rbm.RBM(1200, 500, 0.001, 1, 1,
-                  binary=1-args.relu,
-                  visibleActivationFunction=activationFunction,
-                  hiddenActivationFunction=activationFunction,
-                  rmsprop=True,
-                  nesterov=True)
-  net.train(data)
+    net = rbm.RBM(1200, 500, 0.001, 1, 1,
+                    binary=1-args.relu,
+                    visibleActivationFunction=activationFunction,
+                    hiddenActivationFunction=activationFunction,
+                    rmsprop=True,
+                    nesterov=True)
+    net.train(data)
 
-  data1  = theano.shared(np.asarray(data1,dtype=theanoFloat))
-  data2  = theano.shared(np.asarray(data2,dtype=theanoFloat))
-  similarities = theano.shared(np.asarray(similarities,dtype=theanoFloat))
-
-  # The mini-batch data is a matrix
-  x = T.matrix('x', dtype=theanoFloat)
-  y = T.matrix('y', dtype=theanoFloat)
-
-  z = T.vector('z', dtype=theanoFloat)
-
-  trainer = Trainer(x, y, net)
-
-  # this will be a given
-  # similarities = getSimilarities(data1, data2)
-  error = T.sum(T.sqr(trainer.output-z))
-
-  learningRate = 0.01
-  updates = []
-  gradients = T.grad(error, trainer.params)
-  for param, gradient in zip(trainer.params, gradients):
-    newParam = param - learningRate * gradient
-    updates.append((param, newParam))
-
-  # Now you have to define the theano function
-  discriminativeTraining = theano.function(
-    inputs=[miniBatchIndex],
-    outputs=[trainer.output],
-    updates=updates + trainer.updates,
-    givens={
-          x: data1[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
-          y: data2[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
-          z: similarities[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
-          })
+    return net
 
 
-  for epoch in xrange(epochs):
-    for miniBatch in xrange(nrMiniBatches):
-      bla = discriminativeTraining(miniBatch)
-      print bla
+  def train(data1, data2, similarities, miniBatchSize=10, epochs=100):
+    nrMiniBatches = len(data1) / miniBatchSize
+    miniBatchIndex = T.lscalar()
 
-  # now you also have to test it somehow
-  # so you need to keep some testing data out
+
+    net = _trainRBM(self, data1, data2)
+
+    data1  = theano.shared(np.asarray(data1,dtype=theanoFloat))
+    data2  = theano.shared(np.asarray(data2,dtype=theanoFloat))
+    similarities = theano.shared(np.asarray(similarities,dtype=theanoFloat))
+
+    # The mini-batch data is a matrix
+    x = T.matrix('x', dtype=theanoFloat)
+    y = T.matrix('y', dtype=theanoFloat)
+
+    z = T.vector('z', dtype=theanoFloat)
+
+    trainer = Trainer(x, y, net)
+    self.trainer = trainer
+
+    # this will be a given
+    # similarities = getSimilarities(data1, data2)
+    error = T.sum(T.sqr(trainer.output-z))
+
+    updates = self.buildUpdates(trainer, error)
+
+    # Now you have to define the theano function
+    discriminativeTraining = theano.function(
+      inputs=[miniBatchIndex],
+      outputs=[trainer.output],
+      updates=updates,
+      givens={
+            x: data1[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
+            y: data2[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
+            z: similarities[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
+            })
+
+    for epoch in xrange(epochs):
+      for miniBatch in xrange(nrMiniBatches):
+        bla = discriminativeTraining(miniBatch)
+        print bla
+
+  def test(testData1, testData2):
+    # If it is too slow try adding mini batches
+
+    # TODO : think of making data1 and data2 shared
+    testFunction = theano.function(
+      outputs=[trainer.output],
+      updates=trainer.updates,
+      givens={
+            x: testData1[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
+            y: testData2[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
+            })
+    return testFunction()
+
+  # You can add momentum and all that here as well
+  def buildUpdates(self, trainer, error):
+    updates = []
+    gradients = T.grad(error, trainer.params)
+    for param, gradient in zip(trainer.params, gradients):
+      newParam = param - self.learningRate * gradient
+      updates.append((param, newParam))
+
+    return updates + trainer.updates
 
 def cosineDistance(first, second):
   normFirst = T.sum(T.sqrt(first), axis=1)
@@ -236,6 +260,8 @@ def splitData(imgsPerSubject=None):
 
   return trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest
 
+# Here  you need different measures than 0, 1 according to what you want it to learn
+# for the emotions part
 def defineSimilartyMesures():
   None
 
@@ -255,14 +281,13 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
 def main():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData(10)
 
-  # trainData1  = theano.shared(np.asarray(trainData1,dtype=theanoFloat))
-  # trainData2  = theano.shared(np.asarray(trainData2,dtype=theanoFloat))
-  # testData1  = theano.shared(np.asarray(testData1,dtype=theanoFloat))
-  # testData2  = theano.shared(np.asarray(testData2,dtype=theanoFloat))
-  # similaritiesTrain  = theano.shared(np.asarray(similaritiesTrain,dtype=theanoFloat))
-  # similaritiesTest = theano.shared(np.asarray(similaritiesTest,dtype=theanoFloat))
+  simNet = SimilarityNet(0.01)
+  simNet.train(trainData1, trainData2, similaritiesTrain)
 
-  similarity(trainData1, trainData2, similaritiesTrain)
+  res = simNet.test(testData2, test)
+  print res
+
+
 
 if __name__ == '__main__':
   main()
