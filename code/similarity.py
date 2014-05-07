@@ -79,7 +79,7 @@ class SimilarityNet(object):
     miniBatchIndex = T.lscalar()
 
 
-    net = _trainRBM(self, data1, data2)
+    net = self._trainRBM(data1, data2)
 
     data1  = theano.shared(np.asarray(data1,dtype=theanoFloat))
     data2  = theano.shared(np.asarray(data2,dtype=theanoFloat))
