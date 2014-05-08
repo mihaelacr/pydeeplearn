@@ -84,6 +84,7 @@ class SimilarityNet(object):
   def train(self, data1, data2, similarities, miniBatchSize=10, epochs=100):
     nrMiniBatches = len(data1) / miniBatchSize
     miniBatchIndex = T.lscalar()
+    momentum = T.fscalar()
 
 
     net = self._trainRBM(data1, data2)
@@ -107,11 +108,11 @@ class SimilarityNet(object):
     # similarities = getSimilarities(data1, data2)
     error = T.sum(T.sqr(trainer.output-z))
 
-    updates = self.buildUpdates(trainer, error)
+    updates = self.buildUpdates(trainer, error, momentum)
 
     # Now you have to define the theano function
     discriminativeTraining = theano.function(
-      inputs=[miniBatchIndex],
+      inputs=[miniBatchIndex, momentum],
       outputs=[trainer.output],
       updates=updates,
       givens={
@@ -121,8 +122,11 @@ class SimilarityNet(object):
             })
 
     for epoch in xrange(epochs):
+      momentum = np.float32(min(np.float32(0.5) + iteration * np.float32(0.1),
+                       np.float32(0.95)))
+
       for miniBatch in xrange(nrMiniBatches):
-        discriminativeTraining(miniBatch)
+        discriminativeTraining(miniBatch, momentum)
 
   def test(self, testData1, testData2):
     # If it is too slow try adding mini batches
@@ -141,11 +145,11 @@ class SimilarityNet(object):
     return testFunction()
 
   # You can add momentum and all that here as well
-  def buildUpdates(self, trainer, error):
+  def buildUpdates(self, trainer, error, momentum):
     updates = []
     gradients = T.grad(error, trainer.params)
     for param, oldParamUpdate, gradient in zip(trainer.params, trainer.oldDParams, gradients):
-      paramUpdate = self.maxMomentum * oldParamUpdate - self.learningRate * gradient
+      paramUpdate = momentum * oldParamUpdate - self.learningRate * gradient
       updates.append((param, param + paramUpdate))
       updates.append((oldParamUpdate, paramUpdate))
 
