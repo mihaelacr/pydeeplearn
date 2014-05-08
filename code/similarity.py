@@ -8,7 +8,7 @@ import theano
 from theano import tensor as T
 
 from common import *
-from similarities_utils import *
+from similarity_utils import *
 
 theanoFloat  = theano.config.floatX
 
