@@ -1,6 +1,6 @@
 import argparse
 
-from similarities_utils import *
+from similarity_utils import *
 import similarity
 
 parser = argparse.ArgumentParser(description='digit recognition')
