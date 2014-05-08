@@ -125,7 +125,6 @@ class SimilarityNet(object):
     testFunction = theano.function(
       inputs=[],
       outputs=[self.trainer.output],
-      updates=self.trainer.updates,
       givens={self.x: testData1,
             self.y: testData2
             })
@@ -140,7 +139,7 @@ class SimilarityNet(object):
       newParam = param - self.learningRate * gradient
       updates.append((param, newParam))
 
-    return updates + trainer.updates
+    return updates
 
 
 def cosineDistance(first, second):
