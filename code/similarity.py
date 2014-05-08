@@ -26,7 +26,7 @@ class Trainer(object):
     self.params = [self.w, self.b, self.net.sharedWeights, hiddenBias]
 
     _, weightForHidden = rbm.testWeights(self.net.sharedWeights,
-          visibleDropout=visibleDropout, hiddenDropout=hiddenDropout)
+          visibleDropout=self.net.visibleDropout, hiddenDropout=self.net.hiddenDropout)
 
     hiddenActivations1 = T.nnet.sigmoid(T.dot(input1, weightForHidden) + hiddenBias)
     hiddenActivations2 = T.nnet.sigmoid(T.dot(input2, weightForHidden) + hiddenBias)
