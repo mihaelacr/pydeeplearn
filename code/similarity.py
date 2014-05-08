@@ -21,9 +21,17 @@ class Trainer(object):
     self.b = theano.shared(value=np.float32(0))
     self.net = net
 
+    self.oldDw = theano.shared(value=np.float32(0))
+    self.oldDb = theano.shared(value=np.float32(0))
+    self.oldDWeights = theano.shared(value=np.zeros(self.net.weights.shape , dtype=theanoFloat))
+    self.oldDBias = theano.shared(value=np.zeros(self.net.biases[1].shape , dtype=theanoFloat))
+
+
     hiddenBias = net.sharedBiases[1]
     # Do I need to add all biases? Probably only the hidden ones
     self.params = [self.w, self.b, self.net.sharedWeights, hiddenBias]
+    self.oldDParams = [self.oldDw, self.oldDb, self.oldDWeights, self.oldDBias]
+
 
     _, weightForHidden = rbm.testWeights(self.net.sharedWeights,
           visibleDropout=self.net.visibleDropout, hiddenDropout=self.net.hiddenDropout)
@@ -43,11 +51,12 @@ class SimilarityNet(object):
 
   # TODO: add sizes and activation functions here as well
   # plus rbm learning rates
-  def __init__(self, learningRate, rbmNrVis, rbmNrHid, rbmLearningRate,
+  def __init__(self, learningRate, maxMomentum, rbmNrVis, rbmNrHid, rbmLearningRate,
                 rbmDropoutVis, rbmDropoutHid, binary):
     self.learningRate = learningRate
     self.binary = binary
     self.rbmNrVis = rbmNrVis
+    self.maxMomentum = maxMomentum
     self.rbmNrHid = rbmNrHid
     self.rbmLearningRate = rbmLearningRate
     self.rbmDropoutHid = rbmDropoutHid
@@ -135,9 +144,10 @@ class SimilarityNet(object):
   def buildUpdates(self, trainer, error):
     updates = []
     gradients = T.grad(error, trainer.params)
-    for param, gradient in zip(trainer.params, gradients):
-      newParam = param - self.learningRate * gradient
-      updates.append((param, newParam))
+    for param, oldParamUpdate, gradient in zip(trainer.params, trainer.oldDParams, gradients):
+      paramUpdate = self.maxMomentum * oldParamUpdate - self.learningRate * gradient
+      updates.append((param, param + paramUpdate))
+      updates.append((oldParamUpdate, paramUpdate))
 
     return updates
 

@@ -10,7 +10,7 @@ parser.add_argument('--relu', dest='relu',action='store_true', default=False,
 args = parser.parse_args()
 
 
-def main():
+def similarityMain():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData(10)
 
   simNet = similarity.SimilarityNet(learningRate=0.1,
@@ -24,8 +24,20 @@ def main():
   simNet.train(trainData1, trainData2, similaritiesTrain)
 
   res = simNet.test(testData1, testData2)
+
+  error = (similaritiesTest - res)  * 1.0 / len(res)
+
   print res
 
+  print error
+
+
+def similarityCV():
+  pass
+
+
+def main():
+  pass
 
 if __name__ == '__main__':
   main()
