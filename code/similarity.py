@@ -120,6 +120,9 @@ class SimilarityNet(object):
   def test(self, testData1, testData2):
     # If it is too slow try adding mini batches
 
+    testData1 = np.array(testData1, dtype=theanoFloat)
+    testData2 = np.array(testData2, dtype=theanoFloat)
+
     # TODO : think of making data1 and data2 shared
     testFunction = theano.function(
       inputs=[],
