@@ -91,6 +91,9 @@ class RBMMiniBatchTrainer(object):
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
 
 
+# TODO: check if this is doing the right thing
+# because the graph makes it look like hidden activations has to do with
+# the random generator
 class ReconstructerBatch(object):
   def __init__(self, input, theanoGenerator, weights, biases,
              visibleActivationFunction, hiddenActivationFunction,

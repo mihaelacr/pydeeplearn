@@ -21,22 +21,19 @@ class Trainer(object):
     self.b = theano.shared(value=np.float32(0))
     self.net = net
 
-    theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
-
+    hiddenBias = net.sharedBiases[1]
     # Do I need to add all biases? Probably only the hidden ones
-    # self.params = [self.w, self.b, self.net.sharedWeights] + self.net.sharedBiases
-    self.params = [self.w, self.b, self.net.sharedWeights]
+    self.params = [self.w, self.b, self.net.sharedWeights, hiddenBias]
 
-    self.reconstructer1 = self.net.buildReconstructerForSymbolicVariable(input1, theanoRng)
-    self.reconstructer2 = self.net.buildReconstructerForSymbolicVariable(input2, theanoRng)
+    _, weightForHidden = rbm.testWeights(self.net.sharedWeights,
+          visibleDropout=visibleDropout, hiddenDropout=hiddenDropout)
 
-    # This also has to be some theano graph
-    hiddens1 = self.reconstructer1.hiddenActivations
-    hiddens2 = self.reconstructer2.hiddenActivations
+    hiddenActivations1 = T.nnet.sigmoid(T.dot(input1, weightForHidden) + hiddenBias)
+    hiddenActivations2 = T.nnet.sigmoid(T.dot(input2, weightForHidden) + hiddenBias)
 
-    cos = cosineDistance(hiddens1, hiddens2)
+    # Here i have no sampling
+    cos = cosineDistance(hiddenActivations1, hiddenActivations2)
 
-    self.updates = self.reconstructer1.updates + self.reconstructer2.updates
     prob = 1.0 /( 1.0 + T.exp(self.w * cos + self.b))
 
     self.output = prob
