@@ -136,7 +136,7 @@ class ClassifierBatch(object):
       currentLayerValues = activationFunction(linearSum)
 
     self.lastHiddenActivations = currentLayerValues
-    # Last layer operations, no dropout in the output
+
     w = self.classificationWeights[nrWeights - 1]
     b = biases[nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
