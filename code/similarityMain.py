@@ -61,7 +61,8 @@ def similarityCV():
 
 
 def main():
-  similarityMain()
+  similarityCV()
+  # similarityMain()
 
 if __name__ == '__main__':
   main()
