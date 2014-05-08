@@ -453,7 +453,6 @@ def deepbeliefMultiPIE(big=False):
   print predicted.shape
   print actualLabels.shape
 
-
   confMatrix = confusion_matrix(predicted, np.argmax(actualLabels, axis=1))
 
   print "confusion matrix"

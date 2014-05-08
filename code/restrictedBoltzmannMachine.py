@@ -183,7 +183,7 @@ class RBM(object):
       weights = initializeWeights(self.nrVisible, self.nrHidden)
       biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
       # if self.binary:
-      #   # TODO: I think this makes no sense
+      #   # TODO: I think this makes no senseinitializeBiasesReal
       #   self.biases = intializeBiasesBinary(data, self.nrHidden)
       # else:
       #   # TODO: think of this
@@ -465,7 +465,11 @@ class RBM(object):
 
 
 def initializeWeights(nrVisible, nrHidden):
-  return np.asarray(np.random.normal(0, 0.01, (nrVisible, nrHidden)), dtype=theanoFloat)
+  return  np.asarray(np.random.uniform(
+                      low=-4 * np.sqrt(6. / (nrHidden + nrVisible)),
+                      high=4 * np.sqrt(6. / (nrHidden + nrVisible)),
+                      size=(nrVisible, nrHidden)), dtype=theanoFloat)
+  # return np.asarray(np.random.normal(0, 0.01, (nrVisible, nrHidden)), dtype=theanoFloat)
 
 # This only works for stochastic binary units
 def intializeBiasesBinary(data, nrHidden):
