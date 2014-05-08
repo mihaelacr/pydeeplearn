@@ -14,6 +14,7 @@ def similarityMain():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData(10)
 
   simNet = similarity.SimilarityNet(learningRate=0.1,
+                                    maxMomentum=0.95,
                                     binary=True,
                                     rbmNrVis=1200,
                                     rbmNrHid=500,
