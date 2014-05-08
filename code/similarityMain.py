@@ -40,13 +40,14 @@ def similarityCV():
   params = [(0.1, 0.001), (0.1, 0.005), (0.01, 0.001), (0.01, 0.005)]
   kf = cross_validation.KFold(n=len(trainData1), k=len(params))
 
+  fold = 0
   for train, test in kf:
-    simNet = similarity.SimilarityNet(learningRate=params[0],
+    simNet = similarity.SimilarityNet(learningRate=params[fold][0],
                                     maxMomentum=0.95,
                                     binary=True,
                                     rbmNrVis=1200,
                                     rbmNrHid=500,
-                                    rbmLearningRate=params[1],
+                                    rbmLearningRate=params[fold][1],
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0)
 
@@ -58,6 +59,8 @@ def similarityCV():
 
     print res
     print error
+
+    fold += 1
 
 
 def main():
