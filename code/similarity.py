@@ -23,10 +23,9 @@ class Trainer(object):
 
     theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
 
-
     # Do I need to add all biases? Probably only the hidden ones
     # self.params = [self.w, self.b, self.net.sharedWeights] + self.net.sharedBiases
-    self.params = [self.w, self.b]
+    self.params = [self.w, self.b, self.net.sharedWeights]
 
     self.reconstructer1 = self.net.buildReconstructerForSymbolicVariable(input1, theanoRng)
     self.reconstructer2 = self.net.buildReconstructerForSymbolicVariable(input2, theanoRng)
