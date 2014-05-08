@@ -37,7 +37,7 @@ def similarityMain():
 def similarityCV():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
 
-  params = [(0.1, 0.01), (0.1, 0.005), (0.01, 0.01), (0.01, 0.005)]
+  params = [(0.001, 0.01), (0.001, 0.005), (0.01, 0.01), (0.01, 0.005)]
   kf = cross_validation.KFold(n=len(trainData1), k=len(params))
 
   fold = 0
