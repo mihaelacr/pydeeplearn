@@ -122,6 +122,7 @@ class SimilarityNet(object):
 
     # TODO : think of making data1 and data2 shared
     testFunction = theano.function(
+      inputs=[],
       outputs=[self.trainer.output],
       updates=self.trainer.updates,
       givens={self.x: testData1,
