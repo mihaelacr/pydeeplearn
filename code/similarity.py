@@ -54,7 +54,8 @@ class SimilarityNet(object):
     self.rbmNrVis = rbmNrVis
     self.rbmNrHid = rbmNrHid
     self.rbmLearningRate = rbmLearningRate
-    self.rbmDropoutHid = rbmDropoutVis
+    self.rbmDropoutHid = rbmDropoutHid
+    self.rbmDropoutVis = rbmDropoutVis
 
 
   def _trainRBM(self, data1, data2):
