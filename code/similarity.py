@@ -42,6 +42,7 @@ class Trainer(object):
     # Here i have no sampling
     cos = cosineDistance(hiddenActivations1, hiddenActivations2)
 
+    self.cos = cos
     prob = 1.0 /( 1.0 + T.exp(self.w * cos + self.b))
 
     self.output = prob
@@ -111,7 +112,7 @@ class SimilarityNet(object):
     # Now you have to define the theano function
     discriminativeTraining = theano.function(
       inputs=[miniBatchIndex, momentum],
-      outputs=[trainer.output],
+      outputs=[trainer.output, trainer.cos],
       updates=updates,
       givens={
             x: data1[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
@@ -124,7 +125,8 @@ class SimilarityNet(object):
                        np.float32(0.95)))
 
       for miniBatch in xrange(nrMiniBatches):
-        discriminativeTraining(miniBatch, momentum)
+        output, cos = discriminativeTraining(miniBatch, momentum)
+        print cos
 
     print trainer.w.get_value()
     print trainer.b.get_value()
