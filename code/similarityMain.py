@@ -67,6 +67,8 @@ def similarityCV():
 
     correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
+    print "params[fold]"
+    print params[fold]
     print "res"
     print res
     print "correct"
