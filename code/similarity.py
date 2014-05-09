@@ -104,8 +104,6 @@ class SimilarityNet(object):
     trainer = Trainer(x, y, net)
     self.trainer = trainer
 
-    # this will be a given
-    # similarities = getSimilarities(data1, data2)
     error = T.sum(T.sqr(trainer.output-z))
 
     updates = self.buildUpdates(trainer, error, momentum)

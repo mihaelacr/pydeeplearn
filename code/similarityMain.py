@@ -46,7 +46,7 @@ def similarityCV():
                                     maxMomentum=0.95,
                                     binary=True,
                                     rbmNrVis=1200,
-                                    rbmNrHid=2000,
+                                    rbmNrHid=1000,
                                     rbmLearningRate=params[fold][1],
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0)
@@ -64,8 +64,8 @@ def similarityCV():
 
 
 def main():
-  similarityCV()
-  # similarityMain()
+  # similarityCV()
+  similarityMain()
 
 if __name__ == '__main__':
   main()
