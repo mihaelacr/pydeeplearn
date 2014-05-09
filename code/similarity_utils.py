@@ -92,7 +92,6 @@ def splitData(imgsPerSubject=None):
 
 
 def splitSubjectData(subjectsToImgs, imgsPerSubject):
-
   data1 = []
 
   data2 = []
