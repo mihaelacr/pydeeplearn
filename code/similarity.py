@@ -160,7 +160,7 @@ class SimilarityNet(object):
 def cosineDistance(first, second):
   normFirst = T.sqrt(T.sum(T.sqr(first), axis=1))
   normSecond = T.sqrt(T.sum(T.sqr(second), axis=1))
-  return T.sum(first * second, axis=1) / (normFirst * normSecond)
+  return 1.0 - T.sum(first * second, axis=1) / (normFirst * normSecond)
 
 # Here  you need different measures than 0, 1 according to what you want it to learn
 # for the emotions part
