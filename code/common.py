@@ -88,6 +88,15 @@ def shuffleList(data, labels):
 
   return shuffledData, shuffledLabels
 
+def shuffle3(data1, data2, labels):
+  indexShuffle = np.random.permutation(len(data1))
+  shuffledData1 = np.array([data1[i] for i in indexShuffle])
+  shuffledData2 = np.array([data2[i] for i in indexShuffle])
+  shuffledLabels = np.array([labels[i] for i in indexShuffle])
+
+  return shuffledData1, shuffledData2, shuffledLabels
+
+
 # Recitified linear unit
 def relu(var):
   return var * (var > 0.0)
