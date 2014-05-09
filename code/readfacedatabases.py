@@ -33,6 +33,12 @@ def equalizeFromFloat(x):
   y =  equalizeImg(y).reshape(-1)
   return y / 255.0
 
+def equalizePIE():
+  imgs, labels = readMultiPIE()
+
+  imgs = np.array(map(lambda x: equalizeFromFloat(x), imgs))
+
+  return imgs, labels
 
 def equalizeKanade(big=False):
   data, labels = readKanade(big=big, equalize=False)
