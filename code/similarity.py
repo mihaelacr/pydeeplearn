@@ -127,6 +127,7 @@ class SimilarityNet(object):
         discriminativeTraining(miniBatch, momentum)
 
     print trainer.w.get_value()
+    print triner.b.get_value()
 
   def test(self, testData1, testData2):
     # If it is too slow try adding mini batches
