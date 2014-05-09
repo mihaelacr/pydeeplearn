@@ -685,7 +685,6 @@ def deepbeliefMNIST():
     net = pickle.load(f)
     f.close()
 
-
   probs, predicted = net.classify(testingScaledVectors)
   correct = 0
   errorCases = []
