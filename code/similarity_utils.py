@@ -113,11 +113,11 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None):
       images = images[:imgsPerSubject]
 
     delta = len(images)/ 4 + subject % 2
-    last2Index = lastIndex + delta
+    last2Index = 2 *delta
     data1 += images[0: delta]
     data2 += images[delta: last2Index]
 
-    subjects1 += [subject] * lastIndex
+    subjects1 += [subject] * delta
     subjects2 += [subject] * delta
 
     imagesForShuffling = images[last2Index : ]
