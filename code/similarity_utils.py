@@ -47,7 +47,7 @@ def splitData(imgsPerSubject=None):
   print "trainData1.shape"
   print trainData1.shape
 
-  shuffledData1, shuffledData2, subjectsData1, subjectsData2 = splitShuffling((shuffling, subjectsShuffling))
+  shuffledData1, shuffledData2, subjectsData1, subjectsData2 = splitShuffling(shuffling, subjectsShuffling)
 
   print len(shuffledData1)
   print len(shuffledData2)
