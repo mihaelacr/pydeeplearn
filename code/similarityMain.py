@@ -62,7 +62,7 @@ def similarityCV():
 
     predicted = res > 0.7
 
-    error = (similaritiesTest == predicted) / len(res)
+    error = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
 
     print res
