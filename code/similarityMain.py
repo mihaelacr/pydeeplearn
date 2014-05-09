@@ -64,8 +64,9 @@ def similarityCV():
 
     error = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
-
+    print "res"
     print res
+    print "error"
     print error
 
     fold += 1
