@@ -15,6 +15,23 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
   return (data1[train], data1[test], data2[train], data2[test],
           labels1[train], labels1[test], labels2[train], labels2[test])
 
+def splitShuffling(shuffling, subjectsShuffling):
+  shuffledData1 = shuffling[0: len(shuffling) / 2]
+  shuffledData2 = shuffling[len(shuffling)/2 :]
+
+  subjectsData1 = subjectsShuffling[0: len(shuffling) /2]
+  subjectsData2 = subjectsShuffling[len(shuffling)/2:]
+
+  # HACK
+  # shuffledData2 = shuffledData2[:-1]
+  # subjectsData2 = subjectsData2[:-1]
+
+  shuffledData1 = np.array(shuffledData1)
+  shuffledData1 = np.array(shuffledData2)
+  subjectsData1 = np.array(subjectsData1)
+  subjectsData2 = np.array(subjectsData2)
+
+  return shuffledData1, shuffledData2, subjectsData1, subjectsData2
 
 # you can create more tuples than just one per image
 # you can put each image in 5 tuples and that will probably owrk better
@@ -30,19 +47,7 @@ def splitData(imgsPerSubject=None):
   print "trainData1.shape"
   print trainData1.shape
 
-  shuffledData1 = shuffling[0: len(shuffling) / 2]
-  shuffledData2 = shuffling[len(shuffling)/2 :]
-
-  subjectsData1 = subjectsShuffling[0: len(shuffling) /2]
-  subjectsData2 = subjectsShuffling[len(shuffling)/2:]
-
-  shuffledData2 = shuffledData2[:-1]
-  subjectsData2 = subjectsData2[:-1]
-
-  shuffledData1 = np.array(shuffledData1)
-  shuffledData2 = np.array(shuffledData2)
-  subjectsData1 = np.array(subjectsData1)
-  subjectsData2 = np.array(subjectsData2)
+  shuffledData1, shuffledData2, subjectsData1, subjectsData2 = splitShuffling((shuffling, subjectsShuffling))
 
   print len(shuffledData1)
   print len(shuffledData2)
@@ -91,9 +96,8 @@ def splitData(imgsPerSubject=None):
   return trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest
 
 
-def splitSubjectData(subjectsToImgs, imgsPerSubject):
+def splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None):
   data1 = []
-
   data2 = []
 
   shuffling = []
@@ -102,14 +106,16 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject):
   subjects2 = []
 
   for subject, images in subjectsToImgs.iteritems():
+    if subjectsToTake is not None and subject not in subjectsToTake:
+      pass
+
     if imgsPerSubject is not None:
       images = images[:imgsPerSubject]
 
-    lastIndex = len(images)/ 4 + subject % 2
-    delta = len(images)/ 4 + (subject + 1) % 2
+    delta = len(images)/ 4 + subject % 2
     last2Index = lastIndex + delta
-    data1 += images[0: lastIndex]
-    data2 += images[lastIndex: last2Index]
+    data1 += images[0: delta]
+    data2 += images[delta: last2Index]
 
     subjects1 += [subject] * lastIndex
     subjects2 += [subject] * delta
@@ -129,6 +135,7 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject):
 
   print len(data1)
   print len(data2)
+  assert len(data1) == len(data2)
 
   # Warning: hack; now with the new subject thing it will not work
   data2 = data2[:-1]
@@ -140,3 +147,17 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject):
   subjects2 = np.array(subjects2)
 
   return data1, data2, subjects1, subjects2, shuffling, subjectsShuffling
+
+def splitDataAccordingToSubjects(trainSubjects, testSubjects, imgsPerSubject):
+  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling  = splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None)
+
+  shuffledData1, shuffledData2, subjectsData1, subjectsData2 = splitShuffling(shuffling, subjectsShuffling)
+
+  data1 = np.vstack((data1, shuffledData1))
+  data2 = np.vstack((data2, shuffledData2))
+
+  subjects1 = np.hstack((subjects1, subjectsData1))
+  subjects2 = np.hstack((subjects2, subjectsData2))
+
+  return data1, data2, subjects1, subjects2
+
