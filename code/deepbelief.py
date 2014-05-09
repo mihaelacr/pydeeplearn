@@ -651,7 +651,7 @@ class DBN(object):
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
 
-    plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
+    plot3Error(trainingErrorNoDropout, trainingErrors, validationErrors)
 
     print "number of epochs"
     print epoch

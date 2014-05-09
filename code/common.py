@@ -188,34 +188,13 @@ def plotTraningError(trainingErrors):
     print trainingErrors
 
 
-def plot3Erros(trainingErrors, trainWithDropout, validationErrors, ):
+def plot3Errors(trainingErrors, trainWithDropout, validationErrors):
   # if run remotely without a display
-  try:
-    plt.plot(trainingErrors, label="Training error")
-    plt.plot(validationErrors, label="Validation error")
-    plt.xlabel('Epoch')
-    plt.ylabel('Cross entropy average error')
-    plt.title('Training and validation error during DBN training')
-    plt.legend()
-    plt.show()
-  except Exception as e:
-    print "validation error plot not made"
-    print "error ", e
-
-    # If we had an error we are either not sshed with -X
-    # or we are in a detached screen session.
-    # so turn the io off and save the pic
-    plt.ioff()
-    plt.plot(trainingErrors, label="Training error")
-    plt.plot(validationErrors, label="Validation error")
-    plt.xlabel('Epoch')
-    plt.ylabel('Cross entropy average error')
-    plt.title('Training and validation error during DBN training')
-    plt.legend()
-    plt.savefig("validationandtrainingerror.png" , transparent=True)
-
-    print "printing validation errors and training errors instead"
-    print "validationErrors"
-    print validationErrors
-    print "trainingErrors"
-    print trainingErrors
+  plt.plot(trainWithDropout, label="Training error on dropped out set.")
+  plt.plot(trainingErrors, label="Training error")
+  plt.plot(validationErrors, label="Validation error")
+  plt.xlabel('Epoch')
+  plt.ylabel('Cross entropy average error')
+  plt.title('Training and validation error during DBN training')
+  plt.legend()
+  plt.show()
