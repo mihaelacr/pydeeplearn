@@ -12,6 +12,7 @@ from similarity_utils import *
 
 theanoFloat  = theano.config.floatX
 
+#TODO: rmsprop? maybe for emotions but not sure it is worth here
 
 class Trainer(object):
 
@@ -147,7 +148,6 @@ class SimilarityNet(object):
 
     return testFunction()
 
-  # You can add momentum and all that here as well
   def buildUpdates(self, trainer, error, momentum):
     updates = []
     gradients = T.grad(error, trainer.params)

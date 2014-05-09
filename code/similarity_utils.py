@@ -22,51 +22,7 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
 def splitData(imgsPerSubject=None):
   subjectsToImgs = readMultiPIESubjects()
 
-  data1 = []
-
-  data2 = []
-
-  shuffling = []
-  subjectsShuffling = []
-  subjects1 = []
-  subjects2 = []
-
-  for subject, images in subjectsToImgs.iteritems():
-    if imgsPerSubject is not None:
-      images = images[:imgsPerSubject]
-
-    lastIndex = len(images)/ 4 + subject % 2
-    delta = len(images)/ 4 + (subject + 1) % 2
-    last2Index = lastIndex + delta
-    data1 += images[0: lastIndex]
-    data2 += images[lastIndex: last2Index]
-
-    subjects1 += [subject] * lastIndex
-    subjects2 += [subject] * delta
-
-    imagesForShuffling = images[last2Index : ]
-    shuffling += imagesForShuffling
-    subjectsShuffling += [subject] * len(imagesForShuffling)
-
-  print "len(subjectsShuffling)"
-  print len(subjectsShuffling)
-
-  print "shuffling"
-  print len(shuffling)
-
-  assert len(shuffling) == len(subjectsShuffling)
-  shuffling, subjectsShuffling = shuffleList(shuffling, subjectsShuffling)
-
-  print len(data1)
-  print len(data2)
-  # Warning: hack
-  data2 = data2[:-1]
-  subjects2 = subjects2[:-1]
-
-  data1 = np.array(data1)
-  data2 = np.array(data2)
-  subjects1 = np.array(subjects1)
-  subjects2 = np.array(subjects2)
+  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling = splitSubjectData(subjectsToImgs, imgsPerSubject)
 
   trainData1, testData1, trainData2, testData2, trainSubjects1, testSubjects1,\
         trainSubjects2, testSubjects2 = splitTrainTest(data1, data2, subjects1, subjects2, 5)
@@ -129,4 +85,59 @@ def splitData(imgsPerSubject=None):
   assert len(trainData1) == len(trainData2)
   assert len(testData1) == len(testData2)
 
+  trainData1, trainData2, similaritiesTrain = shuffle3(trainData1, trainData2, similaritiesTrain)
+  testData1, testData2, similaritiesTest = shuffle3(testData1, testData2, similaritiesTest)
+
   return trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest
+
+
+def splitSubjectData(subjectsToImgs, imgsPerSubject):
+
+  data1 = []
+
+  data2 = []
+
+  shuffling = []
+  subjectsShuffling = []
+  subjects1 = []
+  subjects2 = []
+
+  for subject, images in subjectsToImgs.iteritems():
+    if imgsPerSubject is not None:
+      images = images[:imgsPerSubject]
+
+    lastIndex = len(images)/ 4 + subject % 2
+    delta = len(images)/ 4 + (subject + 1) % 2
+    last2Index = lastIndex + delta
+    data1 += images[0: lastIndex]
+    data2 += images[lastIndex: last2Index]
+
+    subjects1 += [subject] * lastIndex
+    subjects2 += [subject] * delta
+
+    imagesForShuffling = images[last2Index : ]
+    shuffling += imagesForShuffling
+    subjectsShuffling += [subject] * len(imagesForShuffling)
+
+  print "len(subjectsShuffling)"
+  print len(subjectsShuffling)
+
+  print "shuffling"
+  print len(shuffling)
+
+  assert len(shuffling) == len(subjectsShuffling)
+  shuffling, subjectsShuffling = shuffleList(shuffling, subjectsShuffling)
+
+  print len(data1)
+  print len(data2)
+
+  # Warning: hack; now with the new subject thing it will not work
+  data2 = data2[:-1]
+  subjects2 = subjects2[:-1]
+
+  data1 = np.array(data1)
+  data2 = np.array(data2)
+  subjects1 = np.array(subjects1)
+  subjects2 = np.array(subjects2)
+
+  return data1, data2, subjects1, subjects2, shuffling, subjectsShuffling

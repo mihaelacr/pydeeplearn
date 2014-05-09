@@ -593,6 +593,8 @@ def svmPIE():
 
 # Make this more general to be able
 # to say different subjects and different poses
+# I tihnk the different subjects is very intersting
+# and I should do this for for
 def deepBeliefPieDifferentIllumination():
   illuminationTotal = range(5)
 
