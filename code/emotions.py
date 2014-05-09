@@ -462,6 +462,7 @@ def deepbeliefMultiPIE(big=False):
     with open(args.netFile, "wb") as f:
       pickle.dump(net, f)
 
+
 def deepbeliefPIECV(big=False):
   data, labels = readMultiPIE()
 
@@ -569,6 +570,7 @@ def deepbeliefPIECV(big=False):
   for i in xrange(len(params)):
     print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
 
+
 def svmPIE():
   with open(args.netFile, "rb") as f:
     dbnNet = pickle.load(f)
@@ -587,6 +589,94 @@ def svmPIE():
   testLabels = labels[test]
 
   svm.SVMCV(dbnNet, training, trainLabels, testing, testLabels)
+
+
+# Make this more general to be able
+# to say different subjects and different poses
+def deepBeliefPieDifferentIllumination():
+  trainData, trainLabels, testData, testLabels = readMultiPieDifferentIlluminations([0,1,2,3])
+
+  if args.relu:
+    activationFunction = relu
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.95
+  else:
+    activationFunction = T.nnet.sigmoid
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.9
+
+  if args.train:
+    # TODO: this might require more thought
+    net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
+               binary=1-args.relu,
+               activationFunction=activationFunction,
+               rbmActivationFunctionVisible=T.nnet.sigmoid,
+               rbmActivationFunctionHidden=T.nnet.sigmoid,
+               unsupervisedLearningRate=unsupervisedLearningRate,
+               # is this not a bad learning rate?
+               supervisedLearningRate=supervisedLearningRate,
+               momentumMax=momentumMax,
+               nesterovMomentum=args.nesterov,
+               rbmNesterovMomentum=args.rbmnesterov,
+               rmsprop=args.rmsprop,
+               miniBatchSize=args.miniBatchSize,
+               visibleDropout=0.8,
+               hiddenDropout=1.0,
+               rbmHiddenDropout=1.0,
+               rbmVisibleDropout=1.0,
+               preTrainEpochs=args.preTrainEpochs)
+
+    unsupervisedData = buildUnsupervisedDataSetForPIE()
+
+    net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
+              validation=args.validation,
+              unsupervisedData=unsupervisedData)
+  else:
+     # Take the saved network and use that for reconstructions
+    with open(args.netFile, "rb") as f:
+      net = pickle.load(f)
+
+  probs, predicted = net.classify(data[test])
+
+  actualLabels = labels[test]
+  correct = 0
+  errorCases = []
+
+  for i in xrange(len(test)):
+    print "predicted"
+    print "probs"
+    print probs[i]
+    print "predicted"
+    print predicted[i]
+    print "actual"
+    actual = actualLabels[i]
+    print np.argmax(actual)
+    if predicted[i] == np.argmax(actual):
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  print "correct"
+  print correct
+
+  print "percentage correct"
+  print correct  * 1.0/ len(test)
+
+  print type(predicted)
+  print type(actualLabels)
+  print predicted.shape
+  print actualLabels.shape
+
+  confMatrix = confusion_matrix(predicted, np.argmax(actualLabels, axis=1))
+
+  print "confusion matrix"
+  print confMatrix
+
+  if args.save:
+    with open(args.netFile, "wb") as f:
+      pickle.dump(net, f)
 
 
 def main():
