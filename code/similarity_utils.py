@@ -141,6 +141,8 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None):
   data2 = np.array(data2)
   subjects1 = np.array(subjects1)
   subjects2 = np.array(subjects2)
+  shuffling = np.array(shuffling)
+  subjectsShuffling = np.array(subjectsShuffling)
 
   return data1, data2, subjects1, subjects2, shuffling, subjectsShuffling
 
