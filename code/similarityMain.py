@@ -58,7 +58,12 @@ def similarityCV():
 
     res = simNet.test(testData1, testData2)
 
-    error = (similaritiesTest - res)  * 1.0 / len(res)
+    # error = (similaritiesTest - res)  * 1.0 / len(res)
+
+    predicted = res > 0.7
+
+    error = (similaritiesTest == predicted) / len(res)
+
 
     print res
     print error
