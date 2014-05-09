@@ -630,9 +630,6 @@ class DBN(object):
           meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
           meanValidation = sum(meanValidations) / len(meanValidations)
 
-          validationErrors += [meanValidation]
-          trainingErrors += [trainingErrorBatch]
-          trainingErrorNoDropout +=  [trainNoDropout(batchNr)]
 
           if meanValidation < bestValidationError:
             # If we have improved well enough, then increase the patience
@@ -641,6 +638,10 @@ class DBN(object):
               patience = max(patience, iteration * 2)
 
             bestValidationError = meanValidation
+
+        validationErrors += [meanValidation]
+        trainingErrors += [trainingErrorBatch]
+        trainingErrorNoDropout +=  [trainNoDropout(batchNr)]
 
         if patience <= iteration:
           doneTraining = True
