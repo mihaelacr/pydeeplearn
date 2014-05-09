@@ -137,10 +137,6 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None):
   print len(data2)
   assert len(data1) == len(data2)
 
-  # Warning: hack; now with the new subject thing it will not work
-  data2 = data2[:-1]
-  subjects2 = subjects2[:-1]
-
   data1 = np.array(data1)
   data2 = np.array(data2)
   subjects1 = np.array(subjects1)
