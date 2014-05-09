@@ -60,7 +60,7 @@ def similarityCV():
 
     # error = (similaritiesTest - res)  * 1.0 / len(res)
 
-    predicted = res > 0.7
+    predicted = res > 0.5
 
     print "predicted"
     print predicted
