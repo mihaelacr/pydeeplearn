@@ -18,7 +18,7 @@ def similarityMain():
                                     maxMomentum=0.95,
                                     binary=True,
                                     rbmNrVis=1200,
-                                    rbmNrHid=500,
+                                    rbmNrHid=1000,
                                     rbmLearningRate=0.001,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0)
