@@ -126,7 +126,7 @@ class SimilarityNet(object):
 
       for miniBatch in xrange(nrMiniBatches):
         output, cos = discriminativeTraining(miniBatch, momentum)
-        print cos
+        # print cos
 
     print trainer.w.get_value()
     print trainer.b.get_value()
