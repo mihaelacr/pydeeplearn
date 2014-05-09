@@ -7,6 +7,9 @@ import similarity
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
+parser.add_argument('--cv', dest='cv',action='store_true', default=False,
+                    help=("if true, does cv"))
+
 
 args = parser.parse_args()
 
@@ -64,8 +67,10 @@ def similarityCV():
 
 
 def main():
-  # similarityCV()
-  similarityMain()
+  if args.cv:
+    similarityCV()
+  else:
+    similarityMain()
 
 if __name__ == '__main__':
   main()
