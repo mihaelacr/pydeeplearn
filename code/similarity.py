@@ -54,7 +54,7 @@ class SimilarityNet(object):
   # TODO: add sizes and activation functions here as well
   # plus rbm learning rates
   def __init__(self, learningRate, maxMomentum, rbmNrVis, rbmNrHid, rbmLearningRate,
-                rbmDropoutVis, rbmDropoutHid, binary):
+                rbmDropoutVis, rbmDropoutHid, binary, trainingEpochsRBM):
     self.learningRate = learningRate
     self.binary = binary
     self.rbmNrVis = rbmNrVis
@@ -63,6 +63,7 @@ class SimilarityNet(object):
     self.rbmLearningRate = rbmLearningRate
     self.rbmDropoutHid = rbmDropoutHid
     self.rbmDropoutVis = rbmDropoutVis
+    self.trainingEpochsRBM = trainingEpochsRBM
 
 
   def _trainRBM(self, data1, data2):
@@ -77,7 +78,8 @@ class SimilarityNet(object):
                     visibleActivationFunction=activationFunction,
                     hiddenActivationFunction=activationFunction,
                     rmsprop=True,
-                    nesterov=True)
+                    nesterov=True,
+                    trainingEpochs=trainingEpochsRBM)
     net.train(data)
 
     return net
