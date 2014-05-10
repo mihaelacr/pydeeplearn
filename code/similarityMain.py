@@ -38,6 +38,45 @@ def similarityMain():
   print error
 
 
+def similarityDifferentSubjects():
+  nrSubjects = 147
+  subjects = range(nrSubjects)
+  kf = cross_validation.KFold(n=len(subjects), k=5)
+
+  for train, test in kf:
+    break
+
+  subjectTest = subjects[train]
+  subjectTrain = subjects[train]
+
+  trainData1, trainData2, trainSubjects1, trainSubjects2 =\
+    splitDataAccordingToSubjects(subjectsToImgs, subjectTrain, imgsPerSubject=None)
+
+
+  testData1, testData2, testSubjects1, testSubjects2 =\
+    splitDataAccordingToSubjects(subjectsToImgs, subjectTest, imgsPerSubject=None)
+
+  simNet = similarity.SimilarityNet(learningRate=0.001,
+                                    maxMomentum=0.95,
+                                    binary=True,
+                                    rbmNrVis=1200,
+                                    rbmNrHid=1000,
+                                    rbmLearningRate=0.005,
+                                    rbmDropoutHid=1.0,
+                                    rbmDropoutVis=1.0,
+                                    trainingEpochs=10)
+
+  simNet.train(trainData1, trainData2, similaritiesTrain)
+
+  res = simNet.test(testData1, testData2)
+
+  error = (similaritiesTest - res)  * 1.0 / len(res)
+
+  print res
+
+  print error
+
+
 def similarityCV():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
 

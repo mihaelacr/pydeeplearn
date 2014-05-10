@@ -146,8 +146,8 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None):
 
   return data1, data2, subjects1, subjects2, shuffling, subjectsShuffling
 
-def splitDataAccordingToSubjects(trainSubjects, testSubjects, imgsPerSubject):
-  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling  = splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None)
+def splitDataAccordingToSubjects(subjectsToImgs, subjects, imgsPerSubject=None):
+  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling  = splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=subjects)
 
   shuffledData1, shuffledData2, subjectsData1, subjectsData2 = splitShuffling(shuffling, subjectsShuffling)
 
@@ -158,4 +158,5 @@ def splitDataAccordingToSubjects(trainSubjects, testSubjects, imgsPerSubject):
   subjects2 = np.hstack((subjects2, subjectsData2))
 
   return data1, data2, subjects1, subjects2
+
 
