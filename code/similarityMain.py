@@ -9,6 +9,8 @@ parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, does cv"))
+parser.add_argument('--diffsubjects', dest='diffsubjects',action='store_true', default=False,
+                    help=("if true, trains a net with different test and train subjects"))
 
 
 args = parser.parse_args()
@@ -38,7 +40,7 @@ def similarityMain():
   print error
 
 
-def similarityDifferentSubjects():
+def similarityDifferentSubjectsMain():
   nrSubjects = 147
   subjects = range(nrSubjects)
   kf = cross_validation.KFold(n=len(subjects), k=5)
@@ -46,8 +48,8 @@ def similarityDifferentSubjects():
   for train, test in kf:
     break
 
-  subjectTest = subjects[train]
   subjectTrain = subjects[train]
+  subjectTest = subjects[test]
 
   trainData1, trainData2, trainSubjects1, trainSubjects2 =\
     splitDataAccordingToSubjects(subjectsToImgs, subjectTrain, imgsPerSubject=None)
@@ -55,6 +57,10 @@ def similarityDifferentSubjects():
 
   testData1, testData2, testSubjects1, testSubjects2 =\
     splitDataAccordingToSubjects(subjectsToImgs, subjectTest, imgsPerSubject=None)
+
+
+  similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
+  similaritiesTest =  similarityDifferentSubjects(testSubjects1, testSubjects2)
 
   simNet = similarity.SimilarityNet(learningRate=0.001,
                                     maxMomentum=0.95,
@@ -120,6 +126,8 @@ def similarityCV():
 def main():
   if args.cv:
     similarityCV()
+  if args.diffsubjects:
+    similarityDifferentSubjectsMain()
   else:
     similarityMain()
 

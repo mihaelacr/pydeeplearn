@@ -159,4 +159,6 @@ def splitDataAccordingToSubjects(subjectsToImgs, subjects, imgsPerSubject=None):
 
   return data1, data2, subjects1, subjects2
 
-
+def similarityDifferentSubjects(labels1, labels2):
+  assert len(labels1) == len(labels2)
+  return labels1 == labels2
