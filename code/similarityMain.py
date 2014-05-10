@@ -57,11 +57,6 @@ def similarityDifferentSubjectsMain():
   for train, test in kf:
     break
 
-  print "training with dataset of size ", len(train)
-  print len(train)
-
-  print "testing with dataset of size ", len(test)
-  print len(test)
 
   subjectsToImgs = readMultiPIESubjects()
 
@@ -75,6 +70,9 @@ def similarityDifferentSubjectsMain():
   testData1, testData2, testSubjects1, testSubjects2 =\
     splitDataAccordingToSubjects(subjectsToImgs, subjectTest, imgsPerSubject=None)
 
+  print "training with dataset of size ", len(trainData1)
+
+  print "testing with dataset of size ", len(testData1)
 
   similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
   similaritiesTest =  similarityDifferentSubjects(testSubjects1, testSubjects2)
