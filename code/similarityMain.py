@@ -34,11 +34,13 @@ def similarityMain():
 
   res = simNet.test(testData1, testData2)
 
-  error = (similaritiesTest - res)  * 1.0 / len(res)
+  predicted = res > 0.5
+
+  correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
   print res
 
-  print error
+  print correct
 
 
 def similarityDifferentSubjectsMain():
