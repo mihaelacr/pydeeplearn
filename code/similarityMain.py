@@ -63,6 +63,11 @@ def similarityDifferentSubjectsMain():
   subjectTrain = subjects[train]
   subjectTest = subjects[test]
 
+  print "len(subjectTrain)"
+  print len(subjectTrain)
+  print "len(subjectTest)"
+  print len(subjectTest)
+
   trainData1, trainData2, trainSubjects1, trainSubjects2 =\
     splitDataAccordingToSubjects(subjectsToImgs, subjectTrain, imgsPerSubject=None)
 
