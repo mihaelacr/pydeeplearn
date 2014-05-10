@@ -79,7 +79,7 @@ class SimilarityNet(object):
                     hiddenActivationFunction=activationFunction,
                     rmsprop=True,
                     nesterov=True,
-                    trainingEpochs=trainingEpochsRBM)
+                    trainingEpochs=self.trainingEpochsRBM)
     net.train(data)
 
     return net
