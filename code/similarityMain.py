@@ -2,6 +2,7 @@ import argparse
 from sklearn import cross_validation
 
 from similarity_utils import *
+from readfacedatabases import *
 import similarity
 
 parser = argparse.ArgumentParser(description='digit recognition')
@@ -47,6 +48,8 @@ def similarityDifferentSubjectsMain():
 
   for train, test in kf:
     break
+
+  subjectsToImgs = readMultiPIESubjects()
 
   subjectTrain = subjects[train]
   subjectTest = subjects[test]
