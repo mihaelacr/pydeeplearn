@@ -39,7 +39,7 @@ def splitShuffling(shuffling, subjectsShuffling):
 def splitData(imgsPerSubject=None):
   subjectsToImgs = readMultiPIESubjects()
 
-  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling = splitSubjectData(subjectsToImgs, imgsPerSubject)
+  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling = splitSubjectData(subjectsToImgs, imgsPerSubject, None)
 
   trainData1, testData1, trainData2, testData2, trainSubjects1, testSubjects1,\
         trainSubjects2, testSubjects2 = splitTrainTest(data1, data2, subjects1, subjects2, 5)
@@ -112,7 +112,7 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None):
     if imgsPerSubject is not None:
       images = images[:imgsPerSubject]
 
-    delta = len(images)/ 4 + subject % 2
+    delta = len(images) / 4 + subject % 2
     last2Index = 2 *delta
     data1 += images[0: delta]
     data2 += images[delta: last2Index]

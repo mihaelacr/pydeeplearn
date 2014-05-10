@@ -63,7 +63,6 @@ def similarityDifferentSubjectsMain():
   print "testing with dataset of size ", len(test)
   print len(test)
 
-
   subjectsToImgs = readMultiPIESubjects()
 
   subjectTrain = subjects[train]
