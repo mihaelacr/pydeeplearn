@@ -79,11 +79,11 @@ def similarityDifferentSubjectsMain():
 
   res = simNet.test(testData1, testData2)
 
-  error = (similaritiesTest - res)  * 1.0 / len(res)
+  correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
   print res
 
-  print error
+  print correct
 
 
 def similarityCV():
