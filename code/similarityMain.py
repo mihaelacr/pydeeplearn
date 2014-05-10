@@ -42,7 +42,7 @@ def similarityMain():
 
 def similarityDifferentSubjectsMain():
   nrSubjects = 147
-  subjects = range(nrSubjects)
+  subjects = np.array(range(nrSubjects))
   kf = cross_validation.KFold(n=len(subjects), k=5)
 
   for train, test in kf:
