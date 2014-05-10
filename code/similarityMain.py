@@ -18,7 +18,7 @@ args = parser.parse_args()
 
 
 def similarityMain():
-  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData(10)
+  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
 
   simNet = similarity.SimilarityNet(learningRate=0.001,
                                     maxMomentum=0.95,
