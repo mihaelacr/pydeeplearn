@@ -20,6 +20,12 @@ args = parser.parse_args()
 def similarityMain():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
 
+  print "training with dataset of size ", len(train)
+  print len(trainData1)
+
+  print "testing with dataset of size ", len(test)
+  print len(testData1)
+
   simNet = similarity.SimilarityNet(learningRate=0.001,
                                     maxMomentum=0.95,
                                     binary=True,
@@ -50,6 +56,13 @@ def similarityDifferentSubjectsMain():
 
   for train, test in kf:
     break
+
+  print "training with dataset of size ", len(train)
+  print len(train)
+
+  print "testing with dataset of size ", len(test)
+  print len(test)
+
 
   subjectsToImgs = readMultiPIESubjects()
 
