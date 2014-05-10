@@ -76,7 +76,6 @@ def similarityDifferentSubjectsMain():
     splitDataAccordingToSubjects(subjectsToImgs, subjectTest, imgsPerSubject=None)
 
   print "training with dataset of size ", len(trainData1)
-
   print "testing with dataset of size ", len(testData1)
 
   similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)

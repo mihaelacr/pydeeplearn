@@ -108,6 +108,7 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None):
   for subject, images in subjectsToImgs.iteritems():
     if subjectsToTake is not None and subject not in subjectsToTake:
       print "skipping subject"
+      continue
 
     if imgsPerSubject is not None:
       images = images[:imgsPerSubject]
