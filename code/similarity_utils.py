@@ -164,7 +164,7 @@ def similarityDifferentSubjects(labels1, labels2):
   assert len(labels1) == len(labels2)
   return labels1 == labels2
 
-def splitSimilarityKanade():
+def splitSimilarityYale():
   subjectsToImgs = readCroppedYaleSubjects()
   # Get all subjects
   data1, data2, subjects1, subjects2 = splitDataAccordingToSubjects(subjectsToImgs,

@@ -50,12 +50,13 @@ def similarityMain():
 
   print correct
 
-def similarityMainTestKanade():
-  subjectsToImgs = readCroppedYaleSubjects()
+def similarityMainTestYale():
+  subjectsToImgs = readMultiPIESubjects()
+
   trainData1, trainData2, trainSubjects1, trainSubjects2 =\
     splitDataAccordingToSubjects(subjectsToImgs, None, imgsPerSubject=None)
 
-  testData1, testData2, similaritiesTest = splitSimilarityKanade()
+  testData1, testData2, similaritiesTest = splitSimilarityYale()
 
   similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
 
@@ -189,7 +190,7 @@ def main():
   if args.diffsubjects:
     similarityDifferentSubjectsMain()
   if args.testKanadeMain:
-    similarityMainTestKanade()
+    similarityMainTestYale()
   else:
     similarityMain()
 
