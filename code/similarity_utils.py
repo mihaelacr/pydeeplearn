@@ -27,11 +27,12 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
 def splitShuffling(shuffling, labelsShuffling):
 
   labels = np.unique(labelsShuffling)
-  print labelsShuffling
-  print labels
 
   remaing = list(shuffling)
   remaininLabels = list(labelsShuffling)
+
+  print "shuffling size"
+  print len(shuffling)
 
   shuffledData1 = []
   shuffledData2 = []
@@ -45,9 +46,6 @@ def splitShuffling(shuffling, labelsShuffling):
     labelIndices = np.array(remaininLabels) == label
     concreteIndices = np.arange(nrRemainingData)[labelIndices]
 
-    print "len(concreteIndices)"
-    print len(concreteIndices)
-
     shuffledData1 += [np.array(remaing)[concreteIndices]]
     labelsData1 += [np.array(remaininLabels)[concreteIndices]]
 
@@ -55,26 +53,12 @@ def splitShuffling(shuffling, labelsShuffling):
 
     otherIndices = np.random.choice(otherIndices, len(concreteIndices), replace=False)
 
-    print otherIndices
-    print "len(otherIndices)"
-    print len(otherIndices)
-
     shuffledData2 += [np.array(remaing)[otherIndices]]
     labelsData2 += [np.array(remaininLabels)[otherIndices]]
-
 
     indicesToRemove = np.hstack((otherIndices, concreteIndices))
     remaing = [v for i, v in enumerate(remaing) if i not in indicesToRemove]
     remaininLabels = [v for i, v in enumerate(remaininLabels) if i not in indicesToRemove]
-
-    print "len(shuffledData1)"
-    print len(shuffledData1)
-    print "len(shuffledData2)"
-    print len(shuffledData2)
-
-    print len(remaing)
-    print len(remaininLabels)
-
 
   shuffledData1 = np.vstack(shuffledData1)
   shuffledData2 = np.vstack(shuffledData2)
