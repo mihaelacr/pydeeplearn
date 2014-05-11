@@ -224,7 +224,7 @@ def readCroppedYale(equalize):
 
   return np.array(images)
 
-def readCroppedYaleSubjects(equalize=False):
+def readCroppedYaleSubjects(equalize=False, show=False):
   PATH = "/data/mcr10/yaleb/CroppedYale"
   # PATH = "/home/aela/uni/project/CroppedYale"
 
@@ -253,10 +253,15 @@ def readCroppedYaleSubjects(equalize=False):
       print f
       print img.shape
 
+
       if equalize:
         img = equalizeImg(img)
 
       img = resize(img, SMALL_SIZE)
+
+      if show:
+        plt.imshow(img, cmap=plt.cm.gray)
+        plt.show()
 
       images += [img.reshape(-1)]
 
@@ -369,5 +374,5 @@ def readAberdeen(detectFaces, equalize):
 if __name__ == '__main__':
   # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   # readMultiPIE(show=True)
-  readCroppedYaleSubjects()
+  readCroppedYaleSubjects(show=True)
 

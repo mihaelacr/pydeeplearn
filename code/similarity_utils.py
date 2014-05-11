@@ -110,6 +110,10 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None):
       print "skipping subject"
       continue
 
+    # The database might contain the subjects in similar
+    # poses, and illumination conditions, so shuffle before
+    np.random.shuffle(images)
+
     if imgsPerSubject is not None:
       images = images[:imgsPerSubject]
 
@@ -166,6 +170,8 @@ def similarityDifferentSubjects(labels1, labels2):
 
 def splitSimilarityYale():
   subjectsToImgs = readCroppedYaleSubjects()
+
+
   # Get all subjects
   data1, data2, subjects1, subjects2 = splitDataAccordingToSubjects(subjectsToImgs,
                                           None, imgsPerSubject=None)
