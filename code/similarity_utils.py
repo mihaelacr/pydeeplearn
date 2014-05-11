@@ -179,7 +179,7 @@ def splitSimilaritiesPIEEmotions():
   # Get all emotions
   data1, data2, emotions1, emotions2 = splitDataAccordingToLabels(emotionToImages,
                                           None, imgsPerLabel=None)
-  kf = cross_validation.KFold(n=len(data1), n_folds=ratio)
+  kf = cross_validation.KFold(n=len(data1), n_folds=5)
   for train, test in kf:
     break
 
