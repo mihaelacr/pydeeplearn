@@ -15,31 +15,28 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
   return (data1[train], data1[test], data2[train], data2[test],
           labels1[train], labels1[test], labels2[train], labels2[test])
 
-def splitShuffling(shuffling, subjectsShuffling):
+def splitShuffling(shuffling, labelsShuffling):
   shuffledData1 = shuffling[0: len(shuffling) / 2]
   shuffledData2 = shuffling[len(shuffling)/2 :]
 
-  subjectsData1 = subjectsShuffling[0: len(shuffling) /2]
-  subjectsData2 = subjectsShuffling[len(shuffling)/2:]
-
-  # HACK
-  # shuffledData2 = shuffledData2[:-1]
-  # subjectsData2 = subjectsData2[:-1]
+  labelsData1 = labelsShuffling[0: len(shuffling) /2]
+  labelsData2 = labelsShuffling[len(shuffling)/2:]
 
   shuffledData1 = np.array(shuffledData1)
   shuffledData1 = np.array(shuffledData2)
-  subjectsData1 = np.array(subjectsData1)
-  subjectsData2 = np.array(subjectsData2)
+  labelsData1 = np.array(labelsData1)
+  labelsData2 = np.array(labelsData2)
 
-  return shuffledData1, shuffledData2, subjectsData1, subjectsData2
+  return shuffledData1, shuffledData2, labelsData1, labelsData2
 
+# TODO: I think this can be written easier with the code similar to the Emotions one
 # you can create more tuples than just one per image
 # you can put each image in 5 tuples and that will probably owrk better
 # it might be useful to also give the same image twice
-def splitData(imgsPerSubject=None):
+def splitDataMultiPIESubject(imgsPerSubject=None):
   subjectsToImgs = readMultiPIESubjects()
 
-  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling = splitSubjectData(subjectsToImgs, imgsPerSubject, None)
+  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling = splitDataInPairsWithLabels(subjectsToImgs, imgsPerSubject, None)
 
   trainData1, testData1, trainData2, testData2, trainSubjects1, testSubjects1,\
         trainSubjects2, testSubjects2 = splitTrainTest(data1, data2, subjects1, subjects2, 5)
@@ -76,9 +73,9 @@ def splitData(imgsPerSubject=None):
   assert len(subjects1) == len(subjects2)
   assert len(trainSubjects1) == len(trainSubjects1)
   assert len(testSubjects1) == len(testSubjects2)
-  similaritiesTrain = (trainSubjects1 == trainSubjects2)
-  similaritiesTest = (testSubjects1 == testSubjects2)
 
+  similaritiesTrain = similarityDifferentLabels(trainSubjects1, trainSubjects2)
+  similaritiesTest = similarityDifferentLabels(testSubjects1, testSubjects2)
 
   print "trainSubjects1.shape"
   print trainSubjects1.shape
@@ -96,47 +93,47 @@ def splitData(imgsPerSubject=None):
   return trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest
 
 
-def splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None):
+def splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=None):
   data1 = []
   data2 = []
 
   shuffling = []
-  subjectsShuffling = []
-  subjects1 = []
-  subjects2 = []
+  labelsShuffling = []
+  labels1 = []
+  labels2 = []
 
-  for subject, images in subjectsToImgs.iteritems():
-    if subjectsToTake is not None and subject not in subjectsToTake:
+  for label, images in labelsToImages.iteritems():
+    if labelsToTake is not None and label not in labelsToTake:
       print "skipping subject"
       continue
 
-    # The database might contain the subjects in similar
+    # The database might contain the labels in similar
     # poses, and illumination conditions, so shuffle before
     np.random.shuffle(images)
 
-    if imgsPerSubject is not None:
-      images = images[:imgsPerSubject]
+    if imgsPerLabel is not None:
+      images = images[:imgsPerLabel]
 
-    delta = len(images) / 4 + subject % 2
+    delta = len(images) / 4 + label % 2
     last2Index = 2 *delta
     data1 += images[0: delta]
     data2 += images[delta: last2Index]
 
-    subjects1 += [subject] * delta
-    subjects2 += [subject] * delta
+    labels1 += [label] * delta
+    labels2 += [label] * delta
 
     imagesForShuffling = images[last2Index : ]
     shuffling += imagesForShuffling
-    subjectsShuffling += [subject] * len(imagesForShuffling)
+    labelsShuffling += [label] * len(imagesForShuffling)
 
-  print "len(subjectsShuffling)"
-  print len(subjectsShuffling)
+  print "len(labelsShuffling)"
+  print len(labelsShuffling)
 
   print "shuffling"
   print len(shuffling)
 
-  assert len(shuffling) == len(subjectsShuffling)
-  shuffling, subjectsShuffling = shuffleList(shuffling, subjectsShuffling)
+  assert len(shuffling) == len(labelsShuffling)
+  shuffling, labelsShuffling = shuffleList(shuffling, labelsShuffling)
 
   print len(data1)
   print len(data2)
@@ -144,36 +141,49 @@ def splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=None):
 
   data1 = np.array(data1)
   data2 = np.array(data2)
-  subjects1 = np.array(subjects1)
-  subjects2 = np.array(subjects2)
+  labels1 = np.array(labels1)
+  labels2 = np.array(labels2)
   shuffling = np.array(shuffling)
-  subjectsShuffling = np.array(subjectsShuffling)
+  labelsShuffling = np.array(labelsShuffling)
 
-  return data1, data2, subjects1, subjects2, shuffling, subjectsShuffling
+  return data1, data2, labels1, labels2, shuffling, labelsShuffling
 
-def splitDataAccordingToSubjects(subjectsToImgs, subjects, imgsPerSubject=None):
-  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling  = splitSubjectData(subjectsToImgs, imgsPerSubject, subjectsToTake=subjects)
+def splitDataAccordingToLabels(labelsToImages, labels, imgsPerLabel=None):
+  data1, data2, labels1, labels2, shuffling, labelsShuffling  = splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=labels)
 
-  shuffledData1, shuffledData2, subjectsData1, subjectsData2 = splitShuffling(shuffling, subjectsShuffling)
+  shuffledData1, shuffledData2, labelsData1, labelsData2 = splitShuffling(shuffling, labelsShuffling)
 
   data1 = np.vstack((data1, shuffledData1))
   data2 = np.vstack((data2, shuffledData2))
 
-  subjects1 = np.hstack((subjects1, subjectsData1))
-  subjects2 = np.hstack((subjects2, subjectsData2))
+  labels1 = np.hstack((labels1, labelsData1))
+  labels2 = np.hstack((labels2, labelsData2))
 
-  return data1, data2, subjects1, subjects2
+  return data1, data2, labels1, labels2
 
-def similarityDifferentSubjects(labels1, labels2):
+def similarityDifferentLabels(labels1, labels2):
   assert len(labels1) == len(labels2)
   return labels1 == labels2
 
 def splitSimilarityYale():
   subjectsToImgs = readCroppedYaleSubjects()
 
-
   # Get all subjects
-  data1, data2, subjects1, subjects2 = splitDataAccordingToSubjects(subjectsToImgs,
+  data1, data2, subjects1, subjects2 = splitDataAccordingToLabels(subjectsToImgs,
                                           None, imgsPerSubject=None)
 
-  return data1, data2, similarityDifferentSubjects(subjects1, subjects2)
+  return data1, data2, similarityDifferentLabels(subjects1, subjects2)
+
+def splitSimilaritiesPIEEmotions():
+  emotionToImages = readMultiPIEEmotions()
+  # Get all emotions
+  data1, data2, emotions1, emotions2 = splitDataAccordingToLabels(emotionToImages,
+                                          None, imgsPerSubject=None)
+  kf = cross_validation.KFold(n=len(data1), n_folds=ratio)
+  for train, test in kf:
+    break
+
+  labels = similarityDifferentLabels(emotions1, emotions2)
+
+  return (data1[train], data2[train], labels[train],
+          data1[test], data2[test], labels[test])

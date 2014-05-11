@@ -14,13 +14,16 @@ parser.add_argument('--testYaleMain', dest='testYaleMain',action='store_true', d
                     help=("if true, tests the net with the Kanade databse"))
 parser.add_argument('--diffsubjects', dest='diffsubjects',action='store_true', default=False,
                     help=("if true, trains a net with different test and train subjects"))
+parser.add_argument('--emotionsdiff', dest='emotionsdiff',action='store_true', default=False,
+                    help=("if true, trains a net to distinguish between emotions"))
+
 
 
 args = parser.parse_args()
 
 
 def similarityMain():
-  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
+  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitDataMultiPIESubject()
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
@@ -49,6 +52,8 @@ def similarityMain():
   print res
 
   print correct
+
+
 
 def similarityMainTestYale():
   subjectsToImgs = readMultiPIESubjects()
@@ -88,7 +93,6 @@ def similarityMainTestYale():
   print res
 
   print correct
-
 
 def similarityDifferentSubjectsMain():
   nrSubjects = 147
@@ -146,7 +150,7 @@ def similarityDifferentSubjectsMain():
 
 
 def similarityCV():
-  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
+  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitDataMultiPIESubject()
 
   params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
   kf = cross_validation.KFold(n=len(trainData1), n_folds=len(params))
@@ -185,6 +189,37 @@ def similarityCV():
     fold += 1
 
 
+def similarityEmotionsMain():
+  trainData1, trainData2, trainLabels, testData1, testData2, testLabels = splitSimilaritiesPIEEmotions()
+
+  print "training with dataset of size ", len(trainData1)
+  print len(trainData1)
+
+  print "testing with dataset of size ", len(testData1)
+  print len(testData1)
+
+  simNet = similarity.SimilarityNet(learningRate=0.001,
+                                    maxMomentum=0.95,
+                                    binary=True,
+                                    rbmNrVis=1200,
+                                    rbmNrHid=1000,
+                                    rbmLearningRate=0.005,
+                                    rbmDropoutHid=1.0,
+                                    rbmDropoutVis=1.0,
+                                    trainingEpochsRBM=10)
+
+  simNet.train(trainData1, trainData2, trainLabels)
+
+  res = simNet.test(testData1, testData2)
+
+  predicted = res > 0.5
+
+  correct = (testLabels == predicted).sum() * 1.0 / len(res)
+
+  print res
+
+  print correct
+
 def main():
   if args.cv:
     similarityCV()
@@ -192,6 +227,8 @@ def main():
     similarityDifferentSubjectsMain()
   if args.testYaleMain:
     similarityMainTestYale()
+  if args.emotionsdiff:
+    similarityEmotionsMain()
   else:
     similarityMain()
 
