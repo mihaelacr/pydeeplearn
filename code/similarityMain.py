@@ -10,7 +10,7 @@ parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, does cv"))
-parser.add_argument('--testKanadeMain', dest='testKanadeMain',action='store_true', default=False,
+parser.add_argument('--testYaleMain', dest='testYaleMain',action='store_true', default=False,
                     help=("if true, tests the net with the Kanade databse"))
 parser.add_argument('--diffsubjects', dest='diffsubjects',action='store_true', default=False,
                     help=("if true, trains a net with different test and train subjects"))
@@ -190,7 +190,7 @@ def main():
     similarityCV()
   if args.diffsubjects:
     similarityDifferentSubjectsMain()
-  if args.testKanadeMain:
+  if args.testYaleMain:
     similarityMainTestYale()
   else:
     similarityMain()
