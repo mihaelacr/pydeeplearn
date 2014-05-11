@@ -38,14 +38,14 @@ def splitShuffling(shuffling, labelsShuffling):
     labelIndices = np.array(remaininLabels) == label
     howMany = len(labelIndices)
     concreteIndices = np.arange(howMany)[labelIndices]
-    shuffledData1 += np.array(remaing)[concreteIndices]
-    labelsData1 += np.array(remaininLabels)[concreteIndices]
+    shuffledData1 += [np.array(remaing)[concreteIndices]]
+    labelsData1 += [np.array(remaininLabels)[concreteIndices]]
 
     otherIndices = np.arange(howMany)[1 - labelIndices]
     otherIndices = np.random.choice(otherIndices, howMany)
 
-    shuffledData2 += np.array(remaing)[otherIndices]
-    labelsData2 += np.array(remaininLabels)[otherIndices]
+    shuffledData2 += [np.array(remaing)[otherIndices]]
+    labelsData2 += [np.array(remaininLabels)[otherIndices]]
 
 
     indicesToRemove = np.hstack(otherIndices, concreteIndices)
