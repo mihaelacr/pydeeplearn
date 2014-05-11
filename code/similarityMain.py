@@ -56,9 +56,10 @@ def similarityMainTestYale():
   trainData1, trainData2, trainSubjects1, trainSubjects2 =\
     splitDataAccordingToSubjects(subjectsToImgs, None, imgsPerSubject=None)
 
+  similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
+
   testData1, testData2, similaritiesTest = splitSimilarityYale()
 
-  similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)

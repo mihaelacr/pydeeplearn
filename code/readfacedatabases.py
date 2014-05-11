@@ -261,6 +261,7 @@ def readCroppedYaleSubjects(equalize=False):
       images += [img.reshape(-1)]
 
     subjectsToImgs[subject] = images
+    subject += 1
 
   return subjectsToImgs
 
