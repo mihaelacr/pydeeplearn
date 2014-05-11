@@ -826,9 +826,12 @@ def cvMNISTGaussian():
   # params = [(1e-03, 1e-03), (1e-03, 1e-04), (1e-04, 1e-03), (1e-04, 1e-04)]
 
   nrFolds = len(params)
-  foldSize = training / nrFolds
 
-  for i in xrange(nrFolds):
+  nrFolds = len(params)
+  kf = cross_validation.KFold(n=training, n_folds=nrFolds)
+
+  i = 0
+  for training, testing in kf:
     # Train the net
     # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
@@ -851,15 +854,13 @@ def cvMNISTGaussian():
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs)
 
-    foldIndices = permutation[i * foldSize : (i + 1) * foldSize - 1]
-
-    net.train(trainingScaledVectors[foldIndices], vectorLabels[foldIndices],
+    net.train(trainingScaledVectors[train], vectorLabels[train],
               maxEpochs=args.maxEpochs,
               validation=args.validation)
 
-    proabilities, predicted = net.classify(testingScaledVectors)
+    proabilities, predicted = net.classify(testingScaledVectors[test])
     # Test it with the testing data and measure the missclassification error
-    error = getClassificationError(predicted, testLabels)
+    error = getClassificationError(predicted, testLabels[test])
 
     print "error for " + str(params[i])
     print error
