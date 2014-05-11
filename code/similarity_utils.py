@@ -72,6 +72,9 @@ def splitShuffling(shuffling, labelsShuffling):
   labelsData1 = np.hstack(labelsData1)
   labelsData2 = np.hstack(labelsData2)
 
+  print shuffledData1.shape
+  print shuffledData2.shape
+
   assert len(shuffledData1) == len(shuffledData2)
   assert len(labelsData1) == len(labelsData2)
 
