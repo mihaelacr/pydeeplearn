@@ -198,6 +198,9 @@ def similarityEmotionsMain():
   print "testing with dataset of size ", len(testData1)
   print len(testData1)
 
+  for k in testLabels:
+    print k
+
   simNet = similarity.SimilarityNet(learningRate=0.001,
                                     maxMomentum=0.95,
                                     binary=True,
