@@ -201,6 +201,9 @@ def similarityEmotionsMain():
   for k in testLabels:
     print k
 
+  for k in trainLabels:
+    print k
+
   simNet = similarity.SimilarityNet(learningRate=0.001,
                                     maxMomentum=0.95,
                                     binary=True,
