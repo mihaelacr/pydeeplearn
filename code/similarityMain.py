@@ -93,7 +93,7 @@ def similarityMainTestYale():
 def similarityDifferentSubjectsMain():
   nrSubjects = 147
   subjects = np.array(range(nrSubjects))
-  kf = cross_validation.KFold(n=len(subjects), k=5)
+  kf = cross_validation.KFold(n=len(subjects), n_folds=5)
 
   for train, test in kf:
     break
@@ -149,7 +149,7 @@ def similarityCV():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
 
   params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
-  kf = cross_validation.KFold(n=len(trainData1), k=len(params))
+  kf = cross_validation.KFold(n=len(trainData1), n_folds=len(params))
 
   fold = 0
   for train, test in kf:
