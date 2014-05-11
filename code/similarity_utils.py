@@ -36,7 +36,7 @@ def splitShuffling(shuffling, labelsShuffling):
 def splitDataMultiPIESubject(imgsPerSubject=None):
   subjectsToImgs = readMultiPIESubjects()
 
-  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling = splitDataInPairsWithLabels(subjectsToImgs, imgsPerSubject, None)
+  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling = splitDataInPairsWithLabels(subjectsToImgs, imgsPerLabel, None)
 
   trainData1, testData1, trainData2, testData2, trainSubjects1, testSubjects1,\
         trainSubjects2, testSubjects2 = splitTrainTest(data1, data2, subjects1, subjects2, 5)
@@ -170,7 +170,7 @@ def splitSimilarityYale():
 
   # Get all subjects
   data1, data2, subjects1, subjects2 = splitDataAccordingToLabels(subjectsToImgs,
-                                          None, imgsPerSubject=None)
+                                          None, imgsPerLabel=None)
 
   return data1, data2, similarityDifferentLabels(subjects1, subjects2)
 
@@ -178,7 +178,7 @@ def splitSimilaritiesPIEEmotions():
   emotionToImages = readMultiPIEEmotions()
   # Get all emotions
   data1, data2, emotions1, emotions2 = splitDataAccordingToLabels(emotionToImages,
-                                          None, imgsPerSubject=None)
+                                          None, imgsPerLabel=None)
   kf = cross_validation.KFold(n=len(data1), n_folds=ratio)
   for train, test in kf:
     break
