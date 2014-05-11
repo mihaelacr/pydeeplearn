@@ -167,8 +167,6 @@ def readMultiPIEEmotions():
 
             emotionToImages[expression] += [image]
 
-  for key in emotionToImages:
-    print key
   return emotionToImages
 
 def readKanade(big=False, folds=None, equalize=False):

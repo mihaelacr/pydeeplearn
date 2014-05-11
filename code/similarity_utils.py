@@ -183,6 +183,16 @@ def splitSimilaritiesPIEEmotions():
   for train, test in kf:
     break
 
+  for k in train:
+    print k
+
+  for k in test:
+    print k
+
+  if True:
+    raise Exception("fjds")
+
+
   labels = similarityDifferentLabels(emotions1, emotions2)
 
   return (data1[train], data2[train], labels[train],
