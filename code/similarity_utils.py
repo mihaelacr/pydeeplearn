@@ -43,6 +43,10 @@ def splitShuffling(shuffling, labelsShuffling):
     print label
 
     nrRemainingData = len(remaing)
+
+    if nrRemainingData == 0:
+      break
+
     labelIndices = np.array(remaininLabels) == label
     concreteIndices = np.arange(nrRemainingData)[labelIndices]
 
