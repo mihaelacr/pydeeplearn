@@ -122,7 +122,6 @@ def readMultiPieDifferentIlluminations(illuminationTrain, show=False):
           imgsTest,  labelsToVectors(labelsTest, 6))
 
 
-
 def readMultiPIESubjects():
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
