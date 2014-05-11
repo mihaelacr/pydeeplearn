@@ -179,6 +179,9 @@ def splitSimilaritiesPIEEmotions():
   # Get all emotions
   data1, data2, emotions1, emotions2 = splitDataAccordingToLabels(emotionToImages,
                                           None, imgsPerLabel=None)
+  labels = similarityDifferentLabels(emotions1, emotions2)
+
+  data1, data2, labels = shuffle3(data1, data2, labels)
   kf = cross_validation.KFold(n=len(data1), n_folds=5)
   for train, test in kf:
     break
@@ -193,7 +196,6 @@ def splitSimilaritiesPIEEmotions():
     raise Exception("fjds")
 
 
-  labels = similarityDifferentLabels(emotions1, emotions2)
 
   return (data1[train], data2[train], labels[train],
           data1[test], data2[test], labels[test])
