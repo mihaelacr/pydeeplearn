@@ -79,6 +79,7 @@ def readMultiPIE(show=False):
 
   return np.array(imgs), labelsToVectors(labels, 6)
 
+
 def readMultiPieDifferentIlluminations(illuminationTrain):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
@@ -200,8 +201,8 @@ def readKanade(big=False, folds=None, equalize=False):
 
 # TODO: get big, small as argument in order to be able to fit the resizing
 def readCroppedYale(equalize):
-  # PATH = "/data/mcr10/yaleb/CroppedYale"
-  PATH = "/home/aela/uni/project/CroppedYale"
+  PATH = "/data/mcr10/yaleb/CroppedYale"
+  # PATH = "/home/aela/uni/project/CroppedYale"
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -222,6 +223,48 @@ def readCroppedYale(equalize):
     images += [img.reshape(-1)]
 
   return np.array(images)
+
+def readCroppedYaleSubjects(equalize=False):
+  # PATH = "/data/mcr10/yaleb/CroppedYale"
+  PATH = "/home/aela/uni/project/CroppedYale"
+
+  subject = 0
+  subjectsToImgs = {}
+  for subjectImagePath in os.listdir(PATH):
+    print "subjectImagePath"
+    print subjectImagePath
+
+
+    fullSubjectPath = os.path.join(PATH, subjectImagePath)
+    imageFiles = os.listdir(fullSubjectPath)
+    imageFiles = [os.path.join(fullSubjectPath, f) for f in imageFiles]
+
+    # Filter out the files which are not image files
+    imageFiles = fnmatch.filter(imageFiles, '*.pgm')
+
+    # Remove the ambient files
+    imageFiles = [ x for x in imageFiles if not "Ambient" in x]
+
+    print imageFiles
+
+    images = []
+    for f in imageFiles:
+      img = cv2.imread(f, 0)
+      print f
+      print img.shape
+
+      if equalize:
+        img = equalizeImg(img)
+
+      img = resize(img, SMALL_SIZE)
+
+      images += [img.reshape(-1)]
+
+    subjectsToImgs[subject] = images
+
+  return subjectsToImgs
+
+
 
 def readAttData(equalize=False):
   PATH = "/data/mcr10/att"
@@ -324,5 +367,6 @@ def readAberdeen(detectFaces, equalize):
 
 if __name__ == '__main__':
   # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
-  readMultiPIE(show=True)
+  # readMultiPIE(show=True)
+  readCroppedYaleSubjects()
 
