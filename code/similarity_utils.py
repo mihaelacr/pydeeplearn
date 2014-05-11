@@ -47,7 +47,7 @@ def splitShuffling(shuffling, labelsShuffling):
     shuffledData1 += [np.array(remaing)[concreteIndices]]
     labelsData1 += [np.array(remaininLabels)[concreteIndices]]
 
-    otherIndices = np.arange(howMany)[1 - labelIndices]
+    otherIndices = np.arange(len(remaing))[1 - labelIndices]
 
     otherIndices = np.random.choice(otherIndices, howMany, replace=False)
     print otherIndices
