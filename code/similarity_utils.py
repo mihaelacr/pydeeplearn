@@ -42,7 +42,7 @@ def splitShuffling(shuffling, labelsShuffling):
 # you can create more tuples than just one per image
 # you can put each image in 5 tuples and that will probably owrk better
 # it might be useful to also give the same image twice
-def splitDataMultiPIESubject(imgsPerSubject=None):
+def splitDataMultiPIESubject(imgsPerLabel=None):
   subjectsToImgs = readMultiPIESubjects()
 
   data1, data2, subjects1, subjects2, shuffling, subjectsShuffling = splitDataInPairsWithLabels(subjectsToImgs, imgsPerLabel, None)
