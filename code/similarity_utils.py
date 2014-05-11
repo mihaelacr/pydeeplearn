@@ -7,6 +7,15 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
   assert len(data1) == len(data2)
   assert len(labels1) == len(labels2)
   assert len(labels1) == len(data1)
+  assert len(labels1) == len(labels2)
+
+  indexShuffle = np.random.permutation(len(data1))
+
+  data1 = np.array([data1[i] for i in indexShuffle])
+  data2 = np.array([data2[i] for i in indexShuffle])
+  labels1 = np.array([labels1[i] for i in indexShuffle])
+  labels2 = np.array([labels2[i] for i in indexShuffle])
+
   # Random data for training and testing
   kf = cross_validation.KFold(n=len(data1), n_folds=ratio)
   for train, test in kf:
