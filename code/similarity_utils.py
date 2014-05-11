@@ -25,7 +25,10 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
           labels1[train], labels1[test], labels2[train], labels2[test])
 
 def splitShuffling(shuffling, labelsShuffling):
+
   labels = np.unique(labelsShuffling)
+  print labelsShuffling
+  print labels
 
   remaing = list(shuffling)
   remaininLabels = list(labelsShuffling)
