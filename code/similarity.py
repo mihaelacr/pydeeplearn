@@ -85,7 +85,7 @@ class SimilarityNet(object):
     return net
 
 
-  def train(self, data1, data2, similarities, miniBatchSize=10, epochs=100):
+  def train(self, data1, data2, similarities, miniBatchSize=20, epochs=200):
     nrMiniBatches = len(data1) / miniBatchSize
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
