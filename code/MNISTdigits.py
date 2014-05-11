@@ -655,7 +655,6 @@ def deepbeliefMNIST():
     supervisedLearningRate = 0.05
     momentumMax = 0.95
 
-
   if args.train:
     # Try 1200, 1200, 1200
     # [784, 500, 500, 2000, 10

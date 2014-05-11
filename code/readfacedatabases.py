@@ -80,7 +80,7 @@ def readMultiPIE(show=False):
   return np.array(imgs), labelsToVectors(labels, 6)
 
 
-def readMultiPieDifferentIlluminations(illuminationTrain):
+def readMultiPieDifferentIlluminations(illuminationTrain, show=False):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   mat = scipy.io.loadmat(PATH)
@@ -108,8 +108,18 @@ def readMultiPieDifferentIlluminations(illuminationTrain):
               imgsTest += [image.reshape(-1)]
               labelsTest += [expression]
 
-  return (np.array(imgsTrain), labelsToVectors(labelsTrain, 6),
-          np.array(imgsTest), labelsToVectors(labelsTest, 6))
+  # Let us shuffle some things
+  imgsTrain = np.array(imgsTrain)
+  labelsTrain = np.array(labelsTrain)
+
+  imgsTest = np.array(imgsTest)
+  labelsTest = np.array(labelsTest)
+
+  imgsTrain, labelsTrain = shuffle(imgsTrain, labelsTrain)
+  imgsTest, labelsTest = shuffle(imgsTest, labelsTest)
+
+  return (imgsTrain, labelsToVectors(labelsTrain, 6),
+          imgsTest,  labelsToVectors(labelsTest, 6))
 
 
 
