@@ -831,7 +831,7 @@ def cvMNISTGaussian():
   kf = cross_validation.KFold(n=training, n_folds=nrFolds)
 
   i = 0
-  for training, testing in kf:
+  for train, test in kf:
     # Train the net
     # Try 1200, 1200, 1200
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
