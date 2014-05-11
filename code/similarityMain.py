@@ -51,6 +51,7 @@ def similarityMain():
   print correct
 
 def similarityMainTestKanade():
+  subjectsToImgs = readCroppedYaleSubjects()
   trainData1, trainData2, trainSubjects1, trainSubjects2 =\
     splitDataAccordingToSubjects(subjectsToImgs, None, imgsPerSubject=None)
 
