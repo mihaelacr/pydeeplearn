@@ -225,8 +225,8 @@ def readCroppedYale(equalize):
   return np.array(images)
 
 def readCroppedYaleSubjects(equalize=False):
-  # PATH = "/data/mcr10/yaleb/CroppedYale"
-  PATH = "/home/aela/uni/project/CroppedYale"
+  PATH = "/data/mcr10/yaleb/CroppedYale"
+  # PATH = "/home/aela/uni/project/CroppedYale"
 
   subject = 0
   subjectsToImgs = {}
