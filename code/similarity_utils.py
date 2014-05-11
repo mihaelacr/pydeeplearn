@@ -48,7 +48,7 @@ def splitShuffling(shuffling, labelsShuffling):
     labelsData2 += [np.array(remaininLabels)[otherIndices]]
 
 
-    indicesToRemove = np.hstack(otherIndices, concreteIndices)
+    indicesToRemove = np.hstack((otherIndices, concreteIndices))
     remaing = [v for i, v in enumerate(remaing) if i not in indicesToRemove]
     remaininLabels = [v for i, v in enumerate(remaininLabels) if i not in indicesToRemove]
 
