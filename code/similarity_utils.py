@@ -53,7 +53,7 @@ def splitShuffling(shuffling, labelsShuffling):
 
     otherIndices = np.arange(nrRemainingData)[1 - labelIndices]
 
-    otherIndices = np.random.choice(otherIndices, nrRemainingData, replace=False)
+    otherIndices = np.random.choice(otherIndices, len(concreteIndices), replace=False)
 
     print otherIndices
     print "len(otherIndices)"
