@@ -41,10 +41,10 @@ def similarityMain():
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
 
-  simNet.train(trainData1, trainData2, similaritiesTrain)
-
   print "training with ", similaritiesTrain.sum(), "positive examples"
   print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
+
+  simNet.train(trainData1, trainData2, similaritiesTrain)
 
   res = simNet.test(testData1, testData2)
 
