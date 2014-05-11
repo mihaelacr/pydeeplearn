@@ -842,12 +842,12 @@ def cvMNISTGaussian():
                   rbmActivationFunctionVisible=identity,
                   rbmActivationFunctionHidden=makeNoisyReluSigmoid(),
                   rmsprop=args.rmsprop,
+                  visibleDropout=0.8,
                   hiddenDropout=0.5,
-                  rbmHiddenDropout=0.5,
                   weightDecayL1=0,
                   weightDecayL2=0,
-                  visibleDropout=0.8,
-                  rbmVisibleDropout=0.9,
+                  rbmHiddenDropout=1.0,
+                  rbmVisibleDropout=1.0,
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs)
 
