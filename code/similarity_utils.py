@@ -34,7 +34,9 @@ def splitShuffling(shuffling, labelsShuffling):
   shuffledData2 = []
   labelsData1 = []
   labelsData2 = []
+
   for label in labels:
+
     labelIndices = np.array(remaininLabels) == label
     howMany = len(labelIndices)
     concreteIndices = np.arange(howMany)[labelIndices]
@@ -51,6 +53,9 @@ def splitShuffling(shuffling, labelsShuffling):
     indicesToRemove = np.hstack((otherIndices, concreteIndices))
     remaing = [v for i, v in enumerate(remaing) if i not in indicesToRemove]
     remaininLabels = [v for i, v in enumerate(remaininLabels) if i not in indicesToRemove]
+
+    print len(remaing)
+    print len(remaininLabels)
 
 
   shuffledData1 = np.vstack(shuffledData1)
