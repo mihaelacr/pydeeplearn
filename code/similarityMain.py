@@ -210,7 +210,7 @@ def similarityEmotionsMain():
 
   simNet.train(trainData1, trainData2, trainLabels)
 
-  res = simNet.test(testData1, testData2)
+  res = simNet.test(testData1, testData2, epochs=400)
 
   predicted = res > 0.5
 
