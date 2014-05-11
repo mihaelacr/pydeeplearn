@@ -22,10 +22,10 @@ args = parser.parse_args()
 def similarityMain():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
 
-  print "training with dataset of size ", len(train)
+  print "training with dataset of size ", len(trainData1)
   print len(trainData1)
 
-  print "testing with dataset of size ", len(test)
+  print "testing with dataset of size ", len(testData1)
   print len(testData1)
 
   simNet = similarity.SimilarityNet(learningRate=0.001,
