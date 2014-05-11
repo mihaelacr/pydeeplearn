@@ -10,6 +10,8 @@ parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, does cv"))
+parser.add_argument('--testKanadeMain', dest='testKanadeMain',action='store_true', default=False,
+                    help=("if true, tests the net with the Kanade databse"))
 parser.add_argument('--diffsubjects', dest='diffsubjects',action='store_true', default=False,
                     help=("if true, trains a net with different test and train subjects"))
 
@@ -19,6 +21,42 @@ args = parser.parse_args()
 
 def similarityMain():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitData()
+
+  print "training with dataset of size ", len(train)
+  print len(trainData1)
+
+  print "testing with dataset of size ", len(test)
+  print len(testData1)
+
+  simNet = similarity.SimilarityNet(learningRate=0.001,
+                                    maxMomentum=0.95,
+                                    binary=True,
+                                    rbmNrVis=1200,
+                                    rbmNrHid=1000,
+                                    rbmLearningRate=0.005,
+                                    rbmDropoutHid=1.0,
+                                    rbmDropoutVis=1.0,
+                                    trainingEpochsRBM=10)
+
+  simNet.train(trainData1, trainData2, similaritiesTrain)
+
+  res = simNet.test(testData1, testData2)
+
+  predicted = res > 0.5
+
+  correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
+
+  print res
+
+  print correct
+
+def similarityMainTestKanade():
+  trainData1, trainData2, trainSubjects1, trainSubjects2 =\
+    splitDataAccordingToSubjects(subjectsToImgs, None, imgsPerSubject=None)
+
+  testData1, testData2, similaritiesTest = splitSimilarityKanade()
+
+  similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
 
   print "training with dataset of size ", len(train)
   print len(trainData1)
@@ -149,6 +187,8 @@ def main():
     similarityCV()
   if args.diffsubjects:
     similarityDifferentSubjectsMain()
+  if args.testKanadeMain:
+    similarityMainTestKanade()
   else:
     similarityMain()
 
