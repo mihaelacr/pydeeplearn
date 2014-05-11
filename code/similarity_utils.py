@@ -25,16 +25,49 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
           labels1[train], labels1[test], labels2[train], labels2[test])
 
 def splitShuffling(shuffling, labelsShuffling):
-  shuffledData1 = shuffling[0: len(shuffling) / 2]
-  shuffledData2 = shuffling[len(shuffling)/2 :]
+  labels = np.unique(labelsShuffling)
 
-  labelsData1 = labelsShuffling[0: len(shuffling) /2]
-  labelsData2 = labelsShuffling[len(shuffling)/2:]
+  remaing = list(shuffling)
+  remaininLabels = list(labelsShuffling)
 
-  shuffledData1 = np.array(shuffledData1)
-  shuffledData1 = np.array(shuffledData2)
-  labelsData1 = np.array(labelsData1)
-  labelsData2 = np.array(labelsData2)
+  shuffledData1 = []
+  shuffledData2 = []
+  labelsData1 = []
+  labelsData2 = []
+  for label in labels:
+    labelIndices = np.array(remaininLabels) == label
+    howMany = len(labelIndices)
+    concreteIndices = np.arange(howMany)[labelIndices]
+    shuffledData1 += np.array(remaing)[concreteIndices]
+    labelsData1 += np.array(remaininLabels)[concreteIndices]
+
+    otherIndices = np.arange(howMany)[1 - labelIndices]
+    otherIndices = np.random.choice(otherIndices, howMany)
+
+    shuffledData2 += np.array(remaing)[otherIndices]
+    labelsData2 += np.array(remaininLabels)[otherIndices]
+
+
+    indicesToRemove = np.hstack(otherIndices, concreteIndices)
+    remaing = [v for i, v in enumerate(remaing) if i not in indicesToRemove]
+    remaininLabels = [v for i, v in enumerate(remaininLabels) if i not in indicesToRemove]
+
+
+  shuffledData1 = np.vstack(shuffledData1)
+  shuffledData2 = np.vstack(shuffledData2)
+  labelsData1 = np.hstack(labelsData1)
+  labelsData2 = np.hstack(labelsData2)
+
+  # shuffledData1 = shuffling[0: len(shuffling) / 2]
+  # shuffledData2 = shuffling[len(shuffling)/2 :]
+
+  # labelsData1 = labelsShuffling[0: len(shuffling) /2]
+  # labelsData2 = labelsShuffling[len(shuffling)/2:]
+
+  # shuffledData1 = np.array(shuffledData1)
+  # shuffledData1 = np.array(shuffledData2)
+  # labelsData1 = np.array(labelsData1)
+  # labelsData2 = np.array(labelsData2)
 
   return shuffledData1, shuffledData2, labelsData1, labelsData2
 
@@ -191,6 +224,7 @@ def splitSimilaritiesPIEEmotions():
   labels = similarityDifferentLabels(emotions1, emotions2)
 
   data1, data2, labels = shuffle3(data1, data2, labels)
+
   kf = cross_validation.KFold(n=len(data1), n_folds=5)
   for train, test in kf:
     break
