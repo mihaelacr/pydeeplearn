@@ -762,9 +762,9 @@ def deepbeliefMNISTGaussian():
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
                  hiddenDropout=0.5,
-                 rbmHiddenDropout=0.5,
                  visibleDropout=0.8,
-                 rbmVisibleDropout=0.9,
+                 rbmHiddenDropout=1.0,
+                 rbmVisibleDropout=1.0,
                  weightDecayL1=0,
                  weightDecayL2=0,
                  preTrainEpochs=args.preTrainEpochs)
