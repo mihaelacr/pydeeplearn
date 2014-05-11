@@ -36,6 +36,7 @@ def splitShuffling(shuffling, labelsShuffling):
   labelsData2 = []
 
   for label in labels:
+    print label
 
     labelIndices = np.array(remaininLabels) == label
     howMany = len(labelIndices)
