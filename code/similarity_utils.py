@@ -71,6 +71,8 @@ def splitShuffling(shuffling, labelsShuffling):
   assert len(shuffledData1) == len(shuffledData2)
   assert len(labelsData1) == len(labelsData2)
 
+  assert len(shuffledData1) <= len(shuffling) / 2
+
   # shuffledData1 = shuffling[0: len(shuffling) / 2]
   # shuffledData2 = shuffling[len(shuffling)/2 :]
 
