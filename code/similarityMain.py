@@ -43,6 +43,9 @@ def similarityMain():
 
   simNet.train(trainData1, trainData2, similaritiesTrain)
 
+  print "training with ", similaritiesTrain.sum(), "positive examples"
+  print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
+
   res = simNet.test(testData1, testData2)
 
   predicted = res > 0.5
@@ -65,12 +68,17 @@ def similarityMainTestYale():
 
   testData1, testData2, similaritiesTest = splitSimilarityYale()
 
-
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
 
   print "testing with dataset of size ", len(testData1)
   print len(testData1)
+
+  print "training with ", similaritiesTrain.sum(), "positive examples"
+  print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
+
+  print "testing with ", similaritiesTest.sum(), "positive examples"
+  print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
 
   simNet = similarity.SimilarityNet(learningRate=0.001,
                                     maxMomentum=0.95,
@@ -126,6 +134,12 @@ def similarityDifferentSubjectsMain():
   similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
   similaritiesTest =  similarityDifferentSubjects(testSubjects1, testSubjects2)
 
+  print "training with ", similaritiesTrain.sum(), "positive examples"
+  print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
+
+  print "testing with ", similaritiesTest.sum(), "positive examples"
+  print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
+
   simNet = similarity.SimilarityNet(learningRate=0.001,
                                     maxMomentum=0.95,
                                     binary=True,
@@ -167,6 +181,12 @@ def similarityCV():
                                     rbmDropoutVis=1.0)
 
     simNet.train(trainData1, trainData2, similaritiesTrain)
+
+    print "training with ", similaritiesTrain.sum(), "positive examples"
+    print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
+
+    print "testing with ", similaritiesTest.sum(), "positive examples"
+    print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
 
     res = simNet.test(testData1, testData2)
 
@@ -213,6 +233,13 @@ def similarityEmotionsMain():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
+
+  print "training with ", trainLabels.sum(), "positive examples"
+  print "training with ", len(trainLabels) - trainLabels.sum(), "negative examples"
+
+  print "testing with ", testLabels.sum(), "positive examples"
+  print "testing with ", len(testLabels) - testLabels.sum(), "negative examples"
+
 
   simNet.train(trainData1, trainData2, trainLabels, epochs=400)
 
