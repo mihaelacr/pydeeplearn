@@ -58,6 +58,11 @@ def splitShuffling(shuffling, labelsShuffling):
     remaing = [v for i, v in enumerate(remaing) if i not in indicesToRemove]
     remaininLabels = [v for i, v in enumerate(remaininLabels) if i not in indicesToRemove]
 
+    print "len(shuffledData1)"
+    print len(shuffledData1)
+    print "len(shuffledData2)"
+    print len(shuffledData2)
+
     print len(remaing)
     print len(remaininLabels)
 
