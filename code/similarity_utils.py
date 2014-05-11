@@ -192,8 +192,8 @@ def splitSimilaritiesPIEEmotions():
   for k in test:
     print k
 
-  if True:
-    raise Exception("fjds")
+  # if True:
+  #   raise Exception("fjds")
 
 
 
