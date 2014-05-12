@@ -37,8 +37,8 @@ def splitShuffling(shuffling, labelsShuffling):
 
   currentLabels = list(labels)
 
-  while len(labels) >= 2:
-    chosenLabels = np.random.choice(labels, 2)
+  while len(currentLabels) >= 2:
+    chosenLabels = np.random.choice(currentLabels, 2)
     label1 = chosenLabels[0]
     label2 = chosenLabels[1]
 
