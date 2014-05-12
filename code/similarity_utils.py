@@ -54,6 +54,10 @@ def splitShuffling(shuffling, labelsShuffling):
       print " in first if"
       continue
 
+    print "labelsToData"
+    print labelsToData
+
+
     dataLabel1 = labelsToData[label1]
     dataLabel2 = labelsToData[label2]
     if len(dataLabel1) == 0 or len(dataLabel2) == 0:
