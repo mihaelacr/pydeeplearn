@@ -60,6 +60,7 @@ def similarityMain():
   for r in res:
     print r
 
+  print "correct"
   print correct
 
 
