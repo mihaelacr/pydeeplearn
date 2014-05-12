@@ -36,7 +36,7 @@ def splitShuffling(shuffling, labelsShuffling):
   labelsData1 = []
   labelsData2 = []
 
-  currentLabels = list(labelsShuffling)
+  currentLabels = list(labels)
 
   while len(shuffledData1) + len(shuffledData2) <= len(shuffling):
     print "len(shuffledData1) + len(shuffledData2)"
