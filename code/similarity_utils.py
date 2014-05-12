@@ -56,6 +56,7 @@ def splitShuffling(shuffling, labelsShuffling):
 
     if not copyCurrentLabels:
       break
+
     label2 = np.random.choice(np.array(copyCurrentLabels), 1, replace=False)
     label2 = label2[0]
     print "label2"
@@ -68,8 +69,8 @@ def splitShuffling(shuffling, labelsShuffling):
       print " in first if"
       continue
 
-    print "labelsToData"
-    print labelsToData
+    # print "labelsToData"
+    # print labelsToData
 
     dataLabel1 = labelsToData[label1]
     dataLabel2 = labelsToData[label2]
@@ -92,8 +93,8 @@ def splitShuffling(shuffling, labelsShuffling):
     del labelsToData[label1][0]
     del labelsToData[label2][0]
 
-    print "labelsToData"
-    print labelsToData
+    # print "labelsToData"
+    # print labelsToData
 
 
   shuffledData1 = np.vstack(shuffledData1)
