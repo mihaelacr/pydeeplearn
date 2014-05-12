@@ -37,7 +37,7 @@ def splitShuffling(shuffling, labelsShuffling):
 
   # currentLabels = list(labelsShuffling)
 
-  while len(labelsShuffling) >= 2:
+  while len(shuffledData1) + len(shuffledData2) <= len(shuffling):
     chosenLabels = np.random.choice(labels, 2)
     label1 = chosenLabels[0]
     label2 = chosenLabels[1]
@@ -56,9 +56,6 @@ def splitShuffling(shuffling, labelsShuffling):
     shuffledData2 += [dataLabel2[0]]
     labelsData1 += [label1]
     labelsData2 += [label2]
-
-    labelsShuffling.remove(label1)
-    labelsShuffling.remove(label2)
 
     del labelsToData[label1][0]
     del labelsToData[label2][0]
