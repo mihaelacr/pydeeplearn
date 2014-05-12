@@ -70,6 +70,8 @@ def splitShuffling(shuffling, labelsShuffling):
     del labelsToData[label1][0]
     del labelsToData[label2][0]
 
+    print labelsToData
+
 
   shuffledData1 = np.vstack(shuffledData1)
   shuffledData2 = np.vstack(shuffledData2)
