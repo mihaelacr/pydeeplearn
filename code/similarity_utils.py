@@ -48,11 +48,13 @@ def splitShuffling(shuffling, labelsShuffling):
     print currentLabels
 
     label1 = np.random.choice(currentLabels, 1, replace=False)
+    label1 = label1[0]
     print "label1"
     print label1
     copyCurrentLabels = list(currentLabels)
     copyCurrentLabels.remove(label1)
     label2 = np.random.choice(np.array(copyCurrentLabels), 1, replace=False)
+    label2 = label2[0]
     print "label2"
     print label2
 
