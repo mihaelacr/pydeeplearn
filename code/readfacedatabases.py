@@ -168,6 +168,31 @@ def readMultiPIEEmotions():
 
   return emotionToImages
 
+def readMultiPIEEmotionsPerSubject():
+  PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
+  # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+
+  mat = scipy.io.loadmat(PATH)
+  data = mat['a_multipie']
+  # For all the subjects
+  subjectToEmotions = []
+
+  for expression in xrange(6):
+    emotionToImages[expression] = []
+  for subject in xrange(147):
+    emotionToImages = {}
+    for pose in xrange(5):
+      for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
+        for illumination in xrange(5):
+            image = np.squeeze(data[subject,pose,expression,illumination,:])
+            image = image.reshape(30,40).T
+            image = image.reshape(-1)
+
+            emotionToImages[expression] += [image]
+    subjectToEmotions+= [emotionToImages]
+
+  return subjectToEmotions
+
 def readKanade(big=False, folds=None, equalize=False):
   if not equalize:
     if big:
