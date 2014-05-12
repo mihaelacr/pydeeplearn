@@ -217,8 +217,8 @@ def splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=None):
 
   return data1, data2, labels1, labels2, shuffling, labelsShuffling
 
-def splitDataAccordingToLabels(labelsToImages, labels, imgsPerLabel=None):
-  data1, data2, labels1, labels2, shuffling, labelsShuffling  = splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=labels)
+def splitDataAccordingToLabels(labelsToImages, labelsToTake, imgsPerLabel=None):
+  data1, data2, labels1, labels2, shuffling, labelsShuffling  = splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=labelsToTake)
 
   shuffledData1, shuffledData2, labelsData1, labelsData2 = splitShuffling(shuffling, labelsShuffling)
 
@@ -258,6 +258,26 @@ def splitSimilaritiesPIEEmotions():
 
   return (data1[train], data2[train], labels[train],
           data1[test], data2[test], labels[test])
+
+def splitEmotionsMultiPieKeepSubjects():
+  subjectToEmotions = readMultiPIEEmotionsPerSubject()
+
+  totalData1 = []
+  totalData2 = []
+  totalLabels1 = []
+  totalLabels2 = []
+  for subject, emotionToImages in subjectToEmotions.iteritems():
+    data1, data2, labels1, labels2 = splitDataAccordingToLabels(emotionToImages, None, None)
+    totalData1 += [data1]
+    totalData2 += [data2]
+    totalLabels1 += [labels1]
+    totalLabels2 += [labels2]
+
+  totalData1 = np.vstack(totalData1)
+  totalData1 = np.vstack(totalData2)
+  totalLabels1 = np.hstack(totalLabels1)
+  totalLabels2 = np.hstack(totalLabels2)
+  return totalData1, totalData2, totalLabels1, totalLabels2
 
 
 def testShuffling():
