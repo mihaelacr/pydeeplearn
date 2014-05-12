@@ -38,6 +38,10 @@ def splitShuffling(shuffling, labelsShuffling):
 
   currentLabels = list(labels)
 
+  print currentLabels
+  if true:
+    raise Exception()
+
   while len(shuffledData1) + len(shuffledData2) <= len(shuffling):
     print "len(shuffledData1) + len(shuffledData2)"
     print len(shuffledData1) + len(shuffledData2)
