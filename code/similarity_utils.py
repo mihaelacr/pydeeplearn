@@ -53,6 +53,9 @@ def splitShuffling(shuffling, labelsShuffling):
     print label1
     copyCurrentLabels = list(currentLabels)
     copyCurrentLabels.remove(label1)
+
+    if not copyCurrentLabels:
+      break
     label2 = np.random.choice(np.array(copyCurrentLabels), 1, replace=False)
     label2 = label2[0]
     print "label2"
