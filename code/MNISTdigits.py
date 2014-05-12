@@ -858,9 +858,9 @@ def cvMNISTGaussian():
               maxEpochs=args.maxEpochs,
               validation=args.validation)
 
-    proabilities, predicted = net.classify(testingScaledVectors[test])
+    proabilities, predicted = net.classify(trainingScaledVectors[test])
     # Test it with the testing data and measure the missclassification error
-    error = getClassificationError(predicted, testLabels[test])
+    error = getClassificationError(predicted, vectorLabels[test])
 
     print "error for " + str(params[i])
     print error
