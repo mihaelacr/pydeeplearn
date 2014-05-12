@@ -47,6 +47,9 @@ def splitShuffling(shuffling, labelsShuffling):
     label1 = chosenLabels[0]
     label2 = chosenLabels[1]
 
+    print label1
+    print label2
+
     if label1 == label2:
       print " in first if"
       continue
