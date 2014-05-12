@@ -63,7 +63,8 @@ def splitShuffling(shuffling, labelsShuffling):
     if len(otherIndices) == 0:
       continue
 
-    otherIndices = np.random.choice(otherIndices, len(concreteIndices), replace=False)
+    indicesToTake = min(len(concreteIndices), len(otherIndices))
+    otherIndices = np.random.choice(otherIndices, indicesToTake, replace=False)
 
     shuffledData1 += [np.array(remaing)[concreteIndices]]
     labelsData1 += [np.array(remaininLabels)[concreteIndices]]
