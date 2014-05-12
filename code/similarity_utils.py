@@ -50,8 +50,8 @@ def splitShuffling(shuffling, labelsShuffling):
     if len(labelsToData[label1]) == 0 or len(labelsToData[label2]) == 0:
       continue
 
-    data1LabelIndex = np.random.choice(len(labelsToData[labels1]))
-    data2LabelIndex = np.random.choice(len(labelsToData[labels2]))
+    data1LabelIndex = np.random.choice(len(labelsToData[label1]))
+    data2LabelIndex = np.random.choice(len(labelsToData[label2]))
     shuffledData1 += [data1LabelIndex]
     shuffledData2 += [data2LabelIndex]
     labelsData1 += [label1]
