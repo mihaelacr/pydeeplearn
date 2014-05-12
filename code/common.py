@@ -10,7 +10,7 @@ def getClassificationError(predicted, actual):
   return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
 
 def scale(data):
-  return preprocessing.scale(data)
+  return preprocessing.scale(data, axis=1)
 
 def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,
@@ -122,6 +122,7 @@ def relu(var):
 def cappedRelu(var):
   return var * (var > 0.0) * (var < 6.0)
 
+# This works for rbms but do not use it for backprop
 def noisyRelu(var, theano_rng):
   var += theano_rng.normal(avg=0.0, std=1.0)
   return var * (var > 0.0)

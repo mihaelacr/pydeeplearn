@@ -814,6 +814,8 @@ def cvMNISTGaussian():
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
   trainVectors = np.array(trainVectors, dtype='float')
+
+  # Ensure the data has zero mean and 1 variance
   trainingScaledVectors = scale(trainVectors)
   vectorLabels = labelsToVectors(trainLabels, 10)
 
@@ -821,7 +823,6 @@ def cvMNISTGaussian():
   bestError = np.inf
 
   # 1e-03, 1e-03: best params
-  # params = [(1e-03, 0.001), (5e-03, 0.001), (5cvMNISTGaussiane-03, 0.001)]
   params = [(1e-03, 1e-03, 0.9), (1e-04, 1e-03, 0.9), (5e-04, 1e-03, 0.9),
             (1e-03, 1e-03, 0.95), (1e-04, 1e-03, 0.95), (5e-04, 1e-03, 0.95),
             (1e-03, 1e-03, 0.99), (1e-04, 1e-03, 0.99), (5e-04, 1e-03, 0.99)]
@@ -829,7 +830,6 @@ def cvMNISTGaussian():
 
   nrFolds = len(params)
 
-  nrFolds = len(params)
   kf = cross_validation.KFold(n=training, n_folds=nrFolds)
 
   i = 0
