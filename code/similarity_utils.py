@@ -43,16 +43,18 @@ def splitShuffling(shuffling, labelsShuffling):
     print "len(shuffling)"
     print len(shuffling)
 
-    chosenLabels = np.random.choice(labels, 2)
+    chosenLabels = np.random.choice(labels, 2, replacement=False)
     label1 = chosenLabels[0]
     label2 = chosenLabels[1]
 
     if label1 == label2:
+      print " in first if"
       continue
 
     dataLabel1 = labelsToData[label1]
     dataLabel2 = labelsToData[label2]
     if len(dataLabel1) == 0 or len(dataLabel2) == 0:
+      print "in second if"
       continue
 
     # data1LabelIndex = np.random.choice(len(labelsToData[label1]))
