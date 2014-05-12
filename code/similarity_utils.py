@@ -45,7 +45,7 @@ def splitShuffling(shuffling, labelsShuffling):
     print len(shuffling)
 
     label1 = np.random.choice(currentLabels, 1, replace=False)
-    label2 = np.random.choice(list(currentLabels).remove(label1), 1, replace=False)
+    label2 = np.random.choice(np.array(list(currentLabels).remove(label1)), 1, replace=False)
 
     print label1
     print label2
