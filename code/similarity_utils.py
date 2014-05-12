@@ -158,7 +158,7 @@ def splitDataMultiPIESubject(imgsPerLabel=None):
 
   print "similaritiesTrain.shape"
   print similaritiesTrain.shape
-  print similaritiesTrain
+  # print similaritiesTrain
 
   assert len(trainData1) == len(trainData2)
   assert len(testData1) == len(testData2)
