@@ -89,11 +89,7 @@ def zerosFromShape(l):
 #   return shuffledData, shuffledLabels
 
 def shuffle(*args):
-  print "args"
-  print args
   shuffled = shuffleList(*args)
-  print "shuffled"
-  print shuffled
   f = lambda x: np.array(x)
   return tuple(map(f, shuffled))
 
@@ -102,17 +98,12 @@ def shuffle(*args):
 def shuffleList(*args):
   lenght = len(args[0])
 
-  print "args in shuffleList"
-  print args
   # Assert they all have the same size
   assert np.array_equal(np.array(map(len, args)), np.ones(len(args)) * lenght)
 
   indexShuffle = np.random.permutation(lenght)
 
   f = lambda x: [x[i] for i in indexShuffle]
-
-  print "map(f, args)"
-  print map(f, args)
   return tuple(map(f, args))
 
 def shuffle3(data1, data2, labels):
