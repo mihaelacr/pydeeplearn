@@ -9,7 +9,7 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
   assert len(labels1) == len(data1)
   assert len(labels1) == len(labels2)
 
-  data1, data2, labels1, labels2 = shuffle(data1, data2, labels1, label2)
+  data1, data2, labels1, labels2 = shuffle(data1, data2, labels1, labels2)
 
   # Random data for training and testing
   kf = cross_validation.KFold(n=len(data1), n_folds=ratio)
