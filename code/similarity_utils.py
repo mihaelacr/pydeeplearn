@@ -42,6 +42,7 @@ def splitShuffling(shuffling, labelsShuffling):
   labelsData2 = []
 
   for label in labels:
+    print "label"
     print label
 
     nrRemainingData = len(remaing)
@@ -56,12 +57,16 @@ def splitShuffling(shuffling, labelsShuffling):
     if len(concreteIndices) == 0:
       continue
 
-    shuffledData1 += [np.array(remaing)[concreteIndices]]
-    labelsData1 += [np.array(remaininLabels)[concreteIndices]]
 
     otherIndices = np.arange(nrRemainingData)[np.invert(labelIndices)]
 
+    if len(otherIndices) == 0:
+      continue
+
     otherIndices = np.random.choice(otherIndices, len(concreteIndices), replace=False)
+
+    shuffledData1 += [np.array(remaing)[concreteIndices]]
+    labelsData1 += [np.array(remaininLabels)[concreteIndices]]
 
     shuffledData2 += [np.array(remaing)[otherIndices]]
     labelsData2 += [np.array(remaininLabels)[otherIndices]]
@@ -280,10 +285,11 @@ def testShuffling():
   assert not c[0] ==  d[0]
   assert not c[1] == d[1]
 
-  fst = sorted(list(a[0]) + list(b[0]))
-  snd = sorted(list(a[1]) + list(b[1]))
-  assert fst is not [1,4] and fst is not [2,5]
-  assert snd is not [1,4] and snd is not [2,5]
+  fst = sorted(list(a[0]))
+  snd = sorted(list(b[0]))
+
+  assert fst == [1,4] or fst == [2,5]
+  assert snd == [2,5] or snd == [1,4]
 
 if __name__ == '__main__':
   testShuffling()
