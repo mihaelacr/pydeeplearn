@@ -44,7 +44,7 @@ def similarityMain():
   print "training with ", similaritiesTrain.sum(), "positive examples"
   print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
 
-  simNet.train(trainData1, trainData2, similaritiesTrain)
+  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=200)
 
   res = simNet.test(testData1, testData2)
 
