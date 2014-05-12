@@ -43,7 +43,7 @@ def splitShuffling(shuffling, labelsShuffling):
     print "len(shuffling)"
     print len(shuffling)
 
-    chosenLabels = np.random.choice(labels, 2, replacement=False)
+    chosenLabels = np.random.choice(labels, 2, replace=False)
     label1 = chosenLabels[0]
     label2 = chosenLabels[1]
 
