@@ -28,73 +28,75 @@ def splitShuffling(shuffling, labelsShuffling):
 
   shuffling, labelsShuffling = shuffle(shuffling, labelsShuffling)
 
-  # labels = np.unique(labelsShuffling)
+  labels = np.unique(labelsShuffling)
 
-  # remaing = list(shuffling)
-  # remaininLabels = list(labelsShuffling)
+  remaing = list(shuffling)
+  remaininLabels = list(labelsShuffling)
 
-  # print "shuffling size"
-  # print len(shuffling)
+  print "shuffling size"
+  print len(shuffling)
 
-  # shuffledData1 = []
-  # shuffledData2 = []
-  # labelsData1 = []
-  # labelsData2 = []
+  shuffledData1 = []
+  shuffledData2 = []
+  labelsData1 = []
+  labelsData2 = []
 
-  # for label in labels:
-  #   print "label"
-  #   print label
+  for label in labels:
+    print "label"
+    print label
 
-  #   nrRemainingData = len(remaing)
+    nrRemainingData = len(remaing)
 
-  #   if nrRemainingData == 0:
-  #     break
+    if nrRemainingData == 0:
+      break
 
-  #   labelIndices = np.array(remaininLabels) == label
-  #   concreteIndices = np.arange(nrRemainingData)[labelIndices]
+    labelIndices = np.array(remaininLabels) == label
+    concreteIndices = np.arange(nrRemainingData)[labelIndices]
 
-  #   # If nothing of this label is left, just continue
-  #   if len(concreteIndices) == 0:
-  #     continue
-
-
-  #   otherIndices = np.arange(nrRemainingData)[np.invert(labelIndices)]
-
-  #   if len(otherIndices) == 0:
-  #     continue
-
-  #   otherIndices = np.random.choice(otherIndices, len(concreteIndices), replace=False)
-
-  #   shuffledData1 += [np.array(remaing)[concreteIndices]]
-  #   labelsData1 += [np.array(remaininLabels)[concreteIndices]]
-
-  #   shuffledData2 += [np.array(remaing)[otherIndices]]
-  #   labelsData2 += [np.array(remaininLabels)[otherIndices]]
-
-  #   indicesToRemove = np.hstack((otherIndices, concreteIndices))
-  #   remaing = [v for i, v in enumerate(remaing) if i not in indicesToRemove]
-  #   remaininLabels = [v for i, v in enumerate(remaininLabels) if i not in indicesToRemove]
+    # If nothing of this label is left, just continue
+    if len(concreteIndices) == 0:
+      continue
 
 
-  # shuffledData1 = np.vstack(shuffledData1)
-  # shuffledData2 = np.vstack(shuffledData2)
+    otherIndices = np.arange(nrRemainingData)[np.invert(labelIndices)]
 
-  # labelsData1 = np.hstack(labelsData1)
-  # labelsData2 = np.hstack(labelsData2)
+    if len(otherIndices) == 0:
+      continue
 
-  # print shuffledData1.shape
-  # print shuffledData2.shape
+    otherIndices = np.random.choice(otherIndices, len(concreteIndices), replace=False)
 
-  # assert len(shuffledData1) == len(shuffledData2)
-  # assert len(labelsData1) == len(labelsData2)
+    shuffledData1 += [np.array(remaing)[concreteIndices]]
+    labelsData1 += [np.array(remaininLabels)[concreteIndices]]
 
-  # assert len(shuffledData1) <= len(shuffling) / 2
+    shuffledData2 += [np.array(remaing)[otherIndices]]
+    labelsData2 += [np.array(remaininLabels)[otherIndices]]
 
-  shuffledData1 = shuffling[0: len(shuffling) / 2]
-  shuffledData2 = shuffling[len(shuffling)/2 :]
+    indicesToRemove = np.hstack((otherIndices, concreteIndices))
+    remaing = [v for i, v in enumerate(remaing) if i not in indicesToRemove]
+    remaininLabels = [v for i, v in enumerate(remaininLabels) if i not in indicesToRemove]
 
-  labelsData1 = labelsShuffling[0: len(shuffling) /2]
-  labelsData2 = labelsShuffling[len(shuffling)/2:]
+
+  shuffledData1 = np.vstack(shuffledData1)
+  shuffledData2 = np.vstack(shuffledData2)
+
+  labelsData1 = np.hstack(labelsData1)
+  labelsData2 = np.hstack(labelsData2)
+
+
+
+  print shuffledData1.shape
+  print shuffledData2.shape
+
+  assert len(shuffledData1) == len(shuffledData2)
+  assert len(labelsData1) == len(labelsData2)
+
+  assert len(shuffledData1) <= len(shuffling) / 2
+
+  # shuffledData1 = shuffling[0: len(shuffling) / 2]
+  # shuffledData2 = shuffling[len(shuffling)/2 :]
+
+  # labelsData1 = labelsShuffling[0: len(shuffling) /2]
+  # labelsData2 = labelsShuffling[len(shuffling)/2:]
 
   # shuffledData1 = np.array(shuffledData1)
   # shuffledData1 = np.array(shuffledData2)
@@ -292,4 +294,6 @@ def testShuffling():
   assert snd == [2,5] or snd == [1,4]
 
 if __name__ == '__main__':
+  # print shuffleList([1,2], [3,4])
+  print len(shuffle([1,2], [3,4]))
   testShuffling()

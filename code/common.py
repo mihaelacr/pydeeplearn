@@ -77,16 +77,43 @@ def labelsToVectors(labels, size):
 def zerosFromShape(l):
   return map(lambda x: np.zeros(x.shape), l)
 
-def shuffle(data, labels):
-  shuffledData, shuffledLabels = shuffleList(data, labels)
-  return np.array(shuffledData), np.array(shuffledLabels)
+# def shuffle(data, labels):
+#   shuffledData, shuffledLabels = shuffleList(data, labels)
+#   return np.array(shuffledData), np.array(shuffledLabels)
 
-def shuffleList(data, labels):
-  indexShuffle = np.random.permutation(len(data))
-  shuffledData = [data[i] for i in indexShuffle]
-  shuffledLabels = [labels[i] for i in indexShuffle]
+# def shuffleList(data, labels):
+#   indexShuffle = np.random.permutation(len(data))
+#   shuffledData = [data[i] for i in indexShuffle]
+#   shuffledLabels = [labels[i] for i in indexShuffle]
 
-  return shuffledData, shuffledLabels
+#   return shuffledData, shuffledLabels
+
+def shuffle(*args):
+  print "args"
+  print args
+  shuffled = shuffleList(*args)
+  print "shuffled"
+  print shuffled
+  f = lambda x: np.array(x)
+  return tuple(map(f, shuffled))
+
+
+# Returns lists
+def shuffleList(*args):
+  lenght = len(args[0])
+
+  print "args in shuffleList"
+  print args
+  # Assert they all have the same size
+  assert np.array_equal(np.array(map(len, args)), np.ones(len(args)) * lenght)
+
+  indexShuffle = np.random.permutation(lenght)
+
+  f = lambda x: [x[i] for i in indexShuffle]
+
+  print "map(f, args)"
+  print map(f, args)
+  return tuple(map(f, args))
 
 def shuffle3(data1, data2, labels):
   indexShuffle = np.random.permutation(len(data1))

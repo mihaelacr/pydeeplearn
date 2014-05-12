@@ -61,7 +61,6 @@ def similarityMain():
   print correct
 
 
-
 def similarityMainTestYale():
   subjectsToImgs = readMultiPIESubjects()
 
