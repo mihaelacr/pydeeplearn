@@ -745,8 +745,9 @@ def deepbeliefMNISTGaussian():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  unsupervisedLearningRate = 0.0005
+  unsupervisedLearningRate = 0.001
   supervisedLearningRate = 0.001
+  momentumMax =0.9
 
   if args.train:
     # Try 1200, 1200, 1200
@@ -755,6 +756,7 @@ def deepbeliefMNISTGaussian():
                  binary=False,
                  unsupervisedLearningRate=unsupervisedLearningRate,
                  supervisedLearningRate=supervisedLearningRate,
+                 momentumMax=momentumMax,
                  activationFunction=relu,
                  rbmActivationFunctionVisible=identity,
                  rbmActivationFunctionHidden=makeNoisyReluSigmoid(),
