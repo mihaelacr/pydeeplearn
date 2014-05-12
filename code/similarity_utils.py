@@ -52,6 +52,11 @@ def splitShuffling(shuffling, labelsShuffling):
     labelIndices = np.array(remaininLabels) == label
     concreteIndices = np.arange(nrRemainingData)[labelIndices]
 
+    # If nothing of this label is left, just continue
+    if not concreteIndices:
+      continue
+
+
     shuffledData1 += [np.array(remaing)[concreteIndices]]
     labelsData1 += [np.array(remaininLabels)[concreteIndices]]
 
@@ -252,3 +257,15 @@ def splitSimilaritiesPIEEmotions():
 
   return (data1[train], data2[train], labels[train],
           data1[test], data2[test], labels[test])
+
+
+def testShuffling():
+
+  shuffling = [1,2,3, 4]
+  labelsShuffling = [1,2,3, 4]
+  a, b,c,  d  = splitShuffling(shuffling, labelsShuffling)
+  assert not c[0] ==  d[0]
+  assert not c[1] ==  d[1]
+
+if __name__ == '__main__':
+  testShuffling()
