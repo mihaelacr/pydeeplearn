@@ -56,7 +56,9 @@ def similarityMain():
 
   correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
-  print res
+  # print res
+  for r in res:
+    print r
 
   print correct
 

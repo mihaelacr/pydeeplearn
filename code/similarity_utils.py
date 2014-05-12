@@ -58,6 +58,7 @@ def splitShuffling(shuffling, labelsShuffling):
       continue
 
     indicesToTake = min(len(concreteIndices), len(otherIndices))
+
     otherIndices = np.random.choice(otherIndices, indicesToTake, replace=False)
 
     shuffledData1 += [np.array(remaing)[concreteIndices]]
@@ -70,6 +71,7 @@ def splitShuffling(shuffling, labelsShuffling):
     remaing = [v for i, v in enumerate(remaing) if i not in indicesToRemove]
     remaininLabels = [v for i, v in enumerate(remaininLabels) if i not in indicesToRemove]
 
+    assert len(remaing) == len(remaininLabels)
 
   shuffledData1 = np.vstack(shuffledData1)
   shuffledData2 = np.vstack(shuffledData2)
@@ -183,7 +185,7 @@ def splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=None):
     if imgsPerLabel is not None:
       images = images[:imgsPerLabel]
 
-    delta = len(images) / 7 + label % 2
+    delta = len(images) / 2 + label % 2
     last2Index = 2 *delta
     data1 += images[0: delta]
     data2 += images[delta: last2Index]
@@ -315,6 +317,22 @@ def testShuffling():
 
   assert fst == [1,4] or fst == [2,5]
   assert snd == [2,5] or snd == [1,4]
+
+  if fst == [1,4]:
+    assert c[0] == 1
+  else:
+    assert c[0] == 2
+
+  shuffling = [ np.array([1,1]), np.array([2,2]), np.array([4,4]), np.array([5,5]),
+                np.array([6, 6]), np.array([7, 7]) ]
+  labelsShuffling = [1, 2, 3, 2, 1, 3]
+  a, b, c, d  = splitShuffling(shuffling, labelsShuffling)
+  assert not c[0] ==  d[0]
+  assert not c[1] == d[1]
+  assert not c[2] == d[2]
+
+  print zip(a, c)
+  print zip(b, d)
 
 if __name__ == '__main__':
   # print shuffleList([1,2], [3,4])
