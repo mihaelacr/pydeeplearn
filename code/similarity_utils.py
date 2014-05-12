@@ -70,6 +70,7 @@ def splitShuffling(shuffling, labelsShuffling):
     del labelsToData[label1][0]
     del labelsToData[label2][0]
 
+    print "labelsToData"
     print labelsToData
 
 
