@@ -46,7 +46,7 @@ def similarityMain():
                                     rbmLearningRate=0.005,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
-                                    trainingEpochsRBM=10)
+                                    trainingEpochsRBM=1)
 
   simNet.train(trainData1, trainData2, similaritiesTrain, epochs=200)
 
