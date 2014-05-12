@@ -26,6 +26,8 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
 
 def splitShuffling(shuffling, labelsShuffling):
 
+  shuffling, labelsShuffling = shuffle(shuffling, labelsShuffling)
+
   labels = np.unique(labelsShuffling)
 
   remaing = list(shuffling)
