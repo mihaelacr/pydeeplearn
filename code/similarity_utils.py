@@ -23,6 +23,11 @@ def splitShuffling(shuffling, labelsShuffling):
 
   shuffling, labelsShuffling = shuffle(shuffling, labelsShuffling)
 
+  print "len(shuffling)"
+  print len(shuffling)
+  print "len(labelsShuffling)"
+  print len(labelsShuffling)
+
   labels = np.unique(labelsShuffling)
 
   # TODO: we already had this? maybe not remake it
@@ -32,8 +37,8 @@ def splitShuffling(shuffling, labelsShuffling):
     labelsToData[label] = list(shuffling[labels == label][0])
     print len(labelsToData[label])
 
-  # if True:
-  #   raise Exception("test")
+  if True:
+    raise Exception("test")
 
   shuffledData1 = []
   shuffledData2 = []
