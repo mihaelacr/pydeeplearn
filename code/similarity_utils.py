@@ -53,9 +53,8 @@ def splitShuffling(shuffling, labelsShuffling):
     concreteIndices = np.arange(nrRemainingData)[labelIndices]
 
     # If nothing of this label is left, just continue
-    if not concreteIndices:
+    if len(concreteIndices) == 0:
       continue
-
 
     shuffledData1 += [np.array(remaing)[concreteIndices]]
     labelsData1 += [np.array(remaininLabels)[concreteIndices]]
@@ -71,8 +70,10 @@ def splitShuffling(shuffling, labelsShuffling):
     remaing = [v for i, v in enumerate(remaing) if i not in indicesToRemove]
     remaininLabels = [v for i, v in enumerate(remaininLabels) if i not in indicesToRemove]
 
+
   shuffledData1 = np.vstack(shuffledData1)
   shuffledData2 = np.vstack(shuffledData2)
+
   labelsData1 = np.hstack(labelsData1)
   labelsData2 = np.hstack(labelsData2)
 
@@ -260,12 +261,29 @@ def splitSimilaritiesPIEEmotions():
 
 
 def testShuffling():
-
   shuffling = [1,2,3, 4]
   labelsShuffling = [1,2,3, 4]
-  a, b,c,  d  = splitShuffling(shuffling, labelsShuffling)
+  a, b, c, d  = splitShuffling(shuffling, labelsShuffling)
   assert not c[0] ==  d[0]
   assert not c[1] ==  d[1]
+  assert sorted(list(a) + list(b)) == [1,2,3,4]
+
+  shuffling = [1,2,3]
+  labelsShuffling = [1,2,3]
+  a, b, c, d  = splitShuffling(shuffling, labelsShuffling)
+  assert not c[0] ==  d[0]
+  assert not a[0] == b[0]
+
+  shuffling = [1,2,4,5]
+  labelsShuffling = [1,2,1,2]
+  a, b, c, d  = splitShuffling(shuffling, labelsShuffling)
+  assert not c[0] ==  d[0]
+  assert not c[1] == d[1]
+
+  fst = sorted(list(a[0]) + list(b[0]))
+  snd = sorted(list(a[1]) + list(b[1]))
+  assert fst is not [1,4] and fst is not [2,5]
+  assert snd is not [1,4] and snd is not [2,5]
 
 if __name__ == '__main__':
   testShuffling()
