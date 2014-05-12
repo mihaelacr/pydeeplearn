@@ -860,7 +860,7 @@ def cvMNISTGaussian():
 
     proabilities, predicted = net.classify(trainingScaledVectors[test])
     # Test it with the testing data and measure the missclassification error
-    error = getClassificationError(predicted, vectorLabels[test])
+    error = getClassificationError(predicted, trainLabels[test])
 
     print "error for " + str(params[i])
     print error
