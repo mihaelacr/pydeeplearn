@@ -827,6 +827,7 @@ def cvMNISTGaussian():
             (1e-03, 1e-03, 0.95), (1e-04, 1e-03, 0.95), (5e-04, 1e-03, 0.95),
             (1e-03, 1e-03, 0.99), (1e-04, 1e-03, 0.99), (5e-04, 1e-03, 0.99)]
   # params = [(1e-03, 1e-03), (1e-03, 1e-04), (1e-04, 1e-03), (1e-04, 1e-04)]
+  correctness = []
 
   nrFolds = len(params)
 
@@ -867,13 +868,21 @@ def cvMNISTGaussian():
     print "error for " + str(params[i])
     print error
 
+    correct = 1.0 - error
+
     if error < bestError:
       bestError = error
       bestFold = i
 
+    correctness += [correct]
+
   print "best fold was " + str(bestFold)
   print "bestParameter " + str(params[bestFold])
   print "bestError " + str(bestError)
+
+  for i in xrange(len(params)):
+    print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(correctness[i])
+
 
 
 # TODO: fix this (look at the ML coursework for it)
