@@ -29,6 +29,13 @@ def similarityMain():
   print len(trainData1)
 
   print "testing with dataset of size ", len(testData1)
+
+  print "training with ", similaritiesTrain.sum(), "positive examples"
+  print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
+
+
+  print "training with ", similaritiesTest.sum(), "positive examples"
+  print "training with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
   print len(testData1)
 
   simNet = similarity.SimilarityNet(learningRate=0.001,
@@ -40,9 +47,6 @@ def similarityMain():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
-
-  print "training with ", similaritiesTrain.sum(), "positive examples"
-  print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
 
   simNet.train(trainData1, trainData2, similaritiesTrain, epochs=200)
 
