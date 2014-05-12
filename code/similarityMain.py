@@ -34,8 +34,8 @@ def similarityMain():
   print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
 
 
-  print "training with ", similaritiesTest.sum(), "positive examples"
-  print "training with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
+  print "testing with ", similaritiesTest.sum(), "positive examples"
+  print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
   print len(testData1)
 
   simNet = similarity.SimilarityNet(learningRate=0.001,
