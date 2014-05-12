@@ -183,7 +183,7 @@ def splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=None):
     if imgsPerLabel is not None:
       images = images[:imgsPerLabel]
 
-    delta = len(images) / 4 + label % 2
+    delta = len(images) / 5 + label % 2
     last2Index = 2 *delta
     data1 += images[0: delta]
     data2 += images[delta: last2Index]
