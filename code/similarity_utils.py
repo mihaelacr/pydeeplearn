@@ -47,21 +47,23 @@ def splitShuffling(shuffling, labelsShuffling):
     if label1 == label2:
       continue
 
-    if len(labelsToData[label1]) == 0 or len(labelsToData[label2]) == 0:
+    dataLabel1 = labelsToData[label1]
+    dataLabel2 = labelsToData[label2]
+    if len(dataLabel1) == 0 or len(dataLabel2) == 0:
       continue
 
     data1LabelIndex = np.random.choice(len(labelsToData[label1]))
     data2LabelIndex = np.random.choice(len(labelsToData[label2]))
-    shuffledData1 += [data1LabelIndex]
-    shuffledData2 += [data2LabelIndex]
+    shuffledData1 += [dataLabel1[data1LabelIndex]]
+    shuffledData2 += [dataLabel2[data2LabelIndex]]
     labelsData1 += [label1]
     labelsData2 += [label2]
 
     currentLabels.remove(label1)
     currentLabels.remove(label2)
 
-    labelsToData[label1].remove(data1LabelIndex)
-    labelsToData[label2].remove(data2LabelIndex)
+    del labelsToData[label1][data1LabelIndex]
+    del labelsToData[label2][data2LabelIndex]
 
 
   shuffledData1 = np.vstack(shuffledData1)
