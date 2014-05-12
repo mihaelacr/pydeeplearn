@@ -29,11 +29,11 @@ def splitShuffling(shuffling, labelsShuffling):
   labelsToData = {}
   for label in labels:
     print shuffling[labels == label]
-    labelsToData[label] = list(shuffling[labels == label])
+    labelsToData[label] = list(shuffling[labels == label][0])
     print len(labelsToData[label])
 
-  if True:
-    raise Exception("test")
+  # if True:
+  #   raise Exception("test")
 
   shuffledData1 = []
   shuffledData2 = []
