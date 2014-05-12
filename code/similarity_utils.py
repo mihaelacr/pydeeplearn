@@ -279,6 +279,16 @@ def splitEmotionsMultiPieKeepSubjects():
   totalLabels2 = np.hstack(totalLabels2)
   return totalData1, totalData2, totalLabels1, totalLabels2
 
+def splitEmotionsMultiPieKeepSubjectsTestTrain():
+  kf = cross_validation.KFold(n=len(totalData1), n_folds=5)
+  for train, test in kf:
+    break
+
+  labels = similarityDifferentLabels(totalLabels1, totalLabels2)
+
+  return (totalData1[train], totalData2[train], labels[train],
+          totalData1[test], totalData2[test], labels[test])
+
 
 def testShuffling():
   shuffling = [1,2,3, 4]
