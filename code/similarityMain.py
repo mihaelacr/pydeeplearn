@@ -184,7 +184,8 @@ def similarityCV():
                                     rbmNrHid=1000,
                                     rbmLearningRate=params[fold][1],
                                     rbmDropoutHid=1.0,
-                                    rbmDropoutVis=1.0)
+                                    rbmDropoutVis=1.0,
+                                    trainingEpochsRBM=1)
 
     simNet.train(trainData1, trainData2, similaritiesTrain)
 
