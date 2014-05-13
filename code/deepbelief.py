@@ -84,10 +84,13 @@ class MiniBatchTrainer(object):
 
     # Sample from the visible layer
     # Get the mask that is used for the visible units
-    dropoutMask = self.theanoRng.binomial(n=1, p=visibleDropout,
+    if visibleDropout in [1.0, 1]:
+      currentLayerValues = se;f.input
+    else:
+      dropoutMask = self.theanoRng.binomial(n=1, p=visibleDropout,
                                             size=self.input.shape,
                                             dtype=theanoFloat)
-    currentLayerValues = self.input * dropoutMask
+      currentLayerValues = self.input * dropoutMask
 
     for stage in xrange(nrWeights -1):
       w = self.weights[stage]
@@ -96,10 +99,14 @@ class MiniBatchTrainer(object):
       # Also check the Stamford paper again to what they did to average out
       # the results with softmax and regression layers?
       # dropout: give the next layer only some of the units from this layer
-      dropoutMaskHidden = self.theanoRng.binomial(n=1, p=hiddenDropout,
+
+      if hiddenDropout in  [1.0, 1]:
+        currentLayerValues = actually(linearSum)
+      else:
+        dropoutMaskHidden = self.theanoRng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
-      currentLayerValues = dropoutMaskHidden * activationFunction(linearSum)
+        currentLayerValues = dropoutMaskHidden * activationFunction(linearSum)
 
     # Last layer operations, no dropout in the output
     w = self.weights[nrWeights - 1]
