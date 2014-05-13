@@ -28,92 +28,94 @@ def splitShuffling(shuffling, labelsShuffling):
   print "len(labelsShuffling)"
   print len(labelsShuffling)
 
-  labels = np.unique(labelsShuffling)
+  # labels = np.unique(labelsShuffling)
 
-  # TODO: we already had this? maybe not remake it
-  labelsToData = {}
-  for label in labels:
-    print shuffling[labels == label]
-    labelsToData[label] = list(shuffling[labelsShuffling == label])
-    print len(labelsToData[label])
+  # # TODO: we already had this? maybe not remake it
+  # labelsToData = {}
+  # for label in labels:
+  #   print shuffling[labels == label]
+  #   labelsToData[label] = list(shuffling[labelsShuffling == label])
+  #   print len(labelsToData[label])
 
-  # if True:
-  #   raise Exception("test")
+  # # if True:
+  # #   raise Exception("test")
 
-  shuffledData1 = []
-  shuffledData2 = []
-  labelsData1 = []
-  labelsData2 = []
+  # shuffledData1 = []
+  # shuffledData2 = []
+  # labelsData1 = []
+  # labelsData2 = []
 
-  currentLabels = list(labels)
+  # currentLabels = list(labels)
 
-  while len(shuffledData1) + len(shuffledData2) <= len(shuffling):
-    # print "len(shuffledData1) + len(shuffledData2)"
-    # print len(shuffledData1) + len(shuffledData2)
-    # print "len(shuffling)"
-    # print len(shuffling)
+  # while len(shuffledData1) + len(shuffledData2) <= len(shuffling):
+  #   # print "len(shuffledData1) + len(shuffledData2)"
+  #   # print len(shuffledData1) + len(shuffledData2)
+  #   # print "len(shuffling)"
+  #   # print len(shuffling)
 
-    # print "currentLabels"
-    # print currentLabels
+  #   # print "currentLabels"
+  #   # print currentLabels
 
-    label1 = np.random.choice(currentLabels, 1, replace=False)
-    label1 = label1[0]
-    print "label1"
-    print label1
-    copyCurrentLabels = list(currentLabels)
-    copyCurrentLabels.remove(label1)
+  #   label1 = np.random.choice(currentLabels, 1, replace=False)
+  #   label1 = label1[0]
+  #   print "label1"
+  #   print label1
+  #   copyCurrentLabels = list(currentLabels)
+  #   copyCurrentLabels.remove(label1)
 
-    if not copyCurrentLabels:
-      break
+  #   if not copyCurrentLabels:
+  #     break
 
-    label2 = np.random.choice(np.array(copyCurrentLabels), 1, replace=False)
-    label2 = label2[0]
-    print "label2"
-    print label2
+  #   label2 = np.random.choice(np.array(copyCurrentLabels), 1, replace=False)
+  #   label2 = label2[0]
+  #   print "label2"
+  #   print label2
 
-    print label1
-    print label2
+  #   print label1
+  #   print label2
 
-    if label1 == label2:
-      print " in first if"
-      continue
+  #   if label1 == label2:
+  #     print " in first if"
+  #     continue
 
-    # print "labelsToData"
-    # print labelsToData
+  #   # print "labelsToData"
+  #   # print labelsToData
 
-    dataLabel1 = labelsToData[label1]
-    dataLabel2 = labelsToData[label2]
-    if len(dataLabel1) == 0:
-      print "in second if"
-      currentLabels.remove(label1)
-      continue
-    if len(dataLabel2) == 0:
-      print "in second if"
-      currentLabels.remove(label2)
-      continue
+  #   dataLabel1 = labelsToData[label1]
+  #   dataLabel2 = labelsToData[label2]
+  #   if len(dataLabel1) == 0:
+  #     print "in second if"
+  #     currentLabels.remove(label1)
+  #     continue
+  #   if len(dataLabel2) == 0:
+  #     print "in second if"
+  #     currentLabels.remove(label2)
+  #     continue
 
-    # data1LabelIndex = np.random.choice(len(labelsToData[label1]))
-    # data2LabelIndex = np.random.choice(len(labelsToData[label2]))
-    print "dataLabel1[0].shape"
-    print dataLabel1[0].shape
-    shuffledData1 += [dataLabel1[0]]
-    shuffledData2 += [dataLabel2[0]]
-    labelsData1 += [label1]
-    labelsData2 += [label2]
+  #   # data1LabelIndex = np.random.choice(len(labelsToData[label1]))
+  #   # data2LabelIndex = np.random.choice(len(labelsToData[label2]))
+  #   print "dataLabel1[0].shape"
+  #   print dataLabel1[0].shape
+  #   shuffledData1 += [dataLabel1[0]]
+  #   shuffledData2 += [dataLabel2[0]]
+  #   labelsData1 += [label1]
+  #   labelsData2 += [label2]
 
-    del labelsToData[label1][0]
-    del labelsToData[label2][0]
+  #   del labelsToData[label1][0]
+  #   del labelsToData[label2][0]
 
-    # print "labelsToData"
-    # print labelsToData
+  #   # print "labelsToData"
+  #   # print labelsToData
 
 
-  shuffledData1 = np.vstack(shuffledData1)
-  shuffledData2 = np.vstack(shuffledData2)
+  # shuffledData1 = np.vstack(shuffledData1)
+  # shuffledData2 = np.vstack(shuffledData2)
 
-  labelsData1 = np.hstack(labelsData1)
-  labelsData2 = np.hstack(labelsData2)
+  # labelsData1 = np.hstack(labelsData1)
+  # labelsData2 = np.hstack(labelsData2)
 
+
+  """ SND method"""
   # remaing = list(shuffling)
   # remaininLabels = list(labelsShuffling)
 
@@ -180,16 +182,16 @@ def splitShuffling(shuffling, labelsShuffling):
   # assert len(shuffledData1) <= len(shuffling) / 2
 
   """  STOP NEW METHOD """
-  # shuffledData1 = shuffling[0: len(shuffling) / 2]
-  # shuffledData2 = shuffling[len(shuffling)/2 :]
+  shuffledData1 = shuffling[0: len(shuffling) / 2]
+  shuffledData2 = shuffling[len(shuffling)/2 :]
 
-  # labelsData1 = labelsShuffling[0: len(shuffling) /2]
-  # labelsData2 = labelsShuffling[len(shuffling)/2:]
+  labelsData1 = labelsShuffling[0: len(shuffling) /2]
+  labelsData2 = labelsShuffling[len(shuffling)/2:]
 
-  # shuffledData1 = np.array(shuffledData1)
-  # shuffledData1 = np.array(shuffledData2)
-  # labelsData1 = np.array(labelsData1)
-  # labelsData2 = np.array(labelsData2)
+  shuffledData1 = np.array(shuffledData1)
+  shuffledData1 = np.array(shuffledData2)
+  labelsData1 = np.array(labelsData1)
+  labelsData2 = np.array(labelsData2)
 
   return shuffledData1, shuffledData2, labelsData1, labelsData2
 
