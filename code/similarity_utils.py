@@ -177,11 +177,17 @@ def splitShuffling(shuffling, labelsShuffling):
 
   """  STOP NEW METHOD """
   shuffling, labelsShuffling = shuffle(shuffling, labelsShuffling)
+
   shuffledData1 = shuffling[0: len(shuffling) / 2]
   shuffledData2 = shuffling[len(shuffling)/2 :]
 
   labelsData1 = labelsShuffling[0: len(shuffling) /2]
   labelsData2 = labelsShuffling[len(shuffling)/2:]
+
+  shuffledData1 = np.array(shuffledData1)
+  shuffledData1 = np.array(shuffledData2)
+  labelsData1 = np.array(labelsData1)
+  labelsData2 = np.array(labelsData2)
 
   return shuffledData1, shuffledData2, labelsData1, labelsData2
 
