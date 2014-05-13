@@ -56,7 +56,9 @@ def splitShuffling(shuffling, labelsShuffling):
 
     label1 = np.random.choice(currentLabels, 1, replace=False)
     label1 = label1[0]
+
     print "label1"
+
     print label1
     copyCurrentLabels = list(currentLabels)
     copyCurrentLabels.remove(label1)
@@ -186,10 +188,6 @@ def splitShuffling(shuffling, labelsShuffling):
 
   print type(shuffledData1)
   print type(shuffledData2)
-  shuffledData1 = np.array(shuffledData1)
-  shuffledData1 = np.array(shuffledData2)
-  labelsData1 = np.array(labelsData1)
-  labelsData2 = np.array(labelsData2)
 
   return shuffledData1, shuffledData2, labelsData1, labelsData2
 
