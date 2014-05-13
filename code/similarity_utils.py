@@ -184,6 +184,8 @@ def splitShuffling(shuffling, labelsShuffling):
   # labelsData1 = labelsShuffling[0: len(shuffling) /2]
   # labelsData2 = labelsShuffling[len(shuffling)/2:]
 
+  print type(shuffledData1)
+  print type(shuffledData2)
   shuffledData1 = np.array(shuffledData1)
   shuffledData1 = np.array(shuffledData2)
   labelsData1 = np.array(labelsData1)
