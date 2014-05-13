@@ -66,6 +66,7 @@ class RBMMiniBatchTrainer(object):
                                 size=(input.shape[0], initialBiases[1].shape[0]),
                                 n=1, p=hiddenDropout,
                                 dtype=theanoFloat)
+
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneCDStep(visibleSample):
@@ -80,7 +81,10 @@ class RBMMiniBatchTrainer(object):
         hidden = hiddenActivations
 
       linearSum = T.dot(hidden, self.weights.T) + self.biasVisible
-      visibleRec = visibleActivationFunction(linearSum) * dropoutMaskVisible
+      if visibleDropout in [1.0, 1]:
+        visibleRec = visibleActivationFunction(linearSum)
+      else:
+        visibleRec = visibleActivationFunction(linearSum) * dropoutMaskVisible
       return [hiddenActivations, visibleRec]
 
     [hiddenSeq, visibleSeq], updates = theano.scan(OneCDStep,
