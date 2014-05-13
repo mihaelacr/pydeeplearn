@@ -500,7 +500,8 @@ def cvMNIST():
     trainData = scaledData[training]
     trainLabels = vectorLabels[training]
 
-    net = db.DBN(5, [784, 1000, 1000, 1000, 10],
+    # net = db.DBN(5, [784, 1000, 1000, 1000, 10],
+    net = db.DBN(5, [784, 500, 500, 2000, 10],
                   binary=1-args.relu,
                   unsupervisedLearningRate=params[i][0],
                   supervisedLearningRate=params[i][1],
@@ -511,12 +512,12 @@ def cvMNIST():
                   rbmActivationFunctionVisible=activationFunction,
                   rbmActivationFunctionHidden=activationFunction,
                   rmsprop=args.rmsprop,
+                  visibleDropout=0.8,
                   hiddenDropout=0.5,
-                  rbmHiddenDropout=0.5,
                   weightDecayL1=0,
                   weightDecayL2=0,
-                  visibleDropout=0.8,
-                  rbmVisibleDropout=0.8,
+                  rbmHiddenDropout=1.0,
+                  rbmVisibleDropout=1.0,
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs)
 
@@ -873,6 +874,7 @@ def cvMNISTGaussian():
     if error < bestError:
       bestError = error
       bestFold = i
+
     i += 1
 
     correctness += [correct]
