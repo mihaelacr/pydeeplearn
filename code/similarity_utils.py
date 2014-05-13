@@ -186,9 +186,6 @@ def splitShuffling(shuffling, labelsShuffling):
   # labelsData1 = labelsShuffling[0: len(shuffling) /2]
   # labelsData2 = labelsShuffling[len(shuffling)/2:]
 
-  print type(shuffledData1)
-  print type(shuffledData2)
-
   return shuffledData1, shuffledData2, labelsData1, labelsData2
 
 # TODO: I think this can be written easier with the code similar to the Emotions one
@@ -255,7 +252,16 @@ def splitDataMultiPIESubject(imgsPerLabel=None):
   return trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest
 
 
-def splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=None):
+"""
+instanceToPairRatio: the number of pairs a data instance needs to be in.
+now the half becomes completely random. For each data instance you can randomly
+choose k without it(or do not bother to check) from the ones with the same label
+you can then randomly choose from the ones without a labels
+but do it so that each instance is chosen once.
+
+ie for each one you choose anohter one so then you get 2 instances in total.
+"""
+def splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=None, instanceToPairRatio=1):
   data1 = []
   data2 = []
 
@@ -271,22 +277,24 @@ def splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=None):
 
     # The database might contain the labels in similar
     # poses, and illumination conditions, so shuffle before
-    np.random.shuffle(images)
-
     if imgsPerLabel is not None:
-      images = images[:imgsPerLabel]
+        images = images[:imgsPerLabel]
 
-    delta = len(images) / 4 + label % 2
-    last2Index = 2 * delta
-    data1 += images[0: delta]
-    data2 += images[delta: last2Index]
+    for i in xrange(instanceToPairRatio):
+      # Each time get a new shuffle of the data
+      np.random.shuffle(images)
 
-    labels1 += [label] * delta
-    labels2 += [label] * delta
+      delta = len(images) / 4 + label % 2
+      last2Index = 2 * delta
+      data1 += images[0: delta]
+      data2 += images[delta: last2Index]
 
-    imagesForShuffling = images[last2Index : ]
-    shuffling += imagesForShuffling
-    labelsShuffling += [label] * len(imagesForShuffling)
+      labels1 += [label] * delta
+      labels2 += [label] * delta
+
+      imagesForShuffling = images[last2Index : ]
+      shuffling += imagesForShuffling
+      labelsShuffling += [label] * len(imagesForShuffling)
 
   print "len(labelsShuffling)"
   print len(labelsShuffling)
