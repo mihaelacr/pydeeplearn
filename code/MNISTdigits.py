@@ -873,6 +873,7 @@ def cvMNISTGaussian():
     if error < bestError:
       bestError = error
       bestFold = i
+    i += 1
 
     correctness += [correct]
 
