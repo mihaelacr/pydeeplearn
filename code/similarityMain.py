@@ -227,7 +227,8 @@ def similarityCV():
 
 
 def similarityEmotionsMain():
-  trainData1, trainData2, trainLabels, testData1, testData2, testLabels = splitSimilaritiesPIEEmotions()
+  trainData1, trainData2, trainLabels, testData1, testData2, testLabels =\
+       splitSimilaritiesPIEEmotions(instanceToPairRatio=2)
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
