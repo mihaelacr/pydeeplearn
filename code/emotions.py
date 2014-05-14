@@ -386,7 +386,7 @@ def deepbeliefMultiPIE(big=False):
     activationFunction = T.nnet.sigmoid
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
-    momentumMax = 0.9
+    momentumMax = 0.95
 
   trainData = data[train]
   trainLabels = labels[train]
@@ -407,7 +407,7 @@ def deepbeliefMultiPIE(big=False):
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
                visibleDropout=0.8,
-               hiddenDropout=1.0,
+               hiddenDropout=0.5,
                rbmHiddenDropout=1.0,
                rbmVisibleDropout=1.0,
                preTrainEpochs=args.preTrainEpochs)
