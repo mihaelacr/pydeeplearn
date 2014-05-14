@@ -49,7 +49,7 @@ def similarityMain():
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
 
-  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=500)
+  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=1000)
 
   res = simNet.test(testData1, testData2)
 
