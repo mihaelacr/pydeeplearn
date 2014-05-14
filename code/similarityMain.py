@@ -23,7 +23,8 @@ args = parser.parse_args()
 
 
 def similarityMain():
-  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitDataMultiPIESubject()
+  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
+     splitDataMultiPIESubject(instanceToPairRatio=2)
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
@@ -170,7 +171,8 @@ def similarityDifferentSubjectsMain():
 
 
 def similarityCV():
-  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest = splitDataMultiPIESubject()
+  trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
+     splitDataMultiPIESubject(instanceToPairRatio=2)
 
   params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
   kf = cross_validation.KFold(n=len(trainData1), n_folds=len(params))

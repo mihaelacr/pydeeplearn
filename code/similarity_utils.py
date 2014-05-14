@@ -192,10 +192,12 @@ def splitShuffling(shuffling, labelsShuffling):
 # you can create more tuples than just one per image
 # you can put each image in 5 tuples and that will probably owrk better
 # it might be useful to also give the same image twice
-def splitDataMultiPIESubject(imgsPerLabel=None):
+def splitDataMultiPIESubject(imgsPerLabel=None, instanceToPairRatio=1):
   subjectsToImgs = readMultiPIESubjects()
 
-  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling = splitDataInPairsWithLabels(subjectsToImgs, imgsPerLabel, None)
+  data1, data2, subjects1, subjects2, shuffling, subjectsShuffling =\
+     splitDataInPairsWithLabels(subjectsToImgs, imgsPerLabel,
+                                None, instanceToPairRatio=instanceToPairRatio)
 
   trainData1, testData1, trainData2, testData2, trainSubjects1, testSubjects1,\
         trainSubjects2, testSubjects2 = splitTrainTest(data1, data2, subjects1, subjects2, 5)
@@ -318,8 +320,11 @@ def splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=None, 
 
   return data1, data2, labels1, labels2, shuffling, labelsShuffling
 
-def splitDataAccordingToLabels(labelsToImages, labelsToTake, imgsPerLabel=None):
-  data1, data2, labels1, labels2, shuffling, labelsShuffling  = splitDataInPairsWithLabels(labelsToImages, imgsPerLabel, labelsToTake=labelsToTake)
+def splitDataAccordingToLabels(labelsToImages, labelsToTake, imgsPerLabel=None, instanceToPairRatio=1):
+  data1, data2, labels1, labels2, shuffling, labelsShuffling  =\
+      splitDataInPairsWithLabels(labelsToImages, imgsPerLabel,
+                                 labelsToTake=labelsToTake,
+                                 instanceToPairRatio=instanceToPairRatio)
 
   shuffledData1, shuffledData2, labelsData1, labelsData2 = splitShuffling(shuffling, labelsShuffling)
 
@@ -335,20 +340,23 @@ def similarityDifferentLabels(labels1, labels2):
   assert len(labels1) == len(labels2)
   return labels1 == labels2
 
-def splitSimilarityYale():
+def splitSimilarityYale(instanceToPairRatio):
   subjectsToImgs = readCroppedYaleSubjects()
 
   # Get all subjects
   data1, data2, subjects1, subjects2 = splitDataAccordingToLabels(subjectsToImgs,
-                                          None, imgsPerLabel=None)
+                                          None, imgsPerLabel=None,
+                                          instanceToPairRatio=instanceToPairRatio)
 
   return data1, data2, similarityDifferentLabels(subjects1, subjects2)
 
-def splitSimilaritiesPIEEmotions():
+def splitSimilaritiesPIEEmotions(instanceToPairRatio):
   emotionToImages = readMultiPIEEmotions()
   # Get all emotions
   data1, data2, emotions1, emotions2 = splitDataAccordingToLabels(emotionToImages,
-                                          None, imgsPerLabel=None)
+                                          None, imgsPerLabel=None,
+                                          instanceToPairRatio=instanceToPairRatio)
+
   labels = similarityDifferentLabels(emotions1, emotions2)
 
   data1, data2, labels = shuffle3(data1, data2, labels)
@@ -360,7 +368,7 @@ def splitSimilaritiesPIEEmotions():
   return (data1[train], data2[train], labels[train],
           data1[test], data2[test], labels[test])
 
-def splitEmotionsMultiPieKeepSubjects():
+def splitEmotionsMultiPieKeepSubjects(instanceToPairRatio):
   subjectToEmotions = readMultiPIEEmotionsPerSubject()
 
   totalData1 = []
@@ -368,7 +376,7 @@ def splitEmotionsMultiPieKeepSubjects():
   totalLabels1 = []
   totalLabels2 = []
   for subject, emotionToImages in subjectToEmotions.iteritems():
-    data1, data2, labels1, labels2 = splitDataAccordingToLabels(emotionToImages, None, None)
+    data1, data2, labels1, labels2 = splitDataAccordingToLabels(emotionToImages, None, None, instanceToPairRatio)
     totalData1 += [data1]
     totalData2 += [data2]
     totalLabels1 += [labels1]
@@ -380,6 +388,7 @@ def splitEmotionsMultiPieKeepSubjects():
   totalLabels2 = np.hstack(totalLabels2)
   return totalData1, totalData2, totalLabels1, totalLabels2
 
+# TODO: this will not work
 def splitEmotionsMultiPieKeepSubjectsTestTrain():
   kf = cross_validation.KFold(n=len(totalData1), n_folds=5)
   for train, test in kf:
