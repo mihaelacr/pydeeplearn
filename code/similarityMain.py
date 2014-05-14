@@ -18,6 +18,8 @@ parser.add_argument('--diffsubjects', dest='diffsubjects',action='store_true', d
                     help=("if true, trains a net with different test and train subjects"))
 parser.add_argument('--emotionsdiff', dest='emotionsdiff',action='store_true', default=False,
                     help=("if true, trains a net to distinguish between emotions"))
+parser.add_argument('--emotionsdiffsamesubj', dest='emotionsdiffsamesubj',action='store_true', default=False,
+                    help=("if true, trains a net to distinguish between emotions where the pictures presented are the same people"))
 
 
 
@@ -271,6 +273,45 @@ def similarityEmotionsMain():
 
   print correct
 
+def similarityEmotionsSameSubject():
+  trainData1, trainData2, trainLabels, testData1, testData2, testLabels =\
+       splitEmotionsMultiPieKeepSubjects(instanceToPairRatio=2)
+
+  print "training with dataset of size ", len(trainData1)
+  print len(trainData1)
+
+  print "testing with dataset of size ", len(testData1)
+  print len(testData1)
+
+  simNet = similarity.SimilarityNet(learningRate=0.001,
+                                    maxMomentum=0.95,
+                                    binary=True,
+                                    rbmNrVis=1200,
+                                    rbmNrHid=1000,
+                                    rbmLearningRate=0.005,
+                                    rbmDropoutHid=1.0,
+                                    rbmDropoutVis=1.0,
+                                    trainingEpochsRBM=10)
+
+  print "training with ", trainLabels.sum(), "positive examples"
+  print "training with ", len(trainLabels) - trainLabels.sum(), "negative examples"
+
+  print "testing with ", testLabels.sum(), "positive examples"
+  print "testing with ", len(testLabels) - testLabels.sum(), "negative examples"
+
+
+  simNet.train(trainData1, trainData2, trainLabels, epochs=400)
+
+  res = simNet.test(testData1, testData2)
+
+  predicted = res > 0.5
+
+  correct = (testLabels == predicted).sum() * 1.0 / len(res)
+
+  print res
+
+  print correct
+
 def main():
   if args.cv:
     similarityCV()
@@ -280,7 +321,10 @@ def main():
     similarityMainTestYale()
   if args.emotionsdiff:
     similarityEmotionsMain()
+  if args.emotionsdiffsamesubj:
+    similarityEmotionsSameSubject()
   else:
+
     similarityMain()
 
 if __name__ == '__main__':
