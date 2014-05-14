@@ -1,5 +1,7 @@
 import argparse
 from sklearn import cross_validation
+from sklearn.metrics import confusion_matrix
+
 
 from similarity_utils import *
 from readfacedatabases import *
@@ -53,13 +55,19 @@ def similarityMain():
 
   res = simNet.test(testData1, testData2)
 
+  # Try to change this threshold?
   predicted = res > 0.5
 
   correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
+
+
   # print res
   for r in res:
     print r
+
+  confMatrix = confusion_matrix(predicted, similaritiesTest)
+  print confMatrix
 
   print "correct"
   print correct
