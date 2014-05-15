@@ -218,6 +218,10 @@ def readMultiPIEEmotionsPerSubject():
 
   for subject in xrange(147):
     emotionToImages = {}
+    # initialize the dictionary for this subject
+    for e in xrange(6):
+      emotionToImages[e] = []
+
     for pose in xrange(5):
       for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
