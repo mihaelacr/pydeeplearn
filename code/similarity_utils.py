@@ -35,10 +35,8 @@ def splitShuffling(shuffling, labelsShuffling):
   labelsToData = {}
   for label in labels:
     labelsToData[label] = list(shuffling[labelsShuffling == label])
-    print len(labelsToData[label])
-
-  # if True:
-  #   raise Exception("test")
+    if DEBUG:
+      print len(labelsToData[label])
 
   shuffledData1 = []
   shuffledData2 = []
