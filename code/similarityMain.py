@@ -274,11 +274,11 @@ def similarityEmotionsMain():
       if i > 6:
         break
       # Create 1 by 1 image
-      res = np.hstack([trainData1[i].reshape(40,30), trainData2[i].reshape(40,30)])
+      res = np.vstack([trainData1[i].reshape(40,30), trainData2[i].reshape(40,30)])
 
       final += [res]
 
-  final = np.vstack(final)
+  final = np.hstack(final)
   plt.imshow(final, cmap=plt.cm.gray)
   plt.axis('off')
   plt.show()
