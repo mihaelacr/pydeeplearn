@@ -391,12 +391,13 @@ def splitEmotionsMultiPieKeepSubjects(instanceToPairRatio):
 # Do not add the similarity code her because
 # I will use this for both emotion difference and similarity
 def splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio):
-  kf = cross_validation.KFold(n=len(totalData1), n_folds=5)
-  for train, test in kf:
-    break
 
   totalData1, totalData2, totalLabels1, totalLabels2 =\
      splitEmotionsMultiPieKeepSubjects(instanceToPairRatio)
+
+  kf = cross_validation.KFold(n=len(totalData1), n_folds=5)
+  for train, test in kf:
+    break
 
   totalData1, totalData2, totalLabels1, totalLabels2 = shuffle(totalData1,
           totalData2, totalLabels1, totalLabels2)
