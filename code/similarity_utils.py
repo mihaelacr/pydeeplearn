@@ -390,6 +390,7 @@ def splitEmotionsMultiPieKeepSubjects(instanceToPairRatio):
 
 # Do not add the similarity code her because
 # I will use this for both emotion difference and similarity
+# you can just change this due to
 def splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio):
 
   totalData1, totalData2, totalLabels1, totalLabels2 =\
@@ -408,6 +409,8 @@ def splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio):
 
   totalData1, totalData2, totalLabels1, totalLabels2 = shuffle(totalData1,
           totalData2, totalLabels1, totalLabels2)
+
+  labels =  similarityDifferentLabels(totalLabels1, totalLabels2)
 
   return (totalData1[train], totalData2[train], labels[train],
           totalData1[test], totalData2[test], labels[test])
