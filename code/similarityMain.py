@@ -128,8 +128,6 @@ def similarityMainTestYale():
 
   correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
-  print res
-
   confMatrix = confusion_matrix(predicted, similaritiesTest)
   print confMatrix
   print correct
@@ -198,8 +196,6 @@ def similarityDifferentSubjectsMain():
 
   correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
-  print res
-
   confMatrix = confusion_matrix(predicted, similaritiesTest)
   print confMatrix
 
@@ -221,6 +217,7 @@ def similarityCV():
 
   correctForParams = []
 
+  # Try bigger values for the number of units: 2000?
   fold = 0
   for train, test in kf:
     simNet = similarity.SimilarityNet(learningRate=params[fold][0],
@@ -254,8 +251,7 @@ def similarityCV():
 
     print "params[fold]"
     print params[fold]
-    print "res"
-    print res
+
     print "correct"
     print correct
     correctForParams += [correct]
@@ -324,8 +320,6 @@ def similarityEmotionsMain():
 
   correct = (testLabels == predicted).sum() * 1.0 / len(res)
 
-  print res
-
   confMatrix = confusion_matrix(predicted, testLabels)
   print confMatrix
 
@@ -376,8 +370,6 @@ def similarityEmotionsSameSubject():
 
   correct = (testLabels == predicted).sum() * 1.0 / len(res)
 
-  print res
-
   confMatrix = confusion_matrix(predicted, testLabels)
   print confMatrix
 
@@ -395,7 +387,6 @@ def main():
   if args.emotionsdiffsamesubj:
     similarityEmotionsSameSubject()
   else:
-
     similarityMain()
 
 if __name__ == '__main__':
