@@ -43,12 +43,22 @@ def similarityMain():
   print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
   print len(testData1)
 
-  simNet = similarity.SimilarityNet(learningRate=0.001,
-                                    maxMomentum=0.95,
+  if args.relu:
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
+  else:
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
+
+
+  simNet = similarity.SimilarityNet(learningRate=learningRate,
+                                    maxMomentum=maxMomentum,
                                     binary=True,
                                     rbmNrVis=1200,
                                     rbmNrHid=1000,
-                                    rbmLearningRate=0.005,
+                                    rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
@@ -61,12 +71,6 @@ def similarityMain():
   predicted = res > 0.5
 
   correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
-
-
-
-  # print res
-  for r in res:
-    print r
 
   confMatrix = confusion_matrix(predicted, similaritiesTest)
   print confMatrix
@@ -97,12 +101,21 @@ def similarityMainTestYale():
   print "testing with ", similaritiesTest.sum(), "positive examples"
   print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
 
-  simNet = similarity.SimilarityNet(learningRate=0.001,
-                                    maxMomentum=0.95,
+  if args.relu:
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
+  else:
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
+
+  simNet = similarity.SimilarityNet(learningRate=learningRate,
+                                    maxMomentum=maxMomentum,
                                     binary=True,
                                     rbmNrVis=1200,
                                     rbmNrHid=1000,
-                                    rbmLearningRate=0.005,
+                                    rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
@@ -119,8 +132,6 @@ def similarityMainTestYale():
 
   confMatrix = confusion_matrix(predicted, similaritiesTest)
   print confMatrix
-
-
   print correct
 
 def similarityDifferentSubjectsMain():
@@ -130,7 +141,6 @@ def similarityDifferentSubjectsMain():
 
   for train, test in kf:
     break
-
 
   subjectsToImgs = readMultiPIESubjects()
 
@@ -161,12 +171,21 @@ def similarityDifferentSubjectsMain():
   print "testing with ", similaritiesTest.sum(), "positive examples"
   print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
 
-  simNet = similarity.SimilarityNet(learningRate=0.001,
-                                    maxMomentum=0.95,
+  if args.relu:
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
+  else:
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
+
+  simNet = similarity.SimilarityNet(learningRate=learningRate,
+                                    maxMomentum=maxMomentum,
                                     binary=True,
                                     rbmNrVis=1200,
                                     rbmNrHid=1000,
-                                    rbmLearningRate=0.005,
+                                    rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
@@ -192,7 +211,12 @@ def similarityCV():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
      splitDataMultiPIESubject(instanceToPairRatio=2)
 
-  params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
+  if args.relu:
+    # TODO: params for relu
+    params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
+  else:
+    params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
+
   kf = cross_validation.KFold(n=len(trainData1), n_folds=len(params))
 
   correctForParams = []
@@ -237,6 +261,7 @@ def similarityCV():
     correctForParams += [correct]
 
     fold += 1
+
   for i in xrange(len(params)):
     print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(correctForParams[i])
 
@@ -251,18 +276,21 @@ def similarityEmotionsMain():
   print "testing with dataset of size ", len(testData1)
   print len(testData1)
 
-  # for k in testLabels:
-  #   print k
+  if args.relu:
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
+  else:
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
 
-  # for k in trainLabels:
-  #   print k
-
-  simNet = similarity.SimilarityNet(learningRate=0.001,
-                                    maxMomentum=0.95,
+  simNet = similarity.SimilarityNet(learningRate=learningRate,
+                                    maxMomentum=maxMomentum,
                                     binary=True,
                                     rbmNrVis=1200,
                                     rbmNrHid=1000,
-                                    rbmLearningRate=0.005,
+                                    rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
@@ -314,12 +342,21 @@ def similarityEmotionsSameSubject():
   print "testing with dataset of size ", len(testData1)
   print len(testData1)
 
-  simNet = similarity.SimilarityNet(learningRate=0.001,
-                                    maxMomentum=0.95,
+  if args.relu:
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
+  else:
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
+
+  simNet = similarity.SimilarityNet(learningRate=learningRate,
+                                    maxMomentum=maxMomentum,
                                     binary=True,
                                     rbmNrVis=1200,
                                     rbmNrHid=1000,
-                                    rbmLearningRate=0.005,
+                                    rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
@@ -343,7 +380,6 @@ def similarityEmotionsSameSubject():
 
   confMatrix = confusion_matrix(predicted, testLabels)
   print confMatrix
-
 
   print correct
 
