@@ -388,7 +388,6 @@ def splitEmotionsMultiPieKeepSubjects(instanceToPairRatio):
   totalLabels2 = np.hstack(totalLabels2)
   return totalData1, totalData2, totalLabels1, totalLabels2
 
-splitEmotionsMultiPieKeepSubjectsTestTrain
 # Do not add the similarity code her because
 # I will use this for both emotion difference and similarity
 def splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio):
