@@ -86,11 +86,9 @@ def splitShuffling(shuffling, labelsShuffling):
     dataLabel1 = labelsToData[label1]
     dataLabel2 = labelsToData[label2]
     if len(dataLabel1) == 0:
-      print "in second if"
       currentLabels.remove(label1)
       continue
     if len(dataLabel2) == 0:
-      print "in second if"
       currentLabels.remove(label2)
       continue
 
