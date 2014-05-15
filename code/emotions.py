@@ -419,7 +419,6 @@ def deepbeliefMultiPIE(big=False):
                rbmActivationFunctionVisible=rbmActivationFunctionVisible,
                rbmActivationFunctionHidden=rbmActivationFunctionHidden,
                unsupervisedLearningRate=unsupervisedLearningRate,
-               # is this not a bad learning rate?
                supervisedLearningRate=supervisedLearningRate,
                momentumMax=momentumMax,
                nesterovMomentum=args.nesterov,
