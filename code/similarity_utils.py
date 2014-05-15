@@ -375,7 +375,7 @@ def splitEmotionsMultiPieKeepSubjects(instanceToPairRatio):
   totalData2 = []
   totalLabels1 = []
   totalLabels2 = []
-  for subject, emotionToImages in subjectToEmotions.iteritems():
+  for subject, emotionToImages in enumerate(subjectToEmotions):
     data1, data2, labels1, labels2 = splitDataAccordingToLabels(emotionToImages, None, None, instanceToPairRatio)
     totalData1 += [data1]
     totalData2 += [data2]
