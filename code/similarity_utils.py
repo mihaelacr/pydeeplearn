@@ -383,7 +383,7 @@ def splitEmotionsMultiPieKeepSubjects(instanceToPairRatio):
     totalLabels2 += [labels2]
 
   totalData1 = np.vstack(totalData1)
-  totalData1 = np.vstack(totalData2)
+  totalData2 = np.vstack(totalData2)
   totalLabels1 = np.hstack(totalLabels1)
   totalLabels2 = np.hstack(totalLabels2)
   return totalData1, totalData2, totalLabels1, totalLabels2
