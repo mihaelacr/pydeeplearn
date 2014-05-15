@@ -270,7 +270,7 @@ def similarityEmotionsMain():
 
   for i in xrange(len(trainData1)):
       # Create 1 by 1 image
-      res = np.hstack([trainData1[i], trainData2[i]])
+      res = np.hstack([trainData1[i].reshape(30,40).T, trainData2[i].reshape(30,40).T])
 
       plt.imshow(res, cmap=plt.cm.gray)
       plt.axis('off')
