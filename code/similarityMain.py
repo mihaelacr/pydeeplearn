@@ -275,6 +275,8 @@ def similarityEmotionsMain():
       plt.axis('off')
       plt.show()
 
+      print trainLabels[i]
+
 
   simNet.train(trainData1, trainData2, trainLabels, epochs=400)
 
