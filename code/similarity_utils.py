@@ -1,6 +1,8 @@
 from sklearn import cross_validation
 from readfacedatabases import *
 
+DEBUG = False
+
 # TODO: move to common?
 def splitTrainTest(data1, data2, labels1, labels2, ratio):
   assert len(data1) == len(data2)
@@ -46,20 +48,22 @@ def splitShuffling(shuffling, labelsShuffling):
   currentLabels = list(labels)
 
   while len(shuffledData1) + len(shuffledData2) <= len(shuffling):
-    # print "len(shuffledData1) + len(shuffledData2)"
-    # print len(shuffledData1) + len(shuffledData2)
-    # print "len(shuffling)"
-    # print len(shuffling)
+    if DEBUG:
+      print "len(shuffledData1) + len(shuffledData2)"
+      print len(shuffledData1) + len(shuffledData2)
+      print "len(shuffling)"
+      print len(shuffling)
 
-    # print "currentLabels"
-    # print currentLabels
+      print "currentLabels"
+      print currentLabels
 
     label1 = np.random.choice(currentLabels, 1, replace=False)
     label1 = label1[0]
 
-    print "label1"
+    if DEBUG:
+      print "label1"
+      print label1
 
-    print label1
     copyCurrentLabels = list(currentLabels)
     copyCurrentLabels.remove(label1)
 
@@ -68,11 +72,13 @@ def splitShuffling(shuffling, labelsShuffling):
 
     label2 = np.random.choice(np.array(copyCurrentLabels), 1, replace=False)
     label2 = label2[0]
-    print "label2"
-    print label2
 
-    print label1
-    print label2
+    if DEBUG:
+      print "label2"
+      print label2
+
+      print label1
+      print label2
 
     # print "labelsToData"
     # print labelsToData
@@ -88,10 +94,6 @@ def splitShuffling(shuffling, labelsShuffling):
       currentLabels.remove(label2)
       continue
 
-    # data1LabelIndex = np.random.choice(len(labelsToData[label1]))
-    # data2LabelIndex = np.random.choice(len(labelsToData[label2]))
-    print "dataLabel1[0].shape"
-    print dataLabel1[0].shape
     shuffledData1 += [dataLabel1[0]]
     shuffledData2 += [dataLabel2[0]]
     labelsData1 += [label1]
@@ -99,10 +101,6 @@ def splitShuffling(shuffling, labelsShuffling):
 
     del labelsToData[label1][0]
     del labelsToData[label2][0]
-
-    # print "labelsToData"
-    # print labelsToData
-
 
   shuffledData1 = np.vstack(shuffledData1)
   shuffledData2 = np.vstack(shuffledData2)
@@ -399,13 +397,6 @@ def splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio):
   kf = cross_validation.KFold(n=len(totalData1), n_folds=5)
   for train, test in kf:
     break
-
-  print "len(totalData1)"
-  print len(totalData1)
-  print "len(totalData2)"
-  print len(totalData2)
-  print len(totalLabels1)
-  print len(totalLabels2)
 
   totalData1, totalData2, totalLabels1, totalLabels2 = shuffle(totalData1,
           totalData2, totalLabels1, totalLabels2)
