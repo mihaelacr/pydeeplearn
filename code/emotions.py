@@ -85,13 +85,13 @@ def rbmEmotions(big=False, reconstructRandom=False):
   print "data.shape"
   print data.shape
 
-  trainData = data[0:-1, :]
-
   if args.relu:
     activationFunction = relu
+    data = scale(data)
   else:
     activationFunction = T.nnet.sigmoid
 
+  trainData = data[0:-1, :]
   # Train the network
   if args.train:
     # The number of hidden units is taken from a deep learning tutorial
@@ -168,8 +168,14 @@ def deepbeliefKanadeCV(big=False):
 
   if args.relu:
     activationFunction = relu
+    rbmActivationFunctionVisible = identity
+    rbmActivationFunctionHidden = makeNoisyRelu()
+    data = scale(data)
   else:
     activationFunction = T.nnet.sigmoid
+    rbmActivationFunctionVisible = T.nnet.sigmoid
+    rbmActivationFunctionHidden = T.nnet.sigmoid
+
 
   # TODO: try boosting for CV in order to increase the number of folds
   params =[(0.1, 0.1, 0.9), (0.1,  0.5, 0.9),  (0.5, 0.1, 0.9),  (0.5, 0.5, 0.9),
@@ -192,6 +198,8 @@ def deepbeliefKanadeCV(big=False):
     net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
                binary=1-args.relu,
                activationFunction=activationFunction,
+               rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+               rbmActivationFunctionHidden=rbmActivationFunctionHidden,
                unsupervisedLearningRate=params[fold][0],
                supervisedLearningRate=params[fold][1],
                momentumMax=params[fold][2],
@@ -266,8 +274,15 @@ def deepbeliefKanade(big=False):
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95
+    data = scale(data)
+    rbmActivationFunctionVisible = identity
+    rbmActivationFunctionHidden = makeNoisyRelu()
+
   else:
     activationFunction = T.nnet.sigmoid
+    rbmActivationFunctionVisible = T.nnet.sigmoid
+    rbmActivationFunctionHidden = T.nnet.sigmoid
+
     unsupervisedLearningRate = 0.5
     supervisedLearningRate = 0.1
     momentumMax = 0.95
@@ -279,8 +294,8 @@ def deepbeliefKanade(big=False):
   net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
              binary=1-args.relu,
              activationFunction=activationFunction,
-             rbmActivationFunctionVisible=T.nnet.sigmoid,
-             rbmActivationFunctionHidden=T.nnet.sigmoid,
+             rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+             rbmActivationFunctionHidden=rbmActivationFunctionHidden,
              unsupervisedLearningRate=unsupervisedLearningRate,
              supervisedLearningRate=supervisedLearningRate,
              momentumMax=momentumMax,
@@ -379,11 +394,16 @@ def deepbeliefMultiPIE(big=False):
 
   if args.relu:
     activationFunction = relu
+    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionVisible = identity
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95
+    data = scale(data)
   else:
     activationFunction = T.nnet.sigmoid
+    rbmActivationFunctionHidden = T.nnet.sigmoid
+    rbmActivationFunctionVisible = T.nnet.sigmoid
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95
@@ -396,8 +416,8 @@ def deepbeliefMultiPIE(big=False):
     net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                binary=1-args.relu,
                activationFunction=activationFunction,
-               rbmActivationFunctionVisible=T.nnet.sigmoid,
-               rbmActivationFunctionHidden=T.nnet.sigmoid,
+               rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+               rbmActivationFunctionHidden=rbmActivationFunctionHidden,
                unsupervisedLearningRate=unsupervisedLearningRate,
                # is this not a bad learning rate?
                supervisedLearningRate=supervisedLearningRate,
@@ -475,8 +495,14 @@ def deepbeliefPIECV(big=False):
 
   if args.relu:
     activationFunction = relu
+    rbmActivationFunctionVisible = identity
+    rbmActivationFunctionHidden = makeNoisyRelu()
+    # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
+    data = scale(data)
   else:
     activationFunction = T.nnet.sigmoid
+    rbmActivationFunctionVisible = T.nnet.sigmoid
+    rbmActivationFunctionHidden = T.nnet.sigmoid
 
   # TODO: try boosting for CV in order to increase the number of folds
   # params =[ (0.01, 0.05, 0.9),  (0.05, 0.01, 0.9),  (0.05, 0.05, 0.9),
@@ -510,8 +536,8 @@ def deepbeliefPIECV(big=False):
     net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                binary=1-args.relu,
                activationFunction=activationFunction,
-               rbmActivationFunctionVisible=activationFunction,
-               rbmActivationFunctionHidden=activationFunction,
+               rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+               rbmActivationFunctionHidden=rbmActivationFunctionHidden,
                unsupervisedLearningRate=params[fold][0],
                supervisedLearningRate=params[fold][1],
                momentumMax=params[fold][2],
@@ -610,19 +636,28 @@ def deepBeliefPieDifferentIllumination():
       unsupervisedLearningRate = 0.05
       supervisedLearningRate = 0.01
       momentumMax = 0.95
+      trainData = scale(trainData)
+      testData = scale(testData)
+
+      rbmActivationFunctionVisible = identity
+      rbmActivationFunctionHidden = makeNoisyRelu()
+
     else:
       activationFunction = T.nnet.sigmoid
       unsupervisedLearningRate = 0.05
       supervisedLearningRate = 0.01
       momentumMax = 0.9
+      rbmActivationFunctionVisible = T.nnet.sigmoid
+      rbmActivationFunctionHidden = T.nnet.sigmoid
+
 
     if args.train:
       # TODO: this might require more thought
       net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                  binary=1-args.relu,
                  activationFunction=activationFunction,
-                 rbmActivationFunctionVisible=T.nnet.sigmoid,
-                 rbmActivationFunctionHidden=T.nnet.sigmoid,
+                 rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+                 rbmActivationFunctionHidden=rbmActivationFunctionHidden,
                  unsupervisedLearningRate=unsupervisedLearningRate,
                  # is this not a bad learning rate?
                  supervisedLearningRate=supervisedLearningRate,
