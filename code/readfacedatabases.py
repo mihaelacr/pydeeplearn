@@ -216,8 +216,6 @@ def readMultiPIEEmotionsPerSubject():
   # For all the subjects
   subjectToEmotions = []
 
-  for expression in xrange(6):
-    emotionToImages[expression] = []
   for subject in xrange(147):
     emotionToImages = {}
     for pose in xrange(5):

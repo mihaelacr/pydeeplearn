@@ -268,6 +268,13 @@ def similarityEmotionsMain():
   print "testing with ", testLabels.sum(), "positive examples"
   print "testing with ", len(testLabels) - testLabels.sum(), "negative examples"
 
+  for i in xrange(len(trainData1)):
+      # Create 1 by 1 image
+      res = np.hstack([trainData1[i], trainData2[i]])
+
+      plt.imshow(res, cmap=plt.cm.gray)
+      plt.axis('off')
+
 
   simNet.train(trainData1, trainData2, trainLabels, epochs=400)
 
