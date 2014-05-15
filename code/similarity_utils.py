@@ -399,6 +399,13 @@ def splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio):
   for train, test in kf:
     break
 
+  print "len(totalData1)"
+  print len(totalData1)
+  print "len(totalData2)"
+  print len(totalData2)
+  print len(totalLabels1)
+  print len(totalLabels2)
+
   totalData1, totalData2, totalLabels1, totalLabels2 = shuffle(totalData1,
           totalData2, totalLabels1, totalLabels2)
 
