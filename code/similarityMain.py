@@ -195,6 +195,8 @@ def similarityCV():
   params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
   kf = cross_validation.KFold(n=len(trainData1), n_folds=len(params))
 
+  correctForParams = []
+
   fold = 0
   for train, test in kf:
     simNet = similarity.SimilarityNet(learningRate=params[fold][0],
@@ -232,8 +234,11 @@ def similarityCV():
     print res
     print "correct"
     print correct
+    correctForParams += [correct]
 
     fold += 1
+  for i in xrange(len(params)):
+    print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(correctForParams[i])
 
 
 def similarityEmotionsMain():
