@@ -168,6 +168,45 @@ def readMultiPIEEmotions():
 
   return emotionToImages
 
+
+def makeMultiPieImagesForReport():
+
+  PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+  mat = scipy.io.loadmat(PATH)
+  data = mat['a_multipie']
+
+  nrSubjects = 3
+
+  total = []
+  for x in xrange(nrSubjects):
+    total += [[1] * 6]
+
+  for subject in xrange(147):
+    for pose in xrange(5):
+      for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
+        for illumination in xrange(5):
+            image = np.squeeze(data[subject,pose,expression,illumination,:])
+
+            image = image.reshape(30,40).T
+            print total[subject]
+            total[subject][expression] = image
+            break
+    if subject + 1 >= nrSubjects:
+      break
+
+  final = []
+  for images in total:
+    images = np.hstack(images)
+    print images.shape
+    final += [images]
+
+  final = np.vstack(final)
+
+  plt.imshow(final, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.show()
+
+
 def readMultiPIEEmotionsPerSubject():
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
