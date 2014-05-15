@@ -301,7 +301,7 @@ def similarityEmotionsMain():
 
 def similarityEmotionsSameSubject():
   trainData1, trainData2, trainLabels, testData1, testData2, testLabels =\
-       splitEmotionsMultiPieKeepSubjects(instanceToPairRatio=2)
+       splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio=2)
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
