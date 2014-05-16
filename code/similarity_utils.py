@@ -369,6 +369,7 @@ def splitSimilaritiesPIEEmotions(instanceToPairRatio):
   return (data1[train], data2[train], labels[train],
           data1[test], data2[test], labels[test])
 
+
 def splitEmotionsMultiPieKeepSubjects(instanceToPairRatio):
   subjectToEmotions = readMultiPIEEmotionsPerSubject()
 
