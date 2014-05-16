@@ -291,12 +291,6 @@ def similarityCV():
 
     simNet.train(trainData1, trainData2, similaritiesTrain)
 
-    print "training with ", similaritiesTrain.sum(), "positive examples"
-    print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
-
-    print "testing with ", similaritiesTest.sum(), "positive examples"
-    print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
-
     res = simNet.test(testData1, testData2)
 
     predicted = res > 0.5
@@ -374,12 +368,6 @@ def similarityCVEmotions():
                                       trainingEpochsRBM=1)
 
     simNet.train(trainData1, trainData2, trainLabels)
-
-    print "training with ", similaritiesTrain.sum(), "positive examples"
-    print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
-
-    print "testing with ", similaritiesTest.sum(), "positive examples"
-    print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
 
     res = simNet.test(testData1, testData2)
 
