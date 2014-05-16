@@ -2,7 +2,7 @@
 
 
 # Also activate the virtual env that has theano and all that
-source /data/mcr10/myenv/bin/activate
+# source /data/mcr10/myenv/bin/activate
 
 export PATH=/usr/local/cuda/bin:$PATH
 export CUDA_PATH=/usr/local/cuda

@@ -51,6 +51,10 @@ parser.add_argument('--cvPIE', dest='cvPIE',action='store_true', default=False,
                     help=("if true, do cross validation"))
 parser.add_argument('--svmPIE', dest='svmPIE',action='store_true', default=False,
                     help=("if true, do SVM on top of the last hidden features"))
+parser.add_argument('--illumination',dest='illumination',action='store_true', default=False,
+                    help="if true, trains and tests the images with different illuminations")
+parser.add_argument('--crossdb', dest='crossdb',action='store_true', default=False,
+                    help=("if true, trains the DBN with multi pie and tests with Kanade."))
 parser.add_argument('--facedetection', dest='facedetection',action='store_true', default=False,
                     help=("if true, do face detection"))
 parser.add_argument('--maxEpochs', type=int, default=1000,
@@ -835,6 +839,10 @@ def main():
     deepbeliefPIECV()
   if args.svmPIE:
     svmPIE()
+  if args.crossdb:
+    crossDataBase()
+  if args.illumination:
+    deepBeliefPieDifferentIllumination()
 
 
 # You can also group the emotions into positive and negative to see

@@ -78,8 +78,6 @@ class MiniBatchTrainer(object):
 
     # Create a theano random number generator
     # Required to sample units for dropout
-    # If it is not shared, does it update when we do the
-    # when we go to another function call?
     self.theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
 
     # Sample from the visible layer
