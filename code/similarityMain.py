@@ -12,6 +12,8 @@ parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, does cv"))
+parser.add_argument('--cvEmotion', dest='cvEmotion',action='store_true', default=False,
+                    help=("if true, does cv for emotions"))
 parser.add_argument('--testYaleMain', dest='testYaleMain',action='store_true', default=False,
                     help=("if true, tests the net with the Kanade databse"))
 parser.add_argument('--diffsubjects', dest='diffsubjects',action='store_true', default=False,
@@ -447,6 +449,8 @@ def similarityEmotionsSameSubject():
 def main():
   if args.cv:
     similarityCV()
+  elif args.cvEmotion:
+    similarityCVEmotions()
   elif args.diffsubjects:
     similarityDifferentSubjectsMain()
   elif args.testYaleMain:
