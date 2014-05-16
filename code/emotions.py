@@ -696,7 +696,7 @@ def deepBeliefPieDifferentIllumination():
     correct = 0
     errorCases = []
 
-    for i in xrange(len(test)):
+    for i in xrange(len(testLabels)):
       print "predicted"
       print "probs"
       print probs[i]
@@ -714,7 +714,7 @@ def deepBeliefPieDifferentIllumination():
     print correct
 
     print "percentage correct"
-    print correct  * 1.0/ len(test)
+    print correct  * 1.0/ len(testLabels)
 
     confMatrix = confusion_matrix(predicted, np.argmax(actualLabels, axis=1))
 
