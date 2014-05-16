@@ -724,6 +724,104 @@ def deepBeliefPieDifferentIllumination():
     print "the correct rate was " + str(correctAll[i])
     print "the confusionMatrix was " + str(confustionMatrices[i])
 
+
+"""Train with PIE test with Kanade. Check the equalization code. """
+def crossDataBase():
+  trainData, trainLabels = readMultiPIE()
+  trainData, trainLabels = shuffle(trainData, trainLabels)
+
+  testData, testLabels = readKanade(False, None)
+
+  if args.relu:
+    activationFunction = relu
+    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionVisible = identity
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.95
+    data = scale(data)
+  else:
+    activationFunction = T.nnet.sigmoid
+    rbmActivationFunctionHidden = T.nnet.sigmoid
+    rbmActivationFunctionVisible = T.nnet.sigmoid
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.95
+
+  trainData = data[train]
+  trainLabels = labels[train]
+
+  if args.train:
+    # TODO: this might require more thought
+    net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
+               binary=1-args.relu,
+               activationFunction=activationFunction,
+               rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+               rbmActivationFunctionHidden=rbmActivationFunctionHidden,
+               unsupervisedLearningRate=unsupervisedLearningRate,
+               supervisedLearningRate=supervisedLearningRate,
+               momentumMax=momentumMax,
+               nesterovMomentum=args.nesterov,
+               rbmNesterovMomentum=args.rbmnesterov,
+               rmsprop=args.rmsprop,
+               miniBatchSize=args.miniBatchSize,
+               visibleDropout=0.8,
+               hiddenDropout=0.5,
+               rbmHiddenDropout=1.0,
+               rbmVisibleDropout=1.0,
+               preTrainEpochs=args.preTrainEpochs)
+
+    unsupervisedData = buildUnsupervisedDataSetForPIE()
+
+    net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
+              validation=args.validation,
+              unsupervisedData=unsupervisedData)
+  else:
+     # Take the saved network and use that for reconstructions
+    with open(args.netFile, "rb") as f:
+      net = pickle.load(f)
+
+  probs, predicted = net.classify(testData)
+
+  actualLabels = testLabels
+  correct = 0
+  errorCases = []
+
+  for i in xrange(len(test)):
+    print "predicted"
+    print "probs"
+    print probs[i]
+    print "predicted"
+    print predicted[i]
+    print "actual"
+    actual = actualLabels[i]
+    print np.argmax(actual)
+    if predicted[i] == np.argmax(actual):
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  print "correct"
+  print correct
+
+  print "percentage correct"
+  print correct  * 1.0/ len(test)
+
+  print type(predicted)
+  print type(actualLabels)
+  print predicted.shape
+  print actualLabels.shape
+
+  confMatrix = confusion_matrix(predicted, np.argmax(actualLabels, axis=1))
+
+  print "confusion matrix"
+  print confMatrix
+
+  if args.save:
+    with open(args.netFile, "wb") as f:
+      pickle.dump(net, f)
+
+
 def main():
   if args.rbm:
     rbmEmotions()
