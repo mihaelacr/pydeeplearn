@@ -77,8 +77,8 @@ class SimilarityNet(object):
                     hiddenDropout=self.rbmDropoutHid,
                     visibleDropout=self.rbmDropoutVis,
                     binary=self.binary,
-                    visibleActivationFunction=visibleActivationFunction,
-                    hiddenActivationFunction=hiddenActivationFunction,
+                    visibleActivationFunction=self.visibleActivationFunction,
+                    hiddenActivationFunction=self.hiddenActivationFunction,
                     rmsprop=True,
                     nesterov=True,
                     trainingEpochs=self.trainingEpochsRBM)
