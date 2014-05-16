@@ -221,14 +221,14 @@ def similarityCV():
   fold = 0
   for train, test in kf:
     simNet = similarity.SimilarityNet(learningRate=params[fold][0],
-                                    maxMomentum=0.95,
-                                    binary=True,
-                                    rbmNrVis=1200,
-                                    rbmNrHid=1000,
-                                    rbmLearningRate=params[fold][1],
-                                    rbmDropoutHid=1.0,
-                                    rbmDropoutVis=1.0,
-                                    trainingEpochsRBM=1)
+                                      maxMomentum=0.95,
+                                      binary=True,
+                                      rbmNrVis=1200,
+                                      rbmNrHid=1000,
+                                      rbmLearningRate=params[fold][1],
+                                      rbmDropoutHid=1.0,
+                                      rbmDropoutVis=1.0,
+                                      trainingEpochsRBM=1)
 
     simNet.train(trainData1, trainData2, similaritiesTrain)
 
@@ -376,13 +376,13 @@ def similarityEmotionsSameSubject():
 def main():
   if args.cv:
     similarityCV()
-  if args.diffsubjects:
+  elif args.diffsubjects:
     similarityDifferentSubjectsMain()
-  if args.testYaleMain:
+  elif args.testYaleMain:
     similarityMainTestYale()
-  if args.emotionsdiff:
+  elif args.emotionsdiff:
     similarityEmotionsMain()
-  if args.emotionsdiffsamesubj:
+  elif args.emotionsdiffsamesubj:
     similarityEmotionsSameSubject()
   else:
     similarityMain()
