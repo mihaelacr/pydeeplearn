@@ -634,7 +634,8 @@ def deepBeliefPieDifferentIllumination():
   correctAll = []
 
   for i in illuminationTotal:
-    trainIllumination = list(illuminationTotal).remove(i)
+    trainIllumination = list(illuminationTotal)
+    trainIllumination.remove(i)
     trainData, trainLabels, testData, testLabels = readMultiPieDifferentIlluminations(trainIllumination)
 
     if args.relu:

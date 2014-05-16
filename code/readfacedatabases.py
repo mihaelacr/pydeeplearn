@@ -80,7 +80,7 @@ def readMultiPIE(show=False):
   return np.array(imgs), labelsToVectors(labels, 6)
 
 
-def readMultiPieDifferentIlluminations(illuminationTrain=None, show=False):
+def readMultiPieDifferentIlluminations(illuminationTrain, show=False):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   mat = scipy.io.loadmat(PATH)
@@ -91,9 +91,6 @@ def readMultiPieDifferentIlluminations(illuminationTrain=None, show=False):
 
   imgsTest = []
   labelsTest = []
-
-  if illuminationTrain is None:
-    illuminationTrain = range(5)
 
   for subject in xrange(147):
     for pose in xrange(5):
