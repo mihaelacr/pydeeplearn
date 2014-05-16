@@ -85,7 +85,7 @@ class MiniBatchTrainer(object):
     # Sample from the visible layer
     # Get the mask that is used for the visible units
     if visibleDropout in [1.0, 1]:
-      currentLayerValues = se;f.input
+      currentLayerValues = self.input
     else:
       dropoutMask = self.theanoRng.binomial(n=1, p=visibleDropout,
                                             size=self.input.shape,
@@ -101,7 +101,7 @@ class MiniBatchTrainer(object):
       # dropout: give the next layer only some of the units from this layer
 
       if hiddenDropout in  [1.0, 1]:
-        currentLayerValues = actually(linearSum)
+        currentLayerValues = activationFunction(linearSum)
       else:
         dropoutMaskHidden = self.theanoRng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
