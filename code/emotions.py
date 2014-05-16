@@ -576,13 +576,16 @@ def deepbeliefPIECV(big=False):
 
     print "correct for " + str(params[fold])
     print correct
-    probsforParms += [correct]
+    print "correctProbs"
+    correctProbs = correct * 1.0 / len(test)
+    print correctProbs
+
+    probsforParms += [correctProbs]
 
     if bestCorrect < correct:
       bestCorrect = correct
       bestParam = params[fold]
-      bestProbs = correct * 1.0 / len(test)
-
+      bestProbs = correctProbs
     fold += 1
 
   print "bestParam"
