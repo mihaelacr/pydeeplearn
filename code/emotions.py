@@ -653,6 +653,7 @@ def deepBeliefPieDifferentIllumination():
       unsupervisedLearningRate = 0.05
       supervisedLearningRate = 0.01
       momentumMax = 0.9
+
       rbmActivationFunctionVisible = T.nnet.sigmoid
       rbmActivationFunctionHidden = T.nnet.sigmoid
 
