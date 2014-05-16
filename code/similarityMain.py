@@ -263,6 +263,74 @@ def similarityCV():
     print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(correctForParams[i])
 
 
+def similarityCVEmotions():
+  data1, data2, labels = splitSimilaritiesPIE(instanceToPairRatio=2)
+
+  if args.relu:
+    # TODO: params for relu
+    # params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
+    # TODO: try this
+    # params = [(0.001, 0.01), (0.001, 0.005), (0.01, 0.01), (0.01, 0.005)]
+    params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
+  else:
+    params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
+
+  kf = cross_validation.KFold(n=len(data1), n_folds=len(params))
+
+  correctForParams = []
+
+  # Try bigger values for the number of units: 2000?
+  fold = 0
+  for train, test in kf:
+    trainData1 = data1[train]
+    trainData2 = data2[train]
+    trainLabels = labels[train]
+
+    testData1 = data1[test]
+    testData2 = data2[test]
+    testLabels = labels[test]
+
+
+    simNet = similarity.SimilarityNet(learningRate=params[fold][0],
+                                      maxMomentum=0.95,
+                                      binary=True,
+                                      rbmNrVis=1200,
+                                      rbmNrHid=1000,
+                                      rbmLearningRate=params[fold][1],
+                                      rbmDropoutHid=1.0,
+                                      rbmDropoutVis=1.0,
+                                      trainingEpochsRBM=1)
+
+    simNet.train(trainData1, trainData2, trainLabels)
+
+    print "training with ", similaritiesTrain.sum(), "positive examples"
+    print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
+
+    print "testing with ", similaritiesTest.sum(), "positive examples"
+    print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
+
+    res = simNet.test(testData1, testData2)
+
+    predicted = res > 0.5
+
+    print "predicted"
+    print predicted
+
+    correct = (testLabels == predicted).sum() * 1.0 / len(res)
+
+    print "params[fold]"
+    print params[fold]
+
+    print "correct"
+    print correct
+    correctForParams += [correct]
+
+    fold += 1
+
+  for i in xrange(len(params)):
+    print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(correctForParams[i])
+
+
 def similarityEmotionsMain():
   trainData1, trainData2, trainLabels, testData1, testData2, testLabels =\
        splitSimilaritiesPIEEmotions(instanceToPairRatio=2)
