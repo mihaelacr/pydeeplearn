@@ -24,10 +24,11 @@ def splitShuffling(shuffling, labelsShuffling):
 
   shuffling, labelsShuffling = shuffle(shuffling, labelsShuffling)
 
-  print "len(shuffling)"
-  print len(shuffling)
-  print "len(labelsShuffling)"
-  print len(labelsShuffling)
+  if DEBUG:
+    print "len(shuffling)"
+    print len(shuffling)
+    print "len(labelsShuffling)"
+    print len(labelsShuffling)
 
   labels = np.unique(labelsShuffling)
 
