@@ -308,7 +308,9 @@ def similarityCV():
     if args.rmsprop:
       params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
     else:
-      params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
+      # params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
+      params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.05),
+                (0.005, 0.01), (0.005, 0.005), (0.005, 0.05)]
 
   else:
     if args.rmsprop:
@@ -370,14 +372,16 @@ def similarityCVEmotions():
     # TODO: try this
     # params = [(0.001, 0.01), (0.001, 0.005), (0.01, 0.01), (0.01, 0.005)]
     if args.rmsprop:
-      params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
+      params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.05),
+                (0.005, 0.01), (0.005, 0.005), (0.005, 0.05)]
     else:
-      params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
-
+      params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.05),
+                (0.005, 0.01), (0.005, 0.005), (0.005, 0.05)]
 
     visibleActivationFunction = identity
     hiddenActivationFunction = makeNoisyRelu()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
+    # I am now doing it in the rbm level so it is not as important anymore to do it here
     data1 = scale(data1)
     data2 = scale(data2)
   else:
