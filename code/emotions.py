@@ -725,7 +725,7 @@ def deepBeliefPieDifferentIllumination():
     correctAll += [correct]
 
 
-  for i in xrange(illuminationTotal):
+  for i in illuminationTotal:
     print "for illumination" + str(i)
     print "the correct rate was " + str(correctAll[i])
     print "the confusionMatrix was " + str(confustionMatrices[i])
