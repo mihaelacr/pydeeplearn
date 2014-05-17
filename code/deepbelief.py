@@ -303,6 +303,11 @@ class DBN(object):
       mins = data.min(axis=1)
       maxs = data.max(axis=1)
       assert np.all(mins >=0.0) and np.all(maxs < 1.0 + 1e-8)
+    else:
+      # We are using gaussian visible units so we need to scale the data
+      if rbmActivationFunctionVisible == identity:
+        data = scale(data)
+
 
       if unsupervisedData is not None:
         mins = unsupervisedData.min(axis=1)
@@ -320,7 +325,7 @@ class DBN(object):
       validationData = data[validationIndices, :]
       validationLabels = labels[validationIndices, :]
 
-      self.trainWithGivenValidationSet(trainingData, trainingLabels,
+      self._trainWithGivenValidationSet(trainingData, trainingLabels,
                                        validationData, validationLabels, maxEpochs,
                                        unsupervisedData)
     else:
@@ -329,8 +334,9 @@ class DBN(object):
       self.trainNoValidation(trainingData, trainingLabels, maxEpochs,
                                        unsupervisedData)
 
-
-  def trainWithGivenValidationSet(self, data, labels,
+  #TODO: if this is used from outside, you have to scale the data as well
+  # and also the validation data
+  def _trainWithGivenValidationSet(self, data, labels,
                                   validationData,
                                   validationLabels,
                                   maxEpochs,

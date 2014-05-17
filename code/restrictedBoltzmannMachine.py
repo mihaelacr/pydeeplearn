@@ -235,6 +235,11 @@ class RBM(object):
     print "data set size for restricted boltzmann machine"
     print len(data)
 
+    # If we have gaussian units, we need to scale the data
+    # to unit variance and zero mean
+    if not binary and visibleActivationFunction == identity:
+      print "scaling data for RBM"
+      data = scale(data)
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
 
