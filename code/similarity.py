@@ -22,16 +22,21 @@ class Trainer(object):
     self.b = theano.shared(value=np.float32(0))
     self.net = net
 
+    self.oldMeanSquarew = theano.shared(value=np.float32(0))
+    self.oldMeanSquareb = theano.shared(value=np.float32(0))
+    self.oldMeanSquareWeights = theano.shared(value=np.zeros(self.net.weights.shape , dtype=theanoFloat))
+    self.oldMeanSquareBias = theano.shared(value=np.zeros(self.net.biases[1].shape , dtype=theanoFloat))
+
     self.oldDw = theano.shared(value=np.float32(0))
     self.oldDb = theano.shared(value=np.float32(0))
     self.oldDWeights = theano.shared(value=np.zeros(self.net.weights.shape , dtype=theanoFloat))
     self.oldDBias = theano.shared(value=np.zeros(self.net.biases[1].shape , dtype=theanoFloat))
 
-
     hiddenBias = net.sharedBiases[1]
     # Do I need to add all biases? Probably only the hidden ones
     self.params = [self.w, self.b, self.net.sharedWeights, hiddenBias]
     self.oldDParams = [self.oldDw, self.oldDb, self.oldDWeights, self.oldDBias]
+    self.oldMeanSquares =  [self.oldMeanSquarew, self.oldMeanSquareb, self.oldMeanSquareWeights, self.oldMeanSquareBias]
 
 
     _, weightForHidden = rbm.testWeights(self.net.sharedWeights,
@@ -55,10 +60,11 @@ class SimilarityNet(object):
   # plus rbm learning rates
   def __init__(self, learningRate, maxMomentum, rbmNrVis, rbmNrHid, rbmLearningRate,
                 visibleActivationFunction, hiddenActivationFunction,
-                rbmDropoutVis, rbmDropoutHid, binary, trainingEpochsRBM):
+                rbmDropoutVis, rbmDropoutHid, binary, rmsprop,trainingEpochsRBM):
 
     self.learningRate = learningRate
     self.binary = binary
+    self.rmsprop = rmsprop
     self.rbmNrVis = rbmNrVis
     self.maxMomentum = maxMomentum
     self.rbmNrHid = rbmNrHid
@@ -153,12 +159,31 @@ class SimilarityNet(object):
     return testFunction()
 
   def buildUpdates(self, trainer, error, momentum):
+    if self.rmsprop:
+      return self.buildUpdatesRmsprop(trainer, error, momentum)
+    else:
+      return self.buildUpdatesNoRmsprop(trainer, error, momentum)
+
+  def buildUpdatesNoRmsprop(self, trainer, error, momentum):
     updates = []
     gradients = T.grad(error, trainer.params)
     for param, oldParamUpdate, gradient in zip(trainer.params, trainer.oldDParams, gradients):
       paramUpdate = momentum * oldParamUpdate - self.learningRate * gradient
       updates.append((param, param + paramUpdate))
       updates.append((oldParamUpdate, paramUpdate))
+
+    return updates
+
+  def buildUpdatesRmsprop(self, trainer, error, momentum):
+    updates = []
+    gradients = T.grad(error, trainer.params)
+    for param, oldParamUpdate, oldMeanSquare, gradient in zip(trainer.params, trainer.oldDParams,
+                                             trainer.oldMeanSquares, gradients):
+      meanSquare = 0.9 * oldMeanSquare + 0.1 * gradient ** 2
+      paramUpdate = momentum * oldParamUpdate - self.learningRate * gradient / T.sqrt(meanSquare + 1e-08)
+      updates.append((param, param + paramUpdate))
+      updates.append((oldParamUpdate, paramUpdate))
+      updates.append((oldMeanSquare, meanSquare))
 
     return updates
 

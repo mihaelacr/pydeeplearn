@@ -74,6 +74,7 @@ def similarityMain():
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
+                                    rmsprop=False,
                                     trainingEpochsRBM=10)
 
   simNet.train(trainData1, trainData2, similaritiesTrain, epochs=1000)
@@ -145,6 +146,7 @@ def similarityMainTestYale():
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
+                                    rmsprop=False,
                                     trainingEpochsRBM=10)
 
   simNet.train(trainData1, trainData2, similaritiesTrain)
@@ -225,6 +227,7 @@ def similarityDifferentSubjectsMain():
                                     rbmNrHid=1000,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
+                                    rmsprop=False,
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
 
@@ -286,6 +289,7 @@ def similarityCV():
                                       rbmNrHid=1000,
                                       rbmLearningRate=params[fold][1],
                                       rbmDropoutHid=1.0,
+                                      rmsprop=False,
                                       rbmDropoutVis=1.0,
                                       trainingEpochsRBM=1)
 
@@ -365,6 +369,7 @@ def similarityCVEmotions():
                                       rbmLearningRate=params[fold][1],
                                       rbmDropoutHid=1.0,
                                       rbmDropoutVis=1.0,
+                                      rmsprop=False,
                                       trainingEpochsRBM=1)
 
     simNet.train(trainData1, trainData2, trainLabels)
@@ -430,6 +435,7 @@ def similarityEmotionsMain():
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
+                                    rmsprop=False,
                                     trainingEpochsRBM=10)
 
   print "training with ", trainLabels.sum(), "positive examples"
@@ -506,6 +512,7 @@ def similarityEmotionsSameSubject():
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
+                                    rmsprop=False,
                                     trainingEpochsRBM=10)
 
   print "training with ", trainLabels.sum(), "positive examples"
