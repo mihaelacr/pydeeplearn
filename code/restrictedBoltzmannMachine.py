@@ -237,7 +237,7 @@ class RBM(object):
 
     # If we have gaussian units, we need to scale the data
     # to unit variance and zero mean
-    if not binary and visibleActivationFunction == identity:
+    if not self.binary and self.visibleActivationFunction == identity:
       print "scaling data for RBM"
       data = scale(data)
 

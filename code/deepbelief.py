@@ -297,7 +297,7 @@ class DBN(object):
   def train(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
             unsupervisedData=None):
 
-    # Do a small check to see if the data is in between (0, 1)
+    # Do a small check to see if the data is in between (0, 1)308
     # if we claim we have binary stochastic units
     if self.binary:
       mins = data.min(axis=1)
@@ -305,7 +305,7 @@ class DBN(object):
       assert np.all(mins >=0.0) and np.all(maxs < 1.0 + 1e-8)
     else:
       # We are using gaussian visible units so we need to scale the data
-      if rbmActivationFunctionVisible == identity:
+      if self.rbmActivationFunctionVisible == identity:
         data = scale(data)
 
 
@@ -336,6 +336,7 @@ class DBN(object):
 
   #TODO: if this is used from outside, you have to scale the data as well
   # and also the validation data
+  # Could be a good idea to use validation data from a different set?
   def _trainWithGivenValidationSet(self, data, labels,
                                   validationData,
                                   validationLabels,
