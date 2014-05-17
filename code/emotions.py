@@ -53,6 +53,8 @@ parser.add_argument('--svmPIE', dest='svmPIE',action='store_true', default=False
                     help=("if true, do SVM on top of the last hidden features"))
 parser.add_argument('--illumination',dest='illumination',action='store_true', default=False,
                     help="if true, trains and tests the images with different illuminations")
+parser.add_argument('--pose',dest='pose',action='store_true', default=False,
+                    help="if true, trains and tests the images with different poses")
 parser.add_argument('--crossdb', dest='crossdb',action='store_true', default=False,
                     help=("if true, trains the DBN with multi pie and tests with Kanade."))
 parser.add_argument('--facedetection', dest='facedetection',action='store_true', default=False,
@@ -627,16 +629,22 @@ def svmPIE():
 # to say different subjects and different poses
 # I tihnk the different subjects is very intersting
 # and I should do this for for
-def deepBeliefPieDifferentIllumination():
-  illuminationTotal = range(5)
+def deepBeliefPieDifferentConditions():
+  allConditions = range(5)
+
+  if args.illumination:
+    getDataFunction = readMultiPieDifferentIlluminations
+  elif args.pose:
+    getDataFunction = readMultiPieDifferentPoses
+
 
   confustionMatrices = []
   correctAll = []
 
-  for i in illuminationTotal:
-    trainIllumination = list(illuminationTotal)
-    trainIllumination.remove(i)
-    trainData, trainLabels, testData, testLabels = readMultiPieDifferentIlluminations(trainIllumination)
+  for i in allConditions:
+    trainConditions = list(allConditions)
+    trainConditions.remove(i)
+    trainData, trainLabels, testData, testLabels = getDataFunction(trainConditions)
 
     if args.relu:
       activationFunction = relu
@@ -725,8 +733,8 @@ def deepBeliefPieDifferentIllumination():
     correctAll += [correct]
 
 
-  for i in illuminationTotal:
-    print "for illumination" + str(i)
+  for i in allConditions:
+    print "for condition" + str(i)
     print "the correct rate was " + str(correctAll[i])
     print "the confusionMatrix was " + str(confustionMatrices[i])
 
@@ -846,8 +854,8 @@ def main():
     svmPIE()
   if args.crossdb:
     crossDataBase()
-  if args.illumination:
-    deepBeliefPieDifferentIllumination()
+  if args.illumination or args.pose:
+    deepBeliefPieDifferentConditions()
 
 
 # You can also group the emotions into positive and negative to see

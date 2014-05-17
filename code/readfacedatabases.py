@@ -122,6 +122,47 @@ def readMultiPieDifferentIlluminations(illuminationTrain, show=False):
           imgsTest,  labelsToVectors(labelsTest, 6))
 
 
+def readMultiPieDifferentPoses(posesTrain, show=False):
+  PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
+  # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+  mat = scipy.io.loadmat(PATH)
+  data = mat['a_multipie']
+  # For all the subjects
+  imgsTrain = []
+  labelsTrain = []
+
+  imgsTest = []
+  labelsTest = []
+
+  for subject in xrange(147):
+    for pose in xrange(5):
+      for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
+        for illumination in xrange(5):
+            image = np.squeeze(data[subject,pose,expression,illumination,:])
+            image = image.reshape(30,40).T
+            if show:
+              plt.imshow(image, cmap=plt.cm.gray)
+              plt.show()
+            if pose in posesTrain:
+              imgsTrain += [image.reshape(-1)]
+              labelsTrain += [expression]
+            else:
+              imgsTest += [image.reshape(-1)]
+              labelsTest += [expression]
+
+  # Let us shuffle some things
+  imgsTrain = np.array(imgsTrain)
+  labelsTrain = np.array(labelsTrain)
+
+  imgsTest = np.array(imgsTest)
+  labelsTest = np.array(labelsTest)
+
+  imgsTrain, labelsTrain = shuffle(imgsTrain, labelsTrain)
+  imgsTest, labelsTest = shuffle(imgsTest, labelsTest)
+
+  return (imgsTrain, labelsToVectors(labelsTrain, 6),
+          imgsTest,  labelsToVectors(labelsTest, 6))
+
 def readMultiPIESubjects():
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
