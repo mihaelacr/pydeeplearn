@@ -730,6 +730,9 @@ def deepBeliefPieDifferentIllumination():
     print "the correct rate was " + str(correctAll[i])
     print "the confusionMatrix was " + str(confustionMatrices[i])
 
+  print "average correct rate", sum(correctAll) * 1.0 / len(correctAll)
+  print "average confusionMatrix was ", sum(confustionMatrices) * 1.0 / len(confustionMatrices)
+
 
 """Train with PIE test with Kanade. Check the equalization code. """
 def crossDataBase():
