@@ -229,6 +229,10 @@ class RBM(object):
     self.sparsityRegularization = sparsityRegularization
     self.sparsityTraget = sparsityTraget
 
+
+    if sparsityConstraint:
+      print "using sparsityConstraint"
+
     self.__initialize(initialWeights, initialBiases)
 
   def __initialize(self, weights, biases):
@@ -325,7 +329,6 @@ class RBM(object):
         updateWeightWithDelta(miniBatchIndex, cdSteps, momentum)
 
     else:
-      print "IN IF"
       updates = self.buildUpdates(batchTrainer, momentum, batchLearningRate, cdSteps)
 
       trainFunction = theano.function(
