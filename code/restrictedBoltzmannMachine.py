@@ -97,6 +97,7 @@ class RBMMiniBatchTrainer(object):
                           n_steps=self.cdSteps)
 
     visibleSample = self.visible
+
     for i in xrange(3):
       linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
       hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
@@ -131,11 +132,23 @@ class RBMMiniBatchTrainer(object):
     # TODO: you need to try this out for the noisy rectified linear units
     # with the thing which I made
     if sparsityConstraint:
-      self.expected = self.hiddenActivations
+      if binary:
+        self.expected = self.hiddenActivations
+      else:
+        self.expected = expectedValueRelu(self.hiddenActivations)
 
     # Do not sample for the last one, in order to get less sampling noise
     hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
+
+
+def expectedValueRelu(x):
+  sigX = T.nnet.sigmoid(x)
+  return T.sqrt(sigX / (2.0 * np.pi)) * T.exp(- x**2 / (2.0 * sigX)) + x * cdf(x / sigX)
+
+# Approximation of the cdf of a standard normal
+def cdf(x):
+  return  1.0/(1 + T.exp(-0.07056 * x**3 - 1.5976* x))
 
 
 # TODO: check if this is doing the right thing
