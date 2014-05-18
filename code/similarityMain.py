@@ -356,7 +356,7 @@ def similarityCV():
                                       nesterovRbm=False,
                                       sparsityConstraint=True,
                                       sparsityRegularization=params[fold][2],
-                                      sparsityTraget=0.5)
+                                      sparsityTraget=0.2)
 
     simNet.train(trainData1, trainData2, similaritiesTrain)
 
