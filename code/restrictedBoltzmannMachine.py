@@ -293,6 +293,7 @@ class RBM(object):
         updateWeightWithDelta(miniBatchIndex, cdSteps, momentum)
 
     else:
+      print "IN IF"
       updates = self.buildUpdates(batchTrainer, momentum, batchLearningRate, cdSteps)
 
       trainFunction = theano.function(
@@ -339,7 +340,6 @@ class RBM(object):
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
 
     sparsityCost = T.sum(self.sparsityTraget - T.mean(batchTrainer.expected, axis=0)) ** 2
-    print "IN IF"
 
     updates = []
     # The theano people do not need this because they use gradient
