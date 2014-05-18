@@ -323,7 +323,7 @@ def similarityCV():
     else:
       # params = [(0.0001, 0.01, 0.01), (0.0001, 0.005, 0.01), (0.001, 0.01, 0.01), (0.001, 0.005, 0.01),
       #           (0.0001, 0.01, 0.001), (0.0001, 0.005, 0.001), (0.001, 0.01, 0.001), (0.001, 0.005, 0.001)]
-      params = [(0.001, 0.05, 0.01), (0.001, 0.01, 0.001), (0.001, 0.005, 0.001),
+      params = [(0.001, 0.05, 0.001), (0.001, 0.005, 0.001),
                 (0.001, 0.01, 0.0001), (0.001, 0.005, 0.0001), (0.001, 0.01, 0.0001), (0.001, 0.005, 0.0001)]
 
 
@@ -349,7 +349,7 @@ def similarityCV():
                                       rbmDropoutVis=1.0,
                                       trainingEpochsRBM=1,
                                       nesterovRbm=False,
-                                      sparsityConstraint=False,
+                                      sparsityConstraint=True,
                                       sparsityRegularization=params[fold][2],
                                       sparsityTraget=0.5)
 
