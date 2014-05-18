@@ -342,7 +342,7 @@ def similarityCV():
                                       rbmDropoutHid=1.0,
                                       # TODO: replace all these
                                       rmsprop=args.rmsprop,
-                                      nesterov=False,
+                                      nesterovRbm=False,
                                       rbmDropoutVis=1.0,
                                       trainingEpochsRBM=1,
                                       sparsityConstraint=True,

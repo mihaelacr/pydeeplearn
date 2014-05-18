@@ -61,6 +61,7 @@ class SimilarityNet(object):
   def __init__(self, learningRate, maxMomentum, rbmNrVis, rbmNrHid, rbmLearningRate,
                 visibleActivationFunction, hiddenActivationFunction,
                 rbmDropoutVis, rbmDropoutHid, binary, rmsprop,trainingEpochsRBM,
+                nesterovRbm,
                 sparsityConstraint, sparsityRegularization, sparsityTraget):
 
     self.learningRate = learningRate
