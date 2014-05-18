@@ -340,7 +340,9 @@ def similarityCV():
                                       rbmNrHid=1000,
                                       rbmLearningRate=params[fold][1],
                                       rbmDropoutHid=1.0,
-                                      rmsprop=False,
+                                      # TODO: replace all these
+                                      rmsprop=args.rmsprop,
+                                      nesterov=False,
                                       rbmDropoutVis=1.0,
                                       trainingEpochsRBM=1,
                                       sparsityConstraint=True,
