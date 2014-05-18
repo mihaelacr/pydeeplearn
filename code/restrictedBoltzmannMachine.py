@@ -339,6 +339,7 @@ class RBM(object):
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
 
     sparsityCost = T.sum(self.sparsityTraget - T.mean(batchTrainer.expected, axis=0)) ** 2
+    print "IN IF"
 
     updates = []
     # The theano people do not need this because they use gradient
