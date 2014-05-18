@@ -76,6 +76,7 @@ class SimilarityNet(object):
     self.trainingEpochsRBM = trainingEpochsRBM
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
+    self.nesterovRbm = nesterovRbm
 
     self.sparsityConstraint = sparsityConstraint
     self.sparsityRegularization = sparsityRegularization
@@ -91,7 +92,7 @@ class SimilarityNet(object):
                     visibleActivationFunction=self.visibleActivationFunction,
                     hiddenActivationFunction=self.hiddenActivationFunction,
                     rmsprop=True,
-                    nesterov=True,
+                    nesterov=self.nesterovRbm,
                     trainingEpochs=self.trainingEpochsRBM,
                     sparsityConstraint=self.sparsityConstraint,
                     sparsityRegularization=self.sparsityRegularization,
