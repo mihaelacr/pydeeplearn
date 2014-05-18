@@ -96,6 +96,7 @@ class RBMMiniBatchTrainer(object):
                           outputs_info=[None, droppedOutVisible],
                           n_steps=self.cdSteps)
 
+    visibleSample = self.visible
     for i in xrange(3):
       linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
       hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
