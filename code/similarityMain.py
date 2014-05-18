@@ -89,7 +89,11 @@ def similarityMain():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
-                                    trainingEpochsRBM=10)
+                                    trainingEpochsRBM=10,
+                                    nesterovRbm=False,
+                                    sparsityConstraint=False,
+                                    sparsityRegularization=None,
+                                    sparsityTraget=None)
 
   simNet.train(trainData1, trainData2, similaritiesTrain, epochs=1000)
 
@@ -342,9 +346,9 @@ def similarityCV():
                                       rbmDropoutHid=1.0,
                                       # TODO: replace all these
                                       rmsprop=args.rmsprop,
-                                      nesterovRbm=False,
                                       rbmDropoutVis=1.0,
                                       trainingEpochsRBM=1,
+                                      nesterovRbm=False,
                                       sparsityConstraint=True,
                                       sparsityRegularization=params[fold][2],
                                       sparsityTraget=0.5)
