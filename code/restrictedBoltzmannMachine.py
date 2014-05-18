@@ -48,24 +48,27 @@ class RBMMiniBatchTrainer(object):
     self.oldMeanHid = theano.shared(value=np.zeros(shape=initialBiases[1].shape,
                                            dtype=theanoFloat))
 
-    if visibleDropout in [1.0, 1]:
-      droppedOutVisible = self.visible
-    else:
-      # Create dropout mask for the visible layer
-      dropoutMaskVisible = self.theanoGenerator.binomial(size=self.visible.shape,
-                                            n=1, p=visibleDropout,
-                                            dtype=theanoFloat)
+    # if visibleDropout in [1.0, 1]:
+    #   droppedOutVisible = self.visible
+    # else:
+    #   # Create dropout mask for the visible layer
+    #   dropoutMaskVisible = self.theanoGenerator.binomial(size=self.visible.shape,
+    #                                         n=1, p=visibleDropout,
+    #                                         dtype=theanoFloat)
 
-      droppedOutVisible = dropoutMaskVisible * self.visible
+    #   droppedOutVisible = dropoutMaskVisible * self.visible
+    droppedOutVisible = self.visble
 
-    if visibleDropout in [1.0, 1]:
-      dropoutMaskHidden = T.ones(shape=(input.shape[0], initialBiases[1].shape[0]))
-    else:
-      # Create dropout mask for the hidden layer
-      dropoutMaskHidden = self.theanoGenerator.binomial(
-                                size=(input.shape[0], initialBiases[1].shape[0]),
-                                n=1, p=hiddenDropout,
-                                dtype=theanoFloat)
+    dropoutMaskHidden = T.ones(shape=(input.shape[0], initialBiases[1].shape[0]))
+
+    # if visibleDropout in [1.0, 1]:
+    #   dropoutMaskHidden = T.ones(shape=(input.shape[0], initialBiases[1].shape[0]))
+    # else:
+    #   # Create dropout mask for the hidden layer
+    #   dropoutMaskHidden = self.theanoGenerator.binomial(
+    #                             size=(input.shape[0], initialBiases[1].shape[0]),
+    #                             n=1, p=hiddenDropout,
+    #                             dtype=theanoFloat)
 
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
