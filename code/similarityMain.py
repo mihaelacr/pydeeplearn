@@ -311,14 +311,14 @@ def similarityCV():
       # params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
       params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.05),
                 (0.01, 0.1), (0.01, 0.05), (0.01, 0.5)]
-
-
-
+      # params = [(0.001, 0.01, 0.001), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
+      #           (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
   else:
     if args.rmsprop:
       params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
     else:
-      params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
+      params = [(0.0001, 0.01, 0.01), (0.0001, 0.005, 0.01), (0.001, 0.01, 0.01), (0.001, 0.005, 0.01),
+                (0.0001, 0.01, 0.001), (0.0001, 0.005, 0.001), (0.001, 0.01, 0.001), (0.001, 0.005, 0.001)]
 
 
   kf = cross_validation.KFold(n=len(trainData1), n_folds=len(params))
@@ -339,7 +339,10 @@ def similarityCV():
                                       rbmDropoutHid=1.0,
                                       rmsprop=False,
                                       rbmDropoutVis=1.0,
-                                      trainingEpochsRBM=1)
+                                      trainingEpochsRBM=1,
+                                      sparsityConstraint=True,
+                                      sparsityRegularization=params[fold][2],
+                                      sparsityTraget=0.5)
 
     simNet.train(trainData1, trainData2, similaritiesTrain)
 

@@ -14,7 +14,7 @@ class RBMMiniBatchTrainer(object):
 
   def __init__(self, input, theanoGenerator, initialWeights, initialBiases,
              visibleActivationFunction, hiddenActivationFunction,
-             visibleDropout, hiddenDropout, binary, cdSteps):
+             visibleDropout, hiddenDropout, binary, sparsityConstraint, cdSteps):
 
     self.visible = input
     self.binary = binary
@@ -96,6 +96,11 @@ class RBMMiniBatchTrainer(object):
     self.hiddenActivations = hiddenSeq[0]
     self.visibleReconstruction = visibleSeq[-1]
 
+    # TODO: you need to try this out for the noisy rectified linear units
+    # with the thing which I made
+    if sparsityConstraint:
+      self.expected = self.hiddenActivations
+
     # Do not sample for the last one, in order to get less sampling noise
     hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
@@ -164,7 +169,10 @@ class RBM(object):
                 weightDecay=0.001,
                 initialWeights=None,
                 initialBiases=None,
-                trainingEpochs=1):
+                trainingEpochs=1,
+                sparsityConstraint=False,
+                sparsityRegularization=0.01,
+                sparsityTraget=0.5):
                 # TODO: also check how the gradient works for RBMS
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
@@ -184,6 +192,9 @@ class RBM(object):
     self.hiddenActivationFunction = hiddenActivationFunction
     self.trainingEpochs = trainingEpochs
     self.binary = binary
+    self.sparsityConstraint = sparsityConstraint
+    self.sparsityRegularization = sparsityRegularization
+    self.sparsityTraget = sparsityTraget
 
     self.__initialize(initialWeights, initialBiases)
 
@@ -211,6 +222,7 @@ class RBM(object):
                                        visibleDropout=self.visibleDropout,
                                        hiddenDropout=self.hiddenDropout,
                                        binary=self.binary,
+                                       sparsityConstraint=self.sparsityConstraint,
                                        cdSteps=1)
 
     reconstructer = ReconstructerBatch(input=x,
@@ -324,6 +336,9 @@ class RBM(object):
 
 
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
+
+    sparsityCost = T.sum(self.sparsityTraget - batchTrainer.expected)
+
     updates = []
     # The theano people do not need this because they use gradient
     # I wonder how that works
@@ -333,6 +348,12 @@ class RBM(object):
     delta = positiveDifference - negativeDifference
 
     wUpdate = momentum * batchTrainer.oldDw
+
+    # Sparsity cost
+    if self.sparsityConstraint:
+      gradientW = T.grad(sparsityCost, batchTrainer.weights)
+      wUpdate -= self.sparsityRegularization * gradientW
+
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
       wUpdate += (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
@@ -342,11 +363,18 @@ class RBM(object):
 
     wUpdate -= batchLearningRate * self.weightDecay * batchTrainer.oldDw
 
+
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDw, wUpdate))
 
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
     biasVisUpdate = momentum * batchTrainer.oldDVis
+
+    # Sparsity cost
+    if self.sparsityConstraint:
+      gradientbiasVis = T.grad(sparsityCost, batchTrainer.biasVisible)
+      biasVisUpdate -= self.sparsityRegularization * gradientbiasVis
+
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
       biasVisUpdate += (1.0 - momentum) * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
@@ -359,6 +387,12 @@ class RBM(object):
 
     hiddenBiasDiff = T.sum(batchTrainer.hiddenActivations - batchTrainer.hiddenReconstruction, axis=0)
     biasHidUpdate = momentum * batchTrainer.oldDHid
+
+     # Sparsity cost
+    if self.sparsityConstraint:
+      gradientbiasHid = T.grad(sparsityCost, batchTrainer.biasHidden)
+      biasVisUpdate -= self.sparsityRegularization * gradientbiasHid
+
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
       biasHidUpdate += (1.0 - momentum) * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
