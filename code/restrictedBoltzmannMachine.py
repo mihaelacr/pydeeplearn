@@ -404,10 +404,10 @@ class RBM(object):
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
     biasVisUpdate = momentum * batchTrainer.oldDVis
 
-    # Sparsity cost
-    if self.sparsityConstraint:
-      gradientbiasVis = T.grad(sparsityCost, batchTrainer.biasVisible)
-      biasVisUpdate -= self.sparsityRegularization * gradientbiasVis
+    # # Sparsity cost
+    # if self.sparsityConstraint:
+    #   gradientbiasVis = T.grad(sparsityCost, batchTrainer.biasVisible)
+    #   biasVisUpdate -= self.sparsityRegularization * gradientbiasVis
 
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
@@ -421,6 +421,11 @@ class RBM(object):
 
     hiddenBiasDiff = T.sum(batchTrainer.hiddenActivations - batchTrainer.hiddenReconstruction, axis=0)
     biasHidUpdate = momentum * batchTrainer.oldDHid
+
+     # Sparsity cost
+    if self.sparsityConstraint:
+      gradientbiasHid = T.grad(sparsityCost, batchTrainer.biasHidden)
+      biasVisUpdate -= self.sparsityRegularization * gradientbiasHid
 
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
