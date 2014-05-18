@@ -108,8 +108,8 @@ class RBMMiniBatchTrainer(object):
       #                                       dtype=theanoFloat)
       # else:
         # hidden = hiddenActivations
-      if i == 0:
-        self.hiddenActivations = hiddenActivations
+      # if i == 0:
+      #   self.hiddenActivations = hiddenActivations
 
       hidden = hiddenActivations
 
@@ -121,7 +121,7 @@ class RBMMiniBatchTrainer(object):
 
       visibleSample = visibleRec
 
-
+    self.hiddenActivations = hiddenActivations
     self.visibleReconstruction = visibleSample
 
     self.updates = updates
