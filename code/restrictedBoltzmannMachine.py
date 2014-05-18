@@ -57,7 +57,7 @@ class RBMMiniBatchTrainer(object):
     #                                         dtype=theanoFloat)
 
     #   droppedOutVisible = dropoutMaskVisible * self.visible
-    droppedOutVisible = self.visble
+    droppedOutVisible = self.visible
 
     dropoutMaskHidden = T.ones(shape=(input.shape[0], initialBiases[1].shape[0]))
 
