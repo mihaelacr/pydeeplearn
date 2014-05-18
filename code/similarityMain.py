@@ -349,7 +349,7 @@ def similarityCV():
                                       rbmDropoutVis=1.0,
                                       trainingEpochsRBM=1,
                                       nesterovRbm=False,
-                                      sparsityConstraint=True,
+                                      sparsityConstraint=False,
                                       sparsityRegularization=params[fold][2],
                                       sparsityTraget=0.5)
 
