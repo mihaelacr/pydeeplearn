@@ -60,7 +60,8 @@ class SimilarityNet(object):
   # plus rbm learning rates
   def __init__(self, learningRate, maxMomentum, rbmNrVis, rbmNrHid, rbmLearningRate,
                 visibleActivationFunction, hiddenActivationFunction,
-                rbmDropoutVis, rbmDropoutHid, binary, rmsprop,trainingEpochsRBM):
+                rbmDropoutVis, rbmDropoutHid, binary, rmsprop,trainingEpochsRBM,
+                sparsityConstraint, sparsityRegularization, sparsityTraget):
 
     self.learningRate = learningRate
     self.binary = binary
@@ -75,6 +76,9 @@ class SimilarityNet(object):
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
 
+    self.sparsityConstraint = sparsityConstraint
+    self.sparsityRegularization = sparsityRegularization
+    self.sparsityTraget = sparsityTraget
 
   def _trainRBM(self, data1, data2):
     data = np.vstack([data1, data2])
@@ -87,7 +91,10 @@ class SimilarityNet(object):
                     hiddenActivationFunction=self.hiddenActivationFunction,
                     rmsprop=True,
                     nesterov=True,
-                    trainingEpochs=self.trainingEpochsRBM)
+                    trainingEpochs=self.trainingEpochsRBM,
+                    sparsityConstraint=self.sparsityConstraint,
+                    sparsityRegularization=self.sparsityRegularization,
+                    sparsityTraget=self.sparsityTraget)
     net.train(data)
 
     return net
