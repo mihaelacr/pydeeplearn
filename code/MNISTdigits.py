@@ -756,7 +756,7 @@ def deepbeliefMNISTGaussian():
   momentumMax = 0.95
   sparsityTragetRbm = 0.1
   sparsityConstraintRbm = False
-  sparsityRegularizationRbm = 0.1
+  sparsityRegularizationRbm = 0.5
 
   if args.train:
     # Try 1200, 1200, 1200
@@ -879,7 +879,7 @@ def cvMNISTGaussian():
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs,
                   sparsityConstraintRbm=True,
-                  sparsityTragetRbm=0.1,
+                  sparsityTragetRbm=0.5,
                   sparsityRegularizationRbm=params[i][2])
 
     net.train(trainingScaledVectors[train], vectorLabels[train],
