@@ -406,7 +406,11 @@ class RBM(object):
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
       wUpdate += (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
       updates.append((batchTrainer.oldMeanW, meanW))
-    else:
+    else: # # Sparsity cost
+    # if self.sparsityConstraint:
+    #   gradientW = T.grad(sparsityCost, batchTrainer.weights)
+    #   delta -= self.sparsityRegularization * gradientW
+
       wUpdate += (1.0 - momentum) * batchLearningRate * delta
 
     wUpdate -= batchLearningRate * self.weightDecay * batchTrainer.oldDw
@@ -493,9 +497,6 @@ class RBM(object):
 
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
 
-    if self.sparsityConstraint:
-      gradientbiasHid = T.grad(sparsityCost, batchTrainer.biasVisible)
-      visibleBiasDiff -= self.sparsityRegularization * gradientbiasHid
 
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
@@ -508,6 +509,9 @@ class RBM(object):
     updates.append((batchTrainer.oldDVis, biasVisUpdate + biasVisUpdateMomentum))
 
     hiddenBiasDiff = T.sum(batchTrainer.hiddenActivations - batchTrainer.hiddenReconstruction, axis=0)
+    if self.sparsityConstraint:
+      gradientbiasHid = T.grad(sparsityCost, batchTrainer.biasHidden)
+      hiddenBiasDiff -= self.sparsityRegularization * gradientbiasHid
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
       biasHidUpdate = (1.0 - momentum) * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
