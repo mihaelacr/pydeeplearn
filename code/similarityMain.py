@@ -2,7 +2,6 @@ import argparse
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
 
-
 from similarity_utils import *
 from readfacedatabases import *
 import similarity
@@ -287,6 +286,8 @@ def similarityDifferentSubjectsMain():
   print correct
 
 
+
+
 def similarityCV():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
      splitDataMultiPIESubject(instanceToPairRatio=2)
@@ -317,8 +318,9 @@ def similarityCV():
                 (0.01, 0.1), (0.01, 0.05), (0.01, 0.5)]
       # params = [(0.001, 0.01, 0.001), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
       #           (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
-      params = [(0.001, 0.01, 0.001), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
-                (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
+      # params = [(0.001, 0.01, 0.001), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
+      #           (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
+      params = makeParamsGrid([(0.001, 0.01, 3), (0.005, 0.05, 3), (0.005, 0.05, 3)])
 
   else:
     if args.rmsprop:
@@ -329,10 +331,12 @@ def similarityCV():
       # params = [(0.005, 0.01, 0.001), (0.005, 0.005, 0.001), (0.005, 0.005, 0.001)]
       # params = [(0.001, 0.01, 0.1), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
       #           (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
-      params = [(0.001, 0.01, 0.05), (0.001, 0.005, 0.05), (0.001, 0.05, 0.05),
-                (0.001, 0.001, 0.05), (0.005, 0.005, 0.05), (0.005, 0.05, 0.05)]
+
+      # params = [(0.001, 0.01, 0.05), (0.001, 0.005, 0.05), (0.001, 0.05, 0.05),
+      #           (0.001, 0.001, 0.05), (0.005, 0.005, 0.05), (0.005, 0.05, 0.05)]
                 # (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
 
+      params = makeParamsGrid([(0.001, 0.01, 3), (0.005, 0.05, 3), (0.005, 0.05, 3)])
 
 
 
