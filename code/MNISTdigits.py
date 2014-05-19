@@ -778,9 +778,9 @@ def deepbeliefMNISTGaussian():
                  rbmVisibleDropout=1.0,
                  weightDecayL1=0,
                  weightDecayL2=0,
-                 sparsityTragetRbm = 0.1,
-                 sparsityConstraintRbm = True,
-                 sparsityRegularizationRbm = 0.1,
+                 sparsityTragetRbm=sparsityTragetRbm,
+                 sparsityConstraintRbm=sparsityConstraintRbm,
+                 sparsityRegularizationRbm=sparsityRegularizationRbm,
                  preTrainEpochs=args.preTrainEpochs)
 
     net.train(trainingScaledVectors, vectorLabels,

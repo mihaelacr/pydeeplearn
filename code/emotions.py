@@ -184,7 +184,7 @@ def deepbeliefKanadeCV(big=False):
   if args.relu:
     activationFunction = relu
     rbmActivationFunctionVisible = identity
-    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionHidden = makeNoisyReluSigmoid()
     data = scale(data)
   else:
     activationFunction = T.nnet.sigmoid
@@ -291,7 +291,7 @@ def deepbeliefKanade(big=False):
     momentumMax = 0.95
     data = scale(data)
     rbmActivationFunctionVisible = identity
-    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionHidden = makeNoisyReluSigmoid()
 
   else:
     activationFunction = T.nnet.sigmoid
@@ -409,7 +409,7 @@ def deepbeliefMultiPIE(big=False):
 
   if args.relu:
     activationFunction = relu
-    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionHidden = makeNoisyReluSigmoid()
     rbmActivationFunctionVisible = identity
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
@@ -510,7 +510,7 @@ def deepbeliefPIECV(big=False):
   if args.relu:
     activationFunction = relu
     rbmActivationFunctionVisible = identity
-    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionHidden = makeNoisyReluSigmoid()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
     data = scale(data)
   else:
@@ -664,7 +664,7 @@ def deepBeliefPieDifferentConditions():
       testData = scale(testData)
 
       rbmActivationFunctionVisible = identity
-      rbmActivationFunctionHidden = makeNoisyRelu()
+      rbmActivationFunctionHidden = makeNoisyReluSigmoid()
 
     else:
       activationFunction = T.nnet.sigmoid
@@ -761,7 +761,7 @@ def crossDataBase():
 
   if args.relu:
     activationFunction = relu
-    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionHidden = makeNoisyReluSigmoid()
     rbmActivationFunctionVisible = identity
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
