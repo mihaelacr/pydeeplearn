@@ -4,6 +4,7 @@ from theano.tensor.shared_randomstreams import RandomStreams
 from theano import tensor as T
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
+import itertools
 
 
 def getClassificationError(predicted, actual):
@@ -143,6 +144,16 @@ def makeNoisyReluSigmoid():
 
 def identity(var):
   return var
+
+# Makes a parameter grid required for cross validation
+# the input should be a list of tuples of size 3: min, max and  number of steps
+# for each parameter
+# EG:  makeParamsGrid([(1, 3, 2), (4,5,2)])
+def makeParamsGrid(paramBorders):
+  f = lambda x: np.linspace(*x)
+  linspaces = map(f, paramBorders)
+
+  return list(itertools.product(*tuple(linspaces)))
 
 
 def getMomentumForEpochLinearIncrease(momentumMax, epoch):

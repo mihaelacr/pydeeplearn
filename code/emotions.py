@@ -743,6 +743,7 @@ def deepBeliefPieDifferentConditions():
 
 
 """Train with PIE test with Kanade. Check the equalization code. """
+# TODO: try to add some unsupervised data
 def crossDataBase():
   trainData, trainLabels = readMultiPIE()
   trainData, trainLabels = shuffle(trainData, trainLabels)
