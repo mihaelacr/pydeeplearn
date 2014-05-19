@@ -102,12 +102,12 @@ class RBMMiniBatchTrainer(object):
       linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
       hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
       # Sample only for stochastic binary units
-      # if self.binary:
-      #   hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
-      #                                       n=1, p=hiddenActivations,
-      #                                       dtype=theanoFloat)
-      # else:
-        # hidden = hiddenActivations
+      if self.binary:
+        hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
+                                            n=1, p=hiddenActivations,
+                                            dtype=theanoFloat)
+      else:
+        hidden = hiddenActivations
       if i == 0:
         self.hiddenActivations = hiddenActivations
 
