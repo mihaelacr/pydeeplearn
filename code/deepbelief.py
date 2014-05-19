@@ -284,6 +284,10 @@ class DBN(object):
       # Let's update the current representation given to the next RBM
       currentData = net.hiddenRepresentation(currentData)
 
+      # Average activation
+      print "average activation after rbm pretraining"
+      print currentData.mean()
+
     # This depends if you have generative or not
     # Initialize the last layer of weights to zero if you have
     # a discriminative net

@@ -141,6 +141,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
   plt.axis('off')
   plt.savefig('reconstructface.png', transparent=True)
 
+
   # Show the weights and their form in a tile fashion
   # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
@@ -150,12 +151,20 @@ def rbmEmotions(big=False, reconstructRandom=False):
   else:
     st = 'simple'
   plt.savefig('weights' + st + '.png', transparent=True)
+
+
+  # let's make some sparsity checks
+  hidden = net.hiddenReconstruction(test.reshape(1, test.shape[0]))
+  print hidden.sum()
   print "done"
+
 
   if args.save:
     f = open(args.netFile, "wb")
     pickle.dump(t, f)
     pickle.dump(net, f)
+
+
 
 
 """
