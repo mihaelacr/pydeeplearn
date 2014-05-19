@@ -94,10 +94,7 @@ class MiniBatchTrainer(object):
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
-      # Also check the Stamford paper again to what they did to average out
-      # the results with softmax and regression layers?
       # dropout: give the next layer only some of the units from this layer
-
       if hiddenDropout in  [1.0, 1]:
         currentLayerValues = activationFunction(linearSum)
       else:

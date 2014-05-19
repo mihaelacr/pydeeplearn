@@ -748,9 +748,17 @@ def deepbeliefMNISTGaussian():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  unsupervisedLearningRate = 0.005
+  # unsupervisedLearningRate = 0.005
+  # supervisedLearningRate = 0.005
+  # momentumMax =0.95
+  unsupervisedLearningRate = 0.01
   supervisedLearningRate = 0.005
-  momentumMax =0.95
+  momentumMax = 0.95
+  sparsityTragetRbm = 0.1
+  sparsityConstraintRbm = True
+  sparsityRegularizationRbm = 0.1
+
+
 
   if args.train:
     # Try 1200, 1200, 1200
@@ -772,6 +780,9 @@ def deepbeliefMNISTGaussian():
                  rbmVisibleDropout=1.0,
                  weightDecayL1=0,
                  weightDecayL2=0,
+                 sparsityTragetRbm = 0.1,
+                 sparsityConstraintRbm = True,
+                 sparsityRegularizationRbm = 0.1,
                  preTrainEpochs=args.preTrainEpochs)
 
     net.train(trainingScaledVectors, vectorLabels,
