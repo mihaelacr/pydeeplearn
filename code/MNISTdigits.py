@@ -831,9 +831,14 @@ def cvMNISTGaussian():
   #           (1e-03, 1e-03, 0.99), (1e-04, 1e-03, 0.99), (5e-04, 1e-03, 0.99)]
   # params = [(1e-03, 1e-03), (1e-03, 1e-04), (1e-04, 1e-03), (1e-04, 1e-04)]
 
-  params = [(5e-03, 1e-02, 0.9),  (1e-02, 5e-03, 0.9), (5e-03, 5e-03, 0.9),
-            (5e-03, 1e-02, 0.95), (1e-02, 5e-03, 0.95),(5e-03, 5e-03, 0.95),
-            (5e-03, 1e-02, 0.99), (1e-02, 5e-03, 0.99),(5e-03, 5e-03, 0.99) ]
+  # params = [(5e-03, 1e-02, 0.9),  (1e-02, 5e-03, 0.9), (5e-03, 5e-03, 0.9),
+  #           (5e-03, 1e-02, 0.95), (1e-02, 5e-03, 0.95),(5e-03, 5e-03, 0.95),
+  #           (5e-03, 1e-02, 0.99), (1e-02, 5e-03, 0.99),(5e-03, 5e-03, 0.99) ]
+
+  params = [(5e-03, 1e-02, 0.1),  (1e-02, 5e-03, 0.1), (5e-03, 5e-03, 0.1),
+            (5e-03, 1e-02, 0.05), (1e-02, 5e-03, 0.05),(5e-03, 5e-03, 0.05),
+            (5e-03, 1e-02, 0.01), (1e-02, 5e-03, 0.01),(5e-03, 5e-03, 0.01) ]
+
 
   correctness = []
 
@@ -849,7 +854,7 @@ def cvMNISTGaussian():
                   binary=False,
                   unsupervisedLearningRate=params[i][0],
                   supervisedLearningRate=params[i][1],
-                  momentumMax=params[i][2],
+                  momentumMax=0.95,
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   activationFunction=relu,
@@ -863,7 +868,10 @@ def cvMNISTGaussian():
                   rbmHiddenDropout=1.0,
                   rbmVisibleDropout=1.0,
                   miniBatchSize=args.miniBatchSize,
-                  preTrainEpochs=args.preTrainEpochs)
+                  preTrainEpochs=args.preTrainEpochs,
+                  sparsityConstraintRbm=True,
+                  sparsityTragetRbm=0.1,
+                  sparsityRegularizationRbm=params[i][2])
 
     net.train(trainingScaledVectors[train], vectorLabels[train],
               maxEpochs=args.maxEpochs,
