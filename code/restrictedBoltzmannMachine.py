@@ -88,8 +88,6 @@ class RBMMiniBatchTrainer(object):
       else:
         hidden = hiddenActivations
 
-      hidden = hiddenActivations
-
       linearSum = T.dot(hidden, self.weights.T) + self.biasVisible
       if visibleDropout in [1.0, 1]:
         visibleRec = visibleActivationFunction(linearSum)
