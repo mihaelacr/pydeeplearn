@@ -464,7 +464,6 @@ class RBM(object):
     preDeltaUpdates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdateMomentum))
     preDeltaUpdates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdateMomentum))
 
-
     if self.sparsityConstraint:
       sparsityCost = T.sum(T.sqr(self.sparsityTraget - T.mean(batchTrainer.expected, axis=0)))
 
@@ -474,6 +473,12 @@ class RBM(object):
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
     delta = positiveDifference - negativeDifference
+
+    # Sparsity cost
+    if self.sparsityConstraint:
+      gradientW = T.grad(sparsityCost, batchTrainer.weights)
+      delta -= self.sparsityRegularization * gradientW
+
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
       wUpdate = (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
@@ -487,6 +492,11 @@ class RBM(object):
     updates.append((batchTrainer.oldDw, wUpdate + wUpdateMomentum))
 
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
+
+    if self.sparsityConstraint:
+      gradientW = T.grad(sparsityCost, batchTrainer.weights)
+      delta -= self.sparsityRegularization * gradientW
+
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
       biasVisUpdate = (1.0 - momentum) * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
