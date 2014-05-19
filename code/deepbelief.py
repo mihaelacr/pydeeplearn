@@ -265,9 +265,9 @@ class DBN(object):
                       initialWeights=initialWeights,
                       initialBiases=initialBiases,
                       trainingEpochs=self.preTrainEpochs,
-                      sparsityTragetRbm=self.sparsityTragetRbm,
-                      sparsityConstraintRbm=self.sparsityConstraintRbm,
-                      sparsityRegularizationRbm=self.sparsityRegularizationRbm)
+                      sparsityConstraint=self.sparsityConstraintRbm,
+                      sparsityTraget=self.sparsityTragetRbm,
+                      sparsityRegularization=self.sparsityRegularizationRbm)
 
       net.train(currentData)
 
