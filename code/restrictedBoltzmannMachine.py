@@ -129,11 +129,11 @@ class RBMMiniBatchTrainer(object):
 
     # TODO: you need to try this out for the noisy rectified linear units
     # with the thing which I made
-    if sparsityConstraint:
-      if binary:
-        self.expected = self.hiddenActivations
-      else:
-        self.expected = expectedValueRelu(linearSum)
+    # if sparsityConstraint:
+    if binary:
+      self.expected = self.hiddenActivations
+    else:
+      self.expected = expectedValueRelu(linearSum)
 
     # Do not sample for the last one, in order to get less sampling noise
     hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
@@ -389,9 +389,8 @@ class RBM(object):
       sparsityCost = T.sum(T.sqr(self.sparsityTraget - T.mean(batchTrainer.expected, axis=0)))
 
     updates = []
-    # The theano people do not need this because they use gradient
-    # I wonder how that works
-    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hiddenActivations)
+
+    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.expected)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
     delta = positiveDifference - negativeDifference
