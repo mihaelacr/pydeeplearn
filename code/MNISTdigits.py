@@ -879,7 +879,7 @@ def cvMNISTGaussian():
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs,
                   sparsityConstraintRbm=True,
-                  sparsityTragetRbm=0.5,
+                  sparsityTragetRbm=0.1,
                   sparsityRegularizationRbm=params[i][2])
 
     net.train(trainingScaledVectors[train], vectorLabels[train],

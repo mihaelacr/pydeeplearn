@@ -509,9 +509,11 @@ class RBM(object):
     updates.append((batchTrainer.oldDVis, biasVisUpdate + biasVisUpdateMomentum))
 
     hiddenBiasDiff = T.sum(batchTrainer.hiddenActivations - batchTrainer.hiddenReconstruction, axis=0)
+
     if self.sparsityConstraint:
       gradientbiasHid = T.grad(sparsityCost, batchTrainer.biasHidden)
       hiddenBiasDiff -= self.sparsityRegularization * gradientbiasHid
+
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
       biasHidUpdate = (1.0 - momentum) * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
