@@ -238,8 +238,8 @@ class RBM(object):
     self.trainingEpochs = trainingEpochs
     self.binary = binary
     self.sparsityConstraint = sparsityConstraint
-    self.sparsityRegularization = sparsityRegularization
-    self.sparsityTraget = sparsityTraget
+    self.sparsityRegularization = np.float32(sparsityRegularization)
+    self.sparsityTraget = np.float32(sparsityTraget)
 
 
     if sparsityConstraint:
