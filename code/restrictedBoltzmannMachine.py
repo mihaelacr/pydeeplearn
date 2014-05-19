@@ -101,8 +101,6 @@ class RBMMiniBatchTrainer(object):
                           outputs_info=[droppedOutVisible],
                           n_steps=self.cdSteps)
 
-    visibleSample = self.visible
-
     # for i in xrange(3):
     #   linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
     #   hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
@@ -125,8 +123,6 @@ class RBMMiniBatchTrainer(object):
       #   visibleRec = visibleActivationFunction(linearSum) * dropoutMaskVisible
 
       # visibleSample = visibleRec
-
-    self.visibleReconstruction = visibleSample
 
     self.updates = updates
 

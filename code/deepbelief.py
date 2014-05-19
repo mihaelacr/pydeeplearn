@@ -185,6 +185,9 @@ class DBN(object):
                 rbmVisibleDropout=1,
                 weightDecayL1=0.0001,
                 weightDecayL2=0.0001,
+                sparsityConstraintRbm=False,
+                sparsityRegularizationRbm=None,
+                sparsityTragetRbm=None,
                 preTrainEpochs=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
@@ -211,6 +214,10 @@ class DBN(object):
     self.momentumMax = momentumMax
     self.momentumForEpochFunction = momentumForEpochFunction
     self.binary = binary
+
+    self.sparsityRegularizationRbm = sparsityRegularizationRbm
+    self.sparsityConstraintRbm = sparsityConstraintRbm
+    self.sparsityTragetRbm = sparsityTragetRbm
 
     print "hidden dropout in DBN", hiddenDropout
     print "visible dropout in DBN", visibleDropout
@@ -257,7 +264,11 @@ class DBN(object):
                       nesterov=self.rbmNesterovMomentum,
                       initialWeights=initialWeights,
                       initialBiases=initialBiases,
-                      trainingEpochs=self.preTrainEpochs)
+                      trainingEpochs=self.preTrainEpochs,
+                      sparsityTragetRbm=self.sparsityTragetRbm,
+                      sparsityConstraintRbm=self.sparsityConstraintRbm,
+                      sparsityRegularizationRbm=self.sparsityRegularizationRbm)
+
       net.train(currentData)
 
       # Use the test weights from the rbm, the ones the correspond to the incoming
