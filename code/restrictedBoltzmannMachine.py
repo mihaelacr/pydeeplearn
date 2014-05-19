@@ -76,12 +76,12 @@ class RBMMiniBatchTrainer(object):
       linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
       hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
       # Sample only for stochastic binary units
-      # if self.binary:
-      #   hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
-      #                                       n=1, p=hiddenActivations,
-      #                                       dtype=theanoFloat)
-      # else:
-        # hidden = hiddenActivations
+      if self.binary:
+        hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
+                                            n=1, p=hiddenActivations,
+                                            dtype=theanoFloat)
+      else:
+        hidden = hiddenActivations
 
       hidden = hiddenActivations
 
@@ -98,35 +98,35 @@ class RBMMiniBatchTrainer(object):
 
     visibleSample = self.visible
 
-    for i in xrange(3):
-      linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
-      hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
-      # Sample only for stochastic binary units
-      if self.binary:
-        hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
-                                            n=1, p=hiddenActivations,
-                                            dtype=theanoFloat)
-      else:
-        hidden = hiddenActivations
-      # if i == 0:
-      self.hiddenActivations = hiddenActivations
+    # for i in xrange(3):
+    #   linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
+    #   hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
+    #   # Sample only for stochastic binary units
+    #   if self.binary:
+    #     hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
+    #                                         n=1, p=hiddenActivations,
+    #                                         dtype=theanoFloat)
+    #   else:
+    #     hidden = hiddenActivations
+    #   # if i == 0:
+    #   self.hiddenActivations = hiddenActivations
 
-      hidden = hiddenActivations
+      # hidden = hiddenActivations
 
-      linearSum = T.dot(hidden, self.weights.T) + self.biasVisible
-      if visibleDropout in [1.0, 1]:
-        visibleRec = visibleActivationFunction(linearSum)
-      else:
-        visibleRec = visibleActivationFunction(linearSum) * dropoutMaskVisible
+      # linearSum = T.dot(hidden, self.weights.T) + self.biasVisible
+      # if visibleDropout in [1.0, 1]:
+      #   visibleRec = visibleActivationFunction(linearSum)
+      # else:
+      #   visibleRec = visibleActivationFunction(linearSum) * dropoutMaskVisible
 
-      visibleSample = visibleRec
+      # visibleSample = visibleRec
 
     self.visibleReconstruction = visibleSample
 
     self.updates = updates
 
-    # self.hiddenActivations = hiddenSeq[0]
-    # self.visibleReconstruction = visibleSeq[-1]
+    self.hiddenActivations = hiddenSeq[0]
+    self.visibleReconstruction = visibleSeq[-1]
 
     # TODO: you need to try this out for the noisy rectified linear units
     # with the thing which I made
