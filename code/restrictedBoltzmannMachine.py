@@ -133,7 +133,7 @@ class RBMMiniBatchTrainer(object):
       if binary:
         self.expected = self.hiddenActivations
       else:
-        self.expected = expectedValueRelu(self.hiddenActivations)
+        self.expected = expectedValueRelu(linearSum)
 
     # Do not sample for the last one, in order to get less sampling noise
     hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
