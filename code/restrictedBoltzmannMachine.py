@@ -400,7 +400,7 @@ class RBM(object):
     # Sparsity cost
     if self.sparsityConstraint:
       gradientW = T.grad(sparsityCost, batchTrainer.weights)
-      wUpdate -= self.sparsityRegularization * gradientW
+      delta -= self.sparsityRegularization * gradientW
 
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
@@ -418,11 +418,6 @@ class RBM(object):
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
     biasVisUpdate = momentum * batchTrainer.oldDVis
 
-    # # Sparsity cost
-    # if self.sparsityConstraint:
-    #   gradientbiasVis = T.grad(sparsityCost, batchTrainer.biasVisible)
-    #   biasVisUpdate -= self.sparsityRegularization * gradientbiasVis
-
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
       biasVisUpdate += (1.0 - momentum) * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
@@ -439,7 +434,7 @@ class RBM(object):
      # Sparsity cost
     if self.sparsityConstraint:
       gradientbiasHid = T.grad(sparsityCost, batchTrainer.biasHidden)
-      biasVisUpdate -= self.sparsityRegularization * gradientbiasHid
+      hiddenBiasDiff -= self.sparsityRegularization * gradientbiasHid
 
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
@@ -469,9 +464,12 @@ class RBM(object):
     preDeltaUpdates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdateMomentum))
     preDeltaUpdates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdateMomentum))
 
+
+    if self.sparsityConstraint:
+      sparsityCost = T.sum(T.sqr(self.sparsityTraget - T.mean(batchTrainer.expected, axis=0)))
+
     updates = []
-    # The theano people do not need this because they use gradient
-    # I wonder how that works, and if it works better
+
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hiddenActivations)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
