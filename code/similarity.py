@@ -64,11 +64,11 @@ class SimilarityNet(object):
                 nesterovRbm,
                 sparsityConstraint, sparsityRegularization, sparsityTraget):
 
-    self.learningRate = learningRate
+    self.learningRate = np.float32(learningRate)
     self.binary = binary
     self.rmsprop = rmsprop
     self.rbmNrVis = rbmNrVis
-    self.maxMomentum = maxMomentum
+    self.maxMomentum = np.float32(maxMomentum)
     self.rbmNrHid = rbmNrHid
     self.rbmLearningRate = rbmLearningRate
     self.rbmDropoutHid = rbmDropoutHid
