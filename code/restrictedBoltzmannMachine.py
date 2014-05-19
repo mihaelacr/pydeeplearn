@@ -72,6 +72,11 @@ class RBMMiniBatchTrainer(object):
 
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
+
+    linearSum = T.dot(droppedOutVisible, self.weights) + self.biasHidden
+    hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
+    self.hiddenActivations = hiddenActivations
+
     def OneCDStep(visibleSample):
       linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
       hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
@@ -90,10 +95,10 @@ class RBMMiniBatchTrainer(object):
         visibleRec = visibleActivationFunction(linearSum)
       else:
         visibleRec = visibleActivationFunction(linearSum) * dropoutMaskVisible
-      return [hiddenActivations, visibleRec]
+      return visibleRec
 
-    [hiddenSeq, visibleSeq], updates = theano.scan(OneCDStep,
-                          outputs_info=[None, droppedOutVisible],
+    visibleSeq, updates = theano.scan(OneCDStep,
+                          outputs_info=[droppedOutVisible],
                           n_steps=self.cdSteps)
 
     visibleSample = self.visible
@@ -125,7 +130,7 @@ class RBMMiniBatchTrainer(object):
 
     self.updates = updates
 
-    self.hiddenActivations = hiddenSeq[0]
+    # self.hiddenActivations = hiddenSeq[0]
     self.visibleReconstruction = visibleSeq[-1]
 
     # TODO: you need to try this out for the noisy rectified linear units
