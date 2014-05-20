@@ -123,14 +123,18 @@ def MultiPIEmain():
 
   save_path = "train_best_pie.pkl"
 
-  train_job = Train(train, model, algorithm, extensions=extensions, save_path="trainpie.pkl", save_freq=1)
-  train_job.main_loop()
+  if os.path.exists(save_path):
+      model = serial.load(save_path)
+  else:
+    print 'Running training'
+    train_job = Train(train, model, algorithm, extensions=extensions, save_path="trainpie.pkl", save_freq=1)
+    train_job.main_loop()
 
   X = model.get_input_space().make_batch_theano()
   Y = model.fprop(X)
 
   y = T.argmax(Y, axis=1)
-  f = function([X], y)
+  f = function([X], allow_input_downcast=True)
   yhat = f(test.X)
 
   y = np.where(test.get_targets())[1]
