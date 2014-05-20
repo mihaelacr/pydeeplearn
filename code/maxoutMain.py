@@ -98,7 +98,7 @@ def MNISTmain():
 
   print 'accuracy', (y==yhat).sum() / y.size
 
-def MultiPIE():
+def MultiPIEmain():
   h0 = maxout.Maxout(layer_name='h0', num_units=1200, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
   h1 = maxout.Maxout(layer_name='h1', num_units=1500, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
   h2 = maxout.Maxout(layer_name='h2', num_units=1500, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
@@ -157,4 +157,4 @@ if __name__ == '__main__':
   if args.mnist:
     MNISTmain()
   if args.pie:
-    MultiPIE()
+    MultiPIEmain()
