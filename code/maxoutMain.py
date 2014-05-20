@@ -48,10 +48,11 @@ def MNIST():
   # TODO: max_col_norm
   h0 = maxout.Maxout(layer_name='h0', num_units=1200, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
   h1 = maxout.Maxout(layer_name='h1', num_units=1200, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
-  # h2 = maxout.Maxout(layer_name='h1', num_units=1200, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
+  # h2 = maxout.Maxout(layer_name='h2, num_units=1200, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
   outlayer = mlp.Softmax(layer_name='y', n_classes=10, irange=0)
 
-  layers = [h0, h1, h2, outlayer]
+  # layers = [h0, h1, h2, outlayer]
+  layers = [h0, h1, outlayer]
 
   model = mlp.MLP(layers, nvis=784)
   train = MNIST('train', one_hot=1, start=0, stop=50000)
