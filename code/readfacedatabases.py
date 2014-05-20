@@ -56,7 +56,7 @@ def equalizeKanade(big=False):
     pickle.dump(labels, f)
 
 # TODO: add equalize argument
-def readMultiPIE(show=False):
+def readMultiPIE(show=False, vectorLabels=True):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
 
@@ -77,7 +77,10 @@ def readMultiPIE(show=False):
             imgs += [image.reshape(-1)]
             labels += [expression]
 
-  return np.array(imgs), labelsToVectors(labels, 6)
+  if vectorLabels:
+    labels = labelsToVectors(labels, 6)
+
+  return np.array(imgs), labels
 
 
 def readMultiPieDifferentIlluminations(illuminationTrain, show=False):
