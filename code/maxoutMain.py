@@ -84,13 +84,6 @@ def MNISTmain():
   yhat = f(test.X)
 
   y = np.squeeze(test.get_targets())
-  # y = np.where(test.get_targets())[1]
-  print y
-  print y.shape
-  print type(y)
-  print yhat
-  print yhat.shape
-  print type(yhat)
 
   print 'accuracy', (y==yhat).sum() / y.size
 
