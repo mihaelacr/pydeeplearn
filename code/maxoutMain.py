@@ -144,9 +144,7 @@ def getMultiPIEindices():
   for train, test in kf:
     break
 
-  allIndices = shuffle(np.arange(l))
-  print type(allIndices)
-  print allIndices.shape
+  allIndices = np.random.permutation(l)
 
   testIndices = allIndices[test]
   stopValidation = len(train)/10
