@@ -16,7 +16,7 @@ from theano import tensor as T
 
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 
-import read
+import readfacedatabases
 
 class MultiPIE(DenseDesignMatrix):
 
