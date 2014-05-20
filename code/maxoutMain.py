@@ -25,7 +25,7 @@ from common import *
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--mnist', dest='mnist',action='store_true', default=False,
                     help=("if true, trains the net on MNIST data"))
-parser.add_argument('--pie',dest='save',action='store_true', default=False,
+parser.add_argument('--pie',dest='pie',action='store_true', default=False,
                     help="if true, trains the net on MultiPIE data")
 args = parser.parse_args()
 
