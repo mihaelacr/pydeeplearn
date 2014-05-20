@@ -216,7 +216,7 @@ class RBM(object):
                 trainingEpochs=1,
                 sparsityConstraint=False,
                 sparsityRegularization=0.01,
-                sparsityTraget=0.5):
+                sparsityTraget=0.01):
                 # TODO: also check how the gradient works for RBMS
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout

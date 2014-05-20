@@ -113,7 +113,10 @@ def rbmMain(reconstructRandom=False):
                   binary=binary,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
-                  rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
+                  rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov,
+                  sparsityConstraint=True,
+                  sparsityRegularization=0.01,
+                  sparsityTraget=0.01)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
   else:
