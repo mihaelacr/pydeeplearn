@@ -2,6 +2,7 @@ from __future__ import division
 import os
 
 import numpy as np
+import argparse
 
 from pylearn2.train import Train
 from pylearn2.datasets.mnist import MNIST
@@ -21,7 +22,12 @@ from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 import readfacedatabases
 from common import *
 
-
+parser = argparse.ArgumentParser(description='digit recognition')
+parser.add_argument('--mnist', dest='mnist',action='store_true', default=False,
+                    help=("if true, trains the net on MNIST data"))
+parser.add_argument('--pie',dest='save',action='store_true', default=False,
+                    help="if true, trains the net on MultiPIE data")
+args = parser.parse_args()
 
 class MultiPIE(DenseDesignMatrix):
 
@@ -148,4 +154,7 @@ def getMultiPIEindices():
   return trainIndices, validationIndices, testIndices
 
 if __name__ == '__main__':
-  MNISTmain()
+  if args.mnist:
+    MNISTmain()
+  if args.pie:
+    MultiPIE()
