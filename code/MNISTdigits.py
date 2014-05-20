@@ -828,7 +828,7 @@ def cvMNISTGaussian():
   trainVectors = np.array(trainVectors, dtype='float')
 
   # Ensure the data has zero mean and 1 variance
-  trainingScaledVectors = scale(trainVectors5)
+  trainingScaledVectors = scale(trainVectors)
   vectorLabels = labelsToVectors(trainLabels, 10)
 
   bestFold = -1
@@ -851,8 +851,6 @@ def cvMNISTGaussian():
   params = [(5e-03, 1e-02, 0.1),  (1e-02, 5e-02, 0.1), (5e-03, 5e-02, 0.1),
             (5e-03, 1e-02, 0.05), (1e-02, 5e-02, 0.05),(5e-03, 5e-02, 0.05),
             (5e-03, 1e-02, 0.01), (1e-02, 5e-02, 0.01),(5e-03, 5e-02, 0.01) ]
-
-
 
   correctness = []
 
