@@ -34,7 +34,7 @@ class MultiPIE(DenseDesignMatrix):
   def __init__(self, name, indices=None):
     self.name = name
 
-    x, y = readMultiPIE(vectorLabels=False)
+    x, y = readMultiPIE(vectorLabels=True)
     x = x[indices]
     y = y[indices]
 
