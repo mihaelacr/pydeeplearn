@@ -46,7 +46,7 @@ class MultiPIE(DenseDesignMatrix):
 
     axes=('c', 0, 1, 'b')
 
-    super(MultiPIE, self).__init__(y=y, x=x, axes=axes)
+    super(MultiPIE, self).__init__(y=y, X=x, axes=axes)
 
   def convert(self, x):
     return self.label_map[x]
