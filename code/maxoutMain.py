@@ -137,7 +137,7 @@ def MultiPIEmain():
   f = function([X], allow_input_downcast=True)
   yhat = f(test.X)
 
-  y = np.where(test.get_targets())[1]
+  y = np.squeeze(test.get_targets())
   print 'accuracy', (y==yhat).sum() / y.size
 
 def getMultiPIEindices():
