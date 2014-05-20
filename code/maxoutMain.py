@@ -83,7 +83,7 @@ def MNISTmain():
   f = function([X], y)
   yhat = f(test.X)
 
-  y = np.where(test.get_targets())[1]
+  # y = np.where(test.get_targets())[1]
   print y
   print y.shape
   print type(y)
