@@ -19,7 +19,7 @@ from sklearn.metrics import confusion_matrix
 
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 
-import readfacedatabases
+from readfacedatabases import *
 from common import *
 
 parser = argparse.ArgumentParser(description='digit recognition')
