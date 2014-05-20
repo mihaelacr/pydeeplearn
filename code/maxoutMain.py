@@ -85,7 +85,9 @@ def MNISTmain():
 
   y = np.where(test.get_targets())[1]
   print y
+  print type(y)
   print yhat
+  print type(yhat)
 
   print 'accuracy', (y==yhat).sum() / y.size
 
