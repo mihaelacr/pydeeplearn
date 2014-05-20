@@ -72,9 +72,9 @@ def MNISTmain():
   if os.path.exists(save_path):
       model = serial.load(save_path)
   else:
-      print 'Running training'
-  train_job = Train(train, model, algorithm, extensions=extensions, save_path="train.pkl", save_freq=1)
-  train_job.main_loop()
+    print 'Running training'
+    train_job = Train(train, model, algorithm, extensions=extensions, save_path="train.pkl", save_freq=1)
+    train_job.main_loop()
 
   X = model.get_input_space().make_batch_theano()
   Y = model.fprop(X)
