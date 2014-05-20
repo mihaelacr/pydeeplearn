@@ -78,13 +78,13 @@ def MNISTmain():
   algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(),
                       monitoring_dataset = monitoring, termination_criterion = termination)
 
-  save_path = "train_best.pkl"
+  save_path = "data/mcr10/train_best.pkl"
 
   if os.path.exists(save_path):
       model = serial.load(save_path)
   else:
     print 'Running training'
-    train_job = Train(train, model, algorithm, extensions=extensions, save_path="train.pkl", save_freq=1)
+    train_job = Train(train, model, algorithm, extensions=extensions, save_path="data/mcr10/train.pkl", save_freq=1)
     train_job.main_loop()
 
   X = model.get_input_space().make_batch_theano()
@@ -121,13 +121,13 @@ def MultiPIEmain():
   algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(),
                       monitoring_dataset=monitoring, termination_criterion=termination)
 
-  save_path = "train_best_pie.pkl"
+  save_path = "data/mcr10/train_best_pie.pkl"
 
   if os.path.exists(save_path):
       model = serial.load(save_path)
   else:
     print 'Running training'
-    train_job = Train(train, model, algorithm, extensions=extensions, save_path="trainpie.pkl", save_freq=1)
+    train_job = Train(train, model, algorithm, extensions=extensions, save_path="data/mcr10/trainpie.pkl", save_freq=1)
     train_job.main_loop()
 
   X = model.get_input_space().make_batch_theano()
