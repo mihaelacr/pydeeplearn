@@ -145,6 +145,8 @@ def getMultiPIEindices():
     break
 
   allIndices = shuffle(np.arange(l))
+  print type(allIndices)
+  print allIndices.shape
 
   testIndices = allIndices[test]
   stopValidation = len(train)/10
