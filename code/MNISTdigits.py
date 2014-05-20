@@ -141,7 +141,7 @@ def rbmMain(reconstructRandom=False):
   # plt.show()
 
   hidden = net.hiddenRepresentation(test.reshape(1, test.shape[0]))
-  plt.imshow(vectorToImage(hidden, (28,28)), cmap=plt.cm.gray)
+  plt.imshow(vectorToImage(hidden, (25,20)), cmap=plt.cm.gray)
   plt.axis('off')
   plt.savefig('hiddenfeatures7.png', transparent=True)
 
