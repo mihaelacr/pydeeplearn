@@ -44,7 +44,7 @@ class MultiPIE(DenseDesignMatrix):
     return self.label_unmap[x]
 
 
-def MNIST():
+def MNISTmain():
   # TODO: max_col_norm
   h0 = maxout.Maxout(layer_name='h0', num_units=1200, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
   h1 = maxout.Maxout(layer_name='h1', num_units=1200, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
@@ -127,4 +127,4 @@ def MultiPIE():
   print 'accuracy', (y==yhat).sum() / y.size
 
 if __name__ == '__main__':
-  MNIST()
+  MNISTmain()
