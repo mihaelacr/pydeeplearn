@@ -406,11 +406,7 @@ class RBM(object):
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
       wUpdate += (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
       updates.append((batchTrainer.oldMeanW, meanW))
-    else: # # Sparsity cost
-    # if self.sparsityConstraint:
-    #   gradientW = T.grad(sparsityCost, batchTrainer.weights)
-    #   delta -= self.sparsityRegularization * gradientW
-
+    else:
       wUpdate += (1.0 - momentum) * batchLearningRate * delta
 
     wUpdate -= batchLearningRate * self.weightDecay * batchTrainer.oldDw
@@ -510,6 +506,7 @@ class RBM(object):
 
     hiddenBiasDiff = T.sum(batchTrainer.hiddenActivations - batchTrainer.hiddenReconstruction, axis=0)
 
+    # As the paper says, only update the hidden bias
     if self.sparsityConstraint:
       gradientbiasHid = T.grad(sparsityCost, batchTrainer.biasHidden)
       hiddenBiasDiff -= self.sparsityRegularization * gradientbiasHid

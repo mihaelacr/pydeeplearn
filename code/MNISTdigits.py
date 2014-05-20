@@ -476,6 +476,8 @@ def cvMNIST():
   bestFold = -1
   bestError = np.inf
 
+
+
   if args.relu:
     # params =[(0.01, 0.01) , (0.01, 0.05), (0.05, 0.1), (0.05, 0.05)]
     # params =[(0.0001, 0.01), (0.00001, 0.001), (0.00001, 0.0001), (0.0001, 0.1)]
@@ -485,9 +487,9 @@ def cvMNIST():
   else:
     # params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.1), (0.05, 0.05)]
     # params =[(0.05, 0.05) , (0.05, 0.075), (0.075, 0.05), (0.075, 0.075)]
-    params =[(0.05, 0.075, 0.9), (0.05, 0.1, 0.9), (0.01, 0.05, 0.9),
-             (0.05, 0.075, 0.95), (0.05, 0.1, 0.95), (0.01, 0.05, 0.95),
-             (0.05, 0.075, 0.99), (0.05, 0.1, 0.99), (0.01, 0.05, 0.99)]
+    params =[(0.05, 0.075, 0.1), (0.05, 0.1, 0.1), (0.01, 0.05, 0.1),
+             (0.05, 0.075, 0.01), (0.05, 0.1, 0.01), (0.01, 0.05, 0.01),
+             (0.05, 0.075, 0.001), (0.05, 0.1, 0.001), (0.01, 0.05, 0.001)]
 
   nrFolds = len(params)
   kf = cross_validation.KFold(n=training, n_folds=nrFolds)
@@ -505,7 +507,7 @@ def cvMNIST():
                   binary=1-args.relu,
                   unsupervisedLearningRate=params[i][0],
                   supervisedLearningRate=params[i][1],
-                  momentumMax=params[i][2],
+                  momentumMax=0.95,
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   activationFunction=activationFunction,
@@ -519,7 +521,10 @@ def cvMNIST():
                   rbmHiddenDropout=1.0,
                   rbmVisibleDropout=1.0,
                   miniBatchSize=args.miniBatchSize,
-                  preTrainEpochs=args.preTrainEpochs)
+                  preTrainEpochs=args.preTrainEpochs,
+                  sparsityTragetRbm=0.01,
+                  sparsityConstraintRbm=True,
+                  sparsityRegularizationRbm=params[i][2])
 
     net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
               validation=args.validation)
