@@ -250,8 +250,13 @@ class DBN(object):
         initialWeights = None
         initialBiases = None
 
+      if i == 0:
+        unsupervisedLearningRate = self.unsupervisedLearningRate * 10
+      else:
+        unsupervisedLearningRate = self.unsupervisedLearningRate
+
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                      learningRate=self.unsupervisedLearningRate,
+                      learningRate=unsupervisedLearningRate,
                       binary=self.binary,
                       visibleActivationFunction=self.rbmActivationFunctionVisible,
                       hiddenActivationFunction=self.rbmActivationFunctionHidden,
