@@ -22,6 +22,9 @@ from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 from readfacedatabases import *
 from common import *
 
+theanoFloat  = theano.config.floatX
+
+
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--mnist', dest='mnist',action='store_true', default=False,
                     help=("if true, trains the net on MNIST data"))
@@ -134,7 +137,8 @@ def MultiPIEmain():
   Y = model.fprop(X)
 
   y = T.argmax(Y, axis=1)
-  f = function([X], allow_input_downcast=True)
+
+  f = function([X])
   yhat = f(test.X)
 
   y = np.squeeze(test.get_targets())
@@ -142,6 +146,8 @@ def MultiPIEmain():
 
 def getMultiPIEindices():
   x, y = readMultiPIE()
+  x = np.array(x, dtype=theanoFloat)
+  y = np.array(y, dtype=theanoFloat)
   l = len(x)
 
   kf = cross_validation.KFold(n=l, n_folds=5)
