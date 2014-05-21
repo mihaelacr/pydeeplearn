@@ -145,10 +145,8 @@ def MultiPIEmain():
   print yhat
   print yhat.shape
 
-  y = np.squeeze(test.get_targets())
+  y = np.argmax(np.squeeze(test.get_targets()), axis=1)
 
-  print y
-  print y.shape
   print 'accuracy', (y==yhat).sum() / y.size
 
 def getMultiPIEindices():
