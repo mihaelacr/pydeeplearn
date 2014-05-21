@@ -62,13 +62,13 @@ class SimilarityNet(object):
                 visibleActivationFunction, hiddenActivationFunction,
                 rbmDropoutVis, rbmDropoutHid, binary, rmsprop,trainingEpochsRBM):
 
-    self.learningRate = learningRate
+    self.learningRate = np.float32(learningRate)
     self.binary = binary
     self.rmsprop = rmsprop
     self.rbmNrVis = rbmNrVis
-    self.maxMomentum = maxMomentum
+    self.maxMomentum = np.float32(maxMomentum)
     self.rbmNrHid = rbmNrHid
-    self.rbmLearningRate = rbmLearningRate
+    self.rbmLearningRate = np.float32(rbmLearningRate)
     self.rbmDropoutHid = rbmDropoutHid
     self.rbmDropoutVis = rbmDropoutVis
     self.trainingEpochsRBM = trainingEpochsRBM
