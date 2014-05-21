@@ -108,7 +108,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
     nrVisible = len(data[0])
     nrHidden = 800
     # use 1 dropout to test the rbm for now
-    net = rbm.RBM(nrVisible, nrHidden, 0.3, 1, 1,
+    net = rbm.RBM(nrVisible, nrHidden, 1.0, 1, 1,
                   binary=1-args.relu,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
