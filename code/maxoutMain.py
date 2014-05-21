@@ -139,7 +139,7 @@ def MultiPIEmain():
 
   y = T.argmax(Y, axis=1)
 
-  f = function(inputs=[X], outputs=y)
+  f = function(inputs=[X], outputs=y, allow_input_downcast=True)
   yhat = f(test.X)
 
   y = np.squeeze(test.get_targets())
