@@ -203,7 +203,7 @@ def deepbeliefKanadeCV(big=False):
     trainLabels = labels[train]
 
     # TODO: this might require more thought
-    net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
+    net = db.DBN(5, [1200, 1800, 1800, 1800, 7],
                binary=1-args.relu,
                activationFunction=activationFunction,
                rbmActivationFunctionVisible=rbmActivationFunctionVisible,
