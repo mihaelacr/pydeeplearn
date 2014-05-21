@@ -216,9 +216,9 @@ def deepbeliefKanadeCV(big=False):
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
                hiddenDropout=0.5,
-               rbmHiddenDropout=0.5,
                visibleDropout=0.8,
-               rbmVisibleDropout=1,
+               rbmHiddenDropout=1.0,
+               rbmVisibleDropout=1.0,
                preTrainEpochs=args.preTrainEpochs)
 
     net.train(trainData, trainLabels,
@@ -312,8 +312,8 @@ def deepbeliefKanade(big=False):
              rmsprop=args.rmsprop,
              miniBatchSize=args.miniBatchSize,
              hiddenDropout=0.5,
-             rbmHiddenDropout=0.5,
-             visibleDropout=0.8,
+             visibleDropout=1.0,
+             rbmHiddenDropout=1.0,
              rbmVisibleDropout=0.8,
              preTrainEpochs=args.preTrainEpochs)
 
