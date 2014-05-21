@@ -56,7 +56,7 @@ def equalizeKanade(big=False):
     pickle.dump(labels, f)
 
 # TODO: add equalize argument
-def readMultiPIE(show=False):
+def readMultiPIE(show=False, equalize=False):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
 
@@ -70,6 +70,8 @@ def readMultiPIE(show=False):
       for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
+            if equalize:
+              image = equalizeFromFloat(image)
             image = image.reshape(30,40).T
             if show:
               plt.imshow(image, cmap=plt.cm.gray)
