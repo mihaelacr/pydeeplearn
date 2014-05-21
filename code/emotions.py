@@ -163,7 +163,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
     big: should the big or small images be used?
 """
 def deepbeliefKanadeCV(big=False):
-  data, labels = readKanade(equalize=args.equalize, big, None)
+  data, labels = readKanade(big, None, equalize=args.equalize)
 
   data, labels = shuffle(data, labels)
 
@@ -263,7 +263,7 @@ def deepbeliefKanadeCV(big=False):
 
 
 def deepbeliefKanade(big=False):
-  data, labels = readKanade(equalize=args.equalize, big,None)
+  data, labels = readKanade(big, None, equalize=args.equalize)
 
   data, labels = shuffle(data, labels)
 
@@ -750,7 +750,7 @@ def crossDataBase():
   trainData, trainLabels = readMultiPIE()
   trainData, trainLabels = shuffle(trainData, trainLabels)
 
-  testData, testLabels = readKanade(equalize=args.equalize, False, None)
+  testData, testLabels = readKanade(False, None, equalize=args.equalize)
 
   if args.relu:
     activationFunction = relu
