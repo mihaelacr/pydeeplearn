@@ -528,7 +528,7 @@ def cvMNIST():
                   preTrainEpochs=args.preTrainEpochs,
                   sparsityTragetRbm=0.01,
                   sparsityConstraintRbm=False,
-                  sparsityRegularizationRbm=params[i][2])
+                  sparsityRegularizationRbm=None)
 
     net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
               validation=args.validation)
