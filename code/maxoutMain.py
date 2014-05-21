@@ -125,7 +125,7 @@ def MultiPIEmain():
   algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(),
                       monitoring_dataset=monitoring, termination_criterion=termination)
 
-  save_path = "/data/mcr10/train_best_pie.pkl"
+  save_path = "/data/mcr10/train_best.pkl"
 
   if os.path.exists(save_path):
       model = serial.load(save_path)
