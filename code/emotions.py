@@ -159,7 +159,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
 
 
   # let's make some sparsity checks
-  hidden = net.hiddenReconstruction(test.reshape(1, test.shape[0]))
+  hidden = net.hiddenRepresentation(test.reshape(1, test.shape[0]))
   print hidden.sum()
   print "done"
 
