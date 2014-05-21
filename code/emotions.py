@@ -312,9 +312,9 @@ def deepbeliefKanade(big=False):
              rmsprop=args.rmsprop,
              miniBatchSize=args.miniBatchSize,
              hiddenDropout=0.5,
-             visibleDropout=1.0,
+             visibleDropout=0.8,
+             rbmVisibleDropout=1.0,
              rbmHiddenDropout=1.0,
-             rbmVisibleDropout=0.8,
              preTrainEpochs=args.preTrainEpochs)
 
   unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
@@ -758,7 +758,8 @@ def crossDataBase():
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95
-    data = scale(data)
+    trainData = scale(trainData)
+    testData = scale(testData)
   else:
     activationFunction = T.nnet.sigmoid
     rbmActivationFunctionHidden = T.nnet.sigmoid
@@ -767,8 +768,6 @@ def crossDataBase():
     supervisedLearningRate = 0.01
     momentumMax = 0.95
 
-  trainData = data[train]
-  trainLabels = labels[train]
 
   if args.train:
     # TODO: this might require more thought
