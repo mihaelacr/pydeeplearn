@@ -31,6 +31,9 @@ parser.add_argument('--mnist', dest='mnist',action='store_true', default=False,
                     help=("if true, trains the net on MNIST data"))
 parser.add_argument('--pie',dest='pie',action='store_true', default=False,
                     help="if true, trains the net on MultiPIE data")
+parser.add_argument('--train',dest='train',action='store_true', default=False,
+                    help=("if true, the network is trained from scratch from the"
+                          "training data"))
 args = parser.parse_args()
 
 class MultiPIE(DenseDesignMatrix):
@@ -84,7 +87,7 @@ def MNISTmain():
 
   save_path = "/data/mcr10/train_best.pkl"
 
-  if os.path.exists(save_path):
+  if not args.train and os.path.exists(save_path):
       model = serial.load(save_path)
   else:
     print 'Running training'
@@ -127,7 +130,7 @@ def MultiPIEmain():
 
   save_path = "/data/mcr10/train_best.pkl"
 
-  if os.path.exists(save_path):
+  if not args.train and os.path.exists(save_path):
       model = serial.load(save_path)
   else:
     print 'Running training'
