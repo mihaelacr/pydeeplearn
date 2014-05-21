@@ -152,6 +152,68 @@ def MultiPIEmain():
 
   print 'accuracy', (y==yhat).sum() / y.size
 
+
+def MultiPIECV():
+  # Learning rate, nr pieces
+  parms = [(0.1, 2), (0.1, 3), (0.01, 2), (0.01, 3)]
+
+  accuracies = []
+
+  for i in xrange(len(parms)):
+    h0 = maxout.Maxout(layer_name='h0', num_units=1500, num_pieces=parms[i][1], W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
+    h1 = maxout.Maxout(layer_name='h1', num_units=1500, num_pieces=parms[i][1], W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
+    h2 = maxout.Maxout(layer_name='h2', num_units=1500, num_pieces=parms[i][1], W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
+    outlayer = mlp.Softmax(layer_name='y', n_classes=6, irange=0)
+
+    layers = [h0, h1, h2, outlayer]
+
+    model = mlp.MLP(layers, nvis=1200)
+
+    trainIndices, validationIndices, testIndices = getMultiPIEindices()
+    train = MultiPIE('train', indices=trainIndices)
+    valid = MultiPIE('valid', indices=validationIndices)
+    test = MultiPIE('test',   indices=testIndices)
+
+    monitoring = dict(valid=valid)
+    termination = MonitorBased(channel_name="valid_y_misclass", N=100)
+    extensions = [best_params.MonitorBasedSaveBest(channel_name="valid_y_misclass",
+                                                   save_path="/data/mcr10/train_best.pkl")]
+
+    algorithm = sgd.SGD(parms[i][1], batch_size=100, cost=Dropout(),
+                        monitoring_dataset=monitoring, termination_criterion=termination)
+
+    save_path = "/data/mcr10/train_best.pkl"
+
+    if not args.train and os.path.exists(save_path):
+        model = serial.load(save_path)
+    else:
+      print 'Running training'
+      train_job = Train(train, model, algorithm, extensions=extensions, save_path="/data/mcr10/trainpie.pkl", save_freq=1)
+      train_job.main_loop()
+
+    X = model.get_input_space().make_batch_theano()
+    Y = model.fprop(X)
+
+    y = T.argmax(Y, axis=1)
+
+    f = function(inputs=[X], outputs=y, allow_input_downcast=True)
+    yhat = f(test.X)
+
+    print sum(yhat)
+    print yhat.shape
+
+    y = np.argmax(np.squeeze(test.get_targets()), axis=1)
+
+    accuracy =  (y==yhat).sum() / y.size
+    accuracies += [accuracy]
+
+  # TODO: some confusion matrix?
+  for i in len(parms):
+    print "for parameter" + str(i)
+    print "the correct rate was " + str(accuracies[i])
+
+
+
 def getMultiPIEindices():
   x, y = readMultiPIE()
   x = np.array(x, dtype=theanoFloat)
