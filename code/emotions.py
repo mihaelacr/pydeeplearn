@@ -28,6 +28,8 @@ parser.add_argument('--train',dest='train',action='store_true', default=False,
                           "traning data"))
 parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
                     help=("if true, the code for traning an rbm on the data is run"))
+parser.add_argument('--sparsity', dest='sparsity',action='store_true', default=False,
+                    help=("if true, the the networks are trained with sparsity constraints"))
 parser.add_argument('--dbKanade', dest='dbKanade',action='store_true', default=False,
                     help=("if true, the code for training a deepbelief net on the"
                           "data is run, where the supervised data is the Kanade DB"))
@@ -111,7 +113,10 @@ def rbmEmotions(big=False, reconstructRandom=False):
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop,
-                  nesterov=args.rbmnesterov)
+                  nesterov=args.rbmnesterov,
+                  sparsityConstraint=args.sparsity,
+                  sparsityRegularization=0.01,
+                  sparsityTraget=0.01)
     net.train(trainData)
     t = visualizeWeights(net.weights.T, SMALL_SIZE, (10,10))
   else:
