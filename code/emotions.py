@@ -85,7 +85,7 @@ db.DEBUG = args.debug
 SMALL_SIZE = ((40, 30))
 
 def rbmEmotions(big=False, reconstructRandom=False):
-  # data, labels = readKanade(args.equalizebig)
+  # data, labels = readKanade(equalize=args.equalizebig)
 
   data, labels = readMultiPIE()
   print "data.shape"
@@ -163,7 +163,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
     big: should the big or small images be used?
 """
 def deepbeliefKanadeCV(big=False):
-  data, labels = readKanade(args.equalize, big, None)
+  data, labels = readKanade(equalize=args.equalize, big, None)
 
   data, labels = shuffle(data, labels)
 
@@ -263,7 +263,7 @@ def deepbeliefKanadeCV(big=False):
 
 
 def deepbeliefKanade(big=False):
-  data, labels = readKanade(args.equalize, big,None)
+  data, labels = readKanade(equalize=args.equalize, big,None)
 
   data, labels = shuffle(data, labels)
 
@@ -363,9 +363,9 @@ def deepbeliefKanade(big=False):
 
 def buildUnsupervisedDataSetForKanadeLabelled():
   None
-  # return np.vstack((readAttData(args.equalize),
-  #                   readJaffe(args.facedetection, args.equalize)))
-                    # readAberdeen(args.facedetection, args.equalize)))
+  # return np.vstack((readAttData(equalize=args.equalize),
+  #                   readJaffe(args.facedetection, equalize=args.equalize)))
+                    # readAberdeen(args.facedetection, equalize=args.equalize)))
     # readNottingham(),
     # readCroppedYale(),
     # readMultiPIE()[0]))
@@ -377,7 +377,7 @@ def buildUnsupervisedDataSetForPIE():
 # but it might be the case that you won't get higher results which such a big
 #dataset
 def buildSupervisedDataSet():
-  dataKanade, labelsKanade = readKanade(args.equalize)
+  dataKanade, labelsKanade = readKanade(equalize=args.equalize)
   dataMPie, labelsMPie = readMultiPIE()
   print dataMPie.shape
   print dataKanade.shape
@@ -750,7 +750,7 @@ def crossDataBase():
   trainData, trainLabels = readMultiPIE()
   trainData, trainLabels = shuffle(trainData, trainLabels)
 
-  testData, testLabels = readKanade(args.equalize, False, None)
+  testData, testLabels = readKanade(equalize=args.equalize, False, None)
 
   if args.relu:
     activationFunction = relu
