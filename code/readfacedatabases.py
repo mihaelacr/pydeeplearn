@@ -428,6 +428,7 @@ def readAttData(equalize=False):
     img = resize(img, SMALL_SIZE)
     images += [img.reshape(-1)]
 
+  assert len(images) != 0
 
   return np.array(images)
 
@@ -487,6 +488,8 @@ def readCropEqualize(path, extension, doRecognition, equalize=False,
         print "rescaling unit"
         img = img / 255.0
       images += [img.reshape(-1)]
+
+  assert len(images) != 0
 
   print len(images)
   return np.array(images)
