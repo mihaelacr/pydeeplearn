@@ -13,6 +13,7 @@ from pylearn2.train_extensions import best_params
 from pylearn2.utils import serial
 from pylearn2.costs.mlp.dropout import Dropout
 from theano import function
+from theano import config
 from theano import tensor as T
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
@@ -22,7 +23,7 @@ from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 from readfacedatabases import *
 from common import *
 
-theanoFloat  = theano.config.floatX
+theanoFloat = config.floatX
 
 
 parser = argparse.ArgumentParser(description='digit recognition')
