@@ -360,8 +360,8 @@ def similarityCV():
                                       # TODO: replace all these
                                       rmsprop=args.rmsprop,
                                       rbmDropoutVis=1.0,
-                                      trainingEpochsRBM=1,
-                                      nesterovRbm=False)
+                                      trainingEpochsRBM=1)
+                                      # nesterovRbm=False)
                                       # sparsityConstraint=True,
                                       # sparsityRegularization=params[fold][2],
                                       # sparsityTraget=0.01)
