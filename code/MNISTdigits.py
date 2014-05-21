@@ -9,7 +9,6 @@ import readmnist
 import restrictedBoltzmannMachine as rbm
 import deepbelief as db
 import ann
-import utils
 import PCA
 import svm
 
@@ -23,6 +22,8 @@ parser.add_argument('--save',dest='save',action='store_true', default=False,
 parser.add_argument('--train',dest='train',action='store_true', default=False,
                     help=("if true, the network is trained from scratch from the"
                           "training data"))
+parser.add_argument('--sparsity', dest='sparsity',action='store_true', default=False,
+                    help=("if true, the the networks are trained with sparsity constraints"))
 parser.add_argument('--ann',dest='ann',action='store_true', default=False,
                     help=("if true, we train an ann not a dbn"))
 parser.add_argument('--pca', dest='pca',action='store_true', default=False,
@@ -114,7 +115,7 @@ def rbmMain(reconstructRandom=False):
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov,
-                  sparsityConstraint=True,
+                  sparsityConstraint=args.sparsity,
                   sparsityRegularization=0.01,
                   sparsityTraget=0.01)
     net.train(trainingScaledVectors)
