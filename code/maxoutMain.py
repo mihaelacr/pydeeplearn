@@ -31,6 +31,8 @@ parser.add_argument('--mnist', dest='mnist',action='store_true', default=False,
                     help=("if true, trains the net on MNIST data"))
 parser.add_argument('--pie',dest='pie',action='store_true', default=False,
                     help="if true, trains the net on MultiPIE data")
+parser.add_argument('--cv',dest='cv',action='store_true', default=False,
+                    help="if true, does CV on pie data")
 parser.add_argument('--train',dest='train',action='store_true', default=False,
                     help=("if true, the network is trained from scratch from the"
                           "training data"))
@@ -238,3 +240,5 @@ if __name__ == '__main__':
     MNISTmain()
   if args.pie:
     MultiPIEmain()
+  if args.cv:
+    MultiPIECV()
