@@ -189,6 +189,8 @@ def deepbeliefKanadeCV(big=False):
            (0.1, 0.1, 0.99), (0.1, 0.5, 0.99), (0.5, 0.1, 0.99), (0.5, 0.5, 0.99)]
 
   unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
+  print "unsupervisedData.shape"
+  print unsupervisedData.shape
 
   kf = cross_validation.KFold(n=len(data), k=len(params))
   bestCorrect = 0
