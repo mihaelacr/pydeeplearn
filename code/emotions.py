@@ -108,14 +108,14 @@ def rbmEmotions(big=False, reconstructRandom=False):
     nrVisible = len(data[0])
     nrHidden = 800
     # use 1 dropout to test the rbm for now
-    net = rbm.RBM(nrVisible, nrHidden, 1.0, 1, 1,
+    net = rbm.RBM(nrVisible, nrHidden, 1.5, 1, 1,
                   binary=1-args.relu,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop,
                   nesterov=args.rbmnesterov,
                   sparsityConstraint=args.sparsity,
-                  sparsityRegularization=0.05,
+                  sparsityRegularization=0.5,
                   sparsityTraget=0.01)
     net.train(trainData)
     t = visualizeWeights(net.weights.T, SMALL_SIZE, (10,10))
