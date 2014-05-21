@@ -22,9 +22,9 @@ SMALL_SIZE = ((40, 30))
 # TODO: make some general things with the path in order to make it work easily between
 # lab machine and local
 def equalizeImg(x):
-  clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-  return clahe.apply(img)
-  # return cv2.equalizeHist(x)
+  # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+  # return clahe.apply(x)
+  return cv2.equalizeHist(x)
 
 def equalizeFromFloat(x):
   x = x * 255
