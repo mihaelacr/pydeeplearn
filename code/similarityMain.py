@@ -2,7 +2,6 @@ import argparse
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
 
-
 from similarity_utils import *
 from readfacedatabases import *
 import similarity
@@ -58,7 +57,7 @@ def similarityMain():
       maxMomentum = 0.95
 
     visibleActivationFunction = identity
-    hiddenActivationFunction = makeNoisyRelu()
+    hiddenActivationFunction = makeNoisyReluSigmoid()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
     testData1 = scale(testData1)
     testData2 = scale(testData2)
@@ -84,14 +83,18 @@ def similarityMain():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     binary=1-args.relu,
                                     rbmNrVis=1200,
-                                    rbmNrHid=1000,
+                                    rbmNrHid=2000,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
-                                    trainingEpochsRBM=10)
+                                    trainingEpochsRBM=10,
+                                    nesterovRbm=False,
+                                    sparsityConstraint=False,
+                                    sparsityRegularization=None,
+                                    sparsityTraget=None)
 
-  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=1000)
+  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=2000)
 
   res = simNet.test(testData1, testData2)
 
@@ -140,7 +143,7 @@ def similarityMainTestYale():
       maxMomentum = 0.95
 
     visibleActivationFunction = identity
-    hiddenActivationFunction = makeNoisyRelu()
+    hiddenActivationFunction = makeNoisyReluSigmoid()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
     testData1 = scale(testData1)
     testData2 = scale(testData2)
@@ -167,7 +170,7 @@ def similarityMainTestYale():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     binary=1-args.relu,
                                     rbmNrVis=1200,
-                                    rbmNrHid=1000,
+                                    rbmNrHid=2000,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
@@ -235,7 +238,7 @@ def similarityDifferentSubjectsMain():
 
 
     visibleActivationFunction = identity
-    hiddenActivationFunction = makeNoisyRelu()
+    hiddenActivationFunction = makeNoisyReluSigmoid()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
     testData1 = scale(testData1)
     testData2 = scale(testData2)
@@ -261,7 +264,7 @@ def similarityDifferentSubjectsMain():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     binary=1-args.relu,
                                     rbmNrVis=1200,
-                                    rbmNrHid=1000,
+                                    rbmNrHid=2000,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rmsprop=False,
@@ -283,6 +286,8 @@ def similarityDifferentSubjectsMain():
   print correct
 
 
+
+
 def similarityCV():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
      splitDataMultiPIESubject(instanceToPairRatio=2)
@@ -294,7 +299,7 @@ def similarityCV():
     # params = [(0.001, 0.01), (0.001, 0.005), (0.01, 0.01), (0.01, 0.005)]
 
     visibleActivationFunction = identity
-    hiddenActivationFunction = makeNoisyRelu()
+    hiddenActivationFunction = makeNoisyReluSigmoid()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
     testData1 = scale(testData1)
     testData2 = scale(testData2)
@@ -311,14 +316,28 @@ def similarityCV():
       # params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
       params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.05),
                 (0.01, 0.1), (0.01, 0.05), (0.01, 0.5)]
-
-
+      # params = [(0.001, 0.01, 0.001), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
+      #           (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
+      # params = [(0.001, 0.01, 0.001), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
+      #           (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
+      params = makeParamsGrid([(0.001, 0.01, 4), (0.005, 0.05, 4), (0.005, 0.05, 4)])
 
   else:
     if args.rmsprop:
       params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
     else:
-      params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
+      # params = [(0.0001, 0.01, 0.01), (0.0001, 0.005, 0.01), (0.001, 0.01, 0.01), (0.001, 0.005, 0.01),
+      #           (0.0001, 0.01, 0.001), (0.0001, 0.005, 0.001), (0.001, 0.01, 0.001), (0.001, 0.005, 0.001)]
+      # params = [(0.005, 0.01, 0.001), (0.005, 0.005, 0.001), (0.005, 0.005, 0.001)]
+      # params = [(0.001, 0.01, 0.1), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
+      #           (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
+
+      # params = [(0.001, 0.01, 0.05), (0.001, 0.005, 0.05), (0.001, 0.05, 0.05),
+      #           (0.001, 0.001, 0.05), (0.005, 0.005, 0.05), (0.005, 0.05, 0.05)]
+                # (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
+
+      params = makeParamsGrid([(0.001, 0.01, 4), (0.005, 0.05, 4), (0.005, 0.05, 4)])
+
 
 
   kf = cross_validation.KFold(n=len(trainData1), n_folds=len(params))
@@ -334,12 +353,17 @@ def similarityCV():
                                       hiddenActivationFunction=hiddenActivationFunction,
                                       binary=1-args.relu,
                                       rbmNrVis=1200,
-                                      rbmNrHid=1000,
+                                      rbmNrHid=2000,
                                       rbmLearningRate=params[fold][1],
                                       rbmDropoutHid=1.0,
-                                      rmsprop=False,
+                                      # TODO: replace all these
+                                      rmsprop=args.rmsprop,
                                       rbmDropoutVis=1.0,
-                                      trainingEpochsRBM=1)
+                                      trainingEpochsRBM=1,
+                                      nesterovRbm=False,
+                                      sparsityConstraint=True,
+                                      sparsityRegularization=params[fold][2],
+                                      sparsityTraget=0.01)
 
     simNet.train(trainData1, trainData2, similaritiesTrain)
 
@@ -381,7 +405,7 @@ def similarityCVEmotions():
                 (0.005, 0.01), (0.005, 0.005), (0.005, 0.05)]
 
     visibleActivationFunction = identity
-    hiddenActivationFunction = makeNoisyRelu()
+    hiddenActivationFunction = makeNoisyReluSigmoid()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
     # I am now doing it in the rbm level so it is not as important anymore to do it here
     data1 = scale(data1)
@@ -424,7 +448,7 @@ def similarityCVEmotions():
                                       hiddenActivationFunction=hiddenActivationFunction,
                                       binary=1-args.relu,
                                       rbmNrVis=1200,
-                                      rbmNrHid=1000,
+                                      rbmNrHid=2000,
                                       rbmLearningRate=params[fold][1],
                                       rbmDropoutHid=1.0,
                                       rbmDropoutVis=1.0,
@@ -477,7 +501,7 @@ def similarityEmotionsMain():
 
 
     visibleActivationFunction = identity
-    hiddenActivationFunction = makeNoisyRelu()
+    hiddenActivationFunction = makeNoisyReluSigmoid()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
     testData1 = scale(testData1)
     testData2 = scale(testData2)
@@ -503,7 +527,7 @@ def similarityEmotionsMain():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     binary=1-args.relu,
                                     rbmNrVis=1200,
-                                    rbmNrHid=1000,
+                                    rbmNrHid=2000,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
@@ -567,7 +591,7 @@ def similarityEmotionsSameSubject():
 
 
     visibleActivationFunction = identity
-    hiddenActivationFunction = makeNoisyRelu()
+    hiddenActivationFunction = makeNoisyReluSigmoid()
 
     testData1 = scale(testData1)
     testData2 = scale(testData2)
@@ -593,7 +617,7 @@ def similarityEmotionsSameSubject():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     binary=1-args.relu,
                                     rbmNrVis=1200,
-                                    rbmNrHid=1000,
+                                    rbmNrHid=2000,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
