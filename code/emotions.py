@@ -85,7 +85,7 @@ db.DEBUG = args.debug
 SMALL_SIZE = ((40, 30))
 
 def rbmEmotions(big=False, reconstructRandom=False):
-  # data, labels = readKanade(big)
+  # data, labels = readKanade(args.equalizebig)
 
   data, labels = readMultiPIE()
   print "data.shape"
@@ -163,7 +163,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
     big: should the big or small images be used?
 """
 def deepbeliefKanadeCV(big=False):
-  data, labels = readKanade(big, None)
+  data, labels = readKanade(args.equalize, big, None)
 
   data, labels = shuffle(data, labels)
 
@@ -263,7 +263,7 @@ def deepbeliefKanadeCV(big=False):
 
 
 def deepbeliefKanade(big=False):
-  data, labels = readKanade(big,None)
+  data, labels = readKanade(args.equalize, big,None)
 
   data, labels = shuffle(data, labels)
 
@@ -377,7 +377,7 @@ def buildUnsupervisedDataSetForPIE():
 # but it might be the case that you won't get higher results which such a big
 #dataset
 def buildSupervisedDataSet():
-  dataKanade, labelsKanade = readKanade()
+  dataKanade, labelsKanade = readKanade(args.equalize)
   dataMPie, labelsMPie = readMultiPIE()
   print dataMPie.shape
   print dataKanade.shape
@@ -750,7 +750,7 @@ def crossDataBase():
   trainData, trainLabels = readMultiPIE()
   trainData, trainLabels = shuffle(trainData, trainLabels)
 
-  testData, testLabels = readKanade(False, None)
+  testData, testLabels = readKanade(args.equalize, False, None)
 
   if args.relu:
     activationFunction = relu
