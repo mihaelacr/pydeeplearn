@@ -77,7 +77,7 @@ def MNISTmain():
   monitoring = dict(valid=valid)
   termination = MonitorBased(channel_name="valid_y_misclass", N=100)
   extensions = [best_params.MonitorBasedSaveBest(channel_name="valid_y_misclass",
-                                                 save_path="train_best.pkl")]
+                                                 save_path="/data/mcr10/train_best.pkl")]
 
   algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(),
                       monitoring_dataset = monitoring, termination_criterion = termination)
@@ -120,7 +120,7 @@ def MultiPIEmain():
   monitoring = dict(valid=valid)
   termination = MonitorBased(channel_name="valid_y_misclass", N=100)
   extensions = [best_params.MonitorBasedSaveBest(channel_name="valid_y_misclass",
-                                                 save_path="train_best.pkl")]
+                                                 save_path="/data/mcr10/train_best.pkl")]
 
   algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(),
                       monitoring_dataset=monitoring, termination_criterion=termination)
