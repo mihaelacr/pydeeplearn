@@ -142,6 +142,9 @@ def MultiPIEmain():
   f = function(inputs=[X], outputs=y, allow_input_downcast=True)
   yhat = f(test.X)
 
+  print yhat
+  print yhat.shape
+
   y = np.squeeze(test.get_targets())
   print 'accuracy', (y==yhat).sum() / y.size
 
