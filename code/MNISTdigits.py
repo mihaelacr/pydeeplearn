@@ -490,10 +490,10 @@ def cvMNIST():
              (1e-05, 0.001, 0.99), (5e-06, 0.001, 0.99), (5e-05, 0.001, 0.99)]
   else:
     # params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.1), (0.05, 0.05)]
-    # params =[(0.05, 0.05) , (0.05, 0.075), (0.075, 0.05), (0.075, 0.075)]
-    params =[(0.05, 0.075, 0.1), (0.05, 0.1, 0.1), (0.01, 0.05, 0.1),
-             (0.05, 0.075, 0.01), (0.05, 0.1, 0.01), (0.01, 0.05, 0.01),
-             (0.05, 0.075, 0.001), (0.05, 0.1, 0.001), (0.01, 0.05, 0.001)]
+    params =[(0.05, 0.05) , (0.05, 0.075), (0.075, 0.05), (0.075, 0.075)]
+    # params =[(0.05, 0.075, 0.1), (0.05, 0.1, 0.1), (0.01, 0.05, 0.1),
+    #          (0.05, 0.075, 0.01), (0.05, 0.1, 0.01), (0.01, 0.05, 0.01),
+    #          (0.05, 0.075, 0.001), (0.05, 0.1, 0.001), (0.01, 0.05, 0.001)]
 
   nrFolds = len(params)
   kf = cross_validation.KFold(n=training, n_folds=nrFolds)
@@ -527,7 +527,7 @@ def cvMNIST():
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs,
                   sparsityTragetRbm=0.01,
-                  sparsityConstraintRbm=True,
+                  sparsityConstraintRbm=False,
                   sparsityRegularizationRbm=params[i][2])
 
     net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
