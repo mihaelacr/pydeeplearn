@@ -318,8 +318,8 @@ def deepbeliefKanade(big=False):
              preTrainEpochs=args.preTrainEpochs)
 
   unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
-  print "unsupervisedData.shape"
-  print unsupervisedData.shape
+  # print "unsupervisedData.shape"
+  # print unsupervisedData.shape
 
   net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
             validation=args.validation,
