@@ -95,7 +95,7 @@ def MNISTmain():
   Y = model.fprop(X)
 
   y = T.argmax(Y, axis=1)
-  f = function([X], y)
+  f = function(inputs=[X], outputs=y)
   yhat = f(test.X)
 
   y = np.squeeze(test.get_targets())
@@ -139,7 +139,7 @@ def MultiPIEmain():
 
   y = T.argmax(Y, axis=1)
 
-  f = function([X])
+  f = function(inputs=[X], outputs=y)
   yhat = f(test.X)
 
   y = np.squeeze(test.get_targets())
