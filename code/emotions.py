@@ -87,9 +87,9 @@ db.DEBUG = args.debug
 SMALL_SIZE = ((40, 30))
 
 def rbmEmotions(big=False, reconstructRandom=False):
-  # data, labels = readKanade(big)
+  data, labels = readKanade(big)
 
-  data, labels = readMultiPIE()
+  # data, labels = readMultiPIE()
   print "data.shape"
   print data.shape
 
