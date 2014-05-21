@@ -87,7 +87,7 @@ SMALL_SIZE = ((40, 30))
 def rbmEmotions(big=False, reconstructRandom=False):
   # data, labels = readKanade(equalize=args.equalizebig)
 
-  data, labels = readMultiPIE()
+  data, labels = readMultiPIE(equalize=args.equalize)
   print "data.shape"
   print data.shape
 
@@ -368,7 +368,7 @@ def buildUnsupervisedDataSetForKanadeLabelled():
                     # readAberdeen(args.facedetection, equalize=args.equalize)))
     # readNottingham(),
     # readCroppedYale(),
-    # readMultiPIE()[0]))
+    # readMultiPIE(equalize=args.equalize)[0]))
 
 def buildUnsupervisedDataSetForPIE():
   return None
@@ -378,7 +378,7 @@ def buildUnsupervisedDataSetForPIE():
 #dataset
 def buildSupervisedDataSet():
   dataKanade, labelsKanade = readKanade(equalize=args.equalize)
-  dataMPie, labelsMPie = readMultiPIE()
+  dataMPie, labelsMPie = readMultiPIE(equalize=args.equalize)
   print dataMPie.shape
   print dataKanade.shape
 
@@ -387,7 +387,7 @@ def buildSupervisedDataSet():
   return data, labels
 
 def deepbeliefMultiPIE(big=False):
-  data, labels = readMultiPIE()
+  data, labels = readMultiPIE(equalize=args.equalize)
 
   data, labels = shuffle(data, labels)
 
@@ -492,7 +492,7 @@ def deepbeliefMultiPIE(big=False):
 
 
 def deepbeliefPIECV(big=False):
-  data, labels = readMultiPIE()
+  data, labels = readMultiPIE(equalize=args.equalize)
 
   data, labels = shuffle(data, labels)
 
@@ -612,7 +612,7 @@ def svmPIE():
   with open(args.netFile, "rb") as f:
     dbnNet = pickle.load(f)
 
-  data, labels = readMultiPIE()
+  data, labels = readMultiPIE(equalize=args.equalize)
 
   # Random data for training and testing
   kf = cross_validation.KFold(n=len(data), n_folds=5)
