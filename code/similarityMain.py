@@ -336,7 +336,8 @@ def similarityCV():
       #           (0.001, 0.001, 0.05), (0.005, 0.005, 0.05), (0.005, 0.05, 0.05)]
                 # (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
 
-      params = makeParamsGrid([(0.001, 0.01, 4), (0.005, 0.05, 4), (0.005, 0.05, 4)])
+      # params = makeParamsGrid([(0.001, 0.01, 4), (0.005, 0.05, 4), (0.005, 0.05, 4)])
+      params = makeParamsGrid([(0.001, 0.01, 4), (0.005, 0.05, 4)])
 
 
 
@@ -360,10 +361,10 @@ def similarityCV():
                                       rmsprop=args.rmsprop,
                                       rbmDropoutVis=1.0,
                                       trainingEpochsRBM=1,
-                                      nesterovRbm=False,
-                                      sparsityConstraint=True,
-                                      sparsityRegularization=params[fold][2],
-                                      sparsityTraget=0.01)
+                                      nesterovRbm=False)
+                                      # sparsityConstraint=True,
+                                      # sparsityRegularization=params[fold][2],
+                                      # sparsityTraget=0.01)
 
     simNet.train(trainData1, trainData2, similaritiesTrain)
 
