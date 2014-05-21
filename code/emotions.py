@@ -362,10 +362,9 @@ def deepbeliefKanade(big=False):
 
 
 def buildUnsupervisedDataSetForKanadeLabelled():
-  return readAttData(args.equalize)
-  # return np.vstack((readAttData(args.equalize),
-  #                   readJaffe(args.facedetection, args.equalize),
-  #                   readAberdeen(args.facedetection, args.equalize)))
+  return np.vstack((readAttData(args.equalize),
+                    readJaffe(args.facedetection, args.equalize),
+                    readAberdeen(args.facedetection, args.equalize)))
     # readNottingham(),
     # readCroppedYale(),
     # readMultiPIE()[0]))
