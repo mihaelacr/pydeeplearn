@@ -278,7 +278,7 @@ def makeEqualizePics():
   kanade = data[0]
   kanadeEq = equalizeFromFloat(kanade)
 
-  data = readJaffe()
+  data = readJaffe(crop=False, detectFaces=False, equalize=False)
   jaffe = data[0]
   jaffeEq = equalizeFromFloat(jaffe)
 
