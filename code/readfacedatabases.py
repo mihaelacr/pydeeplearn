@@ -542,6 +542,8 @@ def readCropEqualize(path, extension, doRecognition, crop, equalize=False,
         if type(img[0,0]) == np.uint8:
           print "rescaling unit"
           img = img / 255.0
+
+        img = resize(img, SMALL_SIZE)
         images += [img.reshape(-1)]
 
   else:
