@@ -326,6 +326,8 @@ def makeCrossDbPlot():
 
     pie = dataPie[labelsPie == i]
     pie = pie[0]
+    print "labelsKanade == i"
+    print labelsKanade == i
     kanade = dataKanade[labelsKanade == i]
     kanade = kanade[0]
     kanadePics += [kanade]
