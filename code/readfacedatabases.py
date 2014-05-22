@@ -313,6 +313,8 @@ def makeCrossDbPlot():
   dataKanade, labelsKanade = readKanade(vectorizeLabels=False)
   dataPie, labelsPie = readMultiPIE(vectorizeLabels=False)
 
+
+  labelsKanade = labelsKanade - 1
   dataKanade, labelsKanade = mapKanadeToPIELabels(dataKanade, labelsKanade)
 
   kanadePics = []
@@ -443,7 +445,9 @@ def mapKanadeToPIELabels(kanadeData, kanadeLabels):
     6: 0
   }
 
-  kanadeLabels = kanadeLabels - 1
+  # If we did not move to 0 to 6, do it now
+  if 7 in kanadeLabels:
+    kanadeLabels = kanadeLabels - 1
 
   mappedLabels = np.array(map(lambda x: kanadeToPie[x], kanadeLabels))
   # Keep the indices for emotions that do not map to the right
