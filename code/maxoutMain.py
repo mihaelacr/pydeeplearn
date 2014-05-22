@@ -210,7 +210,7 @@ def MultiPIECV():
     accuracies += [accuracy]
 
   # TODO: some confusion matrix?
-  for i in len(parms):
+  for i in xrange(len(parms)):
     print "for parameter" + str(i)
     print "the correct rate was " + str(accuracies[i])
 
