@@ -284,7 +284,7 @@ def makeEqualizePics():
   kanadeEq = kanadeEq.reshape(SMALL_SIZE)
 
 
-  data = readJaffe(crop=False, detectFaces=False, equalize=False)
+  data = readJaffe(crop=True, detectFaces=True, equalize=False)
   jaffe = data[0]
   jaffe = jaffe.reshape(SMALL_SIZE)
   jaffeEq = equalizeFromFloat(jaffe)
