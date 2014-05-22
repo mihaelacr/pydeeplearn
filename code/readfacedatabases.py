@@ -285,7 +285,7 @@ def makeEqualizePics():
   first = np.vstack((pie, kanade, jaffe))
   second = np.vstack((pieEq, kanadeEq, jaffeEq))
 
-  allPics = np.vstack(first, second)
+  allPics = np.hstack((first, second))
 
   plt.imshow(allPics, cmap=plt.cm.gray)
   plt.axis('off')
