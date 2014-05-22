@@ -307,6 +307,31 @@ def makeEqualizePics():
   plt.show()
 
 
+def makeCrossDbPlot():
+  dataKanade, labelsKanade = readKanade()
+  dataPie, labelsPie = readMultiPIE()
+
+  dataKanade, labelsKanade = mapKanadeToPIELabels(dataKanade, dataPie)
+
+  kanadePics = []
+  piePics = []
+  for i in xrange(6):
+    pie = dataPie[labelsPie == i][0]
+    kanade = dataKanade[labelsKanade == i][0]
+    kanadePics += [kanade]
+    piePics += [pie]
+
+
+  image1 = np.vstack(tuple(kanade))
+  image2 = np.vstack(tuple(pie))
+
+  images = np.hstack((image1, image2))
+
+  plt.imshow(images, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.show()
+
+
 def readMultiPIEEmotionsPerSubject(equalize):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
@@ -399,6 +424,25 @@ def readKanade(big=False, folds=None, equalize=False):
   assert np.all(np.min(data, axis=1) >= 0.0) and np.all(np.max(data, axis=1) < 1.0 + 1e-8)
 
   return data, labels
+
+
+def mapKanadeToPIELabels(kanadeData, kanadeLabels):
+  kanadeToPie = {
+    0: 2,
+    1: 4,
+    2: 5,
+    3: 3,
+    4: -1,
+    5: 1,
+    6: 0
+  }
+
+  mappedLabels = np.array(map(lambda x: kanadeToPie[x], kanadeLabels))
+  # Keep the indices for emotions that do not map to the right
+  # emotions in the PIE dataset
+  keepIndices = mappedLabels == -1
+
+  return kanadeData[keepIndices], kanadeLabels[keepIndices]
 
 
 # TODO: get big, small as argument in order to be able to fit the resizing
@@ -613,4 +657,5 @@ if __name__ == '__main__':
   # readMultiPIE(show=True)
   # readCroppedYaleSubjects(show=True)
   # makeMultiPieImagesForReport()
-  makeEqualizePics()
+  # makeEqualizePics()
+  makeCrossDbPlot()
