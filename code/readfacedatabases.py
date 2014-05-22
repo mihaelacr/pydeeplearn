@@ -561,7 +561,7 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
         print "rescaling unit"
         img = img / 255.0
 
-       img = resize(img, SMALL_SIZE)
+      img = resize(img, SMALL_SIZE)
 
       if equalize:
         img = equalizeFromFloat(img)
