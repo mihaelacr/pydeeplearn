@@ -84,6 +84,8 @@ def readMultiPIE(show=False, equalize=False, vectorizeLabels=True):
 
   if vectorizeLabels:
     labels = labelsToVectors(labels, 6)
+  else:
+    labels = np.array(labels)
   return np.array(imgs), labels
 
 
