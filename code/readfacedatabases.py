@@ -318,13 +318,7 @@ def makeCrossDbPlot():
 
   labelsKanade = labelsKanade - 1
 
-  print "labelsKanade before"
-  print labelsKanade
-
   dataKanade, labelsKanade = mapKanadeToPIELabels(dataKanade, labelsKanade)
-
-  print "labelsKanade"
-  print labelsKanade
 
   kanadePics = []
   piePics = []
@@ -334,8 +328,7 @@ def makeCrossDbPlot():
     pie = dataPie[labelsPie == i]
     pie = pie[0]
     pie = pie.reshape(SMALL_SIZE)
-    print "labelsKanade == i"
-    print labelsKanade == i
+
     kanade = dataKanade[labelsKanade == i]
     kanade = kanade[0]
     kanade = kanade.reshape(SMALL_SIZE)
