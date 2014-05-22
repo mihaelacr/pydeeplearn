@@ -282,8 +282,8 @@ def makeEqualizePics():
   jaffe = data[0]
   jaffeEq = equalizeFromFloat(jaffe)
 
-  first = np.vstack(pie, kanade, jaffe)
-  second = np.vstack(pieEq, kanadeEq, jaffeEq)
+  first = np.vstack((pie, kanade, jaffe))
+  second = np.vstack((pieEq, kanadeEq, jaffeEq))
 
   allPics = np.vstack(first, second)
 
