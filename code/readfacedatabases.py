@@ -290,8 +290,15 @@ def makeEqualizePics():
   jaffeEq = equalizeFromFloat(jaffe)
   jaffeEq = jaffeEq.reshape(SMALL_SIZE)
 
-  first = np.hstack((pie, kanade, jaffe))
-  second = np.hstack((pieEq, kanadeEq, jaffeEq))
+  data = readCroppedYaleSubjects()
+  yale = data[0]
+  yale = yale.reshape(SMALL_SIZE)
+  yaleEq = equalizeFromFloat(yale)
+  yaleEq = yaleEq.reshape(SMALL_SIZE)
+
+
+  first = np.hstack((pie, kanade, jaffe, yale))
+  second = np.hstack((pieEq, kanadeEq, jaffeEq, yaleEq))
 
   allPics = np.vstack((first, second))
 
