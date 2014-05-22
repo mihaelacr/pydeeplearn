@@ -437,7 +437,11 @@ def readAttData(equalize=False):
 
 def readCropEqualize(path, extension, doRecognition, equalize=False,
                      isColoured=False):
-  dirforres = "detection-cropped"
+  if equalize:
+    dirforres = "detection-cropped"
+  else:
+    dirforres = "detection-cropped-equalized"
+
   pathForCropped = os.path.join(path, dirforres)
 
   if doRecognition:
