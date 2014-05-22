@@ -360,9 +360,8 @@ def deepbeliefKanade(big=False):
       pickle.dump(net, f)
 
 
-
 def buildUnsupervisedDataSetForKanadeLabelled():
-  None
+  return readJaffe(args.facedetection, equalize=args.equalize)
   # return np.vstack((readAttData(equalize=args.equalize),
   #                   readJaffe(args.facedetection, equalize=args.equalize)))
                     # readAberdeen(args.facedetection, equalize=args.equalize)))
