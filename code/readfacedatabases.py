@@ -290,10 +290,10 @@ def makeEqualizePics():
   jaffeEq = equalizeFromFloat(jaffe)
   jaffeEq = jaffeEq.reshape(SMALL_SIZE)
 
-  first = np.vstack((pie, kanade, jaffe))
-  second = np.vstack((pieEq, kanadeEq, jaffeEq))
+  first = np.hstack((pie, kanade, jaffe))
+  second = np.hstack((pieEq, kanadeEq, jaffeEq))
 
-  allPics = np.hstack((first, second))
+  allPics = np.vstack((first, second))
 
   plt.imshow(allPics, cmap=plt.cm.gray)
   plt.axis('off')
