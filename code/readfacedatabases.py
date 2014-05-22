@@ -311,7 +311,7 @@ def makeCrossDbPlot():
   dataKanade, labelsKanade = readKanade()
   dataPie, labelsPie = readMultiPIE()
 
-  dataKanade, labelsKanade = mapKanadeToPIELabels(dataKanade, dataPie)
+  dataKanade, labelsKanade = mapKanadeToPIELabels(dataKanade, labelsKanade)
 
   kanadePics = []
   piePics = []
