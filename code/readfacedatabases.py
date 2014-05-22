@@ -319,6 +319,9 @@ def makeCrossDbPlot():
   labelsKanade = labelsKanade - 1
   dataKanade, labelsKanade = mapKanadeToPIELabels(dataKanade, labelsKanade)
 
+  print "labelsKanade"
+  print labelsKanade
+
   kanadePics = []
   piePics = []
   for i in xrange(6):
