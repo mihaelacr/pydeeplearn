@@ -291,9 +291,9 @@ def deepbeliefKanade(big=False):
     rbmActivationFunctionVisible = T.nnet.sigmoid
     rbmActivationFunctionHidden = T.nnet.sigmoid
 
-    unsupervisedLearningRate = 0.1
+    unsupervisedLearningRate = 0.5
     supervisedLearningRate = 0.1
-    momentumMax = 0.99
+    momentumMax = 0.9
 
   trainData = data[train]
   trainLabels = labels[train]
