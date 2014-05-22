@@ -290,7 +290,7 @@ def makeEqualizePics():
   jaffeEq = equalizeFromFloat(jaffe)
   jaffeEq = jaffeEq.reshape(SMALL_SIZE)
 
-  data = readCroppedYale()
+  data = readCroppedYale(False)
   yale = data[0]
   yale = yale.reshape(SMALL_SIZE)
   yaleEq = equalizeFromFloat(yale)
