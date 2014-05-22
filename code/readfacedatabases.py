@@ -57,7 +57,7 @@ def equalizeKanade(big=False):
     pickle.dump(labels, f)
 
 # TODO: add equalize argument
-def readMultiPIE(show=False, equalize=False):
+def readMultiPIE(show=False, equalize=False, vectorizeLabels=False):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
 
@@ -82,7 +82,9 @@ def readMultiPIE(show=False, equalize=False):
             imgs += [image.reshape(-1)]
             labels += [expression]
 
-  return np.array(imgs), labelsToVectors(labels, 6)
+  if vectorizeLabels:
+    labels = labelsToVectors(labels, 6)
+  return np.array(imgs), labels
 
 
 def readMultiPieDifferentIlluminations(illuminationTrain, show=False, equalize=False):
@@ -362,7 +364,7 @@ def readMultiPIEEmotionsPerSubject(equalize):
 
   return subjectToEmotions
 
-def readKanade(big=False, folds=None, equalize=False):
+def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=False):
   if not equalize:
     if big:
       files = glob.glob('kanade_150*.pickle')
@@ -397,11 +399,10 @@ def readKanade(big=False, folds=None, equalize=False):
         dataFolds.append(foldData)
         foldLabels = np.array(map(int, foldLabels))
 
-        vectorLabels = labelsToVectors(foldLabels -1, 7)
-        labelFolds.append(vectorLabels)
+        if vectorizeLabels
+          foldLabels = labelsToVectors(foldLabels -1, 7)
 
-        print "foldLabels.shape"
-        print vectorLabels.shape
+        labelFolds.append(foldLabels)
 
 
     data = np.vstack(tuple(dataFolds))
