@@ -272,15 +272,23 @@ def makeEqualizePics():
   # plot it] PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   data, _ = readMultiPIE()
   pie = data[0]
+  pie = pie.reshape(SMALL_SIZE)
   pieEq = equalizeFromFloat(pie)
+  pieEq = pieEq.reshape(SMALL_SIZE)
+
 
   data, _ = readKanade()
   kanade = data[0]
+  kanade = kanade.reshape(SMALL_SIZE)
   kanadeEq = equalizeFromFloat(kanade)
+  kanadeEq = kanadeEq.reshape(SMALL_SIZE)
+
 
   data = readJaffe(crop=False, detectFaces=False, equalize=False)
   jaffe = data[0]
+  jaffe = jaffe.reshape(SMALL_SIZE)
   jaffeEq = equalizeFromFloat(jaffe)
+  jaffeEq = jaffeEq.reshape(SMALL_SIZE)
 
   first = np.vstack((pie, kanade, jaffe))
   second = np.vstack((pieEq, kanadeEq, jaffeEq))
