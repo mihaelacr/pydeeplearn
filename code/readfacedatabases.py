@@ -267,6 +267,30 @@ def makeMultiPieImagesForReport():
   plt.axis('off')
   plt.show()
 
+def makeEqualizePics():
+  # Read from multi PIE, Kanade, Jaffe and Aberdeen one image and then
+  # plot it] PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+  data, _ = readMultiPIE()
+  pie = data[0]
+  pieEq = equalizeFromFloat(pie)
+
+  data, _ = readKanade()
+  kanade = data[0]
+  kanadeEq = equalizeFromFloat(kanade)
+
+  data = readJaffe()
+  jaffe = data[0]
+  jaffeEq = equalizeFromFloat(jaffe)
+
+  first = np.vstack(pie, kanade, jaffe)
+  second = np.vstack(pieEq, kanadeEq, jaffeEq)
+
+  allPics = np.vstack(first, second)
+
+  plt.imshow(allPics, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.show()
+
 
 def readMultiPIEEmotionsPerSubject(equalize):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
@@ -569,4 +593,5 @@ if __name__ == '__main__':
   # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   # readMultiPIE(show=True)
   # readCroppedYaleSubjects(show=True)
-  makeMultiPieImagesForReport()
+  # makeMultiPieImagesForReport()
+  makeEqualizePics()
