@@ -57,7 +57,7 @@ def equalizeKanade(big=False):
     pickle.dump(labels, f)
 
 # TODO: add equalize argument
-def readMultiPIE(show=False, equalize=False, vectorizeLabels=False):
+def readMultiPIE(show=False, equalize=False, vectorizeLabels=True):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
 
@@ -364,7 +364,7 @@ def readMultiPIEEmotionsPerSubject(equalize):
 
   return subjectToEmotions
 
-def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=False):
+def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=True):
   if not equalize:
     if big:
       files = glob.glob('kanade_150*.pickle')
@@ -397,6 +397,7 @@ def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=False):
         print foldData.shape
         foldLabels = dataAndLabels[:,-1]
         dataFolds.append(foldData)
+
         foldLabels = np.array(map(int, foldLabels))
 
         if vectorizeLabels:
@@ -406,7 +407,11 @@ def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=False):
 
 
     data = np.vstack(tuple(dataFolds))
-    labels = np.vstack(tuple(labelFolds))
+    if vectorizeLabels:
+      labels = np.vstack(tuple(labelFolds))
+    else:
+      labels = np.hstack(tuple(labelFolds))
+
   else:
     if big:
       fileName = 'equalized_kanade_big.pickle'
