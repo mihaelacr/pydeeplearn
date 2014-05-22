@@ -479,7 +479,7 @@ def readAttData(equalize=False):
 
   return np.array(images)
 
-def readCropEqualize(path, extension, doRecognition, crop, equalize=False,
+def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
                      isColoured=False):
   if not crop and doRecognition:
     raise Exception("you asked for the reading process to crop the images but do no face detection")
@@ -530,7 +530,7 @@ def readCropEqualize(path, extension, doRecognition, crop, equalize=False,
           # Save faces as files
           croppedFileName = os.path.join(pathForCropped, shortPath)
           io.imsave(croppedFileName, face)
-
+    # If not doing face detection live
     else:
       images = []
       imageFiles = [os.path.join(dirpath, f)
@@ -545,7 +545,7 @@ def readCropEqualize(path, extension, doRecognition, crop, equalize=False,
 
         img = resize(img, SMALL_SIZE)
         images += [img.reshape(-1)]
-
+  # If not doing recognition here, just reading from the initial faces
   else:
     images = []
     imageFiles = [os.path.join(dirpath, f)
@@ -560,6 +560,8 @@ def readCropEqualize(path, extension, doRecognition, crop, equalize=False,
       if type(img[0,0]) == np.uint8:
         print "rescaling unit"
         img = img / 255.0
+
+       img = resize(img, SMALL_SIZE)
 
       if equalize:
         img = equalizeFromFloat(img)
