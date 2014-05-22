@@ -455,8 +455,11 @@ def readAttData(equalize=False):
 
   return np.array(images)
 
-def readCropEqualize(path, extension, doRecognition, equalize=False,
+def readCropEqualize(path, extension, doRecognition, crop, equalize=False,
                      isColoured=False):
+  if not crop and doRecognition:
+    raise Exception("you asked for the reading process to crop the images but do no face detection")
+
   if equalize:
     dirforres = "detection-cropped-equalized"
   else:
@@ -464,56 +467,77 @@ def readCropEqualize(path, extension, doRecognition, equalize=False,
 
   pathForCropped = os.path.join(path, dirforres)
 
-  if doRecognition:
-    if not os.path.exists(pathForCropped):
-      os.makedirs(pathForCropped)
+  if crop:
+    if doRecognition:
+      if not os.path.exists(pathForCropped):
+        os.makedirs(pathForCropped)
 
-    imageFiles = [(os.path.join(dirpath, f), f)
-      for dirpath, dirnames, files in os.walk(path)
-      for f in fnmatch.filter(files, '*.' + extension)]
+      imageFiles = [(os.path.join(dirpath, f), f)
+        for dirpath, dirnames, files in os.walk(path)
+        for f in fnmatch.filter(files, '*.' + extension)]
 
-    images = []
+      images = []
 
-    for fullPath, shortPath in imageFiles:
-      # Do not do this for already cropped images
-      if pathForCropped in fullPath:
-        continue
+      for fullPath, shortPath in imageFiles:
+        # Do not do this for already cropped images
+        if pathForCropped in fullPath:
+          continue
 
-      print fullPath
-      img = cv2.imread(fullPath, 0)
+        print fullPath
+        img = cv2.imread(fullPath, 0)
 
-      if equalize:
-        img = equalizeImg(img)
+        if equalize:
+          img = equalizeImg(img)
 
-      face = facedetection.cropFace(img)
-      if not face == None:
-        # Only do the resizing once you are done with the cropping of the faces
-        face = resize(face, SMALL_SIZE)
-        # Check that you are always saving them in the right format
-        print "face.min"
-        print face.min()
+        face = facedetection.cropFace(img)
+        if not face == None:
+          # Only do the resizing once you are done with the cropping of the faces
+          face = resize(face, SMALL_SIZE)
+          # Check that you are always saving them in the right format
+          print "face.min"
+          print face.min()
 
-        print "face.max"
-        print face.max()
+          print "face.max"
+          print face.max()
 
-        assert face.min() >=0 and face.max() <=1
-        images += [face.reshape(-1)]
+          assert face.min() >=0 and face.max() <=1
+          images += [face.reshape(-1)]
 
-        # Save faces as files
-        croppedFileName = os.path.join(pathForCropped, shortPath)
-        io.imsave(croppedFileName, face)
+          # Save faces as files
+          croppedFileName = os.path.join(pathForCropped, shortPath)
+          io.imsave(croppedFileName, face)
+
+    else:
+      images = []
+      imageFiles = [os.path.join(dirpath, f)
+        for dirpath, dirnames, files in os.walk(pathForCropped)
+        for f in fnmatch.filter(files, '*.' + extension)]
+
+      for f in imageFiles:
+        img = cv2.imread(f, 0)
+        if type(img[0,0]) == np.uint8:
+          print "rescaling unit"
+          img = img / 255.0
+        images += [img.reshape(-1)]
 
   else:
     images = []
     imageFiles = [os.path.join(dirpath, f)
-      for dirpath, dirnames, files in os.walk(pathForCropped)
+      for dirpath, dirnames, files in os.walk(path) if dirnames not in ["detection-cropped-equalized", "detection-cropped"]
       for f in fnmatch.filter(files, '*.' + extension)]
+
+    for i in imageFiles:
+      assert not "detection-cropped" in imageFiles
 
     for f in imageFiles:
       img = cv2.imread(f, 0)
       if type(img[0,0]) == np.uint8:
         print "rescaling unit"
         img = img / 255.0
+
+      if equalize:
+        img = equalizeFromFloat(img)
+
       images += [img.reshape(-1)]
 
   assert len(images) != 0
@@ -523,22 +547,22 @@ def readCropEqualize(path, extension, doRecognition, equalize=False,
 
 
 # This needs some thought: remove the cropped folder from path?
-def readJaffe(detectFaces, equalize):
+def readJaffe(crop, detectFaces, equalize):
   PATH = "/data/mcr10/jaffe"
   # PATH = "/home/aela/uni/project/jaffe"
-  return readCropEqualize(PATH , "tiff", detectFaces, equalize=equalize,
+  return readCropEqualize(PATH , "tiff", crop, detectFaces, equalize=equalize,
                           isColoured=False)
 
-def readNottingham(detectFaces, equalize):
+def readNottingham(crop, detectFaces, equalize):
   PATH = "/home/aela/uni/project/nottingham"
   # PATH = "/data/mcr10/nottingham"
-  return readCropEqualize(PATH, "gif", detectFaces, equalize=equalize,
+  return readCropEqualize(PATH, "gif", crop, detectFaces, equalize=equalize,
                           isColoured=False)
 
-def readAberdeen(detectFaces, equalize):
+def readAberdeen(crop, detectFaces, equalize):
   PATH = "/data/mcr10/Aberdeen"
   # PATH = "/home/aela/uni/project/Aberdeen"
-  return readCropEqualize(PATH, "jpg", detectFaces, equalize=equalize,
+  return readCropEqualize(PATH, "jpg", crop, detectFaces, equalize=equalize,
                            isColoured=True)
 
 if __name__ == '__main__':

@@ -67,6 +67,8 @@ parser.add_argument('--validation',dest='validation',action='store_true', defaul
                     help="if true, the network is trained using a validation set")
 parser.add_argument('--equalize',dest='equalize',action='store_true', default=False,
                     help="if true, the input images are equalized before being fed into the net")
+parser.add_argument('--crop',dest='crop',action='store_true', default=False,
+                    help="crops images from databases before training the net")
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--preTrainEpochs', type=int, default=1,
@@ -361,10 +363,10 @@ def deepbeliefKanade(big=False):
 
 
 def buildUnsupervisedDataSetForKanadeLabelled():
-  return readJaffe(args.facedetection, equalize=args.equalize)
+  return readJaffe(args.crop, args.facedetection, equalize=args.equalize)
   # return np.vstack((readAttData(equalize=args.equalize),
   #                   readJaffe(args.facedetection, equalize=args.equalize)))
-                    # readAberdeen(args.facedetection, equalize=args.equalize)))
+                    # readAberdeen(args.crop, args.facedetection, equalize=args.equalize)))
     # readNottingham(),
     # readCroppedYale(),
     # readMultiPIE(equalize=args.equalize)[0]))
