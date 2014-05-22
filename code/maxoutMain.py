@@ -181,7 +181,7 @@ def MultiPIECV():
     extensions = [best_params.MonitorBasedSaveBest(channel_name="valid_y_misclass",
                                                    save_path="/data/mcr10/train_best.pkl")]
 
-    algorithm = sgd.SGD(parms[i][1], batch_size=100, cost=Dropout(),
+    algorithm = sgd.SGD(parms[i][0], batch_size=100, cost=Dropout(),
                         monitoring_dataset=monitoring, termination_criterion=termination)
 
     save_path = "/data/mcr10/train_best.pkl"
