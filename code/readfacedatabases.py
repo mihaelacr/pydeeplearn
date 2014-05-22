@@ -399,7 +399,7 @@ def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=False):
         dataFolds.append(foldData)
         foldLabels = np.array(map(int, foldLabels))
 
-        if vectorizeLabels
+        if vectorizeLabels:
           foldLabels = labelsToVectors(foldLabels -1, 7)
 
         labelFolds.append(foldLabels)
