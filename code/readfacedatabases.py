@@ -310,8 +310,8 @@ def makeEqualizePics():
 
 
 def makeCrossDbPlot():
-  dataKanade, labelsKanade = readKanade()
-  dataPie, labelsPie = readMultiPIE()
+  dataKanade, labelsKanade = readKanade(vectorizeLabels=False)
+  dataPie, labelsPie = readMultiPIE(vectorizeLabels=False)
 
   dataKanade, labelsKanade = mapKanadeToPIELabels(dataKanade, labelsKanade)
 
