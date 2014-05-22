@@ -320,6 +320,7 @@ def makeCrossDbPlot():
   kanadePics = []
   piePics = []
   for i in xrange(6):
+    print "at emotion ", i
     pie = dataPie[labelsPie == i][0]
     kanade = dataKanade[labelsKanade == i][0]
     kanadePics += [kanade]
