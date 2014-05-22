@@ -443,6 +443,8 @@ def mapKanadeToPIELabels(kanadeData, kanadeLabels):
     6: 0
   }
 
+  kanadeLabels = kanadeLabels - 1
+
   mappedLabels = np.array(map(lambda x: kanadeToPie[x], kanadeLabels))
   # Keep the indices for emotions that do not map to the right
   # emotions in the PIE dataset
