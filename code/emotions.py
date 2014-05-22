@@ -744,12 +744,33 @@ def deepBeliefPieDifferentConditions():
   print "average confusionMatrix was ", sum(confustionMatrices) * 1.0 / len(confustionMatrices)
 
 
+def mapKanadeToPIELabels(kanadeData, kanadeLabels):
+  kanadeToPie = {
+    0: 2,
+    1: 4,
+    2: 5,
+    3: 3,
+    4: -1,
+    5: 1,
+    6: 0
+  }
+
+  mappedLabels = np.array(map(lambda x: kanadeToPie[x], kanadeLabels))
+  # Keep the indices for emotions that do not map to the right
+  # emotions in the PIE dataset
+  keepIndices = mappedLabels == -1
+
+  return kanadeData[keepIndices], kanadeLabels[keepIndices]
+
+
 """Train with PIE test with Kanade. Check the equalization code. """
 def crossDataBase():
   trainData, trainLabels = readMultiPIE()
   trainData, trainLabels = shuffle(trainData, trainLabels)
 
   testData, testLabels = readKanade(False, None, equalize=args.equalize)
+  # Some emotions do not correspond for a to b, so we have to map them
+  testData, testLabels = mapKanadeToPIELabels(testData, testLabels)
 
   if args.relu:
     activationFunction = relu
