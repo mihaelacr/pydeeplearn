@@ -467,9 +467,9 @@ def mapKanadeToPIELabels(kanadeData, kanadeLabels):
   mappedLabels = np.array(map(lambda x: kanadeToPie[x], kanadeLabels))
   # Keep the indices for emotions that do not map to the right
   # emotions in the PIE dataset
-  keepIndices = mappedLabels == -1
+  keepIndices = mappedLabels != -1
 
-  return kanadeData[keepIndices], kanadeLabels[keepIndices]
+  return kanadeData[keepIndices], mappedLabels[keepIndices]
 
 
 # TODO: get big, small as argument in order to be able to fit the resizing
