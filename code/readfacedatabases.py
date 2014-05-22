@@ -71,8 +71,10 @@ def readMultiPIE(show=False, equalize=False):
       for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
+
             if equalize:
               image = equalizeFromFloat(image)
+
             image = image.reshape(30,40).T
             if show:
               plt.imshow(image, cmap=plt.cm.gray)
@@ -83,7 +85,7 @@ def readMultiPIE(show=False, equalize=False):
   return np.array(imgs), labelsToVectors(labels, 6)
 
 
-def readMultiPieDifferentIlluminations(illuminationTrain, show=False):
+def readMultiPieDifferentIlluminations(illuminationTrain, show=False, equalize=False):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   mat = scipy.io.loadmat(PATH)
@@ -100,6 +102,10 @@ def readMultiPieDifferentIlluminations(illuminationTrain, show=False):
       for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
+
+            if equalize:
+              image = equalizeFromFloat(image)
+
             image = image.reshape(30,40).T
             if show:
               plt.imshow(image, cmap=plt.cm.gray)
@@ -125,7 +131,7 @@ def readMultiPieDifferentIlluminations(illuminationTrain, show=False):
           imgsTest,  labelsToVectors(labelsTest, 6))
 
 
-def readMultiPieDifferentPoses(posesTrain, show=False):
+def readMultiPieDifferentPoses(posesTrain, show=False, equalize=False):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   mat = scipy.io.loadmat(PATH)
@@ -142,6 +148,9 @@ def readMultiPieDifferentPoses(posesTrain, show=False):
       for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
+            if equalize:
+              image = equalizeFromFloat(image)
+
             image = image.reshape(30,40).T
             if show:
               plt.imshow(image, cmap=plt.cm.gray)
@@ -166,7 +175,7 @@ def readMultiPieDifferentPoses(posesTrain, show=False):
   return (imgsTrain, labelsToVectors(labelsTrain, 6),
           imgsTest,  labelsToVectors(labelsTest, 6))
 
-def readMultiPIESubjects():
+def readMultiPIESubjects(equalize=False):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
 
@@ -181,6 +190,10 @@ def readMultiPIESubjects():
       for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
+
+            if equalize:
+              image = equalizeFromFloat(image)
+
             image = image.reshape(30,40).T
             image = image.reshape(-1)
 
@@ -189,7 +202,7 @@ def readMultiPIESubjects():
   return subjectsToImgs
 
 
-def readMultiPIEEmotions():
+def readMultiPIEEmotions(equalize=False):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
 
@@ -205,6 +218,10 @@ def readMultiPIEEmotions():
       for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
+
+            if equalize:
+              image = equalizeFromFloat(image)
+
             image = image.reshape(30,40).T
             image = image.reshape(-1)
 
@@ -251,7 +268,7 @@ def makeMultiPieImagesForReport():
   plt.show()
 
 
-def readMultiPIEEmotionsPerSubject():
+def readMultiPIEEmotionsPerSubject(equalize):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
 
@@ -270,6 +287,9 @@ def readMultiPIEEmotionsPerSubject():
       for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
+            if equalize:
+              image = equalizeFromFloat(image)
+
             image = image.reshape(30,40).T
             image = image.reshape(-1)
 

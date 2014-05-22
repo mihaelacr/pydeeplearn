@@ -187,8 +187,8 @@ def splitShuffling(shuffling, labelsShuffling):
 # you can create more tuples than just one per image
 # you can put each image in 5 tuples and that will probably owrk better
 # it might be useful to also give the same image twice
-def splitDataMultiPIESubject(imgsPerLabel=None, instanceToPairRatio=1):
-  subjectsToImgs = readMultiPIESubjects()
+def splitDataMultiPIESubject(imgsPerLabel=None, instanceToPairRatio=1, equalize=False):
+  subjectsToImgs = readMultiPIESubjects(equalize)
 
   data1, data2, subjects1, subjects2, shuffling, subjectsShuffling =\
      splitDataInPairsWithLabels(subjectsToImgs, imgsPerLabel,
@@ -335,8 +335,8 @@ def similarityDifferentLabels(labels1, labels2):
   assert len(labels1) == len(labels2)
   return labels1 == labels2
 
-def splitSimilarityYale(instanceToPairRatio):
-  subjectsToImgs = readCroppedYaleSubjects()
+def splitSimilarityYale(instanceToPairRatio, equalize):
+  subjectsToImgs = readCroppedYaleSubjects(equalize)
 
   # Get all subjects
   data1, data2, subjects1, subjects2 = splitDataAccordingToLabels(subjectsToImgs,
@@ -346,8 +346,8 @@ def splitSimilarityYale(instanceToPairRatio):
   return data1, data2, similarityDifferentLabels(subjects1, subjects2)
 
 
-def splitSimilaritiesPIE(instanceToPairRatio):
-  emotionToImages = readMultiPIEEmotions()
+def splitSimilaritiesPIE(instanceToPairRatio, equalize):
+  emotionToImages = readMultiPIEEmotions(equalize)
   # Get all emotions
   data1, data2, emotions1, emotions2 = splitDataAccordingToLabels(emotionToImages,
                                           None, imgsPerLabel=None,
@@ -359,8 +359,8 @@ def splitSimilaritiesPIE(instanceToPairRatio):
 
   return data1, data2, labels
 
-def splitSimilaritiesPIEEmotions(instanceToPairRatio):
-  data1, data2, labels = splitSimilaritiesPIE(instanceToPairRatio)
+def splitSimilaritiesPIEEmotions(instanceToPairRatio, equalize):
+  data1, data2, labels = splitSimilaritiesPIE(instanceToPairRatio, equalize)
 
   kf = cross_validation.KFold(n=len(data1), n_folds=5)
   for train, test in kf:
@@ -370,8 +370,8 @@ def splitSimilaritiesPIEEmotions(instanceToPairRatio):
           data1[test], data2[test], labels[test])
 
 
-def splitEmotionsMultiPieKeepSubjects(instanceToPairRatio):
-  subjectToEmotions = readMultiPIEEmotionsPerSubject()
+def splitEmotionsMultiPieKeepSubjects(instanceToPairRatio, equalize):
+  subjectToEmotions = readMultiPIEEmotionsPerSubject(equalize)
 
   totalData1 = []
   totalData2 = []
@@ -393,10 +393,10 @@ def splitEmotionsMultiPieKeepSubjects(instanceToPairRatio):
 # Do not add the similarity code her because
 # I will use this for both emotion difference and similarity
 # you can just change this due to
-def splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio):
+def splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio, equalize):
 
   totalData1, totalData2, totalLabels1, totalLabels2 =\
-     splitEmotionsMultiPieKeepSubjects(instanceToPairRatio)
+     splitEmotionsMultiPieKeepSubjects(instanceToPairRatio, equalize)
 
   kf = cross_validation.KFold(n=len(totalData1), n_folds=5)
   for train, test in kf:

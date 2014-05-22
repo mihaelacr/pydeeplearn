@@ -23,15 +23,15 @@ parser.add_argument('--emotionsdiff', dest='emotionsdiff',action='store_true', d
                     help=("if true, trains a net to distinguish between emotions"))
 parser.add_argument('--emotionsdiffsamesubj', dest='emotionsdiffsamesubj',action='store_true', default=False,
                     help=("if true, trains a net to distinguish between emotions where the pictures presented are the same people"))
-
-
+parser.add_argument('--equalize',dest='equalize',action='store_true', default=False,
+                    help="if true, the input images are equalized before being fed into the net")
 
 args = parser.parse_args()
 
 
 def similarityMain():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
-     splitDataMultiPIESubject(instanceToPairRatio=2)
+     splitDataMultiPIESubject(instanceToPairRatio=2, equalize=args.equalize)
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
@@ -111,14 +111,14 @@ def similarityMain():
 
 
 def similarityMainTestYale():
-  subjectsToImgs = readMultiPIESubjects()
+  subjectsToImgs = readMultiPIESubjects(args.equalize)
 
   trainData1, trainData2, trainSubjects1, trainSubjects2 =\
     splitDataAccordingToLabels(subjectsToImgs, None, imgsPerSubject=None)
 
   similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
 
-  testData1, testData2, similaritiesTest = splitSimilarityYale()
+  testData1, testData2, similaritiesTest = splitSimilarityYale(args.equalize)
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
@@ -197,7 +197,7 @@ def similarityDifferentSubjectsMain():
   for train, test in kf:
     break
 
-  subjectsToImgs = readMultiPIESubjects()
+  subjectsToImgs = readMultiPIESubjects(args.equalize)
 
   subjectTrain = subjects[train]
   subjectTest = subjects[test]
@@ -290,7 +290,7 @@ def similarityDifferentSubjectsMain():
 
 def similarityCV():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
-     splitDataMultiPIESubject(instanceToPairRatio=2)
+     splitDataMultiPIESubject(instanceToPairRatio=2, equalize=args.equalize)
 
   if args.relu:
     # TODO: params for relu
@@ -391,7 +391,7 @@ def similarityCV():
 
 
 def similarityCVEmotions():
-  data1, data2, labels = splitSimilaritiesPIE(instanceToPairRatio=2)
+  data1, data2, labels = splitSimilaritiesPIE(instanceToPairRatio=2, equalize=args.equalize)
 
   if args.relu:
     # TODO: params for relu
@@ -482,7 +482,7 @@ def similarityCVEmotions():
 
 def similarityEmotionsMain():
   trainData1, trainData2, trainLabels, testData1, testData2, testLabels =\
-       splitSimilaritiesPIEEmotions(instanceToPairRatio=2)
+       splitSimilaritiesPIEEmotions(instanceToPairRatio=2, equalize=args.equalize)
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
@@ -572,7 +572,7 @@ def similarityEmotionsMain():
 
 def similarityEmotionsSameSubject():
   trainData1, trainData2, trainLabels, testData1, testData2, testLabels =\
-       splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio=2)
+       splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio=2, equalize=args.equalize)
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
