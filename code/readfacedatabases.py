@@ -159,6 +159,7 @@ def readMultiPieDifferentPoses(posesTrain, show=False, equalize=False):
             if show:
               plt.imshow(image, cmap=plt.cm.gray)
               plt.show()
+
             if pose in posesTrain:
               imgsTrain += [image.reshape(-1)]
               labelsTrain += [expression]
@@ -327,6 +328,7 @@ def makeCrossDbPlot():
 
     pie = dataPie[labelsPie == i]
     pie = pie[0]
+    print "pie.shape"
     print pie.shape
     pie = pie.reshape(SMALL_SIZE)
 
@@ -681,4 +683,5 @@ if __name__ == '__main__':
   # readCroppedYaleSubjects(show=True)
   # makeMultiPieImagesForReport()
   # makeEqualizePics()
+  readMultiPieDifferentPoses([3], True)
   makeCrossDbPlot()
