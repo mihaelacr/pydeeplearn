@@ -315,8 +315,8 @@ def makeEqualizePics():
 
 def makeCrossDbPlot():
   dataKanade, labelsKanade = readKanade(vectorizeLabels=False)
-  dataPie, labelsPie, _, _ = readMultiPieDifferentPoses([3])
-  labelsPie = np.argmax(labelsPie)
+  dataPie, labelsPie, _, _ = readMultiPieDifferentPoses([2])
+  labelsPie = np.argmax(labelsPie, axis=1)
 
   labelsKanade = labelsKanade - 1
 
@@ -684,5 +684,4 @@ if __name__ == '__main__':
   # readCroppedYaleSubjects(show=True)
   # makeMultiPieImagesForReport()
   # makeEqualizePics()
-  readMultiPieDifferentPoses([2], True)
   makeCrossDbPlot()
