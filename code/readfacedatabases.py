@@ -340,10 +340,10 @@ def makeCrossDbPlot():
     piePics += [pie]
 
 
-  image1 = np.vstack(tuple(kanadePics))
-  image2 = np.vstack(tuple(piePics))
+  image1 = np.hstack(tuple(kanadePics))
+  image2 = np.hstack(tuple(piePics))
 
-  images = np.hstack((image1, image2))
+  images = np.vstack((image1, image2))
 
   plt.imshow(images, cmap=plt.cm.gray)
   plt.axis('off')
