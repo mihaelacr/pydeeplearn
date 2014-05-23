@@ -313,7 +313,7 @@ def makeEqualizePics():
 
 def makeCrossDbPlot():
   dataKanade, labelsKanade = readKanade(vectorizeLabels=False)
-  dataPie, labelsPie, _, _ = readMultiPieDifferentIlluminations([3])
+  dataPie, labelsPie, _, _ = readMultiPieDifferentPoses([3])
   labelsPie = np.argmax(labelsPie)
 
   labelsKanade = labelsKanade - 1
@@ -327,6 +327,7 @@ def makeCrossDbPlot():
 
     pie = dataPie[labelsPie == i]
     pie = pie[0]
+    print pie.shape
     pie = pie.reshape(SMALL_SIZE)
 
     kanade = dataKanade[labelsKanade == i]

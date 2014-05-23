@@ -750,7 +750,7 @@ def deepBeliefPieDifferentConditions():
 
 
 
-
+# TODO: try with the same poses, it will work bad with training with all poses I think
 """Train with PIE test with Kanade. Check the equalization code. """
 def crossDataBase():
   trainData, trainLabels = readMultiPIE()
