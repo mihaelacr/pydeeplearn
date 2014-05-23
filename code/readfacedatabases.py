@@ -156,13 +156,14 @@ def readMultiPieDifferentPoses(posesTrain, show=False, equalize=False):
               image = equalizeFromFloat(image)
 
             image = image.reshape(30,40).T
-            if show:
-              plt.imshow(image, cmap=plt.cm.gray)
-              plt.show()
 
             if pose in posesTrain:
               imgsTrain += [image.reshape(-1)]
               labelsTrain += [expression]
+              # Only show the faces for this pose
+              if show:
+                plt.imshow(image, cmap=plt.cm.gray)
+                plt.show()
             else:
               imgsTest += [image.reshape(-1)]
               labelsTest += [expression]
