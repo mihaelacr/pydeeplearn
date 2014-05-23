@@ -684,5 +684,5 @@ if __name__ == '__main__':
   # readCroppedYaleSubjects(show=True)
   # makeMultiPieImagesForReport()
   # makeEqualizePics()
-  readMultiPieDifferentPoses([0], True)
+  readMultiPieDifferentPoses([3], True)
   makeCrossDbPlot()
