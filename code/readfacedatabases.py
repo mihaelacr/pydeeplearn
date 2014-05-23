@@ -248,10 +248,17 @@ def makeMultiPieImagesForReport():
   for x in xrange(nrSubjects):
     total += [[1] * 6]
 
+
   for subject in xrange(147):
     for pose in xrange(5):
+      if pose != 2 * subject + 1:
+        continue
       for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
+
+            if illumination != subject:
+              continue
+
             image = np.squeeze(data[subject,pose,expression,illumination,:])
 
             image = image.reshape(30,40).T
