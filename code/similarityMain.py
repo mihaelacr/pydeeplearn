@@ -9,7 +9,7 @@ import similarity
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM with a rectified linear units"))
-parser.add_argument('--', dest='rmsprop',action='store_true', default=False,
+parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=False,
                     help=("if true, trains the similarity net is "))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, does cv"))
