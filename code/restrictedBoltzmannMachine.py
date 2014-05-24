@@ -103,10 +103,7 @@ class RBMMiniBatchTrainer(object):
 
     self.visibleReconstruction = visibleSeq[-1]
 
-
     self.runningAvgExpected = theano.shared(value=np.float32(0))
-
-
 
     # if sparsityConstraint:
     if binary:
