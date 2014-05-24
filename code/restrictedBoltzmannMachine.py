@@ -357,11 +357,11 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      runningAvg = batch.runningAvgExpected * 0.9 + T.mean(batchTrainer.expected, axis=0) * 0.1
+      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.expected, axis=0) * 0.1
       # Sum over all hidden units
       sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
 
-      updates.append((batch.runningAvgExpected, runningAvg))
+      updates.append((batchTrainer.runningAvgExpected, runningAvg))
 
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.expected)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
@@ -441,11 +441,11 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      runningAvg = batch.runningAvgExpected * 0.9 + T.mean(batchTrainer.expected, axis=0) * 0.1
+      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.expected, axis=0) * 0.1
       # Sum over all hidden units
       sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
 
-      updates.append((batch.runningAvgExpected, runningAvg))
+      updates.append((batchTrainer.runningAvgExpected, runningAvg))
 
 
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hiddenActivations)
