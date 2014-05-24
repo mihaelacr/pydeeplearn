@@ -79,20 +79,14 @@ class RBMMiniBatchTrainer(object):
 
     def OneCDStep(visibleSample):
       linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
-      hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
-      # Sample only for stochastic binary units
-      if self.binary:
-        hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
-                                            n=1, p=hiddenActivations,
-                                            dtype=theanoFloat)
-      else:
-        hidden = hiddenActivations
+      hidden = hiddenActivationFunction.nonDeterminstic(linearSum) * dropoutMaskHidden
 
       linearSum = T.dot(hidden, self.weights.T) + self.biasVisible
       if visibleDropout in [1.0, 1]:
-        visibleRec = visibleActivationFunction(linearSum)
+        visibleRec = visibleActivationFunction.deterministic(linearSum)
       else:
-        visibleRec = visibleActivationFunction(linearSum) * dropoutMaskVisible
+        visibleRec = visibleActivationFunction.deterministic(linearSum) * dropoutMaskVisible
+
       return visibleRec
 
     visibleSeq, updates = theano.scan(OneCDStep,
@@ -106,13 +100,18 @@ class RBMMiniBatchTrainer(object):
     self.runningAvgExpected = theano.shared(value=np.zeros(shape=initialBiases[1].shape,
                                            dtype=theanoFloat))
 
-    # if sparsityConstraint:
+    # Duplicate work but avoiding gradient in theano thinking we are using a random op
+    linearSum = T.dot(droppedOutVisible, self.weights) + self.biasHidden
     if binary:
-      self.expected = self.hiddenActivations
+      self.hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
+    # THis only copes with noisy relu, so not with max relu or anything else
+    # needs to be changed
     else:
-      self.expected = expectedValueRelu(linearSum)
+      self.hiddenActivations =  expectedValueRelu(linearSum)
 
     # Do not sample for the last one, in order to get less sampling noise
+    # Here you should also use a expected value for symmetry
+    # but we need an elegant way to do it
     hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
 
@@ -512,6 +511,9 @@ class RBM(object):
 
     representHidden = theano.function(
             inputs=[],
+            # TODO: instead of using hiddenAcitvations how about using
+            #  the expectation?
+            # or just make hidden activations to be the expectation?
             outputs=self.reconstructer.hiddenActivations,
             updates=self.reconstructer.updates,
             givens={self.x: dataInstacesConverted})
