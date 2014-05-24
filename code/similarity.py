@@ -42,8 +42,13 @@ class Trainer(object):
     _, weightForHidden = rbm.testWeights(self.net.sharedWeights,
           visibleDropout=self.net.visibleDropout, hiddenDropout=self.net.hiddenDropout)
 
-    hiddenActivations1 = T.nnet.sigmoid(T.dot(input1, weightForHidden) + hiddenBias)
-    hiddenActivations2 = T.nnet.sigmoid(T.dot(input2, weightForHidden) + hiddenBias)
+    # THE HORROR: how shall this work for relu
+    # change it back to the rmb approach or just use the activation function
+    # but I somehow need the deterministic version: that would be better
+    # so even for relu I need to take the expected? or just do the max relu thing
+
+    hiddenActivations1 = net.hiddenActivationFunction(T.dot(input1, weightForHidden) + hiddenBias)
+    hiddenActivations2 = net.hiddenActivationFunction(T.dot(input2, weightForHidden) + hiddenBias)
 
     # Here i have no sampling
     cos = cosineDistance(hiddenActivations1, hiddenActivations2)
