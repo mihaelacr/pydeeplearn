@@ -191,6 +191,7 @@ class RBM(object):
                 initialWeights=None,
                 initialBiases=None,
                 trainingEpochs=1,
+                sparsityCostFunction=squaredDiff,
                 sparsityConstraint=False,
                 sparsityRegularization=0.01,
                 sparsityTraget=0.01):
@@ -216,6 +217,7 @@ class RBM(object):
     self.sparsityConstraint = sparsityConstraint
     self.sparsityRegularization = np.float32(sparsityRegularization)
     self.sparsityTraget = np.float32(sparsityTraget)
+    self.sparsityCostFunction = sparsityCostFunction
 
 
     if sparsityConstraint:
@@ -357,7 +359,7 @@ class RBM(object):
     if self.sparsityConstraint:
       runningAvg = batch.runningAvgExpected * 0.9 + T.mean(batchTrainer.expected, axis=0) * 0.1
       # Sum over all hidden units
-      sparsityCost = T.sum(T.sqr(self.sparsityTraget - runningAvg))
+      sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
 
       updates.append((batch.runningAvgExpected, runningAvg))
 
@@ -441,7 +443,7 @@ class RBM(object):
     if self.sparsityConstraint:
       runningAvg = batch.runningAvgExpected * 0.9 + T.mean(batchTrainer.expected, axis=0) * 0.1
       # Sum over all hidden units
-      sparsityCost = T.sum(T.sqr(self.sparsityTraget - runningAvg))
+      sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
 
       updates.append((batch.runningAvgExpected, runningAvg))
 

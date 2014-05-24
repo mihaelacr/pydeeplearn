@@ -116,6 +116,9 @@ def shuffle3(data1, data2, labels):
   return shuffledData1, shuffledData2, shuffledLabels
 
 
+def squaredDiff(first, second):
+  return T.sqr(first - second)
+
 # Recitified linear unit
 def relu(var):
   return var * (var > 0.0)
