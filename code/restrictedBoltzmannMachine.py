@@ -103,8 +103,11 @@ class RBMMiniBatchTrainer(object):
 
     self.visibleReconstruction = visibleSeq[-1]
 
-    # TODO: you need to try this out for the noisy rectified linear units
-    # with the thing which I made
+
+    self.runningAvgExpected = theano.shared(value=np.float32(0))
+
+
+
     # if sparsityConstraint:
     if binary:
       self.expected = self.hiddenActivations
@@ -351,11 +354,13 @@ class RBM(object):
 
 
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
+    updates = []
 
     if self.sparsityConstraint:
-      sparsityCost = T.sum(T.sqr(self.sparsityTraget - T.mean(batchTrainer.expected, axis=0)))
+      runningAvg = batch.runningAvgExpected * 0.9 + batchTrainer.expected * 0.1
+      sparsityCost = T.sum(T.sqr(self.sparsityTraget - T.mean(runningAvg, axis=0)))
 
-    updates = []
+      updates.append((batch.runningAvgExpected, runningAvg))
 
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.expected)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
@@ -421,6 +426,7 @@ class RBM(object):
     return updates
 
   def buildNesterovUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
+
     preDeltaUpdates = []
 
     wUpdateMomentum = momentum * batchTrainer.oldDw
@@ -431,10 +437,13 @@ class RBM(object):
     preDeltaUpdates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdateMomentum))
     preDeltaUpdates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdateMomentum))
 
-    if self.sparsityConstraint:
-      sparsityCost = T.sum(T.sqr(self.sparsityTraget - T.mean(batchTrainer.expected, axis=0)))
 
     updates = []
+
+    if self.sparsityConstraint:
+      runningAvg = batch.runningAvgExpected * 0.9 + batchTrainer.expected * 0.1
+      sparsityCost = T.sum(T.sqr(self.sparsityTraget - T.mean(runningAvg, axis=0)))
+      updates.append((batch.runningAvgExpected, runningAvg))
 
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hiddenActivations)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
