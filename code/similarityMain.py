@@ -64,6 +64,7 @@ def similarityMain():
     trainData1 = scale(trainData1)
     trainData2 = scale(trainData2)
 
+  # Stochastic binary units
   else:
     if args.rmsprop:
       learningRate = 0.001
@@ -71,7 +72,7 @@ def similarityMain():
       maxMomentum = 0.95
     else:
       learningRate = 0.001
-      rbmLearningRate = 0.005
+      rbmLearningRate = 0.05
       maxMomentum = 0.95
 
     visibleActivationFunction = T.nnet.sigmoid
