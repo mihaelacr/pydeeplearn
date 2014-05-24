@@ -251,12 +251,6 @@ class RBM(object):
     if weights == None and biases == None:
       weights = initializeWeights(self.nrVisible, self.nrHidden)
       biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
-      # if self.binary:
-      #   # TODO: I think this makes no senseinitializeBiasesReal
-      #   self.biases = intializeBiasesBinary(data, self.nrHidden)
-      # else:
-      #   # TODO: think of this
-      #   self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden
 
     theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
 
@@ -304,9 +298,6 @@ class RBM(object):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
 
     self.miniBatchSize = miniBatchSize
-    # Now you have to build the training function
-    # and the updates
-    # The mini-batch data is a matrix
 
     batchTrainer = self.batchTrainer
     x = self.x
