@@ -358,7 +358,7 @@ def similarityCV():
                                       hiddenActivationFunction=hiddenActivationFunction,
                                       binary=1-args.relu,
                                       rbmNrVis=1200,
-                                      rbmNrHid=500,
+                                      rbmNrHid=700,
                                       rbmLearningRate=params[fold][1],
                                       rbmDropoutHid=1.0,
                                       # TODO: replace all these
