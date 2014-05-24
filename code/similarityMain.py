@@ -298,7 +298,8 @@ def similarityCV():
     # params = [(0.001, 0.01), (0.001, 0.005), (0.01, 0.01), (0.01, 0.005)]
 
     visibleActivationFunction = identity
-    hiddenActivationFunction = makeNoisyReluSigmoid()
+    # TODO: switch back to noisy relu
+    hiddenActivationFunction = relu
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
     testData1 = scale(testData1)
     testData2 = scale(testData2)
