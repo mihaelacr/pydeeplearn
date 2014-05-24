@@ -103,7 +103,8 @@ class RBMMiniBatchTrainer(object):
 
     self.visibleReconstruction = visibleSeq[-1]
 
-    self.runningAvgExpected = theano.shared(value=np.float32(0))
+    self.runningAvgExpected = theano.shared(value=np.zeros(shape=initialBiases[1].shape,
+                                           dtype=theanoFloat))
 
     # if sparsityConstraint:
     if binary:
@@ -354,8 +355,9 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      runningAvg = batch.runningAvgExpected * 0.9 + batchTrainer.expected * 0.1
-      sparsityCost = T.sum(T.sqr(self.sparsityTraget - T.mean(runningAvg, axis=0)))
+      runningAvg = batch.runningAvgExpected * 0.9 + T.mean(batchTrainer.expected, axis=0) * 0.1
+      # Sum over all hidden units
+      sparsityCost = T.sum(T.sqr(self.sparsityTraget - runningAvg))
 
       updates.append((batch.runningAvgExpected, runningAvg))
 
@@ -434,13 +436,15 @@ class RBM(object):
     preDeltaUpdates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdateMomentum))
     preDeltaUpdates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdateMomentum))
 
-
     updates = []
 
     if self.sparsityConstraint:
-      runningAvg = batch.runningAvgExpected * 0.9 + batchTrainer.expected * 0.1
-      sparsityCost = T.sum(T.sqr(self.sparsityTraget - T.mean(runningAvg, axis=0)))
+      runningAvg = batch.runningAvgExpected * 0.9 + T.mean(batchTrainer.expected, axis=0) * 0.1
+      # Sum over all hidden units
+      sparsityCost = T.sum(T.sqr(self.sparsityTraget - runningAvg))
+
       updates.append((batch.runningAvgExpected, runningAvg))
+
 
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hiddenActivations)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
