@@ -287,9 +287,6 @@ def similarityDifferentSubjectsMain():
 
   print correct
 
-
-
-
 def similarityCV():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
      splitDataMultiPIESubject(instanceToPairRatio=2, equalize=args.equalize)
@@ -323,7 +320,6 @@ def similarityCV():
       # params = [(0.001, 0.01, 0.001), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
       #           (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
       params = makeParamsGrid([(0.001, 0.01, 4), (0.005, 0.05, 4), (0.005, 0.05, 4)])
-
   else:
     if args.rmsprop:
       params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
@@ -343,8 +339,6 @@ def similarityCV():
 
       # params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
       params = [(0.01, 0.01), (0.01, 0.005), (0.0001, 0.05), (0.001, 0.005)]
-
-
 
   kf = cross_validation.KFold(n=len(trainData1), n_folds=len(params))
 
