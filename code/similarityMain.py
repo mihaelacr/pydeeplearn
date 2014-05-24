@@ -91,7 +91,7 @@ def similarityMain():
                                     rmsprop=False,
                                     trainingEpochsRBM=10)
 
-  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=2000)
+  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=1000)
 
   res = simNet.test(testData1, testData2)
 
