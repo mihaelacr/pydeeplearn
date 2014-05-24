@@ -236,6 +236,26 @@ def readMultiPIEEmotions(equalize=False):
   return emotionToImages
 
 
+def makeKanadeImages():
+  data, labels = readKanade(vectorizeLabels=False)
+
+  if 7 in labels:
+    labels = labels -1
+
+  print np.unique(labels)
+
+  images = []
+  for i in xrange(7):
+    print i
+    emotionData = data[labels == i]
+    images += [emotionData[0].reshape(SMALL_SIZE)]
+
+  images = np.hstack(images)
+
+  plt.imshow(images, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.show()
+
 def makeMultiPieImagesForReport():
 
   PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
@@ -262,9 +282,8 @@ def makeMultiPieImagesForReport():
             image = np.squeeze(data[subject,pose,expression,illumination,:])
 
             image = image.reshape(30,40).T
-            print total[subject]
             total[subject][expression] = image
-            break
+
     if subject + 1 >= nrSubjects:
       break
 
