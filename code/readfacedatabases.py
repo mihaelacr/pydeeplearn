@@ -268,23 +268,31 @@ def makeMultiPieImagesForReport():
   for x in xrange(nrSubjects):
     total += [[1] * 6]
 
+  subjects = [0, 43, 140]
 
   for subject in xrange(147):
+    print subject
+    if subject not in subjects:
+      continue
+
+    index = subjects.index(subject)
+    print "index", index
+
     for pose in xrange(5):
-      if pose != 2 * subject + 1:
+      if pose != 2 * index:
         continue
       for expression in xrange(6): # ['Neutral','Surprise','Squint','Smile','Disgust','Scream']
         for illumination in xrange(5):
 
-            if illumination != subject:
+            if illumination != index:
               continue
 
             image = np.squeeze(data[subject,pose,expression,illumination,:])
 
             image = image.reshape(30,40).T
-            total[subject][expression] = image
+            total[index][expression] = image
 
-    if subject + 1 >= nrSubjects:
+    if index + 1 >= nrSubjects:
       break
 
   final = []
@@ -708,6 +716,7 @@ if __name__ == '__main__':
   # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   # readMultiPIE(show=True)
   # readCroppedYaleSubjects(show=True)
-  makeMultiPieImagesForReport()
+  # makeMultiPieImagesForReport()
   # makeEqualizePics()
   # makeCrossDbPlot()
+  makeKanadeImages()
