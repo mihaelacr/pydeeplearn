@@ -25,8 +25,13 @@ parser.add_argument('--emotionsdiffsamesubj', dest='emotionsdiffsamesubj',action
                     help=("if true, trains a net to distinguish between emotions where the pictures presented are the same people"))
 parser.add_argument('--equalize',dest='equalize',action='store_true', default=False,
                     help="if true, the input images are equalized before being fed into the net")
+parser.add_argument('--nrHidden',dest='nrHidden', type=int, default=500,
+                    help="how many hidden units should be used for the net")
+
 
 args = parser.parse_args()
+
+
 
 
 def similarityMain():
@@ -84,7 +89,7 @@ def similarityMain():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     binary=1-args.relu,
                                     rbmNrVis=1200,
-                                    rbmNrHid=2000,
+                                    rbmNrHid=args.nrHidden,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
@@ -167,7 +172,7 @@ def similarityMainTestYale():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     binary=1-args.relu,
                                     rbmNrVis=1200,
-                                    rbmNrHid=2000,
+                                    rbmNrHid=args.nrHidden,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
@@ -261,7 +266,7 @@ def similarityDifferentSubjectsMain():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     binary=1-args.relu,
                                     rbmNrVis=1200,
-                                    rbmNrHid=2000,
+                                    rbmNrHid=args.nrHidden,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rmsprop=False,
@@ -351,7 +356,7 @@ def similarityCV():
                                       hiddenActivationFunction=hiddenActivationFunction,
                                       binary=1-args.relu,
                                       rbmNrVis=1200,
-                                      rbmNrHid=2000,
+                                      rbmNrHid=args.nrHidden,
                                       rbmLearningRate=params[fold][1],
                                       rbmDropoutHid=1.0,
                                       # TODO: replace all these
@@ -446,7 +451,7 @@ def similarityCVEmotions():
                                       hiddenActivationFunction=hiddenActivationFunction,
                                       binary=1-args.relu,
                                       rbmNrVis=1200,
-                                      rbmNrHid=2000,
+                                      rbmNrHid=args.nrHidden,
                                       rbmLearningRate=params[fold][1],
                                       rbmDropoutHid=1.0,
                                       rbmDropoutVis=1.0,
@@ -525,7 +530,7 @@ def similarityEmotionsMain():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     binary=1-args.relu,
                                     rbmNrVis=1200,
-                                    rbmNrHid=2000,
+                                    rbmNrHid=args.nrHidden,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
@@ -615,7 +620,7 @@ def similarityEmotionsSameSubject():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     binary=1-args.relu,
                                     rbmNrVis=1200,
-                                    rbmNrHid=2000,
+                                    rbmNrHid=args.nrHidden,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
