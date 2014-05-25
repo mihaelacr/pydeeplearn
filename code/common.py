@@ -38,13 +38,6 @@ Returns:
 def imagesToVectors(images):
   return np.array(map(lambda x: x.reshape(-1), images))
 
-# Do not use theano's softmax, it is numerically unstable
-# and it causes Nans to appear
-# Semantically this is the same
-def softmax(v):
-  e_x = T.exp(v - v.max(axis=1, keepdims=True))
-  return e_x / e_x.sum(axis=1, keepdims=True)
-
 def sample(p, size):
   return np.random.uniform(size=size) <= p
 
@@ -78,17 +71,6 @@ def labelsToVectors(labels, size):
 def zerosFromShape(l):
   return map(lambda x: np.zeros(x.shape), l)
 
-# def shuffle(data, labels):
-#   shuffledData, shuffledLabels = shuffleList(data, labels)
-#   return np.array(shuffledData), np.array(shuffledLabels)
-
-# def shuffleList(data, labels):
-#   indexShuffle = np.random.permutation(len(data))
-#   shuffledData = [data[i] for i in indexShuffle]
-#   shuffledLabels = [labels[i] for i in indexShuffle]
-
-#   return shuffledData, shuffledLabels
-
 def shuffle(*args):
   shuffled = shuffleList(*args)
   f = lambda x: np.array(x)
@@ -118,35 +100,6 @@ def shuffle3(data1, data2, labels):
 
 def squaredDiff(first, second):
   return T.sqr(first - second)
-
-# Recitified linear unit
-def relu(var):
-  return var * (var > 0.0)
-
-def cappedRelu(var):
-  return var * (var > 0.0) * (var < 6.0)
-
-# This works for rbms but do not use it for backprop
-def noisyRelu(var, theano_rng):
-  var += theano_rng.normal(avg=0.0, std=1.0)
-  return var * (var > 0.0)
-
-def makeNoisyRelu():
-  rng = RandomStreams(seed=np.random.randint(1, 1000))
-
-  return lambda var: noisyRelu(var, rng)
-
-def noisyReluSigmoid(var, theano_rng):
-  var += theano_rng.normal(avg=0.0, std=T.nnet.ultra_fast_sigmoid(var))
-  return var * (var > 0.0)
-
-def makeNoisyReluSigmoid():
-  rng = RandomStreams(seed=np.random.randint(1, 1000))
-
-  return lambda var: noisyReluSigmoid(var, rng)
-
-def identity(var):
-  return var
 
 # Makes a parameter grid required for cross validation
 # the input should be a list of tuples of size 3: min, max and  number of steps

@@ -59,6 +59,34 @@ class RectifiedNoisyVar1(object):
     return expectedValueGaussian(x, 1.0)
 
 
+class Identity(object):
+
+  def deterministc(self, x):
+    return x
+
+class Softmax(object):
+
+  def deterministc(self, v):
+    # Do not use theano's softmax, it is numerically unstable
+    # and it causes Nans to appear
+    # Semantically this is the same
+    e_x = T.exp(v - v.max(axis=1, keepdims=True))
+    return e_x / e_x.sum(axis=1, keepdims=True)
+
+
+# TODO: try this for the non deterministic version as well
+class CappedRectified(object):
+
+  def __init__(self):
+    pass
+
+  def nonDeterminstic(self, x):
+    return self.deterministc(x)
+
+  def deterministc(self, x):
+    return x * (x > 0.0) * (x < 6.0)
+
+
 def expectedValueGaussian(mean, std):
   return T.sqrt(std / (2.0 * np.pi)) * T.exp(- mean**2 / (2.0 * std)) + mean * cdf(mean / std)
 
@@ -66,13 +94,3 @@ def expectedValueGaussian(mean, std):
 def cdf(x):
   return 1.0/2 *  (1.0 + T.erf(x / T.sqrt(2)))
 
-
-def identity(var):
-  return var
-
-# Do not use theano's softmax, it is numerically unstable
-# and it causes Nans to appear
-# Semantically this is the same
-def softmax(v):
-  e_x = T.exp(v - v.max(axis=1, keepdims=True))
-  return e_x / e_x.sum(axis=1, keepdims=True)

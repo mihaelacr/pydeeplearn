@@ -81,8 +81,6 @@ args = parser.parse_args()
 # Set the debug mode in the deep belief net
 db.DEBUG = args.debug
 
-BINARY = {T.nnet.sigmoid : True}.get(False)
-
 def rbmMain(reconstructRandom=False):
   trainVectors, trainLabels =\
       readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
@@ -94,13 +92,13 @@ def rbmMain(reconstructRandom=False):
 
   # TODO: the reconstruction for relu still looks weird
   if args.relu:
-    activationFunction = makeNoisyReluSigmoid()
+    activationFunction = RectifiedNoisy()
     learningRate = 5e-05
     binary=False
   else:
     learningRate = 0.3
     binary=True
-    activationFunction = T.nnet.sigmoid
+    activationFunction = Sigmoid()
 
   # Train the network
   if args.train:
@@ -294,8 +292,8 @@ def rbmMainGauss(reconstructRandom=False):
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
                   binary=False,
-                  visibleActivationFunction=identity,
-                  hiddenActivationFunction=makeNoisyReluSigmoid(),
+                  visibleActivationFunction=Identity(),
+                  hiddenActivationFunction=RectifiedNoisy(),
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
@@ -355,7 +353,7 @@ def makeNicePlots():
   # TODO: the reconstruction for relu still looks weird
   learningRate = 0.1
   binary = True
-  activationFunction = T.nnet.sigmoid
+  activationFunction = Sigmoid()
 
   # Train the network
   if args.train:
@@ -462,6 +460,7 @@ def pcaOnMnist(training, dimension=700):
 
 
 def cvMNIST():
+  assert not args.relu, "do not run this function for rectified linear units"
   training = args.trainSize
 
   data, labels =\
@@ -471,10 +470,7 @@ def cvMNIST():
   scaledData = data / 255.0
   vectorLabels = labelsToVectors(labels, 10)
 
-  if args.relu:
-    activationFunction = relu
-  else:
-    activationFunction = T.nnet.sigmoid
+  activationFunction = Sigmoid()
 
 
   bestFold = -1
@@ -630,7 +626,11 @@ def svmMNIST():
   svm.SVMCV(dbnNet, trainingScaledVectors, trainLabels,
             testingScaledVectors, testLabels)
 
+# NOT for relu: use GaussianMNIST for that
 def deepbeliefMNIST():
+
+  assert not args.relu, "do not run this method for rectified linear units"
+
   training = args.trainSize
   testing = args.testSize
 
@@ -642,11 +642,7 @@ def deepbeliefMNIST():
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
-  if args.relu:
-    # activationFunction = makeNoisyRelu()
-    activationFunction = relu
-  else:
-    activationFunction = T.nnet.sigmoid
+  activationFunction = Sigmoid()
 
   # TODO: do not divide for RELU?
   trainingScaledVectors = trainVectors / 255.0
@@ -654,24 +650,13 @@ def deepbeliefMNIST():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  if args.relu:
-    unsupervisedLearningRate = 5e-06
-    supervisedLearningRate = 0.001
-    momentumMax = 0.95
-
-  else:
-    # unsupervisedLearningRate = 0.01
-    # supervisedLearningRate = 0.05
-
-    unsupervisedLearningRate = 0.01
-    supervisedLearningRate = 0.05
-    momentumMax = 0.95
+  unsupervisedLearningRate = 0.01
+  supervisedLearningRate = 0.05
+  momentumMax = 0.95
 
   if args.train:
-    # Try 1200, 1200, 1200
-    # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                 binary=1-args.relu,
+                 binary=False,
                  unsupervisedLearningRate=unsupervisedLearningRate,
                  supervisedLearningRate=supervisedLearningRate,
                  momentumMax=momentumMax,
@@ -776,8 +761,8 @@ def deepbeliefMNISTGaussian():
                  supervisedLearningRate=supervisedLearningRate,
                  momentumMax=momentumMax,
                  activationFunction=relu,
-                 rbmActivationFunctionVisible=identity,
-                 rbmActivationFunctionHidden=makeNoisyReluSigmoid(),
+                 rbmActivationFunctionVisible=Identity(),
+                 rbmActivationFunctionHidden=RectifiedNoisy(),
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
@@ -879,8 +864,8 @@ def cvMNISTGaussian():
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   activationFunction=relu,
-                  rbmActivationFunctionVisible=identity,
-                  rbmActivationFunctionHidden=makeNoisyReluSigmoid(),
+                  rbmActivationFunctionVisible=Identity(),
+                  rbmActivationFunctionHidden=RectifiedNoisy(),
                   rmsprop=args.rmsprop,
                   visibleDropout=0.8,
                   hiddenDropout=0.5,

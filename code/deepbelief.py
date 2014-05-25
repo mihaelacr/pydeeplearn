@@ -96,18 +96,18 @@ class MiniBatchTrainer(object):
       linearSum = T.dot(currentLayerValues, w) + b
       # dropout: give the next layer only some of the units from this layer
       if hiddenDropout in  [1.0, 1]:
-        currentLayerValues = activationFunction(linearSum)
+        currentLayerValues = activationFunction.deterministic(linearSum)
       else:
         dropoutMaskHidden = self.theanoRng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
-        currentLayerValues = dropoutMaskHidden * activationFunction(linearSum)
+        currentLayerValues = dropoutMaskHidden * activationFunction.deterministic(linearSum)
 
     # Last layer operations, no dropout in the output
     w = self.weights[nrWeights - 1]
     b = self.biases[nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
-    currentLayerValues = classificationActivationFunction(linearSum)
+    currentLayerValues = classificationActivationFunction.deterministic(linearSum)
 
     self.output = currentLayerValues
 
@@ -135,14 +135,14 @@ class ClassifierBatch(object):
       w = self.classificationWeights[stage]
       b = biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
-      currentLayerValues = activationFunction(linearSum)
+      currentLayerValues = activationFunction.deterministic(linearSum)
 
     self.lastHiddenActivations = currentLayerValues
 
     w = self.classificationWeights[nrWeights - 1]
     b = biases[nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
-    currentLayerValues = classificationActivationFunction(linearSum)
+    currentLayerValues = classificationActivationFunction.deterministic(linearSum)
 
     self.output = currentLayerValues
 
@@ -166,7 +166,7 @@ class DBN(object):
                 activationFunction=Sigmoid(),
                 rbmActivationFunctionVisible=Sigmoid(),
                 rbmActivationFunctionHidden=Sigmoid(),
-                classificationActivationFunction=softmax,
+                classificationActivationFunction=Softmax(),
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,
                 nesterovMomentum=True,
@@ -322,6 +322,7 @@ class DBN(object):
       assert np.all(mins >=0.0) and np.all(maxs < 1.0 + 1e-8)
     else:
       # We are using gaussian visible units so we need to scale the data
+      # TODO: NO: pass in a scale argument
       if self.rbmActivationFunctionVisible == identity:
         print "scaling input data"
         data = scale(data)
