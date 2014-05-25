@@ -862,7 +862,7 @@ def cvMNISTGaussian():
                   momentumMax=0.95,
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
-                  activationFunction=relu,
+                  activationFunction=Rectified(),
                   rbmActivationFunctionVisible=Identity(),
                   rbmActivationFunctionHidden=RectifiedNoisy(),
                   rmsprop=args.rmsprop,
