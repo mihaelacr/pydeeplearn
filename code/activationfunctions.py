@@ -15,12 +15,12 @@ class Sigmoid(object):
     self.theanoGenerator = RandomStreams(seed=np.random.randint(1, 1000))
 
   def nonDeterminstic(self, x):
-    val = self.deterministc(x)
+    val = self.deterministic(x)
     return self.theanoGenerator.binomial(size=val.shape,
                                             n=1, p=val,
                                             dtype=theanoFloat)
 
-  def deterministc(self, x):
+  def deterministic(self, x):
     return T.nnet.sigmoid(x)
 
 class Rectified(object):
@@ -29,9 +29,9 @@ class Rectified(object):
     pass
 
   def nonDeterminstic(self, x):
-    return self.deterministc(x)
+    return self.deterministic(x)
 
-  def deterministc(self, x):
+  def deterministic(self, x):
     return x * (x > 0.0)
 
 class RectifiedNoisy(object):
@@ -43,7 +43,7 @@ class RectifiedNoisy(object):
     x += self.theanoGenerator.normal(avg=0.0, std=T.nnet.ultra_fast_sigmoid(x))
     return x * (x > 0.0)
 
-  def deterministc(self, x):
+  def deterministic(self, x):
     return expectedValueGaussian(x, T.nnet.ultra_fast_sigmoid(x))
 
 class RectifiedNoisyVar1(object):
@@ -55,18 +55,18 @@ class RectifiedNoisyVar1(object):
     x += self.theanoGenerator.normal(avg=0.0, std=1.0)
     return x * (x > 0.0)
 
-  def deterministc(self, x):
+  def deterministic(self, x):
     return expectedValueGaussian(x, 1.0)
 
 
 class Identity(object):
 
-  def deterministc(self, x):
+  def deterministic(self, x):
     return x
 
 class Softmax(object):
 
-  def deterministc(self, v):
+  def deterministic(self, v):
     # Do not use theano's softmax, it is numerically unstable
     # and it causes Nans to appear
     # Semantically this is the same
@@ -81,9 +81,9 @@ class CappedRectified(object):
     pass
 
   def nonDeterminstic(self, x):
-    return self.deterministc(x)
+    return self.deterministic(x)
 
-  def deterministc(self, x):
+  def deterministic(self, x):
     return x * (x > 0.0) * (x < 6.0)
 
 
