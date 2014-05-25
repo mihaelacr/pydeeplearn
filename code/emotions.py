@@ -15,8 +15,9 @@ import deepbelief as db
 import restrictedBoltzmannMachine as rbm
 
 from common import *
-from theano import tensor as T
 from readfacedatabases import *
+from activationfunctions import *
+
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,

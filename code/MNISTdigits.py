@@ -15,6 +15,8 @@ import svm
 from sklearn import cross_validation
 
 from common import *
+from activationfunctions import *
+
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,

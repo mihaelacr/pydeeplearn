@@ -1,10 +1,11 @@
 import numpy as np
 
 import restrictedBoltzmannMachine as rbm
+from activationfunctions import *
+
 import theano
 from theano import tensor as T
 from theano.tensor.shared_randomstreams import RandomStreams
-
 
 theanoFloat  = theano.config.floatX
 

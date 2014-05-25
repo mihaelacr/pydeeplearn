@@ -3,6 +3,7 @@ from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
 
 from similarity_utils import *
+from activationfunctions import *
 from readfacedatabases import *
 import similarity
 

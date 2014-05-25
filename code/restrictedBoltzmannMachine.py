@@ -2,6 +2,7 @@
 
 import numpy as np
 from common import *
+from activationfunctions import *
 
 import theano
 from theano import tensor as T
