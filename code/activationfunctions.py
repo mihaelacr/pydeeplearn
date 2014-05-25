@@ -40,7 +40,7 @@ class RectifiedNoisy(object):
     self.theanoGenerator = RandomStreams(seed=np.random.randint(1, 1000))
 
   def nonDeterminstic(self, x):
-    x += self.theanoGenerator.normal(avg=0.0, std=T.nnet.ultra_fast_sigmoidsigmoid(x))
+    x += self.theanoGenerator.normal(avg=0.0, std=T.nnet.sigmoid(x))
     return x * (x > 0.0)
 
   def deterministic(self, x):
