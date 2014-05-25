@@ -13,6 +13,7 @@ class Sigmoid(object):
 
   def __init__(self):
     self.theanoGenerator = RandomStreams(seed=np.random.randint(1, 1000))
+    self.updates = self.theanoGenerator.updates
 
   def nonDeterminstic(self, x):
     val = self.deterministic(x)
@@ -38,6 +39,7 @@ class RectifiedNoisy(object):
 
   def __init__(self):
     self.theanoGenerator = RandomStreams(seed=np.random.randint(1, 1000))
+    self.updates = self.theanoGenerator.updates
 
   def nonDeterminstic(self, x):
     x += self.theanoGenerator.normal(avg=0.0, std=T.nnet.sigmoid(x))
@@ -50,6 +52,7 @@ class RectifiedNoisyVar1(object):
 
   def __init__(self):
     self.theanoGenerator = RandomStreams(seed=np.random.randint(1, 1000))
+    self.updates = self.theanoGenerator.updates
 
   def nonDeterminstic(self, x):
     x += self.theanoGenerator.normal(avg=0.0, std=1.0)

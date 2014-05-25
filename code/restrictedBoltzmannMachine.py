@@ -85,7 +85,7 @@ class RBMMiniBatchTrainer(object):
                           outputs_info=[droppedOutVisible],
                           n_steps=self.cdSteps)
 
-    self.updates = updates
+    self.updates = updates + hiddenActivationFunction.updates
 
     self.visibleReconstruction = visibleSeq[-1]
 
