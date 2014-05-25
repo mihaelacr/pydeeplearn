@@ -140,6 +140,7 @@ class ReconstructerBatch(object):
     self.updates = updates
 
     self.visibleReconstruction = visibleSeq[-1]
+
     # Duplicate work but avoiding gradient in theano thinking we are using a random op
     linearSum = T.dot(self.visible, self.weightsForHidden) + hiddenBias
     self.hiddenActivations = hiddenActivationFunction.deterministic(linearSum)
@@ -331,13 +332,13 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.expected, axis=0) * 0.1
+      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.hiddenActivations, axis=0) * 0.1
       # Sum over all hidden units
       sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
 
       updates.append((batchTrainer.runningAvgExpected, runningAvg))
 
-    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.expected)
+    positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hiddenActivations)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
     delta = positiveDifference - negativeDifference
@@ -415,7 +416,7 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.expected, axis=0) * 0.1
+      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.hiddenActivations, axis=0) * 0.1
       # Sum over all hidden units
       sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
 
@@ -486,7 +487,7 @@ class RBM(object):
 
     representHidden = theano.function(
             inputs=[],
-            # TODO: instead of using hiddenAcitvations how about using
+            # TODO: instead of using hiddenActivations how about using
             #  the expectation?
             # or just make hidden activations to be the expectation?
             outputs=self.reconstructer.hiddenActivations,
