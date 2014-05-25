@@ -42,8 +42,8 @@ class Trainer(object):
     _, weightForHidden = rbm.testWeights(self.net.sharedWeights,
           visibleDropout=self.net.visibleDropout, hiddenDropout=self.net.hiddenDropout)
 
-    hiddenActivations1 = net.hiddenActivationFunction(T.dot(input1, weightForHidden) + hiddenBias)
-    hiddenActivations2 = net.hiddenActivationFunction(T.dot(input2, weightForHidden) + hiddenBias)
+    hiddenActivations1 = net.hiddenActivationFunction.deterministic(T.dot(input1, weightForHidden) + hiddenBias)
+    hiddenActivations2 = net.hiddenActivationFunction.deterministic(T.dot(input2, weightForHidden) + hiddenBias)
 
     # Here i have no sampling
     cos = cosineDistance(hiddenActivations1, hiddenActivations2)
