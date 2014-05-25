@@ -2,6 +2,7 @@
 
 import numpy as np
 from common import *
+
 from activationfunctions import *
 
 import theano
@@ -126,7 +127,7 @@ class ReconstructerBatch(object):
     # The hidden layers up to the last one, like Hinton suggests
     def OneCDStep(visibleSample):
       linearSum = T.dot(visibleSample, self.weightsForHidden) + hiddenBias
-      hidden = hiddenActivationFunction.nonDeterminstic(linearSum) * dropoutMaskHidden
+      hidden = hiddenActivationFunction.nonDeterminstic(linearSum)
       linearSum = T.dot(hidden, self.weightsForVisible) + visibleBias
       visibleRec = visibleActivationFunction.deterministic(linearSum)
 
