@@ -42,7 +42,7 @@ class RectifiedNoisy(object):
     self.updates = self.theanoGenerator.updates
 
   def nonDeterminstic(self, x):
-    x += self.theanoGenerator.normal(avg=0.0, std=T.nnet.sigmoid(x))
+    x += self.theanoGenerator.normal(avg=0.0, std=(T.nnet.sigmoid(x) + 1e-08))
     return x * (x > 0.0)
 
   def deterministic(self, x):
