@@ -60,12 +60,11 @@ class SimilarityNet(object):
   # plus rbm learning rates
   def __init__(self, learningRate, maxMomentum, rbmNrVis, rbmNrHid, rbmLearningRate,
                 visibleActivationFunction, hiddenActivationFunction,
-                rbmDropoutVis, rbmDropoutHid, binary, rmsprop,trainingEpochsRBM,
+                rbmDropoutVis, rbmDropoutHid, rmsprop,trainingEpochsRBM,
                 nesterovRbm,
                 sparsityConstraint, sparsityRegularization, sparsityTraget):
 
     self.learningRate = np.float32(learningRate)
-    self.binary = binary
     self.rmsprop = rmsprop
     self.rbmNrVis = rbmNrVis
     self.maxMomentum = np.float32(maxMomentum)
@@ -88,7 +87,6 @@ class SimilarityNet(object):
     net = rbm.RBM(self.rbmNrVis, self.rbmNrHid, self.rbmLearningRate,
                     hiddenDropout=self.rbmDropoutHid,
                     visibleDropout=self.rbmDropoutVis,
-                    binary=self.binary,
                     visibleActivationFunction=self.visibleActivationFunction,
                     hiddenActivationFunction=self.hiddenActivationFunction,
                     rmsprop=True,

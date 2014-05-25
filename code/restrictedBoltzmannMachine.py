@@ -16,10 +16,9 @@ class RBMMiniBatchTrainer(object):
 
   def __init__(self, input, theanoGenerator, initialWeights, initialBiases,
              visibleActivationFunction, hiddenActivationFunction,
-             visibleDropout, hiddenDropout, binary, sparsityConstraint, cdSteps):
+             visibleDropout, hiddenDropout, sparsityConstraint, cdSteps):
 
     self.visible = input
-    self.binary = binary
     self.cdSteps = theano.shared(value=np.int32(cdSteps))
     self.theanoGenerator = theanoGenerator
 
@@ -110,10 +109,9 @@ class RBMMiniBatchTrainer(object):
 class ReconstructerBatch(object):
   def __init__(self, input, theanoGenerator, weights, biases,
              visibleActivationFunction, hiddenActivationFunction,
-             visibleDropout, hiddenDropout, binary, cdSteps):
+             visibleDropout, hiddenDropout, cdSteps):
 
     self.visible = input
-    self.binary = binary
     self.cdSteps = theano.shared(value=np.int32(cdSteps))
     self.theanoGenerator = theanoGenerator
 
@@ -157,7 +155,6 @@ class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, learningRate,
                 hiddenDropout, visibleDropout,
-                binary=True,
                 visibleActivationFunction=Sigmoid(),
                 hiddenActivationFunction=Sigmoid(),
                 rmsprop=True,
@@ -188,7 +185,6 @@ class RBM(object):
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
     self.trainingEpochs = trainingEpochs
-    self.binary = binary
     self.sparsityConstraint = sparsityConstraint
     self.sparsityRegularization = np.float32(sparsityRegularization)
     self.sparsityTraget = np.float32(sparsityTraget)
@@ -217,7 +213,6 @@ class RBM(object):
                                        hiddenActivationFunction=self.hiddenActivationFunction,
                                        visibleDropout=self.visibleDropout,
                                        hiddenDropout=self.hiddenDropout,
-                                       binary=self.binary,
                                        sparsityConstraint=self.sparsityConstraint,
                                        cdSteps=1)
 
@@ -229,7 +224,6 @@ class RBM(object):
                                         hiddenActivationFunction=self.hiddenActivationFunction,
                                         visibleDropout=self.visibleDropout,
                                         hiddenDropout=self.hiddenDropout,
-                                        binary=self.binary,
                                         cdSteps=1)
     self.reconstructer = reconstructer
     self.batchTrainer = batchTrainer
@@ -245,7 +239,7 @@ class RBM(object):
 
     # If we have gaussian units, we need to scale the data
     # to unit variance and zero mean
-    if not self.binary and self.visibleActivationFunction == identity:
+    if isinstance(self.visibleActivationFunction, Identity):
       print "scaling data for RBM"
       data = scale(data)
 
@@ -524,7 +518,6 @@ class RBM(object):
                                         hiddenActivationFunction=self.hiddenActivationFunction,
                                         visibleDropout=self.visibleDropout,
                                         hiddenDropout=self.hiddenDropout,
-                                        binary=self.binary,
                                         cdSteps=1)
     return reconstructer
 

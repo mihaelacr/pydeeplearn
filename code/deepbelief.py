@@ -258,7 +258,6 @@ class DBN(object):
 
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                       learningRate=unsupervisedLearningRate,
-                      binary=self.binary,
                       visibleActivationFunction=self.rbmActivationFunctionVisible,
                       hiddenActivationFunction=self.rbmActivationFunctionHidden,
                       hiddenDropout=self.rbmHiddenDropout,
@@ -789,7 +788,6 @@ class DBN(object):
       biases = np.array([self.biases[i-1], self.generativeBiases[i-1]])
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i-1],
                       learningRate=self.unsupervisedLearningRate,
-                      binary=self.binary,
                       visibleActivationFunction=self.rbmActivationFunctionVisible,
                       hiddenActivationFunction=self.rbmActivationFunctionHidden,
                       hiddenDropout=1.0,
@@ -827,7 +825,6 @@ class DBN(object):
       biases = np.array([self.generativeBiases[i], self.biases[i]])
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                       learningRate=self.unsupervisedLearningRate,
-                      binary=self.binary,
                       visibleActivationFunction=self.rbmActivationFunctionVisible,
                       hiddenActivationFunction=self.rbmActivationFunctionHidden,
                       hiddenDropout=1.0,

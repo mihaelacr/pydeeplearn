@@ -111,7 +111,6 @@ def rbmMain(reconstructRandom=False):
     nrHidden = 500
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
-                  binary=binary,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov,
@@ -293,7 +292,6 @@ def rbmMainGauss(reconstructRandom=False):
     nrHidden = 500
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
-                  binary=False,
                   visibleActivationFunction=Identity(),
                   hiddenActivationFunction=RectifiedNoisy(),
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
@@ -366,7 +364,6 @@ def makeNicePlots():
     nrHidden = 500
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
-                  binary=binary,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)

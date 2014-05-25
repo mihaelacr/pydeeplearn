@@ -110,7 +110,6 @@ def rbmEmotions(big=False, reconstructRandom=False):
     nrHidden = 800
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, 1.2, 1, 1,
-                  binary=1-args.relu,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop,
