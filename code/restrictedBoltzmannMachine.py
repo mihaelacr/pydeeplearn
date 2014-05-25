@@ -139,6 +139,7 @@ class ReconstructerBatch(object):
 
     self.updates = updates
 
+    self.visibleReconstruction = visibleSeq[-1]
     # Duplicate work but avoiding gradient in theano thinking we are using a random op
     linearSum = T.dot(self.visible, self.weightsForHidden) + hiddenBias
     self.hiddenActivations = hiddenActivationFunction.deterministic(linearSum)
