@@ -163,9 +163,9 @@ class DBN(object):
   """
   def __init__(self, nrLayers, layerSizes,
                 binary,
-                activationFunction=T.nnet.sigmoid,
-                rbmActivationFunctionVisible=T.nnet.sigmoid,
-                rbmActivationFunctionHidden=T.nnet.sigmoid,
+                activationFunction=Sigmoid(),
+                rbmActivationFunctionVisible=Sigmoid(),
+                rbmActivationFunctionHidden=Sigmoid(),
                 classificationActivationFunction=softmax,
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,

@@ -48,34 +48,25 @@ class RBMMiniBatchTrainer(object):
     self.oldMeanHid = theano.shared(value=np.zeros(shape=initialBiases[1].shape,
                                            dtype=theanoFloat))
 
-    # if visibleDropout in [1.0, 1]:
-    #   droppedOutVisible = self.visible
-    # else:
-    #   # Create dropout mask for the visible layer
-    #   dropoutMaskVisible = self.theanoGenerator.binomial(size=self.visible.shape,
-    #                                         n=1, p=visibleDropout,
-    #                                         dtype=theanoFloat)
+    if visibleDropout in [1.0, 1]:
+      droppedOutVisible = self.visible
+    else:
+      # Create dropout mask for the visible layer
+      dropoutMaskVisible = self.theanoGenerator.binomial(size=self.visible.shape,
+                                            n=1, p=visibleDropout,
+                                            dtype=theanoFloat)
 
-    #   droppedOutVisible = dropoutMaskVisible * self.visible
-    droppedOutVisible = self.visible
+      droppedOutVisible = dropoutMaskVisible * self.visible
 
-    dropoutMaskHidden = T.ones(shape=(input.shape[0], initialBiases[1].shape[0]))
 
-    # if visibleDropout in [1.0, 1]:
-    #   dropoutMaskHidden = T.ones(shape=(input.shape[0], initialBiases[1].shape[0]))
-    # else:
-    #   # Create dropout mask for the hidden layer
-    #   dropoutMaskHidden = self.theanoGenerator.binomial(
-    #                             size=(input.shape[0], initialBiases[1].shape[0]),
-    #                             n=1, p=hiddenDropout,
-    #                             dtype=theanoFloat)
-
-    # This does not sample the visible layers, but samples
-    # The hidden layers up to the last one, like Hinton suggests
-
-    linearSum = T.dot(droppedOutVisible, self.weights) + self.biasHidden
-    hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
-    self.hiddenActivations = hiddenActivations
+    if hiddenDropout in [1.0, 1]:
+      dropoutMaskHidden = T.ones(shape=(input.shape[0], initialBiases[1].shape[0]))
+    else:
+      # Create dropout mask for the hidden layer
+      dropoutMaskHidden = self.theanoGenerator.binomial(
+                                size=(input.shape[0], initialBiases[1].shape[0]),
+                                n=1, p=hiddenDropout,
+                                dtype=theanoFloat)
 
     def OneCDStep(visibleSample):
       linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
@@ -102,27 +93,13 @@ class RBMMiniBatchTrainer(object):
 
     # Duplicate work but avoiding gradient in theano thinking we are using a random op
     linearSum = T.dot(droppedOutVisible, self.weights) + self.biasHidden
-    if binary:
-      self.hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
-    # THis only copes with noisy relu, so not with max relu or anything else
-    # needs to be changed
-    else:
-      self.hiddenActivations =  expectedValueRelu(linearSum)
+    self.hiddenActivations = hiddenActivationFunction.deterministic(linearSum) * dropoutMaskHidden
 
     # Do not sample for the last one, in order to get less sampling noise
     # Here you should also use a expected value for symmetry
     # but we need an elegant way to do it
-    hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
+    hiddenRec = hiddenActivationFunction.deterministic(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
-
-
-def expectedValueRelu(x):
-  sigX = T.nnet.sigmoid(x)
-  return T.sqrt(sigX / (2.0 * np.pi)) * T.exp(- x**2 / (2.0 * sigX)) + x * cdf(x / sigX)
-
-# Approximation of the cdf of a standard normal
-def cdf(x):
-  return  1.0/(1 + T.exp(-0.07056 * x**3 - 1.5976* x))
 
 
 # TODO: check if this is doing the right thing
@@ -138,39 +115,34 @@ class ReconstructerBatch(object):
     self.cdSteps = theano.shared(value=np.int32(cdSteps))
     self.theanoGenerator = theanoGenerator
 
-    self.weightsForVisible, self.weightForHidden = testWeights(weights,
+    self.weightsForVisible, self.weightsForHidden = testWeights(weights,
           visibleDropout=visibleDropout, hiddenDropout=hiddenDropout)
 
     hiddenBias = biases[1]
     visibleBias = biases[0]
+
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneCDStep(visibleSample):
-      linearSum = T.dot(visibleSample, self.weightForHidden) + hiddenBias
-      hiddenActivations = hiddenActivationFunction(linearSum)
-      # Sample only for stochastic binary units
-      if self.binary:
-        hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
-                                            n=1, p=hiddenActivations,
-                                            dtype=theanoFloat)
-      else:
-        hidden = hiddenActivations
-
+      linearSum = T.dot(visibleSample, self.weightsForHidden) + hiddenBias
+      hidden = hiddenActivationFunction.nonDeterminstic(linearSum) * dropoutMaskHidden
       linearSum = T.dot(hidden, self.weightsForVisible) + visibleBias
-      visibleRec = visibleActivationFunction(linearSum)
-      return [hiddenActivations, visibleRec]
+      visibleRec = visibleActivationFunction.deterministic(linearSum)
 
-    [hiddenSeq, visibleSeq], updates = theano.scan(OneCDStep,
-                          outputs_info=[None, self.visible],
+      return visibleRec
+
+    visibleSeq, updates = theano.scan(OneCDStep,
+                          outputs_info=[self.visible],
                           n_steps=self.cdSteps)
 
     self.updates = updates
 
-    self.hiddenActivations = hiddenSeq[0]
-    self.visibleReconstruction = visibleSeq[-1]
+    # Duplicate work but avoiding gradient in theano thinking we are using a random op
+    linearSum = T.dot(self.visible, self.weightsForHidden) + hiddenBias
+    self.hiddenActivations = hiddenActivationFunction.deterministic(linearSum)
 
     # Do not sample for the last one, in order to get less sampling noise
-    hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weightForHidden) + hiddenBias)
+    hiddenRec = hiddenActivationFunction.deterministic(T.dot(self.visibleReconstruction, self.weightsForHidden) + hiddenBias)
 
     self.hiddenReconstruction = hiddenRec
 
@@ -182,8 +154,8 @@ class RBM(object):
   def __init__(self, nrVisible, nrHidden, learningRate,
                 hiddenDropout, visibleDropout,
                 binary=True,
-                visibleActivationFunction=T.nnet.sigmoid,
-                hiddenActivationFunction=T.nnet.sigmoid,
+                visibleActivationFunction=Sigmoid(),
+                hiddenActivationFunction=Sigmoid(),
                 rmsprop=True,
                 nesterov=True,
                 weightDecay=0.001,

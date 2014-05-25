@@ -65,3 +65,14 @@ def expectedValueGaussian(mean, std):
 # Approximation of the cdf of a standard normal
 def cdf(x):
   return 1.0/2 *  (1.0 + T.erf(x / T.sqrt(2)))
+
+
+def identity(var):
+  return var
+
+# Do not use theano's softmax, it is numerically unstable
+# and it causes Nans to appear
+# Semantically this is the same
+def softmax(v):
+  e_x = T.exp(v - v.max(axis=1, keepdims=True))
+  return e_x / e_x.sum(axis=1, keepdims=True)
