@@ -81,6 +81,9 @@ class SimilarityNet(object):
     self.sparsityRegularization = sparsityRegularization
     self.sparsityTraget = sparsityTraget
 
+    if rmsprop:
+      print "training similarity net with rmsprop"
+
   def _trainRBM(self, data1, data2):
     data = np.vstack([data1, data2])
 
