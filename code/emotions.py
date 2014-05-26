@@ -353,7 +353,7 @@ def deepbeliefKanade(big=False):
   print "percentage correct"
   print correct  * 1.0/ len(test)
 
-  confMatrix = confusion_matrix(predicted, np.argmax(actualLabels, axis=1))
+  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
   print "confusion matrix"
   print confMatrix
 
@@ -483,7 +483,7 @@ def deepbeliefMultiPIE(big=False):
   print predicted.shape
   print actualLabels.shape
 
-  confMatrix = confusion_matrix(predicted, np.argmax(actualLabels, axis=1))
+  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
 
   print "confusion matrix"
   print confMatrix
@@ -730,7 +730,7 @@ def deepBeliefPieDifferentConditions():
     correct = correct  * 1.0/ len(testLabels)
     print correct
 
-    confMatrix = confusion_matrix(predicted, np.argmax(actualLabels, axis=1))
+    confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
 
     print "confusion matrix"
     print confMatrix
@@ -746,8 +746,6 @@ def deepBeliefPieDifferentConditions():
 
   print "average correct rate", sum(correctAll) * 1.0 / len(correctAll)
   print "average confusionMatrix was ", sum(confustionMatrices) * 1.0 / len(confustionMatrices)
-
-
 
 
 
@@ -840,7 +838,7 @@ def crossDataBase():
   print predicted.shape
   print actualLabels.shape
 
-  confMatrix = confusion_matrix(predicted, np.argmax(actualLabels, axis=1))
+  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
 
   print "confusion matrix"
   print confMatrix

@@ -105,7 +105,7 @@ def similarityMain():
 
   correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
-  confMatrix = confusion_matrix(predicted, similaritiesTest)
+  confMatrix = confusion_matrix(similaritiesTest, predicted)
   print confMatrix
 
   print "correct"
@@ -187,7 +187,7 @@ def similarityMainTestYale():
 
   correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
-  confMatrix = confusion_matrix(predicted, similaritiesTest)
+  confMatrix = confusion_matrix(similaritiesTest, predicted)
   print confMatrix
   print correct
 
@@ -281,7 +281,7 @@ def similarityDifferentSubjectsMain():
 
   correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
-  confMatrix = confusion_matrix(predicted, similaritiesTest)
+  confMatrix = confusion_matrix(similaritiesTest, predicted)
   print confMatrix
 
 
@@ -564,7 +564,7 @@ def similarityEmotionsMain():
 
   correct = (testLabels == predicted).sum() * 1.0 / len(res)
 
-  confMatrix = confusion_matrix(predicted, testLabels)
+  confMatrix = confusion_matrix(testLabels, predicted)
   print confMatrix
 
 
@@ -640,7 +640,7 @@ def similarityEmotionsSameSubject():
 
   correct = (testLabels == predicted).sum() * 1.0 / len(res)
 
-  confMatrix = confusion_matrix(predicted, testLabels)
+  confMatrix = confusion_matrix(testLabels, predicted)
   print confMatrix
 
   print correct
