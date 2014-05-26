@@ -169,7 +169,7 @@ class SimilarityNet(object):
 
     return testFunction()
 
-  def buildUpdates(self, trainer, error, momentum):
+  def buildUpdates(self, trainer, error, learningRate, momentum):
     if self.rmsprop:
       return self.buildUpdatesRmsprop(trainer, error, learningRate, momentum)
     else:
