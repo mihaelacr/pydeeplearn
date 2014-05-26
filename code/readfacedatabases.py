@@ -111,12 +111,14 @@ def readMultiPieDifferentIlluminations(illuminationTrain, show=False, equalize=F
               image = equalizeFromFloat(image)
 
             image = image.reshape(30,40).T
-            if show:
-              plt.imshow(image, cmap=plt.cm.gray)
-              plt.show()
             if illumination in illuminationTrain:
               imgsTrain += [image.reshape(-1)]
               labelsTrain += [expression]
+
+              if show:
+                plt.imshow(image, cmap=plt.cm.gray)
+                plt.show()
+
             else:
               imgsTest += [image.reshape(-1)]
               labelsTest += [expression]
@@ -719,4 +721,5 @@ if __name__ == '__main__':
   # makeMultiPieImagesForReport()
   # makeEqualizePics()
   # makeCrossDbPlot()
-  makeKanadeImages()
+  # makeKanadeImages()
+  readMultiPieDifferentIlluminations([3], show=True, equalize=True)
