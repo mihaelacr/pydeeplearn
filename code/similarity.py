@@ -108,6 +108,7 @@ class SimilarityNet(object):
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
 
+    learningRate = self.learningRate / miniBatchSize
 
     net = self._trainRBM(data1, data2)
 
@@ -128,7 +129,7 @@ class SimilarityNet(object):
 
     error = T.sum(T.sqr(trainer.output-z))
 
-    updates = self.buildUpdates(trainer, error, momentum)
+    updates = self.buildUpdates(trainer, error, learningRate, momentum)
 
     # Now you have to define the theano function
     discriminativeTraining = theano.function(
@@ -146,7 +147,7 @@ class SimilarityNet(object):
                        np.float32(0.95)))
 
       for miniBatch in xrange(nrMiniBatches):
-        output, cos = discriminativeTraining(miniBatch, momentum)
+        output, cos = discriminativeTraining(miniBatch, learningRate, momentum)
         # print cos
 
     print trainer.w.get_value()
@@ -170,27 +171,27 @@ class SimilarityNet(object):
 
   def buildUpdates(self, trainer, error, momentum):
     if self.rmsprop:
-      return self.buildUpdatesRmsprop(trainer, error, momentum)
+      return self.buildUpdatesRmsprop(trainer, error, learningRate, momentum)
     else:
-      return self.buildUpdatesNoRmsprop(trainer, error, momentum)
+      return self.buildUpdatesNoRmsprop(trainer, error, learningRate, momentum)
 
-  def buildUpdatesNoRmsprop(self, trainer, error, momentum):
+  def buildUpdatesNoRmsprop(self, trainer, error, learningRate, momentum):
     updates = []
     gradients = T.grad(error, trainer.params)
     for param, oldParamUpdate, gradient in zip(trainer.params, trainer.oldDParams, gradients):
-      paramUpdate = momentum * oldParamUpdate - self.learningRate * gradient
+      paramUpdate = momentum * oldParamUpdate - learningRate * gradient
       updates.append((param, param + paramUpdate))
       updates.append((oldParamUpdate, paramUpdate))
 
     return updates
 
-  def buildUpdatesRmsprop(self, trainer, error, momentum):
+  def buildUpdatesRmsprop(self, trainer, error, learningRate, momentum):
     updates = []
     gradients = T.grad(error, trainer.params)
     for param, oldParamUpdate, oldMeanSquare, gradient in zip(trainer.params, trainer.oldDParams,
                                              trainer.oldMeanSquares, gradients):
       meanSquare = 0.9 * oldMeanSquare + 0.1 * gradient ** 2
-      paramUpdate = momentum * oldParamUpdate - self.learningRate * gradient / T.sqrt(meanSquare + 1e-08)
+      paramUpdate = momentum * oldParamUpdate - learningRate * gradient / T.sqrt(meanSquare + 1e-08)
       updates.append((param, param + paramUpdate))
       updates.append((oldParamUpdate, paramUpdate))
       updates.append((oldMeanSquare, meanSquare))
