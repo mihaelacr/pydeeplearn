@@ -133,7 +133,7 @@ class SimilarityNet(object):
 
     # Now you have to define the theano function
     discriminativeTraining = theano.function(
-      inputs=[miniBatchIndex, momentum],
+      inputs=[miniBatchIndex, learningRate, momentum],
       outputs=[trainer.output, trainer.cos],
       updates=updates,
       givens={
