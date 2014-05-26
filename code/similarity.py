@@ -108,7 +108,7 @@ class SimilarityNet(object):
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
 
-    learningRate = self.learningRate / miniBatchSize
+    learningRate = np.float32(self.learningRate / miniBatchSize)
 
     net = self._trainRBM(data1, data2)
 
