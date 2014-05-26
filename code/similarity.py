@@ -107,8 +107,9 @@ class SimilarityNet(object):
     nrMiniBatches = len(data1) / miniBatchSize
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
+    learningRate = T.fscalar()
 
-    learningRate = np.float32(self.learningRate / miniBatchSize)
+    learningRateMiniBatch = np.float32(self.learningRate / miniBatchSize)
 
     net = self._trainRBM(data1, data2)
 
@@ -147,7 +148,7 @@ class SimilarityNet(object):
                        np.float32(0.95)))
 
       for miniBatch in xrange(nrMiniBatches):
-        output, cos = discriminativeTraining(miniBatch, learningRate, momentum)
+        output, cos = discriminativeTraining(miniBatch, learningRateMiniBatch, momentum)
         # print cos
 
     print trainer.w.get_value()
