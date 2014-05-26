@@ -649,7 +649,7 @@ def deepBeliefPieDifferentConditions():
   for i in allConditions:
     trainConditions = list(allConditions)
     trainConditions.remove(i)
-    trainData, trainLabels, testData, testLabels = getDataFunction(trainConditions)
+    trainData, trainLabels, testData, testLabels = getDataFunction(trainConditions, equalize=args.equalize)
 
     if args.relu:
       activationFunction = relu
