@@ -323,7 +323,7 @@ class DBN(object):
     else:
       # We are using gaussian visible units so we need to scale the data
       # TODO: NO: pass in a scale argument
-      if self.rbmActivationFunctionVisible == identity:
+      if isinstance(self.rbmActivationFunctionVisible, Identity):
         print "scaling input data"
         data = scale(data)
 
