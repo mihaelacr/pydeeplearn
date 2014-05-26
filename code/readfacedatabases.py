@@ -23,9 +23,9 @@ SMALL_SIZE = ((40, 30))
 # lab machine and local
 def equalizeImg(x):
   # Contrast Limited Adaptive Histogram Equalization
-  clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(5,5))
-  return clahe.apply(x)
-  # return cv2.equalizeHist(x)
+  # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(5,5))
+  # return clahe.apply(x)
+  return cv2.equalizeHist(x)
 
 def equalizeFromFloat(x):
   x = x * 255
