@@ -78,7 +78,7 @@ class Softmax(object):
 
 
 # TODO: try this for the non deterministic version as well
-class CappedRectified(object):
+class CappedRectifiedNoisy(object):
 
   def __init__(self):
     pass
