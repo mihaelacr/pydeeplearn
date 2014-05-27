@@ -179,6 +179,7 @@ class SimilarityNet(object):
   def buildUpdatesNoRmsprop(self, trainer, error, learningRate, momentum):
     updates = []
     gradients = T.grad(error, trainer.params)
+
     for param, oldParamUpdate, gradient in zip(trainer.params, trainer.oldDParams, gradients):
       paramUpdate = momentum * oldParamUpdate - learningRate * gradient
       updates.append((param, param + paramUpdate))
@@ -189,6 +190,7 @@ class SimilarityNet(object):
   def buildUpdatesRmsprop(self, trainer, error, learningRate, momentum):
     updates = []
     gradients = T.grad(error, trainer.params)
+
     for param, oldParamUpdate, oldMeanSquare, gradient in zip(trainer.params, trainer.oldDParams,
                                              trainer.oldMeanSquares, gradients):
       meanSquare = 0.9 * oldMeanSquare + 0.1 * gradient ** 2
