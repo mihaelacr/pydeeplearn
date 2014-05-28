@@ -308,7 +308,7 @@ def similarityCV():
   if args.relu:
     if args.rmsprop:
       # params = [(0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.1, 0,01), (0.001, 0.05, 0.01)]
-       params = [(0.01, 0.0001, 0.01), (0.01, 0.0005, 0.1), (0.01, 0.0001, 0), (0.01, 0.0005, 0)]
+       params = [(0.0001, 0.0001, 0.01), (0.0001, 0.0005, 0.1), (0.0001, 0.0001, 0), (0.00001, 0.0005, 0)]
                 # (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
     else:
       # params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
@@ -364,7 +364,7 @@ def similarityCV():
                                       sparsityRegularization=params[fold][2],
                                       sparsityTraget=0.01)
 
-    simNet.train(trainData1, trainData2, similaritiesTrain)
+    simNet.train(trainData1, trainData2, similaritiesTrain, epochs=10)
 
     res = simNet.test(testData1, testData2)
 
