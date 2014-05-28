@@ -24,6 +24,8 @@ parser.add_argument('--emotionsdiff', dest='emotionsdiff',action='store_true', d
                     help=("if true, trains a net to distinguish between emotions"))
 parser.add_argument('--emotionsdiffsamesubj', dest='emotionsdiffsamesubj',action='store_true', default=False,
                     help=("if true, trains a net to distinguish between emotions where the pictures presented are the same people"))
+parser.add_argument('--epochs', type=int, default=1000,
+                    help='the maximum number of supervised epochs')
 
 
 
@@ -94,7 +96,7 @@ def similarityMain():
                                     sparsityRegularization=0.01,
                                     sparsityTraget=0.01)
 
-  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=1000)
+  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
 
   res = simNet.test(testData1, testData2)
 
@@ -269,7 +271,7 @@ def similarityDifferentSubjectsMain():
                                     rbmDropoutVis=1.0,
                                     trainingEpochsRBM=10)
 
-  simNet.train(trainData1, trainData2, similaritiesTrain)
+  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
 
   res = simNet.test(testData1, testData2)
 
@@ -364,7 +366,7 @@ def similarityCV():
                                       sparsityRegularization=params[fold][2],
                                       sparsityTraget=0.01)
 
-    simNet.train(trainData1, trainData2, similaritiesTrain, epochs=10)
+    simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
 
     res = simNet.test(testData1, testData2)
 
@@ -453,7 +455,7 @@ def similarityCVEmotions():
                                       rmsprop=False,
                                       trainingEpochsRBM=1)
 
-    simNet.train(trainData1, trainData2, trainLabels)
+    simNet.train(trainData1, trainData2, trainLabels, epochs=args.epochs)
 
     res = simNet.test(testData1, testData2)
 
@@ -552,7 +554,7 @@ def similarityEmotionsMain():
   plt.axis('off')
   plt.show()
 
-  simNet.train(trainData1, trainData2, trainLabels, epochs=400)
+  simNet.train(trainData1, trainData2, trainLabels, epochs=args.epochs)
 
   res = simNet.test(testData1, testData2)
 
@@ -627,7 +629,7 @@ def similarityEmotionsSameSubject():
   print "testing with ", len(testLabels) - testLabels.sum(), "negative examples"
 
 
-  simNet.train(trainData1, trainData2, trainLabels, epochs=400)
+  simNet.train(trainData1, trainData2, trainLabels, epochs=args.epochs)
 
   res = simNet.test(testData1, testData2)
 
