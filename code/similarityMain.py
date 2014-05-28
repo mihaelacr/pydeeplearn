@@ -284,8 +284,6 @@ def similarityDifferentSubjectsMain():
   print correct
 
 
-
-
 def similarityCV():
   trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
      splitDataMultiPIESubject(instanceToPairRatio=2)
@@ -310,7 +308,7 @@ def similarityCV():
   if args.relu:
     if args.rmsprop:
       # params = [(0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.1, 0,01), (0.001, 0.05, 0.01)]
-       params = [(0.01, 0.1, 0.01), (0.01, 0.05, 0.1), (0.01, 0.1, 0), (0.01, 0.05, 0)]
+       params = [(0.01, 0.0001, 0.01), (0.01, 0.0005, 0.1), (0.01, 0.0001, 0), (0.01, 0.0005, 0)]
                 # (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
     else:
       # params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
