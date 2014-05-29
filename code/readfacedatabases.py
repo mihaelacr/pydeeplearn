@@ -383,7 +383,7 @@ def facedetectionMultiPie():
   data = map(lambda x: x.reshape(SMALL_SIZE), data)
   data = map(cropFromFloat, data)
   for d in data:
-    if d not None:
+    if d is not None:
       plt.imshow(d, cmap=plt.cm.gray)
       plt.show()
 
