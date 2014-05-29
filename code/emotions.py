@@ -497,6 +497,114 @@ def deepbeliefMultiPIE(big=False):
       pickle.dump(net, f)
 
 
+def deepbeliefMultiPIEAverage(big=False):
+  data, labels = readMultiPIE(equalize=args.equalize)
+
+  data, labels = shuffle(data, labels)
+
+
+
+  print "data.shape"
+  print data.shape
+  print "labels.shape"
+  print labels.shape
+
+  if args.relu:
+    activationFunction = relu
+    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionVisible = identity
+    unsupervisedLearningRate = 0.005
+    supervisedLearningRate = 0.001
+    momentumMax = 0.95
+    data = scale(data)
+  else:
+    activationFunction = T.nnet.sigmoid
+    rbmActivationFunctionHidden = T.nnet.sigmoid
+    rbmActivationFunctionVisible = T.nnet.sigmoid
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.95
+
+
+  correctAll = []
+  confustionMatrices = []
+  # Random data for training and testing
+  kf = cross_validation.KFold(n=len(data), n_folds=5)
+  for train, test in kf:
+
+
+    trainData = data[train]
+    trainLabels = labels[train]
+
+    if args.train:
+      # TODO: this might require more thought
+      net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
+                 binary=1-args.relu,
+                 activationFunction=activationFunction,
+                 rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+                 rbmActivationFunctionHidden=rbmActivationFunctionHidden,
+                 unsupervisedLearningRate=unsupervisedLearningRate,
+                 supervisedLearningRate=supervisedLearningRate,
+                 momentumMax=momentumMax,
+                 nesterovMomentum=args.nesterov,
+                 rbmNesterovMomentum=args.rbmnesterov,
+                 rmsprop=args.rmsprop,
+                 miniBatchSize=args.miniBatchSize,
+                 visibleDropout=0.8,
+                 hiddenDropout=0.5,
+                 rbmHiddenDropout=1.0,
+                 rbmVisibleDropout=1.0,
+                 preTrainEpochs=args.preTrainEpochs)
+
+      unsupervisedData = buildUnsupervisedDataSetForPIE()
+
+      net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
+                validation=args.validation,
+                unsupervisedData=unsupervisedData)
+    else:
+       # Take the saved network and use that for reconstructions
+      with open(args.netFile, "rb") as f:
+        net = pickle.load(f)
+
+    probs, predicted = net.classify(data[test])
+
+    actualLabels = labels[test]
+    correct = 0
+    errorCases = []
+
+    for i in xrange(len(test)):
+      actual = actualLabels[i]
+      print np.argmax(actual)
+      if predicted[i] == np.argmax(actual):
+        correct += 1
+      else:
+        errorCases.append(i)
+
+    print "correct"
+    print correct
+
+    print "percentage correct"
+    print correct  * 1.0/ len(test)
+
+    print type(predicted)
+    print type(actualLabels)
+    print predicted.shape
+    print actualLabels.shape
+
+    confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+
+    print "confusion matrix"
+    print confMatrix
+
+    correctAll += [correct  * 1.0/ len(test)]
+    confustionMatrices += [confMatrix]
+
+  print "average correct"
+  print sum(correctAll) / len(correctAll)
+  print "average confusion matrix"
+  print sum(confustionMatrices) / len(confustionMatrices)
+
+
 def deepbeliefPIECV(big=False):
   data, labels = readMultiPIE(equalize=args.equalize)
 
@@ -1173,8 +1281,8 @@ def main():
 # You can also group the emotions into positive and negative to see
 # if you can get better results (probably yes)
 if __name__ == '__main__':
-  import random
-  print "FIXING RANDOMNESS"
-  random.seed(6)
-  np.random.seed(6)
+  # import random
+  # print "FIXING RANDOMNESS"
+  # random.seed(6)
+  # np.random.seed(6)
   main()
