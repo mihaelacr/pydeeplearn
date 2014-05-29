@@ -370,7 +370,8 @@ def makeCrossDbPlot():
   dataPie, labelsPie, _, _ = readMultiPieDifferentPoses([2])
   labelsPie = np.argmax(labelsPie, axis=1)
 
-  labelsKanade = labelsKanade - 1
+  if 7 in labelsKanade:
+    labelsKanade = labelsKanade - 1
 
   dataKanade, labelsKanade = mapKanadeToPIELabels(dataKanade, labelsKanade)
 
