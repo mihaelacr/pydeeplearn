@@ -75,7 +75,7 @@ def readMultiPIE(show=False, equalize=False, vectorizeLabels=True):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
 
-  if args.equalize:
+  if equalize:
     print "equalizing multi pie data"
   mat = scipy.io.loadmat(PATH)
   data = mat['a_multipie']
