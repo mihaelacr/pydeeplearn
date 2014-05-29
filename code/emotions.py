@@ -763,7 +763,14 @@ def crossDataBase():
   testLabels = labelsToVectors(testLabels, 6)
 
   print "testLabels after map"
-  print np.argmax(testLabels, axis=1)
+  labelsSimple = np.argmax(testLabels, axis=1)
+  print labelsSimple
+
+  for i in xrange(labelsSimple):
+    print "emotions", i
+    plt.imshow(vectorToImage(testData, SMALL_SIZE), cmap=plt.cm.gray)
+    plt.show()
+
 
   if args.relu:
     activationFunction = relu
