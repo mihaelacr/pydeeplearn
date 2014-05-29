@@ -1052,7 +1052,7 @@ def missingData():
   testData = addBlobsOfMissingData(testData)
 
   for i in xrange(10):
-    plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray)
+    plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
     plt.show()
 
   if args.relu:
