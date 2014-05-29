@@ -409,8 +409,8 @@ def deepbeliefMultiPIE(big=False):
     activationFunction = relu
     rbmActivationFunctionHidden = makeNoisyRelu()
     rbmActivationFunctionVisible = identity
-    unsupervisedLearningRate = 0.05
-    supervisedLearningRate = 0.01
+    unsupervisedLearningRate = 0.005
+    supervisedLearningRate = 0.001
     momentumMax = 0.95
     data = scale(data)
   else:
@@ -659,8 +659,8 @@ def deepBeliefPieDifferentConditions():
 
     if args.relu:
       activationFunction = relu
-      unsupervisedLearningRate = 0.05
-      supervisedLearningRate = 0.01
+      unsupervisedLearningRate = 0.005
+      supervisedLearningRate = 0.001
       momentumMax = 0.95
       trainData = scale(trainData)
       testData = scale(testData)
@@ -792,8 +792,8 @@ def crossDataBase():
     activationFunction = relu
     rbmActivationFunctionHidden = makeNoisyRelu()
     rbmActivationFunctionVisible = identity
-    unsupervisedLearningRate = 0.05
-    supervisedLearningRate = 0.01
+    unsupervisedLearningRate = 0.005
+    supervisedLearningRate = 0.001
     momentumMax = 0.95
     trainData = scale(trainData)
     testData = scale(testData)
