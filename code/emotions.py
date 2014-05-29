@@ -365,7 +365,6 @@ def deepbeliefKanade(big=False):
       pickle.dump(net, f)
 
 
-
 def buildUnsupervisedDataSetForKanadeLabelled():
   return np.vstack((
     # readCroppedYale(),
