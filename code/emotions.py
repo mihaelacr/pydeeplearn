@@ -763,7 +763,7 @@ def crossDataBase():
   testLabels = labelsToVectors(testLabels, 6)
 
   print "testLabels after map"
-  print testLabels
+  print np.argmax(testLabels, axis=1)
 
   if args.relu:
     activationFunction = relu
