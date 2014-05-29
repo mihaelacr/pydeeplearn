@@ -40,6 +40,16 @@ def equalizeFromFloatGlobal(x):
   y =  equalizeImgGlobal(y).reshape(-1)
   return y / 255.0
 
+
+def cropFromFloat(x):
+  x = x * 255
+  x = np.asarray(x, dtype='uint8')
+  # y = x.reshape(SMALL_SIZE)
+  y = facedetection.cropFace(x)
+  return y.reshape(SMALL_SIZE)
+
+
+
 def equalizeFromFloatCLAHE(x):
   x = x * 255
   x = np.asarray(x, dtype='uint8')
@@ -369,7 +379,7 @@ def facedetectionMultiPie():
   data, _ = readMultiPIE()
 
   data = map(lambda x: x.reshape(SMALL_SIZE), data)
-  data = map(facedetection.cropFace, data)
+  data = map(cropFromFloat, data)
   for d in data:
     plt.imshow(d, cmap=plt.cm.gray)
     plt.show()
