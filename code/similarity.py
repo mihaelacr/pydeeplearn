@@ -110,6 +110,8 @@ class SimilarityNet(object):
     learningRate = T.fscalar()
 
     learningRateMiniBatch = np.float32(self.learningRate / miniBatchSize)
+    print "learningRateMiniBatch in similarity net"
+    print learningRateMiniBatch
 
     net = self._trainRBM(data1, data2)
 
