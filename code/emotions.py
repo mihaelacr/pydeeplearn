@@ -755,9 +755,10 @@ def crossDataBase():
   trainData, trainLabels = readMultiPIE()
   trainData, trainLabels = shuffle(trainData, trainLabels)
 
-  testData, testLabels = readKanade(False, None, equalize=args.equalize)
+  testData, testLabels = readKanade(False, None, equalize=args.equalize, vectorizeLabels=False)
   # Some emotions do not correspond for a to b, so we have to map them
   testData, testLabels = mapKanadeToPIELabels(testData, testLabels)
+  testLabels = labelsToVectors(testLabels, 6)
 
   if args.relu:
     activationFunction = relu
