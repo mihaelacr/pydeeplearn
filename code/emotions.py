@@ -812,7 +812,7 @@ def crossDataBase():
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
                visibleDropout=0.8,
-               hiddenDropout=0.5,
+               hiddenDropout=1.0,
                rbmHiddenDropout=1.0,
                rbmVisibleDropout=1.0,
                preTrainEpochs=args.preTrainEpochs)
