@@ -496,6 +496,7 @@ def mapKanadeToPIELabels(kanadeData, kanadeLabels):
     6: 0
   }
 
+  print "kanadeLabels"
   print kanadeLabels
 
   # If we did not move to 0 to 6, do it now
