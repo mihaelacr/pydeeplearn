@@ -871,6 +871,143 @@ def crossDataBase():
   print "confusion matrix"
   print confMatrix
 
+# TODO: try with the same poses, it will work bad with training with all poses I think
+"""Train with PIE test with Kanade. Check the equalization code. """
+def crossDataBaseCV():
+  # Only train with the frontal pose
+  trainData, trainLabels, _, _ = readMultiPieDifferentPoses([2], equalize=args.equalize)
+  trainData, trainLabels = shuffle(trainData, trainLabels)
+
+  print "trainLabels"
+  print np.argmax(trainLabels, axis=1)
+
+  # for i in xrange(len(trainLabels)):
+  #   print "emotions", np.argmax(trainLabels[i])
+  #   plt.imshow(vectorToImage(trainData[i], SMALL_SIZE), cmap=plt.cm.gray)
+  #   plt.show()
+  confustionMatrices = []
+  correctAll = []
+
+  params = [(0.001, 0.005), (0.001, 0.05), (0.01, 0.05), (0.01, 0.005)]
+
+
+  testData, testLabels = readKanade(False, None, equalize=args.equalize, vectorizeLabels=False)
+  print "testLabels"
+  print testLabels
+  # Some emotions do not correspond for a to b, so we have to map them
+  testData, testLabels = mapKanadeToPIELabels(testData, testLabels)
+  testLabels = labelsToVectors(testLabels, 6)
+
+  print "testLabels after map"
+  labelsSimple = np.argmax(testLabels, axis=1)
+  print labelsSimple
+
+  # for i in xrange(len(labelsSimple)):
+  #   print "emotions", labelsSimple[i]
+  #   plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray)
+  #   plt.show()
+
+
+  if args.relu:
+    activationFunction = relu
+    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionVisible = identity
+    # unsupervisedLearningRate = 0.05
+    # supervisedLearningRate = 0.01
+    # momentumMax = 0.95
+    trainData = scale(trainData)
+    testData = scale(testData)
+  else:
+    activationFunction = T.nnet.sigmoid
+    rbmActivationFunctionHidden = T.nnet.sigmoid
+    rbmActivationFunctionVisible = T.nnet.sigmoid
+    # unsupervisedLearningRate = 0.05
+    # supervisedLearningRate = 0.01
+    # momentumMax = 0.95
+
+
+  for param in params:
+
+    if args.train:
+      # TODO: this might require more thought
+      net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
+                 binary=1-args.relu,
+                 activationFunction=activationFunction,
+                 rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+                 rbmActivationFunctionHidden=rbmActivationFunctionHidden,
+                 supervisedLearningRate=param[1],
+                 unsupervisedLearningRate=param[0],
+                 momentumMax=0.95,
+                 nesterovMomentum=args.nesterov,
+                 rbmNesterovMomentum=args.rbmnesterov,
+                 rmsprop=args.rmsprop,
+                 miniBatchSize=args.miniBatchSize,
+                 visibleDropout=0.8,
+                 hiddenDropout=1.0,
+                 rbmHiddenDropout=1.0,
+                 rbmVisibleDropout=1.0,
+                 preTrainEpochs=args.preTrainEpochs)
+
+      unsupervisedData = buildUnsupervisedDataSetForPIE()
+
+      net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
+                validation=args.validation,
+                unsupervisedData=unsupervisedData)
+
+      if args.save:
+        with open(args.netFile, "wb") as f:
+          pickle.dump(net, f)
+
+    else:
+       # Take the saved network and use that for reconstructions
+      with open(args.netFile, "rb") as f:
+        net = pickle.load(f)
+
+    probs, predicted = net.classify(testData)
+
+    actualLabels = testLabels
+    correct = 0
+    errorCases = []
+
+    for i in xrange(len(testLabels)):
+      print "predicted"
+      print "probs"
+      print probs[i]
+      print "predicted"
+      print predicted[i]
+      print "actual"
+      actual = actualLabels[i]
+      print np.argmax(actual)
+      if predicted[i] == np.argmax(actual):
+        correct += 1
+      else:
+        errorCases.append(i)
+
+    print "correct"
+    print correct
+
+    print "percentage correct"
+    print correct  * 1.0/ len(testLabels)
+
+    print type(predicted)
+    print type(actualLabels)
+    print predicted.shape
+    print actualLabels.shape
+
+    confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+
+    correctAll += [correct  * 1.0/ len(testLabels)]
+    confustionMatrices += [confMatrix]
+
+    print "confusion matrix"
+    print confMatrix
+
+
+  for param in params:
+    print "for param" + str(param)
+    print "the correct rate was " + str(correctAll[i])
+    print "the confusionMatrix was " + str(confustionMatrices[i])
+
 
 def main():
   if args.rbm:
