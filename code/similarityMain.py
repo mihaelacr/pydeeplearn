@@ -291,11 +291,6 @@ def similarityCV():
      splitDataMultiPIESubject(instanceToPairRatio=2)
 
   if args.relu:
-    # TODO: params for relu
-    # params = [(0.0001, 0.01), (0.0001, 0.005), (0.001, 0.01), (0.001, 0.005)]
-    # TODO: try this
-    # params = [(0.001, 0.01), (0.001, 0.005), (0.01, 0.01), (0.01, 0.005)]
-
     visibleActivationFunction = Identity()
     hiddenActivationFunction = RectifiedNoisy()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
