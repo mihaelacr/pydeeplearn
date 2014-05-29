@@ -754,6 +754,7 @@ if __name__ == '__main__':
   # readCroppedYaleSubjects(show=True)
   # makeMultiPieImagesForReport()
   # makeEqualizePics()
-  makeCrossDbPlot()
+  # makeCrossDbPlot()
+  facedetectionMultiPie()
   # makeKanadeImages()
   # readMultiPieDifferentIlluminations([3], show=True, equalize=True)
