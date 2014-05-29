@@ -756,6 +756,9 @@ def crossDataBase():
   trainData, trainLabels, _, _ = readMultiPieDifferentPoses([2], equalize=args.equalize)
   trainData, trainLabels = shuffle(trainData, trainLabels)
 
+  print "trainLabels"
+  print np.argmax(trainLabels, axis=1)
+
   # for i in xrange(len(trainLabels)):
   #   print "emotions", np.argmax(trainLabels[i])
   #   plt.imshow(vectorToImage(trainData[i], SMALL_SIZE), cmap=plt.cm.gray)
