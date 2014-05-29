@@ -766,7 +766,7 @@ def crossDataBase():
   labelsSimple = np.argmax(testLabels, axis=1)
   print labelsSimple
 
-  for i in xrange(labelsSimple):
+  for i in labelsSimple:
     print "emotions", i
     plt.imshow(vectorToImage(testData, SMALL_SIZE), cmap=plt.cm.gray)
     plt.show()
