@@ -46,6 +46,8 @@ def cropFromFloat(x):
   x = np.asarray(x, dtype='uint8')
   # y = x.reshape(SMALL_SIZE)
   y = facedetection.cropFace(x, rescaleForReconigtion=1)
+  if y is None:
+    return None
   return y.reshape(SMALL_SIZE)
 
 
@@ -381,8 +383,9 @@ def facedetectionMultiPie():
   data = map(lambda x: x.reshape(SMALL_SIZE), data)
   data = map(cropFromFloat, data)
   for d in data:
-    plt.imshow(d, cmap=plt.cm.gray)
-    plt.show()
+    if d not None:
+      plt.imshow(d, cmap=plt.cm.gray)
+      plt.show()
 
 
 def makeCrossDbPlot():
