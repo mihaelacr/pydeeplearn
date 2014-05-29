@@ -55,6 +55,8 @@ parser.add_argument('--illumination',dest='illumination',action='store_true', de
                     help="if true, trains and tests the images with different illuminations")
 parser.add_argument('--pose',dest='pose',action='store_true', default=False,
                     help="if true, trains and tests the images with different poses")
+parser.add_argument('--missing', dest='missing',action='store_true', default=False,
+                    help=("tests the network with missing data."))
 parser.add_argument('--crossdb', dest='crossdb',action='store_true', default=False,
                     help=("if true, trains the DBN with multi pie and tests with Kanade."))
 parser.add_argument('--crossdbCV', dest='crossdbCV',action='store_true', default=False,
@@ -1011,6 +1013,138 @@ def crossDataBaseCV():
     print "the confusionMatrix was " + str(confustionMatrices[i])
 
 
+
+def addBlobsOfMissingData(testData):
+  sqSize = 5
+  maxHeight = SMALL_SIZE[0] - sqSize
+  maxLength = SMALL_SIZE[1] - sqSize
+
+  def makeBlob(x):
+    x = x.reshape(SMALL_SIZE)
+    m = np.random.random_integers(low=0, high=maxHeight)
+    n = np.random.random_integers(low=0, high=maxLength)
+
+    for i in xrange(sqSize):
+      for j in xrange(sqSize):
+        x[m + i, n + j] = 0
+
+
+    return x.reshape(-1)
+
+  return map(makeBlob, testData)
+
+"""Train with PIE test with Kanade. Check the equalization code. """
+def missingData():
+  data, labels = readMultiPIE(equalize=args.equalize)
+  data, labels = shuffle(data, labels)
+
+  # Random data for training and testing
+  kf = cross_validation.KFold(n=len(data), n_folds=4)
+  for train, test in kf:
+    break
+
+  trainData = data[train]
+  trainLabels = labels[train]
+
+  testData = data[test]
+  testLabels = labels[test]
+
+  testData = addBlobsOfMissingData(testData)
+
+  for i in xrange(10):
+    plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray)
+    plt.show()
+
+  if args.relu:
+    activationFunction = relu
+    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionVisible = identity
+    unsupervisedLearningRate = 0.005
+    supervisedLearningRate = 0.001
+    momentumMax = 0.95
+    trainData = scale(trainData)
+    testData = scale(testData)
+  else:
+    activationFunction = T.nnet.sigmoid
+    rbmActivationFunctionHidden = T.nnet.sigmoid
+    rbmActivationFunctionVisible = T.nnet.sigmoid
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.95
+
+  if args.train:
+    # TODO: this might require more thought
+    net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
+               binary=1-args.relu,
+               activationFunction=activationFunction,
+               rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+               rbmActivationFunctionHidden=rbmActivationFunctionHidden,
+               unsupervisedLearningRate=unsupervisedLearningRate,
+               supervisedLearningRate=supervisedLearningRate,
+               momentumMax=momentumMax,
+               nesterovMomentum=args.nesterov,
+               rbmNesterovMomentum=args.rbmnesterov,
+               rmsprop=args.rmsprop,
+               miniBatchSize=args.miniBatchSize,
+               visibleDropout=0.8,
+               hiddenDropout=1.0,
+               rbmHiddenDropout=1.0,
+               rbmVisibleDropout=1.0,
+               preTrainEpochs=args.preTrainEpochs)
+
+    unsupervisedData = buildUnsupervisedDataSetForPIE()
+
+    net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
+              validation=args.validation,
+              unsupervisedData=unsupervisedData)
+
+    if args.save:
+      with open(args.netFile, "wb") as f:
+        pickle.dump(net, f)
+
+  else:
+     # Take the saved network and use that for reconstructions
+    with open(args.netFile, "rb") as f:
+      net = pickle.load(f)
+
+  probs, predicted = net.classify(testData)
+
+  actualLabels = testLabels
+  correct = 0
+  errorCases = []
+
+  for i in xrange(len(testLabels)):
+    print "predicted"
+    print "probs"
+    print probs[i]
+    print "predicted"
+    print predicted[i]
+    print "actual"
+    actual = actualLabels[i]
+    print np.argmax(actual)
+    if predicted[i] == np.argmax(actual):
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  print "correct"
+  print correct
+
+  print "percentage correct"
+  print correct  * 1.0/ len(testLabels)
+
+  print type(predicted)
+  print type(actualLabels)
+  print predicted.shape
+  print actualLabels.shape
+
+  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+
+  print "confusion matrix"
+  print confMatrix
+
+
+
 def main():
   if args.rbm:
     rbmEmotions()
@@ -1031,6 +1165,9 @@ def main():
 
   if args.illumination or args.pose:
     deepBeliefPieDifferentConditions()
+
+  if args.missing:
+    missingData()
 
 
 # You can also group the emotions into positive and negative to see
