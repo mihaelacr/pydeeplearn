@@ -21,23 +21,37 @@ SMALL_SIZE = ((40, 30))
 
 # TODO: make some general things with the path in order to make it work easily between
 # lab machine and local
-def equalizeImg(x):
+def equalizeImgGlobal(x):
   # Contrast Limited Adaptive Histogram Equalization
   # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(5,5))
   # return clahe.apply(x)
   return cv2.equalizeHist(x)
 
-def equalizeFromFloat(x):
+def equalizeCLAHE(x):
+  # Contrast Limited Adaptive Histogram Equalization
+  clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(5,5))
+  return clahe.apply(x)
+
+
+def equalizeFromFloatGlobal(x):
   x = x * 255
   x = np.asarray(x, dtype='uint8')
   y = x.reshape(SMALL_SIZE)
-  y =  equalizeImg(y).reshape(-1)
+  y =  equalizeImgGlobal(y).reshape(-1)
   return y / 255.0
+
+def equalizeFromFloatCLAHE(x):
+  x = x * 255
+  x = np.asarray(x, dtype='uint8')
+  y = x.reshape(SMALL_SIZE)
+  y =  equalizeCLAHE(y).reshape(-1)
+  return y / 255.0
+
+
 
 def equalizePIE():
   imgs, labels = readMultiPIE()
-
-  imgs = np.array(map(lambda x: equalizeFromFloat(x), imgs))
+  imgs = np.array(map(lambda x: equalizeFromFloatGlobal(x), imgs))
 
   return imgs, labels
 
@@ -50,7 +64,7 @@ def equalizeKanade(big=False):
       fileName = 'equalized_kanade_small.pickle'
 
 
-  data = np.array(map(lambda x: equalizeFromFloat(x), data))
+  data = np.array(map(lambda x: equalizeFromFloatCLAHE(x), data))
 
   with open(fileName, "wb") as f:
     pickle.dump(data, f)
@@ -73,7 +87,7 @@ def readMultiPIE(show=False, equalize=False, vectorizeLabels=True):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
 
             if equalize:
-              image = equalizeFromFloat(image)
+              image = equalizeFromFloatGlobal(image)
 
             image = image.reshape(30,40).T
             if show:
@@ -108,7 +122,7 @@ def readMultiPieDifferentIlluminations(illuminationTrain, show=False, equalize=F
             image = np.squeeze(data[subject,pose,expression,illumination,:])
 
             if equalize:
-              image = equalizeFromFloat(image)
+              image = equalizeFromFloatGlobal(image)
 
             image = image.reshape(30,40).T
             if illumination in illuminationTrain:
@@ -155,7 +169,7 @@ def readMultiPieDifferentPoses(posesTrain, show=False, equalize=False):
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
             if equalize:
-              image = equalizeFromFloat(image)
+              image = equalizeFromFloatGlobal(image)
 
             image = image.reshape(30,40).T
 
@@ -200,7 +214,7 @@ def readMultiPIESubjects(equalize=False):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
 
             if equalize:
-              image = equalizeFromFloat(image)
+              image = equalizeFromFloatGlobal(image)
 
             image = image.reshape(30,40).T
             image = image.reshape(-1)
@@ -228,7 +242,7 @@ def readMultiPIEEmotions(equalize=False):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
 
             if equalize:
-              image = equalizeFromFloat(image)
+              image = equalizeFromFloatGlobal(image)
 
             image = image.reshape(30,40).T
             image = image.reshape(-1)
@@ -315,27 +329,27 @@ def makeEqualizePics():
   data, _ = readMultiPIE()
   pie = data[0]
   pie = pie.reshape(SMALL_SIZE)
-  pieEq = equalizeFromFloat(pie)
+  pieEq = equalizeFromFloatGlobal(pie)
   pieEq = pieEq.reshape(SMALL_SIZE)
 
 
   data, _ = readKanade()
   kanade = data[0]
   kanade = kanade.reshape(SMALL_SIZE)
-  kanadeEq = equalizeFromFloat(kanade)
+  kanadeEq = equalizeFromFloatCLAHE(kanade)
   kanadeEq = kanadeEq.reshape(SMALL_SIZE)
 
 
   data = readJaffe(crop=True, detectFaces=True, equalize=False)
   jaffe = data[0]
   jaffe = jaffe.reshape(SMALL_SIZE)
-  jaffeEq = equalizeFromFloat(jaffe)
+  jaffeEq = equalizeFromFloatCLAHE(jaffe)
   jaffeEq = jaffeEq.reshape(SMALL_SIZE)
 
   data = readCroppedYale(False)
   yale = data[0]
   yale = yale.reshape(SMALL_SIZE)
-  yaleEq = equalizeFromFloat(yale)
+  yaleEq = equalizeFromFloatCLAHE(yale)
   yaleEq = yaleEq.reshape(SMALL_SIZE)
 
 
@@ -406,7 +420,7 @@ def readMultiPIEEmotionsPerSubject(equalize):
         for illumination in xrange(5):
             image = np.squeeze(data[subject,pose,expression,illumination,:])
             if equalize:
-              image = equalizeFromFloat(image)
+              image = equalizeFromFloatGlobal(image)
 
             image = image.reshape(30,40).T
             image = image.reshape(-1)
@@ -636,11 +650,10 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
         if pathForCropped in fullPath:
           continue
 
-        print fullPath
         img = cv2.imread(fullPath, 0)
 
         if equalize:
-          img = equalizeImg(img)
+          img = equalizeFromFloatCLAHE(img)
 
         face = facedetection.cropFace(img)
         if not face == None:
@@ -693,7 +706,7 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
       img = resize(img, SMALL_SIZE)
 
       if equalize:
-        img = equalizeFromFloat(img)
+        img = equalizeFromFloatCLAHE(img)
 
       images += [img.reshape(-1)]
 
