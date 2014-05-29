@@ -805,6 +805,7 @@ def crossDataBase():
     net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
               validation=args.validation,
               unsupervisedData=unsupervisedData)
+
     if args.save:
       with open(args.netFile, "wb") as f:
         pickle.dump(net, f)
@@ -838,7 +839,7 @@ def crossDataBase():
   print correct
 
   print "percentage correct"
-  print correct  * 1.0/ len(test)
+  print correct  * 1.0/ len(testLabels)
 
   print type(predicted)
   print type(actualLabels)
