@@ -752,8 +752,14 @@ def deepBeliefPieDifferentConditions():
 # TODO: try with the same poses, it will work bad with training with all poses I think
 """Train with PIE test with Kanade. Check the equalization code. """
 def crossDataBase():
-  trainData, trainLabels = readMultiPIE()
+  trainData, trainLabels = readMultiPIE(equalize=args.equalize)
   trainData, trainLabels = shuffle(trainData, trainLabels)
+
+  for i in xrange(len(trainLabels)):
+    print "emotions", np.argmax(trainLabels[i])
+    plt.imshow(vectorToImage(trainData[i], SMALL_SIZE), cmap=plt.cm.gray)
+    plt.show()
+
 
   testData, testLabels = readKanade(False, None, equalize=args.equalize, vectorizeLabels=False)
   print "testLabels"
