@@ -762,6 +762,9 @@ def crossDataBase():
   testData, testLabels = mapKanadeToPIELabels(testData, testLabels)
   testLabels = labelsToVectors(testLabels, 6)
 
+  print "testLabels after map"
+  print testLabels
+
   if args.relu:
     activationFunction = relu
     rbmActivationFunctionHidden = makeNoisyRelu()
