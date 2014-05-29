@@ -956,10 +956,6 @@ def crossDataBaseCV():
                 validation=args.validation,
                 unsupervisedData=unsupervisedData)
 
-      if args.save:
-        with open(args.netFile, "wb") as f:
-          pickle.dump(net, f)
-
     else:
        # Take the saved network and use that for reconstructions
       with open(args.netFile, "rb") as f:
