@@ -91,7 +91,7 @@ def similarityMain():
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
                                     trainingEpochsRBM=10,
-                                    nesterovRbm=False,
+                                    nesterovRbm=True,
                                     sparsityConstraint=True,
                                     sparsityRegularization=0.01,
                                     sparsityTraget=0.01)
@@ -361,7 +361,7 @@ def similarityCV():
                                       rmsprop=args.rmsprop,
                                       rbmDropoutVis=1.0,
                                       trainingEpochsRBM=1,
-                                      nesterovRbm=False,
+                                      nesterovRbm=True,
                                       sparsityConstraint=True,
                                       sparsityRegularization=params[fold][2],
                                       sparsityTraget=0.01)
