@@ -479,6 +479,10 @@ def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=True):
       data = pickle.load(f)
       labels = pickle.load(f)
 
+    if not vectorizeLabels:
+      labels = np.argmax(labels, axis=1)
+
+
   # For now: check that the data is binary
   assert np.all(np.min(data, axis=1) >= 0.0) and np.all(np.max(data, axis=1) < 1.0 + 1e-8)
 
