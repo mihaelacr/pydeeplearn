@@ -57,6 +57,8 @@ parser.add_argument('--pose',dest='pose',action='store_true', default=False,
                     help="if true, trains and tests the images with different poses")
 parser.add_argument('--crossdb', dest='crossdb',action='store_true', default=False,
                     help=("if true, trains the DBN with multi pie and tests with Kanade."))
+parser.add_argument('--crossdbCV', dest='crossdbCV',action='store_true', default=False,
+                    help=("if true, trains the DBN with multi pie and tests with Kanade."))
 parser.add_argument('--facedetection', dest='facedetection',action='store_true', default=False,
                     help=("if true, do face detection"))
 parser.add_argument('--maxEpochs', type=int, default=1000,
@@ -1024,6 +1026,9 @@ def main():
     svmPIE()
   if args.crossdb:
     crossDataBase()
+  if args.crossdbCV:
+    crossDataBaseCV()
+
   if args.illumination or args.pose:
     deepBeliefPieDifferentConditions()
 
