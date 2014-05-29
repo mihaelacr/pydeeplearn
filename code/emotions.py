@@ -756,10 +756,10 @@ def crossDataBase():
   trainData, trainLabels, _, _ = readMultiPieDifferentPoses([2], equalize=args.equalize)
   trainData, trainLabels = shuffle(trainData, trainLabels)
 
-  for i in xrange(len(trainLabels)):
-    print "emotions", np.argmax(trainLabels[i])
-    plt.imshow(vectorToImage(trainData[i], SMALL_SIZE), cmap=plt.cm.gray)
-    plt.show()
+  # for i in xrange(len(trainLabels)):
+  #   print "emotions", np.argmax(trainLabels[i])
+  #   plt.imshow(vectorToImage(trainData[i], SMALL_SIZE), cmap=plt.cm.gray)
+  #   plt.show()
 
 
   testData, testLabels = readKanade(False, None, equalize=args.equalize, vectorizeLabels=False)
@@ -773,10 +773,10 @@ def crossDataBase():
   labelsSimple = np.argmax(testLabels, axis=1)
   print labelsSimple
 
-  for i in xrange(len(labelsSimple)):
-    print "emotions", labelsSimple[i]
-    plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray)
-    plt.show()
+  # for i in xrange(len(labelsSimple)):
+  #   print "emotions", labelsSimple[i]
+  #   plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray)
+  #   plt.show()
 
 
   if args.relu:
