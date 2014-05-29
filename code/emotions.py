@@ -805,6 +805,10 @@ def crossDataBase():
     net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
               validation=args.validation,
               unsupervisedData=unsupervisedData)
+    if args.save:
+      with open(args.netFile, "wb") as f:
+        pickle.dump(net, f)
+
   else:
      # Take the saved network and use that for reconstructions
     with open(args.netFile, "rb") as f:
@@ -845,10 +849,6 @@ def crossDataBase():
 
   print "confusion matrix"
   print confMatrix
-
-  if args.save:
-    with open(args.netFile, "wb") as f:
-      pickle.dump(net, f)
 
 
 def main():
