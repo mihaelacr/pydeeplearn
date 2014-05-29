@@ -366,8 +366,8 @@ def makeEqualizePics():
 
 
 def makeCrossDbPlot():
-  dataKanade, labelsKanade = readKanade(vectorizeLabels=False)
-  dataPie, labelsPie, _, _ = readMultiPieDifferentPoses([2])
+  dataKanade, labelsKanade = readKanade(vectorizeLabels=False, equalize=True)
+  dataPie, labelsPie, _, _ = readMultiPieDifferentPoses([2], equalize=True)
   labelsPie = np.argmax(labelsPie, axis=1)
 
   if 7 in labelsKanade:
