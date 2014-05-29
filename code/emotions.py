@@ -1001,7 +1001,7 @@ def crossDataBaseCV():
     print confMatrix
 
 
-  for param in params:
+  for i, param in enumerate(params):
     print "for param" + str(param)
     print "the correct rate was " + str(correctAll[i])
     print "the confusionMatrix was " + str(confustionMatrices[i])
