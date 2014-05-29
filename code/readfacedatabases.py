@@ -365,6 +365,16 @@ def makeEqualizePics():
   plt.show()
 
 
+def facedetectionMultiPie():
+  data, _ = readMultiPIE()
+
+  data = map(lamba x: x,reshape(SMALL_SIZE), data)
+  data = map(facedetection.cropFace, data)
+  for d in data:
+    plt.imshow(d, cmap=plt.cm.gray)
+    plt.show()
+
+
 def makeCrossDbPlot():
   dataKanade, labelsKanade = readKanade(vectorizeLabels=False, equalize=True)
   dataPie, labelsPie, _, _ = readMultiPieDifferentPoses([2], equalize=True)
