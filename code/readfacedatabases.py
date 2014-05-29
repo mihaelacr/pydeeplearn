@@ -45,7 +45,7 @@ def cropFromFloat(x):
   x = x * 255
   x = np.asarray(x, dtype='uint8')
   # y = x.reshape(SMALL_SIZE)
-  y = facedetection.cropFace(x)
+  y = facedetection.cropFace(x, rescaleForReconigtion=1)
   return y.reshape(SMALL_SIZE)
 
 
