@@ -51,6 +51,8 @@ parser.add_argument('--cvPIE', dest='cvPIE',action='store_true', default=False,
                     help=("if true, do cross validation"))
 parser.add_argument('--svmPIE', dest='svmPIE',action='store_true', default=False,
                     help=("if true, do SVM on top of the last hidden features"))
+parser.add_argument('--average', dest='average',action='store_true', default=False,
+                    help=("average out results over multiple runs"))
 parser.add_argument('--illumination',dest='illumination',action='store_true', default=False,
                     help="if true, trains and tests the images with different illuminations")
 parser.add_argument('--pose',dest='pose',action='store_true', default=False,
@@ -1276,6 +1278,9 @@ def main():
 
   if args.missing:
     missingData()
+
+  if args.average:
+    deepbeliefMultiPIEAverage()
 
 
 # You can also group the emotions into positive and negative to see
