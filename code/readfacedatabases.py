@@ -368,7 +368,7 @@ def makeEqualizePics():
 def facedetectionMultiPie():
   data, _ = readMultiPIE()
 
-  data = map(lamba x: x,reshape(SMALL_SIZE), data)
+  data = map(lambda x: x.reshape(SMALL_SIZE), data)
   data = map(facedetection.cropFace, data)
   for d in data:
     plt.imshow(d, cmap=plt.cm.gray)
