@@ -9,6 +9,21 @@ import numpy as np
 
 theanoFloat  = theano.config.floatX
 
+class ActivationFunction(object):
+
+  def __getstate__(self):
+    odict = self.__dict__.copy() # copy the dict since we change it
+    if 'theanoGenerator' in odict:
+      del odict['theanoGenerator']
+    return odict
+
+  def __setstate__(self, dict):
+    self.__dict__.update(dict)   # update attributes
+
+  def __getinitargs__():
+    return None
+
+
 class Sigmoid(object):
 
   def __init__(self):
