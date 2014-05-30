@@ -101,11 +101,16 @@ class CappedRectifiedNoisy(ActivationFunction):
   def deterministic(self, x):
     return x * (x > 0.0) * (x < 6.0)
 
+# TODO
+  def activationProbablity(self, x):
+    return None
 
-def expectedValueGaussian(mean, std):
-  return T.sqrt(std / (2.0 * np.pi)) * T.exp(- mean**2 / (2.0 * std)) + mean * cdf(mean / std)
+
+def expectedValueGaussian(mean, variance):
+  std = T.sqrt(variance)
+  return std / T.sqrt(2.0 * np.pi) * T.exp(- mean**2 / (2.0 * std)) + mean * cdf(mean / std)
 
 # Approximation of the cdf of a standard normal
-def cdf(x):
-  return 1.0/2 *  (1.0 + T.erf(x / T.sqrt(2)))
+def cdf(x, miu=0.0, sigma=1.0):
+  return 1.0/2 *  (1.0 + T.erf((x - miu)/( sigma T.sqrt(2))))
 
