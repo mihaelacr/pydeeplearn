@@ -9,13 +9,14 @@ import readmnist
 import restrictedBoltzmannMachine as rbm
 import deepbelief as db
 import ann
-import utils
 import PCA
 import svm
 
 from sklearn import cross_validation
 
 from common import *
+from activationfunctions import *
+
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,
@@ -23,6 +24,8 @@ parser.add_argument('--save',dest='save',action='store_true', default=False,
 parser.add_argument('--train',dest='train',action='store_true', default=False,
                     help=("if true, the network is trained from scratch from the"
                           "training data"))
+parser.add_argument('--sparsity', dest='sparsity',action='store_true', default=False,
+                    help=("if true, the the networks are trained with sparsity constraints"))
 parser.add_argument('--ann',dest='ann',action='store_true', default=False,
                     help=("if true, we train an ann not a dbn"))
 parser.add_argument('--pca', dest='pca',action='store_true', default=False,
@@ -80,8 +83,6 @@ args = parser.parse_args()
 # Set the debug mode in the deep belief net
 db.DEBUG = args.debug
 
-BINARY = {T.nnet.sigmoid : True}.get(False)
-
 def rbmMain(reconstructRandom=False):
   trainVectors, trainLabels =\
       readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
@@ -93,13 +94,13 @@ def rbmMain(reconstructRandom=False):
 
   # TODO: the reconstruction for relu still looks weird
   if args.relu:
-    activationFunction = makeNoisyReluSigmoid()
+    activationFunction = RectifiedNoisy()
     learningRate = 5e-05
     binary=False
   else:
     learningRate = 0.3
     binary=True
-    activationFunction = T.nnet.sigmoid
+    activationFunction = Sigmoid()
 
   # Train the network
   if args.train:
@@ -110,10 +111,12 @@ def rbmMain(reconstructRandom=False):
     nrHidden = 500
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
-                  binary=binary,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
-                  rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
+                  rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov,
+                  sparsityConstraint=args.sparsity,
+                  sparsityRegularization=0.01,
+                  sparsityTraget=0.01)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
   else:
@@ -138,7 +141,7 @@ def rbmMain(reconstructRandom=False):
   # plt.show()
 
   hidden = net.hiddenRepresentation(test.reshape(1, test.shape[0]))
-  plt.imshow(vectorToImage(hidden, (28,28)), cmap=plt.cm.gray)
+  plt.imshow(vectorToImage(hidden, (25,20)), cmap=plt.cm.gray)
   plt.axis('off')
   plt.savefig('hiddenfeatures7.png', transparent=True)
 
@@ -289,9 +292,8 @@ def rbmMainGauss(reconstructRandom=False):
     nrHidden = 500
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
-                  binary=False,
-                  visibleActivationFunction=identity,
-                  hiddenActivationFunction=makeNoisyReluSigmoid(),
+                  visibleActivationFunction=Identity(),
+                  hiddenActivationFunction=RectifiedNoisy(),
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
     net.train(trainingScaledVectors)
     t = visualizeWeights(net.weights.T, (28,28), (10,10))
@@ -351,7 +353,7 @@ def makeNicePlots():
   # TODO: the reconstruction for relu still looks weird
   learningRate = 0.1
   binary = True
-  activationFunction = T.nnet.sigmoid
+  activationFunction = Sigmoid()
 
   # Train the network
   if args.train:
@@ -362,7 +364,6 @@ def makeNicePlots():
     nrHidden = 500
     # use 1 dropout to test the rbm for now
     net = rbm.RBM(nrVisible, nrHidden, learningRate, 1, 1,
-                  binary=binary,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop, nesterov=args.rbmnesterov)
@@ -458,6 +459,7 @@ def pcaOnMnist(training, dimension=700):
 
 
 def cvMNIST():
+  assert not args.relu, "do not run this function for rectified linear units"
   training = args.trainSize
 
   data, labels =\
@@ -467,14 +469,13 @@ def cvMNIST():
   scaledData = data / 255.0
   vectorLabels = labelsToVectors(labels, 10)
 
-  if args.relu:
-    activationFunction = relu
-  else:
-    activationFunction = T.nnet.sigmoid
+  activationFunction = Sigmoid()
 
 
   bestFold = -1
   bestError = np.inf
+
+
 
   if args.relu:
     # params =[(0.01, 0.01) , (0.01, 0.05), (0.05, 0.1), (0.05, 0.05)]
@@ -484,10 +485,10 @@ def cvMNIST():
              (1e-05, 0.001, 0.99), (5e-06, 0.001, 0.99), (5e-05, 0.001, 0.99)]
   else:
     # params =[(0.1, 0.1) , (0.1, 0.05), (0.05, 0.1), (0.05, 0.05)]
-    # params =[(0.05, 0.05) , (0.05, 0.075), (0.075, 0.05), (0.075, 0.075)]
-    params =[(0.05, 0.075, 0.9), (0.05, 0.1, 0.9), (0.01, 0.05, 0.9),
-             (0.05, 0.075, 0.95), (0.05, 0.1, 0.95), (0.01, 0.05, 0.95),
-             (0.05, 0.075, 0.99), (0.05, 0.1, 0.99), (0.01, 0.05, 0.99)]
+    params =[(0.05, 0.05) , (0.05, 0.075), (0.075, 0.05), (0.075, 0.075)]
+    # params =[(0.05, 0.075, 0.1), (0.05, 0.1, 0.1), (0.01, 0.05, 0.1),
+    #          (0.05, 0.075, 0.01), (0.05, 0.1, 0.01), (0.01, 0.05, 0.01),
+    #          (0.05, 0.075, 0.001), (0.05, 0.1, 0.001), (0.01, 0.05, 0.001)]
 
   nrFolds = len(params)
   kf = cross_validation.KFold(n=training, n_folds=nrFolds)
@@ -505,7 +506,7 @@ def cvMNIST():
                   binary=1-args.relu,
                   unsupervisedLearningRate=params[i][0],
                   supervisedLearningRate=params[i][1],
-                  momentumMax=params[i][2],
+                  momentumMax=0.95,
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
                   activationFunction=activationFunction,
@@ -519,7 +520,10 @@ def cvMNIST():
                   rbmHiddenDropout=1.0,
                   rbmVisibleDropout=1.0,
                   miniBatchSize=args.miniBatchSize,
-                  preTrainEpochs=args.preTrainEpochs)
+                  preTrainEpochs=args.preTrainEpochs,
+                  sparsityTragetRbm=0.01,
+                  sparsityConstraintRbm=False,
+                  sparsityRegularizationRbm=None)
 
     net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
               validation=args.validation)
@@ -621,7 +625,11 @@ def svmMNIST():
   svm.SVMCV(dbnNet, trainingScaledVectors, trainLabels,
             testingScaledVectors, testLabels)
 
+# NOT for relu: use GaussianMNIST for that
 def deepbeliefMNIST():
+
+  assert not args.relu, "do not run this method for rectified linear units"
+
   training = args.trainSize
   testing = args.testSize
 
@@ -633,11 +641,7 @@ def deepbeliefMNIST():
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
-  if args.relu:
-    # activationFunction = makeNoisyRelu()
-    activationFunction = relu
-  else:
-    activationFunction = T.nnet.sigmoid
+  activationFunction = Sigmoid()
 
   # TODO: do not divide for RELU?
   trainingScaledVectors = trainVectors / 255.0
@@ -645,24 +649,13 @@ def deepbeliefMNIST():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  if args.relu:
-    unsupervisedLearningRate = 5e-06
-    supervisedLearningRate = 0.001
-    momentumMax = 0.95
-
-  else:
-    # unsupervisedLearningRate = 0.01
-    # supervisedLearningRate = 0.05
-
-    unsupervisedLearningRate = 0.01
-    supervisedLearningRate = 0.05
-    momentumMax = 0.95
+  unsupervisedLearningRate = 0.01
+  supervisedLearningRate = 0.05
+  momentumMax = 0.95
 
   if args.train:
-    # Try 1200, 1200, 1200
-    # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                 binary=1-args.relu,
+                 binary=False,
                  unsupervisedLearningRate=unsupervisedLearningRate,
                  supervisedLearningRate=supervisedLearningRate,
                  momentumMax=momentumMax,
@@ -748,9 +741,15 @@ def deepbeliefMNISTGaussian():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
+  # unsupervisedLearningRate = 0.005
+  # supervisedLearningRate = 0.005
+  # momentumMax =0.95
   unsupervisedLearningRate = 0.005
-  supervisedLearningRate = 0.005
-  momentumMax =0.95
+  supervisedLearningRate = 0.01
+  momentumMax = 0.95
+  sparsityTragetRbm = 0.01
+  sparsityConstraintRbm = True
+  sparsityRegularizationRbm = 0.05
 
   if args.train:
     # Try 1200, 1200, 1200
@@ -761,8 +760,8 @@ def deepbeliefMNISTGaussian():
                  supervisedLearningRate=supervisedLearningRate,
                  momentumMax=momentumMax,
                  activationFunction=relu,
-                 rbmActivationFunctionVisible=identity,
-                 rbmActivationFunctionHidden=makeNoisyReluSigmoid(),
+                 rbmActivationFunctionVisible=Identity(),
+                 rbmActivationFunctionHidden=RectifiedNoisy(),
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
@@ -772,6 +771,9 @@ def deepbeliefMNISTGaussian():
                  rbmVisibleDropout=1.0,
                  weightDecayL1=0,
                  weightDecayL2=0,
+                 sparsityTragetRbm=sparsityTragetRbm,
+                 sparsityConstraintRbm=sparsityConstraintRbm,
+                 sparsityRegularizationRbm=sparsityRegularizationRbm,
                  preTrainEpochs=args.preTrainEpochs)
 
     net.train(trainingScaledVectors, vectorLabels,
@@ -831,9 +833,17 @@ def cvMNISTGaussian():
   #           (1e-03, 1e-03, 0.99), (1e-04, 1e-03, 0.99), (5e-04, 1e-03, 0.99)]
   # params = [(1e-03, 1e-03), (1e-03, 1e-04), (1e-04, 1e-03), (1e-04, 1e-04)]
 
-  params = [(5e-03, 1e-02, 0.9),  (1e-02, 5e-03, 0.9), (5e-03, 5e-03, 0.9),
-            (5e-03, 1e-02, 0.95), (1e-02, 5e-03, 0.95),(5e-03, 5e-03, 0.95),
-            (5e-03, 1e-02, 0.99), (1e-02, 5e-03, 0.99),(5e-03, 5e-03, 0.99) ]
+  # params = [(5e-03, 1e-02, 0.9),  (1e-02, 5e-03, 0.9), (5e-03, 5e-03, 0.9),
+  #           (5e-03, 1e-02, 0.95), (1e-02, 5e-03, 0.95),(5e-03, 5e-03, 0.95),
+  #           (5e-03, 1e-02, 0.99), (1e-02, 5e-03, 0.99),(5e-03, 5e-03, 0.99) ]
+
+  # params = [(5e-03, 1e-02, 0.1),  (1e-02, 5e-03, 0.1), (5e-03, 5e-03, 0.1),
+  #           (5e-03, 1e-02, 0.05), (1e-02, 5e-03, 0.05),(5e-03, 5e-03, 0.05),
+  #           (5e-03, 1e-02, 0.01), (1e-02, 5e-03, 0.01),(5e-03, 5e-03, 0.01) ]
+
+  params = [(5e-03, 1e-02, 0.1),  (1e-02, 5e-02, 0.1), (5e-03, 5e-02, 0.1),
+            (5e-03, 1e-02, 0.05), (1e-02, 5e-02, 0.05),(5e-03, 5e-02, 0.05),
+            (5e-03, 1e-02, 0.01), (1e-02, 5e-02, 0.01),(5e-03, 5e-02, 0.01) ]
 
   correctness = []
 
@@ -849,12 +859,12 @@ def cvMNISTGaussian():
                   binary=False,
                   unsupervisedLearningRate=params[i][0],
                   supervisedLearningRate=params[i][1],
-                  momentumMax=params[i][2],
+                  momentumMax=0.95,
                   nesterovMomentum=args.nesterov,
                   rbmNesterovMomentum=args.rbmnesterov,
-                  activationFunction=relu,
-                  rbmActivationFunctionVisible=identity,
-                  rbmActivationFunctionHidden=makeNoisyReluSigmoid(),
+                  activationFunction=Rectified(),
+                  rbmActivationFunctionVisible=Identity(),
+                  rbmActivationFunctionHidden=RectifiedNoisy(),
                   rmsprop=args.rmsprop,
                   visibleDropout=0.8,
                   hiddenDropout=0.5,
@@ -863,7 +873,10 @@ def cvMNISTGaussian():
                   rbmHiddenDropout=1.0,
                   rbmVisibleDropout=1.0,
                   miniBatchSize=args.miniBatchSize,
-                  preTrainEpochs=args.preTrainEpochs)
+                  preTrainEpochs=args.preTrainEpochs,
+                  sparsityConstraintRbm=True,
+                  sparsityTragetRbm=0.01,
+                  sparsityRegularizationRbm=params[i][2])
 
     net.train(trainingScaledVectors[train], vectorLabels[train],
               maxEpochs=args.maxEpochs,

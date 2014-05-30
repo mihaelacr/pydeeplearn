@@ -21,5 +21,4 @@ export PYTHONPATH=/data/mcr10/opencv/lib/python2.7/site-packagesPYTHONPATH=$PYTH
 # For cudamat: trial in nolearn
 export PYTHONPATH=$PYTHONPATH:/data/mcr10/theanoopenblas/cudamat
 
-export THEANO_FLAGS='floatX=float32,device=gpu0,nvcc.fastmath=True'Failed to load OpenCL runtime
-in
+export THEANO_FLAGS='floatX=float32,device=gpu0,nvcc.fastmath=True'

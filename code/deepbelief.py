@@ -1,10 +1,11 @@
 import numpy as np
 
 import restrictedBoltzmannMachine as rbm
+from activationfunctions import *
+
 import theano
 from theano import tensor as T
 from theano.tensor.shared_randomstreams import RandomStreams
-
 
 theanoFloat  = theano.config.floatX
 
@@ -94,23 +95,20 @@ class MiniBatchTrainer(object):
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
-      # Also check the Stamford paper again to what they did to average out
-      # the results with softmax and regression layers?
       # dropout: give the next layer only some of the units from this layer
-
       if hiddenDropout in  [1.0, 1]:
-        currentLayerValues = activationFunction(linearSum)
+        currentLayerValues = activationFunction.deterministic(linearSum)
       else:
         dropoutMaskHidden = self.theanoRng.binomial(n=1, p=hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
-        currentLayerValues = dropoutMaskHidden * activationFunction(linearSum)
+        currentLayerValues = dropoutMaskHidden * activationFunction.deterministic(linearSum)
 
     # Last layer operations, no dropout in the output
     w = self.weights[nrWeights - 1]
     b = self.biases[nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
-    currentLayerValues = classificationActivationFunction(linearSum)
+    currentLayerValues = classificationActivationFunction.deterministic(linearSum)
 
     self.output = currentLayerValues
 
@@ -138,14 +136,14 @@ class ClassifierBatch(object):
       w = self.classificationWeights[stage]
       b = biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
-      currentLayerValues = activationFunction(linearSum)
+      currentLayerValues = activationFunction.deterministic(linearSum)
 
     self.lastHiddenActivations = currentLayerValues
 
     w = self.classificationWeights[nrWeights - 1]
     b = biases[nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
-    currentLayerValues = classificationActivationFunction(linearSum)
+    currentLayerValues = classificationActivationFunction.deterministic(linearSum)
 
     self.output = currentLayerValues
 
@@ -166,10 +164,10 @@ class DBN(object):
   """
   def __init__(self, nrLayers, layerSizes,
                 binary,
-                activationFunction=T.nnet.sigmoid,
-                rbmActivationFunctionVisible=T.nnet.sigmoid,
-                rbmActivationFunctionHidden=T.nnet.sigmoid,
-                classificationActivationFunction=softmax,
+                activationFunction=Sigmoid(),
+                rbmActivationFunctionVisible=Sigmoid(),
+                rbmActivationFunctionHidden=Sigmoid(),
+                classificationActivationFunction=Softmax(),
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,
                 nesterovMomentum=True,
@@ -185,6 +183,9 @@ class DBN(object):
                 rbmVisibleDropout=1,
                 weightDecayL1=0.0001,
                 weightDecayL2=0.0001,
+                sparsityConstraintRbm=False,
+                sparsityRegularizationRbm=None,
+                sparsityTragetRbm=None,
                 preTrainEpochs=1):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
@@ -211,6 +212,10 @@ class DBN(object):
     self.momentumMax = momentumMax
     self.momentumForEpochFunction = momentumForEpochFunction
     self.binary = binary
+
+    self.sparsityRegularizationRbm = sparsityRegularizationRbm
+    self.sparsityConstraintRbm = sparsityConstraintRbm
+    self.sparsityTragetRbm = sparsityTragetRbm
 
     print "hidden dropout in DBN", hiddenDropout
     print "visible dropout in DBN", visibleDropout
@@ -246,9 +251,13 @@ class DBN(object):
         initialWeights = None
         initialBiases = None
 
+      if i == 0:
+        unsupervisedLearningRate = self.unsupervisedLearningRate * 10
+      else:
+        unsupervisedLearningRate = self.unsupervisedLearningRate
+
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
-                      learningRate=self.unsupervisedLearningRate,
-                      binary=self.binary,
+                      learningRate=unsupervisedLearningRate,
                       visibleActivationFunction=self.rbmActivationFunctionVisible,
                       hiddenActivationFunction=self.rbmActivationFunctionHidden,
                       hiddenDropout=self.rbmHiddenDropout,
@@ -257,7 +266,11 @@ class DBN(object):
                       nesterov=self.rbmNesterovMomentum,
                       initialWeights=initialWeights,
                       initialBiases=initialBiases,
-                      trainingEpochs=self.preTrainEpochs)
+                      trainingEpochs=self.preTrainEpochs,
+                      sparsityConstraint=self.sparsityConstraintRbm,
+                      sparsityTraget=self.sparsityTragetRbm,
+                      sparsityRegularization=self.sparsityRegularizationRbm)
+
       net.train(currentData)
 
       # Use the test weights from the rbm, the ones the correspond to the incoming
@@ -275,6 +288,10 @@ class DBN(object):
 
       # Let's update the current representation given to the next RBM
       currentData = net.hiddenRepresentation(currentData)
+
+      # Average activation
+      print "average activation after rbm pretraining"
+      print currentData.mean()
 
     # This depends if you have generative or not
     # Initialize the last layer of weights to zero if you have
@@ -305,7 +322,9 @@ class DBN(object):
       assert np.all(mins >=0.0) and np.all(maxs < 1.0 + 1e-8)
     else:
       # We are using gaussian visible units so we need to scale the data
-      if self.rbmActivationFunctionVisible == identity:
+      # TODO: NO: pass in a scale argument
+      if isinstance(self.rbmActivationFunctionVisible, Identity):
+        print "scaling input data"
         data = scale(data)
 
 
@@ -769,7 +788,6 @@ class DBN(object):
       biases = np.array([self.biases[i-1], self.generativeBiases[i-1]])
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i-1],
                       learningRate=self.unsupervisedLearningRate,
-                      binary=self.binary,
                       visibleActivationFunction=self.rbmActivationFunctionVisible,
                       hiddenActivationFunction=self.rbmActivationFunctionHidden,
                       hiddenDropout=1.0,
@@ -807,7 +825,6 @@ class DBN(object):
       biases = np.array([self.generativeBiases[i], self.biases[i]])
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                       learningRate=self.unsupervisedLearningRate,
-                      binary=self.binary,
                       visibleActivationFunction=self.rbmActivationFunctionVisible,
                       hiddenActivationFunction=self.rbmActivationFunctionHidden,
                       hiddenDropout=1.0,

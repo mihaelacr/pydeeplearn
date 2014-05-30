@@ -3,6 +3,8 @@
 import numpy as np
 from common import *
 
+from activationfunctions import *
+
 import theano
 from theano import tensor as T
 from theano.tensor.shared_randomstreams import RandomStreams
@@ -14,10 +16,9 @@ class RBMMiniBatchTrainer(object):
 
   def __init__(self, input, theanoGenerator, initialWeights, initialBiases,
              visibleActivationFunction, hiddenActivationFunction,
-             visibleDropout, hiddenDropout, binary, cdSteps):
+             visibleDropout, hiddenDropout, sparsityConstraint, cdSteps):
 
     self.visible = input
-    self.binary = binary
     self.cdSteps = theano.shared(value=np.int32(cdSteps))
     self.theanoGenerator = theanoGenerator
 
@@ -58,7 +59,8 @@ class RBMMiniBatchTrainer(object):
 
       droppedOutVisible = dropoutMaskVisible * self.visible
 
-    if visibleDropout in [1.0, 1]:
+
+    if hiddenDropout in [1.0, 1]:
       dropoutMaskHidden = T.ones(shape=(input.shape[0], initialBiases[1].shape[0]))
     else:
       # Create dropout mask for the hidden layer
@@ -67,37 +69,37 @@ class RBMMiniBatchTrainer(object):
                                 n=1, p=hiddenDropout,
                                 dtype=theanoFloat)
 
-    # This does not sample the visible layers, but samples
-    # The hidden layers up to the last one, like Hinton suggests
     def OneCDStep(visibleSample):
       linearSum = T.dot(visibleSample, self.weights) + self.biasHidden
-      hiddenActivations = hiddenActivationFunction(linearSum) * dropoutMaskHidden
-      # Sample only for stochastic binary units
-      if self.binary:
-        hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
-                                            n=1, p=hiddenActivations,
-                                            dtype=theanoFloat)
-      else:
-        hidden = hiddenActivations
+      hidden = hiddenActivationFunction.nonDeterminstic(linearSum) * dropoutMaskHidden
 
       linearSum = T.dot(hidden, self.weights.T) + self.biasVisible
       if visibleDropout in [1.0, 1]:
-        visibleRec = visibleActivationFunction(linearSum)
+        visibleRec = visibleActivationFunction.deterministic(linearSum)
       else:
-        visibleRec = visibleActivationFunction(linearSum) * dropoutMaskVisible
-      return [hiddenActivations, visibleRec]
+        visibleRec = visibleActivationFunction.deterministic(linearSum) * dropoutMaskVisible
 
-    [hiddenSeq, visibleSeq], updates = theano.scan(OneCDStep,
-                          outputs_info=[None, droppedOutVisible],
+      return visibleRec
+
+    visibleSeq, updates = theano.scan(OneCDStep,
+                          outputs_info=[droppedOutVisible],
                           n_steps=self.cdSteps)
 
     self.updates = updates
 
-    self.hiddenActivations = hiddenSeq[0]
     self.visibleReconstruction = visibleSeq[-1]
 
+    self.runningAvgExpected = theano.shared(value=np.zeros(shape=initialBiases[1].shape,
+                                           dtype=theanoFloat))
+
+    # Duplicate work but avoiding gradient in theano thinking we are using a random op
+    linearSum = T.dot(droppedOutVisible, self.weights) + self.biasHidden
+    self.hiddenActivations = hiddenActivationFunction.deterministic(linearSum) * dropoutMaskHidden
+
     # Do not sample for the last one, in order to get less sampling noise
-    hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
+    # Here you should also use a expected value for symmetry
+    # but we need an elegant way to do it
+    hiddenRec = hiddenActivationFunction.deterministic(T.dot(self.visibleReconstruction, self.weights) + self.biasHidden)
     self.hiddenReconstruction = hiddenRec * dropoutMaskHidden
 
 
@@ -107,46 +109,42 @@ class RBMMiniBatchTrainer(object):
 class ReconstructerBatch(object):
   def __init__(self, input, theanoGenerator, weights, biases,
              visibleActivationFunction, hiddenActivationFunction,
-             visibleDropout, hiddenDropout, binary, cdSteps):
+             visibleDropout, hiddenDropout, cdSteps):
 
     self.visible = input
-    self.binary = binary
     self.cdSteps = theano.shared(value=np.int32(cdSteps))
     self.theanoGenerator = theanoGenerator
 
-    self.weightsForVisible, self.weightForHidden = testWeights(weights,
+    self.weightsForVisible, self.weightsForHidden = testWeights(weights,
           visibleDropout=visibleDropout, hiddenDropout=hiddenDropout)
 
     hiddenBias = biases[1]
     visibleBias = biases[0]
+
     # This does not sample the visible layers, but samples
     # The hidden layers up to the last one, like Hinton suggests
     def OneCDStep(visibleSample):
-      linearSum = T.dot(visibleSample, self.weightForHidden) + hiddenBias
-      hiddenActivations = hiddenActivationFunction(linearSum)
-      # Sample only for stochastic binary units
-      if self.binary:
-        hidden = self.theanoGenerator.binomial(size=hiddenActivations.shape,
-                                            n=1, p=hiddenActivations,
-                                            dtype=theanoFloat)
-      else:
-        hidden = hiddenActivations
-
+      linearSum = T.dot(visibleSample, self.weightsForHidden) + hiddenBias
+      hidden = hiddenActivationFunction.nonDeterminstic(linearSum)
       linearSum = T.dot(hidden, self.weightsForVisible) + visibleBias
-      visibleRec = visibleActivationFunction(linearSum)
-      return [hiddenActivations, visibleRec]
+      visibleRec = visibleActivationFunction.deterministic(linearSum)
 
-    [hiddenSeq, visibleSeq], updates = theano.scan(OneCDStep,
-                          outputs_info=[None, self.visible],
+      return visibleRec
+
+    visibleSeq, updates = theano.scan(OneCDStep,
+                          outputs_info=[self.visible],
                           n_steps=self.cdSteps)
 
     self.updates = updates
 
-    self.hiddenActivations = hiddenSeq[0]
     self.visibleReconstruction = visibleSeq[-1]
 
+    # Duplicate work but avoiding gradient in theano thinking we are using a random op
+    linearSum = T.dot(self.visible, self.weightsForHidden) + hiddenBias
+    self.hiddenActivations = hiddenActivationFunction.deterministic(linearSum)
+
     # Do not sample for the last one, in order to get less sampling noise
-    hiddenRec = hiddenActivationFunction(T.dot(self.visibleReconstruction, self.weightForHidden) + hiddenBias)
+    hiddenRec = hiddenActivationFunction.deterministic(T.dot(self.visibleReconstruction, self.weightsForHidden) + hiddenBias)
 
     self.hiddenReconstruction = hiddenRec
 
@@ -157,14 +155,18 @@ class RBM(object):
 
   def __init__(self, nrVisible, nrHidden, learningRate,
                 hiddenDropout, visibleDropout,
-                binary=True,
-                visibleActivationFunction=T.nnet.sigmoid,
-                hiddenActivationFunction=T.nnet.sigmoid,
-                rmsprop=True, nesterov=True,
+                visibleActivationFunction=Sigmoid(),
+                hiddenActivationFunction=Sigmoid(),
+                rmsprop=True,
+                nesterov=True,
                 weightDecay=0.001,
                 initialWeights=None,
                 initialBiases=None,
-                trainingEpochs=1):
+                trainingEpochs=1,
+                sparsityCostFunction=T.nnet.binary_crossentropy,
+                sparsityConstraint=False,
+                sparsityRegularization=0.01,
+                sparsityTraget=0.01):
                 # TODO: also check how the gradient works for RBMS
     # dropout = 1 means no dropout, keep all the weights
     self.hiddenDropout = hiddenDropout
@@ -183,7 +185,14 @@ class RBM(object):
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
     self.trainingEpochs = trainingEpochs
-    self.binary = binary
+    self.sparsityConstraint = sparsityConstraint
+    self.sparsityRegularization = np.float32(sparsityRegularization)
+    self.sparsityTraget = np.float32(sparsityTraget)
+    self.sparsityCostFunction = sparsityCostFunction
+
+
+    if sparsityConstraint:
+      print "using sparsityConstraint"
 
     self.__initialize(initialWeights, initialBiases)
 
@@ -192,12 +201,6 @@ class RBM(object):
     if weights == None and biases == None:
       weights = initializeWeights(self.nrVisible, self.nrHidden)
       biases = initializeBiasesReal(self.nrVisible, self.nrHidden)
-      # if self.binary:
-      #   # TODO: I think this makes no senseinitializeBiasesReal
-      #   self.biases = intializeBiasesBinary(data, self.nrHidden)
-      # else:
-      #   # TODO: think of this
-      #   self.biases = initializeBiasesReal(self.nrVisible, self.nrHidden
 
     theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
 
@@ -210,7 +213,7 @@ class RBM(object):
                                        hiddenActivationFunction=self.hiddenActivationFunction,
                                        visibleDropout=self.visibleDropout,
                                        hiddenDropout=self.hiddenDropout,
-                                       binary=self.binary,
+                                       sparsityConstraint=self.sparsityConstraint,
                                        cdSteps=1)
 
     reconstructer = ReconstructerBatch(input=x,
@@ -221,7 +224,6 @@ class RBM(object):
                                         hiddenActivationFunction=self.hiddenActivationFunction,
                                         visibleDropout=self.visibleDropout,
                                         hiddenDropout=self.hiddenDropout,
-                                        binary=self.binary,
                                         cdSteps=1)
     self.reconstructer = reconstructer
     self.batchTrainer = batchTrainer
@@ -237,16 +239,13 @@ class RBM(object):
 
     # If we have gaussian units, we need to scale the data
     # to unit variance and zero mean
-    if not self.binary and self.visibleActivationFunction == identity:
+    if isinstance(self.visibleActivationFunction, Identity):
       print "scaling data for RBM"
       data = scale(data)
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
 
     self.miniBatchSize = miniBatchSize
-    # Now you have to build the training function
-    # and the updates
-    # The mini-batch data is a matrix
 
     batchTrainer = self.batchTrainer
     x = self.x
@@ -325,14 +324,26 @@ class RBM(object):
 
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
     updates = []
-    # The theano people do not need this because they use gradient
-    # I wonder how that works
+
+    if self.sparsityConstraint:
+      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.hiddenActivations, axis=0) * 0.1
+      # Sum over all hidden units
+      sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
+
+      updates.append((batchTrainer.runningAvgExpected, runningAvg))
+
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hiddenActivations)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
     delta = positiveDifference - negativeDifference
 
     wUpdate = momentum * batchTrainer.oldDw
+
+    # # Sparsity cost
+    # if self.sparsityConstraint:
+    #   gradientW = T.grad(sparsityCost, batchTrainer.weights)
+    #   delta -= self.sparsityRegularization * gradientW
+
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
       wUpdate += (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
@@ -342,11 +353,13 @@ class RBM(object):
 
     wUpdate -= batchLearningRate * self.weightDecay * batchTrainer.oldDw
 
+
     updates.append((batchTrainer.weights, batchTrainer.weights + wUpdate))
     updates.append((batchTrainer.oldDw, wUpdate))
 
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
     biasVisUpdate = momentum * batchTrainer.oldDVis
+
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
       biasVisUpdate += (1.0 - momentum) * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
@@ -359,6 +372,12 @@ class RBM(object):
 
     hiddenBiasDiff = T.sum(batchTrainer.hiddenActivations - batchTrainer.hiddenReconstruction, axis=0)
     biasHidUpdate = momentum * batchTrainer.oldDHid
+
+     # Sparsity cost
+    if self.sparsityConstraint:
+      gradientbiasHid = T.grad(sparsityCost, batchTrainer.biasHidden)
+      hiddenBiasDiff -= self.sparsityRegularization * gradientbiasHid
+
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
       biasHidUpdate += (1.0 - momentum) * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
@@ -377,6 +396,7 @@ class RBM(object):
     return updates
 
   def buildNesterovUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
+
     preDeltaUpdates = []
 
     wUpdateMomentum = momentum * batchTrainer.oldDw
@@ -388,12 +408,25 @@ class RBM(object):
     preDeltaUpdates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdateMomentum))
 
     updates = []
-    # The theano people do not need this because they use gradient
-    # I wonder how that works, and if it works better
+
+    if self.sparsityConstraint:
+      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.hiddenActivations, axis=0) * 0.1
+      # Sum over all hidden units
+      sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
+
+      updates.append((batchTrainer.runningAvgExpected, runningAvg))
+
+
     positiveDifference = T.dot(batchTrainer.visible.T, batchTrainer.hiddenActivations)
     negativeDifference = T.dot(batchTrainer.visibleReconstruction.T,
                                batchTrainer.hiddenReconstruction)
     delta = positiveDifference - negativeDifference
+
+    # # Sparsity cost
+    # if self.sparsityConstraint:
+    #   gradientW = T.grad(sparsityCost, batchTrainer.weights)
+    #   delta -= self.sparsityRegularization * gradientW
+
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
       wUpdate = (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
@@ -407,6 +440,8 @@ class RBM(object):
     updates.append((batchTrainer.oldDw, wUpdate + wUpdateMomentum))
 
     visibleBiasDiff = T.sum(batchTrainer.visible - batchTrainer.visibleReconstruction, axis=0)
+
+
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
       biasVisUpdate = (1.0 - momentum) * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
@@ -418,6 +453,12 @@ class RBM(object):
     updates.append((batchTrainer.oldDVis, biasVisUpdate + biasVisUpdateMomentum))
 
     hiddenBiasDiff = T.sum(batchTrainer.hiddenActivations - batchTrainer.hiddenReconstruction, axis=0)
+
+    # As the paper says, only update the hidden bias
+    if self.sparsityConstraint:
+      gradientbiasHid = T.grad(sparsityCost, batchTrainer.biasHidden)
+      hiddenBiasDiff -= self.sparsityRegularization * gradientbiasHid
+
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
       biasHidUpdate = (1.0 - momentum) * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
@@ -440,6 +481,9 @@ class RBM(object):
 
     representHidden = theano.function(
             inputs=[],
+            # TODO: instead of using hiddenActivations how about using
+            #  the expectation?
+            # or just make hidden activations to be the expectation?
             outputs=self.reconstructer.hiddenActivations,
             updates=self.reconstructer.updates,
             givens={self.x: dataInstacesConverted})
@@ -474,7 +518,6 @@ class RBM(object):
                                         hiddenActivationFunction=self.hiddenActivationFunction,
                                         visibleDropout=self.visibleDropout,
                                         hiddenDropout=self.hiddenDropout,
-                                        binary=self.binary,
                                         cdSteps=1)
     return reconstructer
 

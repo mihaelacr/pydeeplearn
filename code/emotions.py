@@ -15,8 +15,9 @@ import deepbelief as db
 import restrictedBoltzmannMachine as rbm
 
 from common import *
-from theano import tensor as T
 from readfacedatabases import *
+from activationfunctions import *
+
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
@@ -28,6 +29,8 @@ parser.add_argument('--train',dest='train',action='store_true', default=False,
                           "traning data"))
 parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
                     help=("if true, the code for traning an rbm on the data is run"))
+parser.add_argument('--sparsity', dest='sparsity',action='store_true', default=False,
+                    help=("if true, the the networks are trained with sparsity constraints"))
 parser.add_argument('--dbKanade', dest='dbKanade',action='store_true', default=False,
                     help=("if true, the code for training a deepbelief net on the"
                           "data is run, where the supervised data is the Kanade DB"))
@@ -93,17 +96,15 @@ db.DEBUG = args.debug
 SMALL_SIZE = ((40, 30))
 
 def rbmEmotions(big=False, reconstructRandom=False):
-  # data, labels = readKanade(equalize=args.equalizebig)
-
-  data, labels = readMultiPIE(equalize=args.equalize)
+  data, labels = readMultiPIE(big, equalize=args.equalize)
   print "data.shape"
   print data.shape
 
   if args.relu:
-    activationFunction = relu
+    activationFunction = Rectified()
     data = scale(data)
   else:
-    activationFunction = T.nnet.sigmoid
+    activationFunction = Sigmoid()
 
   trainData = data[0:-1, :]
   # Train the network
@@ -114,12 +115,14 @@ def rbmEmotions(big=False, reconstructRandom=False):
     nrVisible = len(data[0])
     nrHidden = 800
     # use 1 dropout to test the rbm for now
-    net = rbm.RBM(nrVisible, nrHidden, 0.001, 1, 1,
-                  binary=1-args.relu,
+    net = rbm.RBM(nrVisible, nrHidden, 1.2, 1, 1,
                   visibleActivationFunction=activationFunction,
                   hiddenActivationFunction=activationFunction,
                   rmsprop=args.rbmrmsprop,
-                  nesterov=args.rbmnesterov)
+                  nesterov=args.rbmnesterov,
+                  sparsityConstraint=args.sparsity,
+                  sparsityRegularization=0.5,
+                  sparsityTraget=0.01)
     net.train(trainData)
     t = visualizeWeights(net.weights.T, SMALL_SIZE, (10,10))
   else:
@@ -149,6 +152,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
   plt.axis('off')
   plt.savefig('reconstructface.png', transparent=True)
 
+
   # Show the weights and their form in a tile fashion
   # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
@@ -158,12 +162,20 @@ def rbmEmotions(big=False, reconstructRandom=False):
   else:
     st = 'simple'
   plt.savefig('weights' + st + '.png', transparent=True)
+
+
+  # let's make some sparsity checks
+  hidden = net.hiddenRepresentation(test.reshape(1, test.shape[0]))
+  print hidden.sum()
   print "done"
+
 
   if args.save:
     f = open(args.netFile, "wb")
     pickle.dump(t, f)
     pickle.dump(net, f)
+
+
 
 
 """
@@ -181,14 +193,14 @@ def deepbeliefKanadeCV(big=False):
   print labels.shape
 
   if args.relu:
-    activationFunction = relu
-    rbmActivationFunctionVisible = identity
-    rbmActivationFunctionHidden = makeNoisyRelu()
+    activationFunction = Rectified()
+    rbmActivationFunctionVisible = Identity()
+    rbmActivationFunctionHidden = RectifiedNoisy()
     data = scale(data)
   else:
-    activationFunction = T.nnet.sigmoid
-    rbmActivationFunctionVisible = T.nnet.sigmoid
-    rbmActivationFunctionHidden = T.nnet.sigmoid
+    activationFunction = Sigmoid()
+    rbmActivationFunctionVisible = Sigmoid()
+    rbmActivationFunctionHidden = Sigmoid()
 
 
   # TODO: try boosting for CV in order to increase the number of folds
@@ -286,18 +298,18 @@ def deepbeliefKanade(big=False):
     break
 
   if args.relu:
-    activationFunction = relu
+    activationFunction = Rectified()
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95
     data = scale(data)
-    rbmActivationFunctionVisible = identity
-    rbmActivationFunctionHidden = makeNoisyRelu()
+    rbmActivationFunctionVisible = Identity()
+    rbmActivationFunctionHidden = RectifiedNoisy()
 
   else:
-    activationFunction = T.nnet.sigmoid
-    rbmActivationFunctionVisible = T.nnet.sigmoid
-    rbmActivationFunctionHidden = T.nnet.sigmoid
+    activationFunction = Sigmoid()
+    rbmActivationFunctionVisible = Sigmoid()
+    rbmActivationFunctionHidden = Sigmoid()
 
     unsupervisedLearningRate = 0.5
     supervisedLearningRate = 0.1
@@ -410,17 +422,17 @@ def deepbeliefMultiPIE(big=False):
     break
 
   if args.relu:
-    activationFunction = relu
-    rbmActivationFunctionHidden = makeNoisyRelu()
-    rbmActivationFunctionVisible = identity
+    activationFunction = Rectified()
+    rbmActivationFunctionHidden = RectifiedNoisy()
+    rbmActivationFunctionVisible = Identity()
     unsupervisedLearningRate = 0.005
     supervisedLearningRate = 0.001
     momentumMax = 0.95
     data = scale(data)
   else:
-    activationFunction = T.nnet.sigmoid
-    rbmActivationFunctionHidden = T.nnet.sigmoid
-    rbmActivationFunctionVisible = T.nnet.sigmoid
+    activationFunction = Sigmoid()
+    rbmActivationFunctionHidden = Sigmoid()
+    rbmActivationFunctionVisible = Sigmoid()
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95
@@ -503,8 +515,6 @@ def deepbeliefMultiPIEAverage(big=False):
   data, labels = readMultiPIE(equalize=args.equalize)
 
   data, labels = shuffle(data, labels)
-
-
 
   print "data.shape"
   print data.shape
@@ -618,15 +628,15 @@ def deepbeliefPIECV(big=False):
   print labels.shape
 
   if args.relu:
-    activationFunction = relu
-    rbmActivationFunctionVisible = identity
-    rbmActivationFunctionHidden = makeNoisyRelu()
+    activationFunction = Rectified()
+    rbmActivationFunctionVisible = Identity()
+    rbmActivationFunctionHidden = RectifiedNoisy()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
     data = scale(data)
   else:
-    activationFunction = T.nnet.sigmoid
-    rbmActivationFunctionVisible = T.nnet.sigmoid
-    rbmActivationFunctionHidden = T.nnet.sigmoid
+    activationFunction = Sigmoid()
+    rbmActivationFunctionVisible = Sigmoid()
+    rbmActivationFunctionHidden = Sigmoid()
 
   # TODO: try boosting for CV in order to increase the number of folds
   # params =[ (0.01, 0.05, 0.9),  (0.05, 0.01, 0.9),  (0.05, 0.05, 0.9),
@@ -770,25 +780,24 @@ def deepBeliefPieDifferentConditions():
     trainData, trainLabels, testData, testLabels = getDataFunction(trainConditions, equalize=args.equalize)
 
     if args.relu:
-      activationFunction = relu
+      activationFunction = Rectified()
+      rbmActivationFunctionVisible = Identity()
+      rbmActivationFunctionHidden = RectifiedNoisy()
+
       unsupervisedLearningRate = 0.005
       supervisedLearningRate = 0.001
       momentumMax = 0.95
       trainData = scale(trainData)
       testData = scale(testData)
 
-      rbmActivationFunctionVisible = identity
-      rbmActivationFunctionHidden = makeNoisyRelu()
-
     else:
-      activationFunction = T.nnet.sigmoid
+      activationFunction = Sigmoid()
+      rbmActivationFunctionVisible = Sigmoid()
+      rbmActivationFunctionHidden = Sigmoid()
+
       unsupervisedLearningRate = 0.05
       supervisedLearningRate = 0.01
       momentumMax = 0.9
-
-      rbmActivationFunctionVisible = T.nnet.sigmoid
-      rbmActivationFunctionHidden = T.nnet.sigmoid
-
 
     if args.train:
       # TODO: this might require more thought
@@ -869,6 +878,7 @@ def deepBeliefPieDifferentConditions():
 
 # TODO: try with the same poses, it will work bad with training with all poses I think
 """Train with PIE test with Kanade. Check the equalization code. """
+# TODO: try to add some unsupervised data
 def crossDataBase():
   # Only train with the frontal pose
   trainData, trainLabels, _, _ = readMultiPieDifferentPoses([2], equalize=args.equalize)
@@ -901,18 +911,19 @@ def crossDataBase():
 
 
   if args.relu:
-    activationFunction = relu
-    rbmActivationFunctionHidden = makeNoisyRelu()
-    rbmActivationFunctionVisible = identity
+    activationFunction = Rectified() # Now I can even use rectifiednoisy because I use the deterministic version
+    rbmActivationFunctionHidden = RectifiedNoisy()
+    rbmActivationFunctionVisible = Identity()
+
     unsupervisedLearningRate = 0.005
     supervisedLearningRate = 0.001
     momentumMax = 0.95
     trainData = scale(trainData)
     testData = scale(testData)
   else:
-    activationFunction = T.nnet.sigmoid
-    rbmActivationFunctionHidden = T.nnet.sigmoid
-    rbmActivationFunctionVisible = T.nnet.sigmoid
+    activationFunction = Sigmoid()
+    rbmActivationFunctionHidden = Sigmoid()
+    rbmActivationFunctionVisible = Sigmoid()
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95

@@ -12,7 +12,6 @@ from similarity_utils import *
 
 theanoFloat  = theano.config.floatX
 
-#TODO: rmsprop? maybe for emotions but not sure it is worth here
 
 class Trainer(object):
 
@@ -46,9 +45,8 @@ class Trainer(object):
     # change it back to the rmb approach or just use the activation function
     # but I somehow need the deterministic version: that would be better
     # so even for relu I need to take the expected? or just do the max relu thing
-
-    hiddenActivations1 = net.hiddenActivationFunction(T.dot(input1, weightForHidden) + hiddenBias)
-    hiddenActivations2 = net.hiddenActivationFunction(T.dot(input2, weightForHidden) + hiddenBias)
+    hiddenActivations1 = net.hiddenActivationFunction.deterministic(T.dot(input1, weightForHidden) + hiddenBias)
+    hiddenActivations2 = net.hiddenActivationFunction.deterministic(T.dot(input2, weightForHidden) + hiddenBias)
 
     # Here i have no sampling
     cos = cosineDistance(hiddenActivations1, hiddenActivations2)
@@ -65,10 +63,11 @@ class SimilarityNet(object):
   # plus rbm learning rates
   def __init__(self, learningRate, maxMomentum, rbmNrVis, rbmNrHid, rbmLearningRate,
                 visibleActivationFunction, hiddenActivationFunction,
-                rbmDropoutVis, rbmDropoutHid, binary, rmsprop,trainingEpochsRBM):
+                rbmDropoutVis, rbmDropoutHid, rmsprop,trainingEpochsRBM,
+                nesterovRbm,
+                sparsityConstraint, sparsityRegularization, sparsityTraget):
 
     self.learningRate = np.float32(learningRate)
-    self.binary = binary
     self.rmsprop = rmsprop
     self.rbmNrVis = rbmNrVis
     self.maxMomentum = np.float32(maxMomentum)
@@ -79,7 +78,14 @@ class SimilarityNet(object):
     self.trainingEpochsRBM = trainingEpochsRBM
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
+    self.nesterovRbm = nesterovRbm
 
+    self.sparsityConstraint = sparsityConstraint
+    self.sparsityRegularization = sparsityRegularization
+    self.sparsityTraget = sparsityTraget
+
+    if rmsprop:
+      print "training similarity net with rmsprop"
 
   def _trainRBM(self, data1, data2):
     data = np.vstack([data1, data2])
@@ -87,12 +93,14 @@ class SimilarityNet(object):
     net = rbm.RBM(self.rbmNrVis, self.rbmNrHid, self.rbmLearningRate,
                     hiddenDropout=self.rbmDropoutHid,
                     visibleDropout=self.rbmDropoutVis,
-                    binary=self.binary,
                     visibleActivationFunction=self.visibleActivationFunction,
                     hiddenActivationFunction=self.hiddenActivationFunction,
                     rmsprop=True,
-                    nesterov=True,
-                    trainingEpochs=self.trainingEpochsRBM)
+                    nesterov=self.nesterovRbm,
+                    trainingEpochs=self.trainingEpochsRBM,
+                    sparsityConstraint=self.sparsityConstraint,
+                    sparsityRegularization=self.sparsityRegularization,
+                    sparsityTraget=self.sparsityTraget)
     net.train(data)
 
     return net
@@ -102,7 +110,11 @@ class SimilarityNet(object):
     nrMiniBatches = len(data1) / miniBatchSize
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
+    learningRate = T.fscalar()
 
+    learningRateMiniBatch = np.float32(self.learningRate / miniBatchSize)
+    print "learningRateMiniBatch in similarity net"
+    print learningRateMiniBatch
 
     net = self._trainRBM(data1, data2)
 
@@ -123,11 +135,11 @@ class SimilarityNet(object):
 
     error = T.sum(T.sqr(trainer.output-z))
 
-    updates = self.buildUpdates(trainer, error, momentum)
+    updates = self.buildUpdates(trainer, error, learningRate, momentum)
 
     # Now you have to define the theano function
     discriminativeTraining = theano.function(
-      inputs=[miniBatchIndex, momentum],
+      inputs=[miniBatchIndex, learningRate, momentum],
       outputs=[trainer.output, trainer.cos],
       updates=updates,
       givens={
@@ -141,7 +153,7 @@ class SimilarityNet(object):
                        np.float32(0.95)))
 
       for miniBatch in xrange(nrMiniBatches):
-        output, cos = discriminativeTraining(miniBatch, momentum)
+        output, cos = discriminativeTraining(miniBatch, learningRateMiniBatch, momentum)
         # print cos
 
     print trainer.w.get_value()
@@ -163,29 +175,31 @@ class SimilarityNet(object):
 
     return testFunction()
 
-  def buildUpdates(self, trainer, error, momentum):
+  def buildUpdates(self, trainer, error, learningRate, momentum):
     if self.rmsprop:
-      return self.buildUpdatesRmsprop(trainer, error, momentum)
+      return self.buildUpdatesRmsprop(trainer, error, learningRate, momentum)
     else:
-      return self.buildUpdatesNoRmsprop(trainer, error, momentum)
+      return self.buildUpdatesNoRmsprop(trainer, error, learningRate, momentum)
 
-  def buildUpdatesNoRmsprop(self, trainer, error, momentum):
+  def buildUpdatesNoRmsprop(self, trainer, error, learningRate, momentum):
     updates = []
     gradients = T.grad(error, trainer.params)
+
     for param, oldParamUpdate, gradient in zip(trainer.params, trainer.oldDParams, gradients):
-      paramUpdate = momentum * oldParamUpdate - self.learningRate * gradient
+      paramUpdate = momentum * oldParamUpdate - learningRate * gradient
       updates.append((param, param + paramUpdate))
       updates.append((oldParamUpdate, paramUpdate))
 
     return updates
 
-  def buildUpdatesRmsprop(self, trainer, error, momentum):
+  def buildUpdatesRmsprop(self, trainer, error, learningRate, momentum):
     updates = []
     gradients = T.grad(error, trainer.params)
+
     for param, oldParamUpdate, oldMeanSquare, gradient in zip(trainer.params, trainer.oldDParams,
                                              trainer.oldMeanSquares, gradients):
       meanSquare = 0.9 * oldMeanSquare + 0.1 * gradient ** 2
-      paramUpdate = momentum * oldParamUpdate - self.learningRate * gradient / T.sqrt(meanSquare + 1e-08)
+      paramUpdate = momentum * oldParamUpdate - learningRate * gradient / T.sqrt(meanSquare + 1e-08)
       updates.append((param, param + paramUpdate))
       updates.append((oldParamUpdate, paramUpdate))
       updates.append((oldMeanSquare, meanSquare))
