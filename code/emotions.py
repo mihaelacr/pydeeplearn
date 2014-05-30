@@ -3,7 +3,6 @@ and the main which have to do with emotion recognition, especially
 with the Kanade database."""
 
 import argparse
-# import DimensionalityReduction
 import cPickle as pickle
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
