@@ -38,6 +38,10 @@ class Sigmoid(ActivationFunction):
   def deterministic(self, x):
     return T.nnet.sigmoid(x)
 
+
+  def activationProbablity(self, x):
+    return T.nnet.sigmoid(x)
+
 class Rectified(ActivationFunction):
 
   def __init__(self):
@@ -61,6 +65,9 @@ class RectifiedNoisy(ActivationFunction):
   def deterministic(self, x):
     return expectedValueGaussian(x, T.nnet.sigmoid(x))
 
+  def activationProbablity(self, x):
+    return 1.0 - cdf(0, miu=x, variance=T.nnet.sigmoid)
+
 class RectifiedNoisyVar1(ActivationFunction):
 
   def __init__(self):
@@ -73,6 +80,8 @@ class RectifiedNoisyVar1(ActivationFunction):
   def deterministic(self, x):
     return expectedValueGaussian(x, 1.0)
 
+  def activationProbablity(self, x):
+    return 1.0 - cdf(0, miu=x, variance=1.0)
 
 class Identity(ActivationFunction):
 
@@ -111,6 +120,6 @@ def expectedValueGaussian(mean, variance):
   return std / T.sqrt(2.0 * np.pi) * T.exp(- mean**2 / (2.0 * std)) + mean * cdf(mean / std)
 
 # Approximation of the cdf of a standard normal
-def cdf(x, miu=0.0, sigma=1.0):
-  return 1.0/2 *  (1.0 + T.erf((x - miu)/( sigma T.sqrt(2))))
+def cdf(x, miu=0.0, variance=1.0):
+  return 1.0/2 *  (1.0 + T.erf((x - miu)/ T.sqrt(2 * variance)))
 
