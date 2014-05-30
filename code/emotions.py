@@ -613,7 +613,7 @@ def deepbeliefMultiPIEAverage(big=False):
   print "average correct"
   print sum(correctAll) / len(correctAll)
   print "average confusion matrix"
-  print sum(confustionMatrices) / len(confustionMatrices)
+  print sum(confustionMatrices) * 1.0 / len(confustionMatrices)
 
 
 def deepbeliefPIECV(big=False):
