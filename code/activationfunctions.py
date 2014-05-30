@@ -24,7 +24,7 @@ class ActivationFunction(object):
     return None
 
 
-class Sigmoid(object):
+class Sigmoid(ActivationFunction):
 
   def __init__(self):
     self.theanoGenerator = RandomStreams(seed=np.random.randint(1, 1000))
@@ -39,7 +39,7 @@ class Sigmoid(object):
   def deterministic(self, x):
     return T.nnet.sigmoid(x)
 
-class Rectified(object):
+class Rectified(ActivationFunction):
 
   def __init__(self):
     pass
@@ -50,7 +50,7 @@ class Rectified(object):
   def deterministic(self, x):
     return x * (x > 0.0)
 
-class RectifiedNoisy(object):
+class RectifiedNoisy(ActivationFunction):
 
   def __init__(self):
     self.theanoGenerator = RandomStreams(seed=np.random.randint(1, 1000))
@@ -63,7 +63,7 @@ class RectifiedNoisy(object):
   def deterministic(self, x):
     return expectedValueGaussian(x, T.nnet.sigmoid(x))
 
-class RectifiedNoisyVar1(object):
+class RectifiedNoisyVar1(ActivationFunction):
 
   def __init__(self):
     self.theanoGenerator = RandomStreams(seed=np.random.randint(1, 1000))
@@ -77,12 +77,12 @@ class RectifiedNoisyVar1(object):
     return expectedValueGaussian(x, 1.0)
 
 
-class Identity(object):
+class Identity(ActivationFunction):
 
   def deterministic(self, x):
     return x
 
-class Softmax(object):
+class Softmax(ActivationFunction):
 
   def deterministic(self, v):
     # Do not use theano's softmax, it is numerically unstable
@@ -93,7 +93,7 @@ class Softmax(object):
 
 
 # TODO: try this for the non deterministic version as well
-class CappedRectifiedNoisy(object):
+class CappedRectifiedNoisy(ActivationFunction):
 
   def __init__(self):
     pass
