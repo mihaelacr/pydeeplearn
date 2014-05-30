@@ -521,17 +521,17 @@ def deepbeliefMultiPIEAverage(big=False):
   print labels.shape
 
   if args.relu:
-    activationFunction = relu
-    rbmActivationFunctionHidden = makeNoisyRelu()
-    rbmActivationFunctionVisible = identity
+    activationFunction = Rectified()
+    rbmActivationFunctionHidden = RectifiedNoisy()
+    rbmActivationFunctionVisible = identityIdentity()
     unsupervisedLearningRate = 0.005
     supervisedLearningRate = 0.001
     momentumMax = 0.95
     data = scale(data)
   else:
-    activationFunction = T.nnet.sigmoid
-    rbmActivationFunctionHidden = T.nnet.sigmoid
-    rbmActivationFunctionVisible = T.nnet.sigmoid
+    activationFunction = Sigmoid()
+    rbmActivationFunctionHidden = Sigmoid()
+    rbmActivationFunctionVisible = Sigmoid()
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95
@@ -1037,18 +1037,18 @@ def crossDataBaseCV():
 
 
   if args.relu:
-    activationFunction = relu
-    rbmActivationFunctionHidden = makeNoisyRelu()
-    rbmActivationFunctionVisible = identity
+    activationFunction = Rectified()
+    rbmActivationFunctionHidden = RectifiedNoisy()
+    rbmActivationFunctionVisible = Identity()
     # unsupervisedLearningRate = 0.05
     # supervisedLearningRate = 0.01
     # momentumMax = 0.95
     trainData = scale(trainData)
     testData = scale(testData)
   else:
-    activationFunction = T.nnet.sigmoid
-    rbmActivationFunctionHidden = T.nnet.sigmoid
-    rbmActivationFunctionVisible = T.nnet.sigmoid
+    activationFunction = Sigmoid()
+    rbmActivationFunctionHidden = Sigmoid()
+    rbmActivationFunctionVisible = Sigmoid()
     # unsupervisedLearningRate = 0.05
     # supervisedLearningRate = 0.01
     # momentumMax = 0.95
@@ -1176,18 +1176,18 @@ def missingData():
     plt.show()
 
   if args.relu:
-    activationFunction = relu
-    rbmActivationFunctionHidden = makeNoisyRelu()
-    rbmActivationFunctionVisible = identity
+    activationFunction = Rectified()
+    rbmActivationFunctionHidden = RectifiedNoisy()
+    rbmActivationFunctionVisible = Identity()
     unsupervisedLearningRate = 0.005
     supervisedLearningRate = 0.001
     momentumMax = 0.95
     trainData = scale(trainData)
     testData = scale(testData)
   else:
-    activationFunction = T.nnet.sigmoid
-    rbmActivationFunctionHidden = T.nnet.sigmoid
-    rbmActivationFunctionVisible = T.nnet.sigmoid
+    activationFunction = Sigmoid()
+    rbmActivationFunctionHidden = Sigmoid()
+    rbmActivationFunctionVisible = Sigmoid()
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95
