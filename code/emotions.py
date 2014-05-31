@@ -1139,8 +1139,7 @@ def crossDataBaseCV():
 
 
 
-def addBlobsOfMissingData(testData):
-  sqSize = 5
+def addBlobsOfMissingData(testData, sqSize=5):
   maxHeight = SMALL_SIZE[0] - sqSize
   maxLength = SMALL_SIZE[1] - sqSize
 
@@ -1153,7 +1152,6 @@ def addBlobsOfMissingData(testData):
       for j in xrange(sqSize):
         x[m + i, n + j] = 0
 
-
     return x.reshape(-1)
 
   return np.array(map(makeBlob, testData))
@@ -1164,7 +1162,7 @@ def makeMissingDataPlot():
 
   testData = data[0:20]
 
-  testData = addBlobsOfMissingData(testData)
+  testData = addBlobsOfMissingData(testData, sqSize=10)
   final = []
   for i in xrange(6):
     final += [testData[i].reshape(SMALL_SIZE)]
