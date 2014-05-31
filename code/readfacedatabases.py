@@ -214,7 +214,7 @@ def makeMultiPosesPlot():
   finalPics = []
   for i in xrange(5):
     pics, _, _, _ = readMultiPieDifferentPoses([i], show=False, equalize=False)
-    finalPics += [pics[0]]
+    finalPics += [pics[0].reshape(SMALL_SIZE)]
 
   img = np.hstack(tuple(finalPics))
 
