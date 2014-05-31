@@ -66,7 +66,7 @@ class RectifiedNoisy(ActivationFunction):
     return expectedValueGaussian(x, T.nnet.sigmoid(x))
 
   def activationProbablity(self, x):
-    return 1.0 - cdf(0, miu=x, variance=T.nnet.sigmoid)
+    return 1.0 - cdf(0, miu=x, variance=T.nnet.sigmoid(x))
 
 class RectifiedNoisyVar1(ActivationFunction):
 
