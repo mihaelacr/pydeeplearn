@@ -1156,14 +1156,18 @@ def addBlobsOfMissingData(testData):
 
     return x.reshape(-1)
 
-  return map(makeBlob, testData)
+  return np.array(map(makeBlob, testData))
 
 def makeMissingDataPlot():
   data, labels = readMultiPIE(equalize=args.equalize)
+  data, labels = shuffle(data, labels)
 
+  testData = data[0:20]
+
+  testData = addBlobsOfMissingData(testData)
   final = []
   for i in xrange(6):
-    final += [data[i].reshape(SMALL_SIZE)]
+    final += [testData[i].reshape(SMALL_SIZE)]
 
   final = np.hstack(tuple(final))
 
