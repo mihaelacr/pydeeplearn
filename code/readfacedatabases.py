@@ -219,6 +219,7 @@ def makeMultiPosesPlot():
   img = np.hstack(tuple(finalPics))
 
   plt.imshow(img, cmap=plt.cm.gray)
+  plt.axis('off')
   plt.show()
 
 
