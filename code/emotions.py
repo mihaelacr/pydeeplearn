@@ -1158,6 +1158,20 @@ def addBlobsOfMissingData(testData):
 
   return map(makeBlob, testData)
 
+def makeMissingDataPlot():
+  data, labels = readMultiPIE(equalize=args.equalize)
+
+  final = []
+  for i in xrange(6):
+    final += [data[i].reshape(SMALL_SIZE)]
+
+  final = np.hstack(tuple(final))
+
+
+  plt.imshow(final, cmap=plt.cm.gray, interpolation="nearest")
+  plt.axis('off')
+  plt.show()
+
 """Train with PIE test with Kanade. Check the equalization code. """
 def missingData():
   data, labels = readMultiPIE(equalize=args.equalize)
@@ -1305,4 +1319,5 @@ if __name__ == '__main__':
   # print "FIXING RANDOMNESS"
   # random.seed(6)
   # np.random.seed(6)
+  makeMissingDataPlot()
   main()
