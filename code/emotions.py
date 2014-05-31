@@ -121,7 +121,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
                   nesterov=args.rbmnesterov,
                   sparsityConstraint=args.sparsity,
                   sparsityRegularization=0.5,
-                  trainingEpochs=args.trainingEpochs,
+                  trainingEpochs=args.maxEpochs,
                   sparsityTraget=0.01)
     net.train(trainData)
     t = visualizeWeights(net.weights.T, SMALL_SIZE, (10,10))
