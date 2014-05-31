@@ -823,7 +823,7 @@ def deepBeliefPieDifferentConditions():
                  rbmVisibleDropout=1.0,
                  preTrainEpochs=args.preTrainEpochs)
 
-      unsupervisedData = buildUnsupervisedDataSetForPIE()
+      unsupervisedData = readMultiPIE(equalize=args.equalize)
 
       net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
                 validation=args.validation,
