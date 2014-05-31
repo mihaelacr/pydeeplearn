@@ -421,7 +421,7 @@ def deepbeliefMultiPIE(big=False):
     break
 
   if args.relu:
-    activationFunction = Rectified()
+    activationFunction = RectifiedNoisy()
     rbmActivationFunctionHidden = RectifiedNoisy()
     rbmActivationFunctionVisible = Identity()
     unsupervisedLearningRate = 0.005
