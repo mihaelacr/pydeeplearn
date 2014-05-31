@@ -1081,7 +1081,7 @@ def crossDataBaseCV():
                  rbmVisibleDropout=1.0,
                  preTrainEpochs=args.preTrainEpochs)
 
-      unsupervisedData, _ = buildUnsupervisedDataSetForPIE()
+      unsupervisedData= buildUnsupervisedDataSetForPIE()
 
       net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
                 validation=args.validation,

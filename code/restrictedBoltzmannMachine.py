@@ -96,6 +96,8 @@ class RBMMiniBatchTrainer(object):
     linearSum = T.dot(droppedOutVisible, self.weights) + self.biasHidden
     self.hiddenActivations = hiddenActivationFunction.deterministic(linearSum) * dropoutMaskHidden
 
+    self.activationProbabilities =  hiddenActivationFunction.activationProbablity(linearSum)
+
     # Do not sample for the last one, in order to get less sampling noise
     # Here you should also use a expected value for symmetry
     # but we need an elegant way to do it
@@ -326,7 +328,7 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.hiddenActivations, axis=0) * 0.1
+      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.activationProbabilities, axis=0) * 0.1
       # Sum over all hidden units
       sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
 
@@ -410,7 +412,7 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.hiddenActivations, axis=0) * 0.1
+      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.activationProbabilities, axis=0) * 0.1
       # Sum over all hidden units
       sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
 
