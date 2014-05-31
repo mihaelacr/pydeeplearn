@@ -823,7 +823,7 @@ def deepBeliefPieDifferentConditions():
                  rbmVisibleDropout=1.0,
                  preTrainEpochs=args.preTrainEpochs)
 
-      unsupervisedData = readMultiPIE(equalize=args.equalize)
+      unsupervisedData, _ = readMultiPIE(equalize=args.equalize)
 
       net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
                 validation=args.validation,
@@ -1080,7 +1080,7 @@ def crossDataBaseCV():
                  rbmVisibleDropout=1.0,
                  preTrainEpochs=args.preTrainEpochs)
 
-      unsupervisedData = buildUnsupervisedDataSetForPIE()
+      unsupervisedData, _ = buildUnsupervisedDataSetForPIE()
 
       net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
                 validation=args.validation,
