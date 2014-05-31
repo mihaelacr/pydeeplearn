@@ -209,6 +209,19 @@ def readMultiPieDifferentPoses(posesTrain, show=False, equalize=False):
   return (imgsTrain, labelsToVectors(labelsTrain, 6),
           imgsTest,  labelsToVectors(labelsTest, 6))
 
+
+def makeMultiPosesPlot():
+  finalPics = []
+  for i in xrange(5):
+    pics, _, _, _ = readMultiPieDifferentPoses([i], show=False, equalize=False)
+    finalPics += [pics[0]]
+
+  img = np.hstack(tuple(finalPics))
+
+  plt.imshow(img, cmap=plt.cm.gray)
+  plt.show()
+
+
 def readMultiPIESubjects(equalize=False):
   PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
   # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
