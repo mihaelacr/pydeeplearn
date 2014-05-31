@@ -779,6 +779,7 @@ if __name__ == '__main__':
   # makeMultiPieImagesForReport()
   # makeEqualizePics()
   # makeCrossDbPlot()
-  facedetectionMultiPie()
+  # facedetectionMultiPie()
+  makeMultiPosesPlot()
   # makeKanadeImages()
   # readMultiPieDifferentIlluminations([3], show=True, equalize=True)
