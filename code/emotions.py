@@ -806,10 +806,6 @@ def deepBeliefPieDifferentConditions():
       momentumMax = 0.95
       trainData = scale(trainData)
       testData = scale(testData)
-      print "input shape"
-      print trainData[0].shape
-      print type(trainData)
-
 
     else:
       activationFunction = Sigmoid()
