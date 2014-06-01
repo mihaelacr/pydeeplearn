@@ -186,7 +186,8 @@ class DBN(object):
                 sparsityConstraintRbm=False,
                 sparsityRegularizationRbm=None,
                 sparsityTragetRbm=None,
-                preTrainEpochs=1):
+                preTrainEpochs=1,
+                nameDataset=''):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
 
@@ -216,6 +217,9 @@ class DBN(object):
     self.sparsityRegularizationRbm = sparsityRegularizationRbm
     self.sparsityConstraintRbm = sparsityConstraintRbm
     self.sparsityTragetRbm = sparsityTragetRbm
+
+
+    self.name = name
 
     print "hidden dropout in DBN", hiddenDropout
     print "visible dropout in DBN", visibleDropout
@@ -312,9 +316,12 @@ class DBN(object):
     validation data, used for early stopping of the model.
   """
   def train(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
-            unsupervisedData=None):
+            unsupervisedData=None, trainingIndices=None):
 
-    # Do a small check to see if the data is in between (0, 1)308
+    # Required if the user wants to record on what indices they tested the dataset on
+    self.trainingIndices = trainingIndices
+
+    # Do a small check to see if the data is in between (0, 1)
     # if we claim we have binary stochastic units
     if self.binary:
       mins = data.min(axis=1)
