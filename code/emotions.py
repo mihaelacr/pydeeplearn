@@ -808,6 +808,7 @@ def deepBeliefPieDifferentConditions():
       testData = scale(testData)
       print "input shape"
       print trainData[0].shape
+      print type(trainData)
 
 
     else:
