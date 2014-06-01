@@ -1315,6 +1315,7 @@ def missingDataTestFromTrainedNet():
     break
 
   testData = data[test]
+  testLabels = labels[test]
   testData = scale(testData)
 
   testData, pairs = makeMissingDataOnly12Positions(testData)
