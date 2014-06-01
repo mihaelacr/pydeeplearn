@@ -785,6 +785,7 @@ def deepBeliefPieDifferentConditions():
   for trainConditions, _ in kf:
     print "trainConditions"
     print trainConditions
+    print trainConditions.shape
 
     trainData, trainLabels, testData, testLabels = getDataFunction(trainConditions, equalize=args.equalize)
 
