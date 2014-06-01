@@ -789,10 +789,7 @@ def deepBeliefPieDifferentConditions():
 
     trainData, trainLabels, testData, testLabels = getDataFunction(trainConditions, equalize=args.equalize)
 
-    print "input shape"
-    print trainData[0].shape
-
-    trainData = shuffle(trainData)
+    trainData, trainLabels = shuffle(trainData, trainLabels)
 
     print "input shape"
     print trainData[0].shape
