@@ -1156,7 +1156,7 @@ def addBlobsOfMissingData(testData, sqSize=5):
 
   return np.array(map(makeBlob, testData))
 
-def makeMissingDataPlot():
+def makeMissingDataImage():
   data, labels = readMultiPIE(equalize=args.equalize)
   data, labels = shuffle(data, labels)
 
@@ -1180,7 +1180,7 @@ def missingData():
   data, labels = shuffle(data, labels)
 
   # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), n_folds=4)
+  kf = cross_validation.KFold(n=len(data), n_folds=5)
   for train, test in kf:
     break
 
@@ -1284,6 +1284,84 @@ def missingData():
   print "confusion matrix"
   print confMatrix
 
+def makeMissingDataOnly12Positions(testData):
+  def makeBlob(x):
+    x = x.reshape(SMALL_SIZE)
+    m = np.random.random_integers(low=0, high=4)
+    n = np.random.random_integers(low=0, high=3)
+
+    for i in xrange(10):
+      for j in xrange(10):
+        x[1) * m  + i, 10 * n + j] = 0
+
+    return x.reshape(-1), (m,n)
+
+  data = []
+  coordinates = []
+  for i, d in enumerate(testData):
+    d, (m, n) = makeBlob(d)
+    data += [d]
+    coordinates += [(m,n)]
+
+  return np.array(data), coordinates
+
+def missingDataTestFromTrainedNet():
+  data, labels = readMultiPIE(equalize=args.equalize)
+  data, labels = shuffle(data, labels)
+
+  # Random data for training and testing
+  kf = cross_validation.KFold(n=len(data), n_folds=5)
+  for train, test in kf:
+    break
+
+  testData = scale(testData)
+
+  testData, pairs = makeMissingDataOnly12Positions(testData)
+
+
+  with open(args.netFile, "rb") as f:
+      net = pickle.load(f)
+
+  dictSquares = {}
+  for i in xrange(4):
+    for j in xrange(3):
+      dictSquares[(i,j)] = []
+
+  testData = data[test]
+
+  probs, predicted = net.classify(testData)
+
+  actualLabels = testLabels
+  correct = 0
+  errorCases = []
+
+  for i in xrange(len(testLabels)):
+    print "predicted"
+    print "probs"
+    print probs[i]
+    print "predicted"
+    print predicted[i]
+    print "actual"
+    actual = actualLabels[i]
+    print np.argmax(actual)
+    if predicted[i] == np.argmax(actual):
+      correct += 1
+      dictSquares[pairs[i]] += [1]
+    else:
+      errorCases.append(i)
+      dictSquares[pairs[i]] += [0]
+
+  print "percentage correct"
+  print correct  * 1.0/ len(testLabels)
+
+  mat = np.zeros(4, 3)
+  for i in xrange(4):
+    for j in xrange(3):
+      mat[i,j] = dictSquares[(i,j)].sum() * 1.0 / len(dictSquares[(i,j)])
+
+
+  plt.matshow(mat, interpolation='none')
+  plt.show()
 
 
 def main():
@@ -1321,5 +1399,4 @@ if __name__ == '__main__':
   # print "FIXING RANDOMNESS"
   # random.seed(6)
   # np.random.seed(6)
-  # makeMissingDataPlot()
   main()
