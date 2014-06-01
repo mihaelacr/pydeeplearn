@@ -219,7 +219,7 @@ class DBN(object):
     self.sparsityTragetRbm = sparsityTragetRbm
 
 
-    self.name = name
+    self.nameDataset = nameDataset
 
     print "hidden dropout in DBN", hiddenDropout
     print "visible dropout in DBN", visibleDropout
