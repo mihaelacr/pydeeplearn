@@ -1362,6 +1362,7 @@ def missingDataTestFromTrainedNet():
       mat[i,j] = sum(dictSquares[(i,j)]) * 1.0 / len(dictSquares[(i,j)])
 
 
+  print mat
   plt.matshow(mat, interpolation='none')
   plt.show()
 
