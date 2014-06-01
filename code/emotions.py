@@ -793,6 +793,8 @@ def deepBeliefPieDifferentConditions():
 
     print "input shape"
     print trainData[0].shape
+    print "type(trainData)"
+    print type(trainData)
 
     if args.relu:
       activationFunction = Rectified()
