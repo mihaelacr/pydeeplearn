@@ -340,6 +340,8 @@ class DBN(object):
         maxs = unsupervisedData.max(axis=1)
         assert np.all(mins) >=0.0 and np.all(maxs) < 1.0 + 1e-8
 
+    data = shuffle(data)
+
     if validation:
       nrInstances = len(data)
       validationIndices = np.random.choice(xrange(nrInstances),
