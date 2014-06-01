@@ -1361,6 +1361,8 @@ def missingDataTestFromTrainedNet():
   mat = np.zeros((4, 3))
   for i in xrange(4):
     for j in xrange(3):
+      print "len(dictSquares[(i,j)])"
+      print len(dictSquares[(i,j)])
       mat[i,j] = sum(dictSquares[(i,j)]) * 1.0 / len(dictSquares[(i,j)])
 
 
