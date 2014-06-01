@@ -1356,7 +1356,7 @@ def missingDataTestFromTrainedNet():
   print "percentage correct"
   print correct  * 1.0/ len(testLabels)
 
-  mat = np.zeros(4, 3)
+  mat = np.zeros((4, 3))
   for i in xrange(4):
     for j in xrange(3):
       mat[i,j] = dictSquares[(i,j)].sum() * 1.0 / len(dictSquares[(i,j)])
