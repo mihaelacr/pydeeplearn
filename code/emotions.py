@@ -771,7 +771,7 @@ def deepBeliefPieDifferentConditions():
     getDataFunction = readMultiPieDifferentIlluminations
   elif args.pose:
     getDataFunction = readMultiPieDifferentPoses
-  elif arg.subjects:
+  elif args.subjects:
     getDataFunction = readMultiPieDifferentSubjects
 
 
