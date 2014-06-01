@@ -1250,7 +1250,8 @@ def missingData():
 
     net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
               validation=args.validation,
-              unsupervisedData=unsupervisedData)
+              unsupervisedData=unsupervisedData,
+              trainingIndices=train)
 
     if args.save:
       with open(args.netFile, "wb") as f:
