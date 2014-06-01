@@ -1287,8 +1287,8 @@ def missingData():
 def makeMissingDataOnly12Positions(testData):
   def makeBlob(x):
     x = x.reshape(SMALL_SIZE)
-    m = np.random.random_integers(low=0, high=4)
-    n = np.random.random_integers(low=0, high=3)
+    m = np.random.randint(low=0, high=4)
+    n = np.random.randint(low=0, high=3)
 
     for i in xrange(10):
       for j in xrange(10):
