@@ -765,27 +765,30 @@ def svmPIE():
 # I tihnk the different subjects is very intersting
 # and I should do this for for
 def deepBeliefPieDifferentConditions():
-  allConditions = range(5)
 
   if args.illumination:
     getDataFunction = readMultiPieDifferentIlluminations
+    allConditions = np.array(range(5))
   elif args.pose:
     getDataFunction = readMultiPieDifferentPoses
+    allConditions = np.array(range(5))
   elif args.subjects:
     getDataFunction = readMultiPieDifferentSubjects
+    allConditions = np.array(range(147))
 
+
+  kf = cross_validation.KFold(n=len(allConditions), k=5)
 
   confustionMatrices = []
   correctAll = []
 
-  for i in allConditions:
-    trainConditions = list(allConditions)
-    trainConditions.remove(i)
-
+  for trainConditions, _ in kf:
     print "trainConditions"
     print trainConditions
 
     trainData, trainLabels, testData, testLabels = getDataFunction(trainConditions, equalize=args.equalize)
+
+    trainData = shuffle(trainData)
 
     if args.relu:
       activationFunction = Rectified()
