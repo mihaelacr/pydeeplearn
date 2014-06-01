@@ -835,11 +835,11 @@ def deepBeliefPieDifferentConditions():
                  rbmVisibleDropout=1.0,
                  preTrainEpochs=args.preTrainEpochs)
 
-      unsupervisedData, _ = readMultiPIE(equalize=args.equalize)
-
+      print "trainData.shape"
+      print trainData.shape
       net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
                 validation=args.validation,
-                unsupervisedData=unsupervisedData)
+                unsupervisedData=None)
     else:
        # Take the saved network and use that for reconstructions
       with open(args.netFile, "rb") as f:
