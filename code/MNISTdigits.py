@@ -841,9 +841,12 @@ def cvMNISTGaussian():
   #           (5e-03, 1e-02, 0.05), (1e-02, 5e-03, 0.05),(5e-03, 5e-03, 0.05),
   #           (5e-03, 1e-02, 0.01), (1e-02, 5e-03, 0.01),(5e-03, 5e-03, 0.01) ]
 
-  params = [(5e-03, 1e-02, 0.1),  (1e-02, 5e-02, 0.1), (5e-03, 5e-02, 0.1),
-            (5e-03, 1e-02, 0.05), (1e-02, 5e-02, 0.05),(5e-03, 5e-02, 0.05),
-            (5e-03, 1e-02, 0.01), (1e-02, 5e-02, 0.01),(5e-03, 5e-02, 0.01) ]
+  # params = [(5e-03, 1e-02, 0.1),  (1e-02, 5e-02, 0.1), (5e-03, 5e-02, 0.1),
+  #           (5e-03, 1e-02, 0.05), (1e-02, 5e-02, 0.05),(5e-03, 5e-02, 0.05),
+  #           (5e-03, 1e-02, 0.01), (1e-02, 5e-02, 0.01),(5e-03, 5e-02, 0.01), ]
+  #           (5e-03, 1e-02, 0.01), (1e-02, 5e-02, 0.01),(5e-03, 5e-02, 0.01), ]
+
+  params = [(5e-03, 1e-02),  (1e-02, 5e-02), (5e-03, 5e-02)]
 
   correctness = []
 
@@ -874,9 +877,9 @@ def cvMNISTGaussian():
                   rbmVisibleDropout=1.0,
                   miniBatchSize=args.miniBatchSize,
                   preTrainEpochs=args.preTrainEpochs,
-                  sparsityConstraintRbm=True,
+                  sparsityConstraintRbm=False,
                   sparsityTragetRbm=0.01,
-                  sparsityRegularizationRbm=params[i][2])
+                  sparsityRegularizationRbm=None)
 
     net.train(trainingScaledVectors[train], vectorLabels[train],
               maxEpochs=args.maxEpochs,
