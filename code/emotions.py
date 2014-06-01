@@ -1322,14 +1322,12 @@ def missingDataTestFromTrainedNet():
 
 
   with open(args.netFile, "rb") as f:
-      net = pickle.load(f)
+    net = pickle.load(f)
 
   dictSquares = {}
   for i in xrange(4):
     for j in xrange(3):
       dictSquares[(i,j)] = []
-
-  testData = data[test]
 
   probs, predicted = net.classify(testData)
 
