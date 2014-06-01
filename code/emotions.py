@@ -1367,7 +1367,7 @@ def missingDataTestFromTrainedNet():
 
 
   print mat
-  plt.matshow(mat, cmap=plt.cm.YlOrRed,interpolation='none', vmin=0.85, vmax=1)
+  plt.matshow(mat, cmap=plt.get_cmap("YlOrRed"),interpolation='none', vmin=0.85, vmax=1)
   plt.show()
 
 
