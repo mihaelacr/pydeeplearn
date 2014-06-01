@@ -59,6 +59,8 @@ parser.add_argument('--illumination',dest='illumination',action='store_true', de
                     help="if true, trains and tests the images with different illuminations")
 parser.add_argument('--pose',dest='pose',action='store_true', default=False,
                     help="if true, trains and tests the images with different poses")
+parser.add_argument('--subjects',dest='subjects',action='store_true', default=False,
+                    help="if true, trains and tests the images with different subjects")
 parser.add_argument('--missing', dest='missing',action='store_true', default=False,
                     help=("tests the network with missing data."))
 parser.add_argument('--crossdb', dest='crossdb',action='store_true', default=False,
@@ -769,6 +771,8 @@ def deepBeliefPieDifferentConditions():
     getDataFunction = readMultiPieDifferentIlluminations
   elif args.pose:
     getDataFunction = readMultiPieDifferentPoses
+  elif arg.subjects:
+    getDataFunction = readMultiPieDifferentSubjects
 
 
   confustionMatrices = []
@@ -1389,7 +1393,7 @@ def main():
   if args.crossdbCV:
     crossDataBaseCV()
 
-  if args.illumination or args.pose:
+  if args.illumination or args.pose or args.subjects:
     deepBeliefPieDifferentConditions()
 
   if args.missing:
