@@ -790,6 +790,9 @@ def deepBeliefPieDifferentConditions():
 
     trainData = shuffle(trainData)
 
+    print "input shape"
+    print trainData[0].shape
+
     if args.relu:
       activationFunction = Rectified()
       rbmActivationFunctionVisible = Identity()
