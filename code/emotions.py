@@ -1292,7 +1292,7 @@ def makeMissingDataOnly12Positions(testData):
 
     for i in xrange(10):
       for j in xrange(10):
-        x[1) * m  + i, 10 * n + j] = 0
+        x[10 * m  + i, 10 * n + j] = 0
 
     return x.reshape(-1), (m,n)
 
