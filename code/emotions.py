@@ -1399,4 +1399,5 @@ if __name__ == '__main__':
   # print "FIXING RANDOMNESS"
   # random.seed(6)
   # np.random.seed(6)
-  main()
+  missingDataTestFromTrainedNet()
+  # main()
