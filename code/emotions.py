@@ -1314,6 +1314,7 @@ def missingDataTestFromTrainedNet():
   for train, test in kf:
     break
 
+  testData = data[test]
   testData = scale(testData)
 
   testData, pairs = makeMissingDataOnly12Positions(testData)
