@@ -1336,6 +1336,7 @@ def missingDataTestFromTrainedNet():
   trainingIndices = net.trainingIndices
   testIndices = np.setdiff1d(np.arange(len(data)), trainingIndices)
   testData = data[testIndices]
+  testLabels =labels[testIndices]
   print "len(testData)"
   print len(testData)
 
