@@ -1336,29 +1336,93 @@ def missingDataTestFromTrainedNet():
   data, labels = shuffle(data,labels)
 
 
-  with open(args.netFile, "rb") as f:
-    net = pickle.load(f)
+  # with open(args.netFile, "rb") as f:
+  #   net = pickle.load(f)
 
-  trainingIndices = net.trainingIndices
-  testIndices = np.setdiff1d(np.arange(len(data)), trainingIndices)
+  # trainingIndices = net.trainingIndices
+  # testIndices = np.setdiff1d(np.arange(len(data)), trainingIndices)
 
-  print testIndices
-  testData = data[testIndices]
-  testLabels = labels[testIndices]
-  print "len(testData)"
-  print len(testData)
+  # print testIndices
+  # testData = data[testIndices]
+  # testLabels = labels[testIndices]
+  # print "len(testData)"
+  # print len(testData)
+   # Random data for training and testing
+  kf = cross_validation.KFold(n=len(data), n_folds=5)
+  for train, test in kf:
+    break
 
-  # testData, pairs = makeMissingDataOnly12Positions(testData)
+  trainData = data[train]
+  trainLabels = labels[train]
+
+  testData = data[test]
+  testLabels = labels[test]
+
+  testData, pairs = makeMissingDataOnly12Positions(testData)
 
 
-  # dictSquares = {}
-  # for i in xrange(4):
-  #   for j in xrange(3):
-  #     dictSquares[(i,j)] = []
+  # testData = addBlobsOfMissingData(testData, sqSize=10)
 
   # for i in xrange(10):
   #   plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
   #   plt.show()
+
+  if args.relu:
+    activationFunction = Rectified()
+    rbmActivationFunctionHidden = RectifiedNoisy()
+    rbmActivationFunctionVisible = Identity()
+    unsupervisedLearningRate = 0.005
+    supervisedLearningRate = 0.001
+    momentumMax = 0.95
+    trainData = scale(trainData)
+    testData = scale(testData)
+  else:
+    activationFunction = Sigmoid()
+    rbmActivationFunctionHidden = Sigmoid()
+    rbmActivationFunctionVisible = Sigmoid()
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.95
+
+  if args.train:
+    # TODO: this might require more thought
+    net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
+               binary=1-args.relu,
+               activationFunction=activationFunction,
+               rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+               rbmActivationFunctionHidden=rbmActivationFunctionHidden,
+               unsupervisedLearningRate=unsupervisedLearningRate,
+               supervisedLearningRate=supervisedLearningRate,
+               momentumMax=momentumMax,
+               nesterovMomentum=args.nesterov,
+               rbmNesterovMomentum=args.rbmnesterov,
+               rmsprop=args.rmsprop,
+               miniBatchSize=args.miniBatchSize,
+               visibleDropout=0.8,
+               hiddenDropout=1.0,
+               rbmHiddenDropout=1.0,
+               rbmVisibleDropout=1.0,
+               preTrainEpochs=args.preTrainEpochs)
+
+    unsupervisedData = buildUnsupervisedDataSetForPIE()
+
+    net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
+              validation=args.validation,
+              unsupervisedData=unsupervisedData,
+              trainingIndices=train)
+
+    if args.save:
+      with open(args.netFile, "wb") as f:
+        pickle.dump(net, f)
+
+  dictSquares = {}
+  for i in xrange(4):
+    for j in xrange(3):
+      dictSquares[(i,j)] = []
+
+  for i in xrange(10):
+    plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
+    plt.show()
 
   probs, predicted = net.classify(testData)
 
@@ -1433,5 +1497,5 @@ if __name__ == '__main__':
   # print "FIXING RANDOMNESS"
   # random.seed(6)
   # np.random.seed(6)
-  # missingDataTestFromTrainedNet()
-  main()
+  missingDataTestFromTrainedNet()
+  # main()
