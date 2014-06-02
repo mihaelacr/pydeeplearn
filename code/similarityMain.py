@@ -32,6 +32,9 @@ parser.add_argument('--nrHidden',dest='nrHidden', type=int, default=500,
                     help="how many hidden units should be used for the net")
 parser.add_argument('--epochs', type=int, default=1000,
                     help='the maximum number of supervised epochs')
+parser.add_argument('--rbmepochs', type=int, default=1000,
+                    help='the maximum number of unsupervised epochs')
+
 
 args = parser.parse_args()
 
@@ -95,7 +98,7 @@ def similarityMain():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
-                                    trainingEpochsRBM=10,
+                                    trainingEpochsRBM=args.rbmepochs,
                                     nesterovRbm=True,
                                     sparsityConstraint=args.sparsity,
                                     sparsityRegularization=0.01,
@@ -181,7 +184,7 @@ def similarityMainTestYale():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
-                                    trainingEpochsRBM=10)
+                                    trainingEpochsRBM=args.rbmepochs)
 
   simNet.train(trainData1, trainData2, similaritiesTrain)
 
@@ -273,7 +276,7 @@ def similarityDifferentSubjectsMain():
                                     rbmDropoutHid=1.0,
                                     rmsprop=False,
                                     rbmDropoutVis=1.0,
-                                    trainingEpochsRBM=10)
+                                    trainingEpochsRBM=args.rbmepochs)
 
   simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
 
@@ -341,7 +344,7 @@ def similarityCV():
                                       rbmDropoutHid=1.0,
                                       rmsprop=args.rmsprop,
                                       rbmDropoutVis=1.0,
-                                      trainingEpochsRBM=1,
+                                      trainingEpochsRBM=args.rbmepochs,
                                       nesterovRbm=True,
                                       sparsityConstraint=args.sparsity,
                                       sparsityRegularization=params[fold][2],
@@ -434,7 +437,7 @@ def similarityCVEmotions():
                                       rbmDropoutHid=1.0,
                                       rbmDropoutVis=1.0,
                                       rmsprop=False,
-                                      trainingEpochsRBM=1)
+                                      trainingEpochsRBM=args.rbmepochs)
 
     simNet.train(trainData1, trainData2, trainLabels, epochs=args.epochs)
 
@@ -511,7 +514,7 @@ def similarityEmotionsMain():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
-                                    trainingEpochsRBM=10)
+                                    trainingEpochsRBM=args.rbmepochs)
 
   print "training with ", trainLabels.sum(), "positive examples"
   print "training with ", len(trainLabels) - trainLabels.sum(), "negative examples"
@@ -598,7 +601,7 @@ def similarityEmotionsSameSubject():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
-                                    trainingEpochsRBM=10)
+                                    trainingEpochsRBM=args.rbmepochs)
 
   print "training with ", trainLabels.sum(), "positive examples"
   print "training with ", len(trainLabels) - trainLabels.sum(), "negative examples"
