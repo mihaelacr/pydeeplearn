@@ -13,7 +13,7 @@ from activationfunctions import *
 
 parser = argparse.ArgumentParser(description='tests')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
-parser.add_argument('relu', help="")
+parser.add_argument('--relu', help="")
 
 # Get the arguments of the program
 args = parser.parse_args()
