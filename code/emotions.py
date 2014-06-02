@@ -1335,11 +1335,8 @@ def missingDataTestFromTrainedNet():
   testData = data[testIndices]
   print "len(testData)"
   print len(testData)
-  testData = addBlobsOfMissingData(testData, sqSize=5)
-
 
   testData, pairs = makeMissingDataOnly12Positions(testData)
-
 
   with open(args.netFile, "rb") as f:
     net = pickle.load(f)
@@ -1426,5 +1423,5 @@ if __name__ == '__main__':
   # print "FIXING RANDOMNESS"
   # random.seed(6)
   # np.random.seed(6)
-  # missingDataTestFromTrainedNet()
-  main()
+  missingDataTestFromTrainedNet()
+  # main()
