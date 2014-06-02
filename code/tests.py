@@ -20,7 +20,7 @@ args = parser.parse_args()
 
 
 def testPicklingDBN():
-  data, labels = readKanade(False, None, equalize=args.equalize)
+  data, labels = readKanade(False, None, equalize=False)
 
   print "data.shape"
   print data.shape
