@@ -328,7 +328,7 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      if sparsityCostFunction == T.nnet.binary_crossentropy:
+      if self.sparsityCostFunction == T.nnet.binary_crossentropy:
         sparistyCostMeasure = batchTrainer.activationProbabilities
       else:
         sparistyCostMeasure = batchTrainer.hiddenActivations
@@ -416,7 +416,7 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      if sparsityCostFunction == T.nnet.binary_crossentropy:
+      if self.sparsityCostFunction == T.nnet.binary_crossentropy:
         sparistyCostMeasure = batchTrainer.activationProbabilities
       else:
         sparistyCostMeasure = batchTrainer.hiddenActivations
