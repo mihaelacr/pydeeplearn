@@ -1338,7 +1338,7 @@ def missingDataTestFromTrainedNet():
 
   print testIndices
   testData = data[testIndices]
-  testLabels = abels[testIndices]
+  testLabels = labels[testIndices]
   print "len(testData)"
   print len(testData)
 
