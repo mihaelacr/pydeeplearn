@@ -14,7 +14,9 @@ from activationfunctions import *
 
 parser = argparse.ArgumentParser(description='tests')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
-parser.add_argument('--relu', help="")
+parser.add_argument('--relu', dest='relu',action='store_true', default=False,
+                    help=("if true, trains the RBM or DBN with a rectified linear unit"))
+
 
 # Get the arguments of the program
 args = parser.parse_args()
