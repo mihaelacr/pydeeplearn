@@ -821,12 +821,12 @@ def readAberdeen(crop, detectFaces, equalize):
 
 if __name__ == '__main__':
   # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
-  # readMultiPIE(show=True)
+  readMultiPIE(show=True)
   # readCroppedYaleSubjects(show=True)
   # makeMultiPieImagesForReport()
   # makeEqualizePics()
   # makeCrossDbPlot()
-  # facedetectionMultiPie()
+  facedetectionMultiPie()
   makeMultiPosesPlot()
   # makeKanadeImages()
   # readMultiPieDifferentIlluminations([3], show=True, equalize=True)
