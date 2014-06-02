@@ -28,7 +28,7 @@ parser.add_argument('--emotionsdiffsamesubj', dest='emotionsdiffsamesubj',action
                     help=("if true, trains a net to distinguish between emotions where the pictures presented are the same people"))
 parser.add_argument('--equalize',dest='equalize',action='store_true', default=False,
                     help="if true, the input images are equalized before being fed into the net")
-parser.add_argument('--nrHidden',dest='nrHidden', type=int, default=500,
+parser.add_argument('--nrHidden',dest='nrHidden', type=int, default=1000,
                     help="how many hidden units should be used for the net")
 parser.add_argument('--epochs', type=int, default=1000,
                     help='the maximum number of supervised epochs')
@@ -59,7 +59,7 @@ def similarityMain():
   if args.relu:
     if args.rmsprop:
       learningRate = 0.001
-      rbmLearningRate = 0.005
+      rbmLearningRate = 0.00005
       maxMomentum = 0.95
     else:
       learningRate = 0.001
