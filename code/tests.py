@@ -100,7 +100,7 @@ def testPicklingDBN():
 
   for key in initialDict:
     assert key in afterDict
-    if isinstace(initialDict[key], (np.ndarray, np.generic)):
+    if isinstance(initialDict[key], (np.ndarray, np.generic)):
       assert np.arrays_equal(initialDict[key], afterDict[key])
     else:
       assert initialDict[key] == afterDict[key]
