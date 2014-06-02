@@ -1346,10 +1346,10 @@ def missingDataTestFromTrainedNet():
   # testData, pairs = makeMissingDataOnly12Positions(testData)
 
 
-  dictSquares = {}
-  for i in xrange(4):
-    for j in xrange(3):
-      dictSquares[(i,j)] = []
+  # dictSquares = {}
+  # for i in xrange(4):
+  #   for j in xrange(3):
+  #     dictSquares[(i,j)] = []
 
   # for i in xrange(10):
   #   plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
@@ -1372,25 +1372,25 @@ def missingDataTestFromTrainedNet():
     print np.argmax(actual)
     if predicted[i] == np.argmax(actual):
       correct += 1
-      dictSquares[pairs[i]] += [1]
+      # dictSquares[pairs[i]] += [1]
     else:
       errorCases.append(i)
-      dictSquares[pairs[i]] += [0]
+      # dictSquares[pairs[i]] += [0]
 
   print "percentage correct"
   print correct  * 1.0/ len(testLabels)
 
-  mat = np.zeros((4, 3))
-  for i in xrange(4):
-    for j in xrange(3):
-      print "len(dictSquares[(i,j)])"
-      print len(dictSquares[(i,j)])
-      mat[i,j] = sum(dictSquares[(i,j)]) * 1.0 / len(dictSquares[(i,j)])
+  # mat = np.zeros((4, 3))
+  # for i in xrange(4):
+  #   for j in xrange(3):
+  #     print "len(dictSquares[(i,j)])"
+  #     print len(dictSquares[(i,j)])
+  #     mat[i,j] = sum(dictSquares[(i,j)]) * 1.0 / len(dictSquares[(i,j)])
 
 
-  print mat
-  plt.matshow(mat, cmap=plt.get_cmap("YlOrRd"),interpolation='none', vmin=0.85, vmax=1)
-  plt.show()
+  # print mat
+  # plt.matshow(mat, cmap=plt.get_cmap("YlOrRd"),interpolation='none', vmin=0.85, vmax=1)
+  # plt.show()
 
 
 def main():
