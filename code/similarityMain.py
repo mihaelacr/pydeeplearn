@@ -341,7 +341,7 @@ def similarityCV():
                                       visibleActivationFunction=visibleActivationFunction,
                                       hiddenActivationFunction=hiddenActivationFunction,
                                       rbmNrVis=1200,
-                                      rbmNrHid=700,
+                                      rbmNrHid=args.nrHidden,
                                       rbmLearningRate=params[fold][1],
                                       rbmDropoutHid=1.0,
                                       rmsprop=args.rmsprop,
