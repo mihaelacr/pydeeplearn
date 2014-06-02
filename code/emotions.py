@@ -1343,7 +1343,7 @@ def missingDataTestFromTrainedNet():
   print "len(testData)"
   print len(testData)
 
-  testData, pairs = makeMissingDataOnly12Positions(testData)
+  # testData, pairs = makeMissingDataOnly12Positions(testData)
 
 
   dictSquares = {}
