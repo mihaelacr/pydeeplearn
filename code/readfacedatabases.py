@@ -235,7 +235,7 @@ def readMultiPieDifferentPoses(posesTrain, show=False, equalize=False):
               imgsTrain += [image.reshape(-1)]
               labelsTrain += [expression]
               # Only show the faces for this pose
-              if show:
+              if show and expression == 5 and subject == 2:
                 plt.imshow(image, cmap=plt.cm.gray)
                 plt.axis('off')
                 plt.show()
