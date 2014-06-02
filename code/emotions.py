@@ -1330,6 +1330,9 @@ def makeMissingDataOnly12Positions(testData):
 def missingDataTestFromTrainedNet():
   data, labels = readMultiPIE(equalize=args.equalize)
 
+  with open(args.netFile, "rb") as f:
+    net = pickle.load(f)
+
   trainingIndices = net.trainingIndices
   testIndices = np.setdiff1d(np.arange(len(data)), trainingIndices)
   testData = data[testIndices]
@@ -1338,8 +1341,6 @@ def missingDataTestFromTrainedNet():
 
   testData, pairs = makeMissingDataOnly12Positions(testData)
 
-  with open(args.netFile, "rb") as f:
-    net = pickle.load(f)
 
   dictSquares = {}
   for i in xrange(4):
