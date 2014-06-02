@@ -1270,6 +1270,8 @@ def missingData():
       testData = addBlobsOfMissingData(testData, sqSize=5)
 
 
+  print net.__dict__
+
   probs, predicted = net.classify(testData)
 
   actualLabels = testLabels
