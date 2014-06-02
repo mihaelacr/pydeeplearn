@@ -97,7 +97,14 @@ def testPicklingDBN():
   del afterDict['rbmActivationFunctionHidden']
   del afterDict['rbmActivationFunctionVisible']
 
-  assert initialDict == afterDict
+
+  for key in initialDict:
+    assert key in afterDict
+    if type(initialDict[key]) == np.ndarray:
+      assert np.arrays_equal(initialDict[key], afterDict[key])
+    else:
+      assert initialDict[key] == afterDict[key]
+
 
 
 def main():
