@@ -18,7 +18,7 @@ from readfacedatabases import *
 from activationfunctions import *
 
 
-parser = argparse.ArgumentParser(description='digit recognition')
+parser = argparse.ArgumentParser(description='emotion recongnition')
 parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
                     help=("if true, rbms are trained using nesterov momentum"))
 parser.add_argument('--save',dest='save',action='store_true', default=False,

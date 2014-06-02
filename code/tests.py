@@ -11,6 +11,7 @@ from common import *
 from readfacedatabases import *
 from activationfunctions import *
 
+parser = argparse.ArgumentParser(description='tests')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
 parser.add_argument('relu', help="")
 
