@@ -1190,7 +1190,7 @@ def makeMissingDataImage():
 """Train with PIE test with Kanade. Check the equalization code. """
 def missingData():
   data, labels = readMultiPIE(equalize=args.equalize)
-  data, labels = shuffle(data, labels)
+  # data, labels = shuffle(data, labels)
 
   # Random data for training and testing
   kf = cross_validation.KFold(n=len(data), n_folds=5)
@@ -1262,6 +1262,14 @@ def missingData():
     with open(args.netFile, "rb") as f:
       net = pickle.load(f)
 
+      trainingIndices = net.trainingIndices
+      testIndices = np.setdiff1d(np.arange(len(data)), trainingIndices)
+      testData = data[testIndices]
+      print "len(testData)"
+      print len(testData)
+      testData = addBlobsOfMissingData(testData, sqSize=5)
+
+
   probs, predicted = net.classify(testData)
 
   actualLabels = testLabels
@@ -1321,16 +1329,14 @@ def makeMissingDataOnly12Positions(testData):
 
 def missingDataTestFromTrainedNet():
   data, labels = readMultiPIE(equalize=args.equalize)
-  data, labels = shuffle(data, labels)
 
-  # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), n_folds=5)
-  for train, test in kf:
-    break
+  trainingIndices = net.trainingIndices
+  testIndices = np.setdiff1d(np.arange(len(data)), trainingIndices)
+  testData = data[testIndices]
+  print "len(testData)"
+  print len(testData)
+  testData = addBlobsOfMissingData(testData, sqSize=5)
 
-  testData = data[test]
-  testLabels = labels[test]
-  testData = scale(testData)
 
   testData, pairs = makeMissingDataOnly12Positions(testData)
 
