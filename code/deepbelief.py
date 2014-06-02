@@ -117,7 +117,6 @@ class MiniBatchTrainer(object):
 
 class ClassifierBatch(object):
 
-  # TODO: investigate a bit the sharing thing
   def __init__(self, input, nrLayers, weights, biases,
                visibleDropout, hiddenDropout,
                activationFunction, classificationActivationFunction):

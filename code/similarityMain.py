@@ -10,6 +10,8 @@ import similarity
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM with a rectified linear units"))
+parser.add_argument('--sparsity', dest='sparsity',action='store_true', default=False,
+                    help=("if true, trains the RBM with a sparsity constraint"))
 parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=False,
                     help=("if true, trains the similarity net is "))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
@@ -32,8 +34,6 @@ parser.add_argument('--epochs', type=int, default=1000,
                     help='the maximum number of supervised epochs')
 
 args = parser.parse_args()
-
-
 
 
 def similarityMain():
@@ -97,7 +97,7 @@ def similarityMain():
                                     rmsprop=False,
                                     trainingEpochsRBM=10,
                                     nesterovRbm=True,
-                                    sparsityConstraint=True,
+                                    sparsityConstraint=args.sparsity,
                                     sparsityRegularization=0.01,
                                     sparsityTraget=0.01)
 
@@ -346,7 +346,7 @@ def similarityCV():
                                       rbmDropoutVis=1.0,
                                       trainingEpochsRBM=1,
                                       nesterovRbm=True,
-                                      sparsityConstraint=True,
+                                      sparsityConstraint=args.sparsity,
                                       sparsityRegularization=params[fold][2],
                                       sparsityTraget=0.01)
 
