@@ -349,7 +349,7 @@ def similarityCV():
                                       trainingEpochsRBM=args.rbmepochs,
                                       nesterovRbm=True,
                                       sparsityConstraint=args.sparsity,
-                                      sparsityRegularization=params[i][-1],
+                                      sparsityRegularization=params[fold][-1],
                                       sparsityTraget=0.01)
 
     simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
