@@ -1338,7 +1338,7 @@ def missingDataTestFromTrainedNet():
 
   print testIndices
   testData = data[testIndices]
-  testLabels =labels[testIndices]
+  testLabels = abels[testIndices]
   print "len(testData)"
   print len(testData)
 
@@ -1350,9 +1350,9 @@ def missingDataTestFromTrainedNet():
     for j in xrange(3):
       dictSquares[(i,j)] = []
 
-  # for i in xrange(10):
-  #   plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
-  #   plt.show()
+  for i in xrange(10):
+    plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
+    plt.show()
 
   probs, predicted = net.classify(testData)
 
