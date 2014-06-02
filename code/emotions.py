@@ -1329,6 +1329,7 @@ def makeMissingDataOnly12Positions(testData):
 
 def missingDataTestFromTrainedNet():
   data, labels = readMultiPIE(equalize=args.equalize)
+  data, labels = shuffle(data,labels)
 
   with open(args.netFile, "rb") as f:
     net = pickle.load(f)
