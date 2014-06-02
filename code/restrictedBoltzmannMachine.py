@@ -328,7 +328,12 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.activationProbabilities, axis=0) * 0.1
+      if sparsityCostFunction == T.nnet.binary_crossentropy:
+        sparistyCostMeasure = batchTrainer.activationProbabilities
+      else:
+        sparistyCostMeasure = batchTrainer.hiddenActivations
+
+      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(sparistyCostMeasure, axis=0) * 0.1
       # Sum over all hidden units
       sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
 
@@ -398,7 +403,6 @@ class RBM(object):
     return updates
 
   def buildNesterovUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
-
     preDeltaUpdates = []
 
     wUpdateMomentum = momentum * batchTrainer.oldDw
@@ -412,7 +416,12 @@ class RBM(object):
     updates = []
 
     if self.sparsityConstraint:
-      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(batchTrainer.activationProbabilities, axis=0) * 0.1
+      if sparsityCostFunction == T.nnet.binary_crossentropy:
+        sparistyCostMeasure = batchTrainer.activationProbabilities
+      else:
+        sparistyCostMeasure = batchTrainer.hiddenActivations
+
+      runningAvg = batchTrainer.runningAvgExpected * 0.9 + T.mean(sparistyCostMeasure, axis=0) * 0.1
       # Sum over all hidden units
       sparsityCost = T.sum(self.sparsityCostFunction(self.sparsityTraget, runningAvg))
 
