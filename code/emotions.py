@@ -1259,6 +1259,8 @@ def missingData():
 
   else:
      # Take the saved network and use that for reconstructions
+
+    print "using ", args.netFile, " for reading the pickled net"
     with open(args.netFile, "rb") as f:
       net = pickle.load(f)
 
@@ -1332,6 +1334,7 @@ def makeMissingDataOnly12Positions(testData):
 def missingDataTestFromTrainedNet():
   data, labels = readMultiPIE(equalize=args.equalize)
   data, labels = shuffle(data,labels)
+
 
   with open(args.netFile, "rb") as f:
     net = pickle.load(f)
