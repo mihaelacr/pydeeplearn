@@ -128,7 +128,7 @@ def similarityMainTestYale():
 
   similaritiesTrain =  similarityDifferentLabels(trainSubjects1, trainSubjects2)
 
-  testData1, testData2, similaritiesTest = splitSimilarityYale(instanceToPairRatio=1, args.equalize)
+  testData1, testData2, similaritiesTest = splitSimilarityYale(1, args.equalize)
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
