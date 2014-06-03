@@ -41,14 +41,10 @@ class Trainer(object):
     _, weightForHidden = rbm.testWeights(self.net.sharedWeights,
           visibleDropout=self.net.visibleDropout, hiddenDropout=self.net.hiddenDropout)
 
-    # THE HORROR: how shall this work for relu
-    # change it back to the rmb approach or just use the activation function
-    # but I somehow need the deterministic version: that would be better
-    # so even for relu I need to take the expected? or just do the max relu thing
     hiddenActivations1 = net.hiddenActivationFunction.deterministic(T.dot(input1, weightForHidden) + hiddenBias)
     hiddenActivations2 = net.hiddenActivationFunction.deterministic(T.dot(input2, weightForHidden) + hiddenBias)
 
-    # Here i have no sampling
+    # Use the cosine distance between the two vectors of of activations
     cos = cosineDistance(hiddenActivations1, hiddenActivations2)
 
     self.cos = cos
@@ -149,19 +145,18 @@ class SimilarityNet(object):
             })
 
     for epoch in xrange(epochs):
+      print "epoch", epoch
       momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.1),
                        np.float32(0.95)))
 
       for miniBatch in xrange(nrMiniBatches):
         output, cos = discriminativeTraining(miniBatch, learningRateMiniBatch, momentum)
-        # print cos
 
     print trainer.w.get_value()
     print trainer.b.get_value()
 
   def test(self, testData1, testData2):
     # If it is too slow try adding mini batches
-
     testData1 = np.array(testData1, dtype=theanoFloat)
     testData2 = np.array(testData2, dtype=theanoFloat)
 
@@ -196,8 +191,7 @@ class SimilarityNet(object):
     updates = []
     gradients = T.grad(error, trainer.params)
 
-    for param, oldParamUpdate, oldMeanSquare, gradient in zip(trainer.params, trainer.oldDParams,
-                                             trainer.oldMeanSquares, gradients):
+    for param, oldParamUpdate, oldMeanSquare, gradient in zip(trainer.params, trainer.oldDParams, trainer.oldMeanSquares, gradients):
       meanSquare = 0.9 * oldMeanSquare + 0.1 * gradient ** 2
       paramUpdate = momentum * oldParamUpdate - learningRate * gradient / T.sqrt(meanSquare + 1e-08)
       updates.append((param, param + paramUpdate))
@@ -211,9 +205,4 @@ def cosineDistance(first, second):
   normFirst = T.sqrt(T.sum(T.sqr(first), axis=1))
   normSecond = T.sqrt(T.sum(T.sqr(second), axis=1))
   return 1.0 - T.sum(first * second, axis=1) / (normFirst * normSecond)
-
-# Here  you need different measures than 0, 1 according to what you want it to learn
-# for the emotions part
-def defineSimilartyMesures():
-  None
 
