@@ -276,7 +276,11 @@ def similarityDifferentSubjectsMain():
                                     rbmDropoutHid=1.0,
                                     rmsprop=False,
                                     rbmDropoutVis=1.0,
-                                    trainingEpochsRBM=args.rbmepochs)
+                                    trainingEpochsRBM=args.rbmepochs,
+                                    nesterovRbm=True,
+                                    sparsityConstraint=args.sparsity,
+                                    sparsityRegularization=0.001,
+                                    sparsityTraget=0.01)
 
   simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
 
@@ -315,8 +319,7 @@ def similarityCV():
       params = [(0.001, 0.005), (0.001, 0.001), (0.005, 0.001), (0.005, 0.005)]
     else:
       # params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
-      params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.05),
-                (0.01, 0.1), (0.01, 0.05), (0.01, 0.5)]
+      params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.05), (0.01, 0.1), (0.01, 0.05), (0.01, 0.5)]
       # params = [(0.001, 0.01, 0.001), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
       #           (0.001, 0.01, 0.01), (0.001, 0.005, 0.01), (0.001, 0.05, 0.01)]
       # params = [(0.001, 0.01, 0.001), (0.001, 0.005, 0.001), (0.001, 0.05, 0.001),
@@ -439,7 +442,11 @@ def similarityCVEmotions():
                                       rbmDropoutHid=1.0,
                                       rbmDropoutVis=1.0,
                                       rmsprop=False,
-                                      trainingEpochsRBM=args.rbmepochs)
+                                      trainingEpochsRBM=args.rbmepochs,
+                                      nesterovRbm=True,
+                                      sparsityConstraint=args.sparsity,
+                                      sparsityRegularization=params[fold][-1],
+                                      sparsityTraget=0.01)
 
     simNet.train(trainData1, trainData2, trainLabels, epochs=args.epochs)
 
@@ -516,7 +523,11 @@ def similarityEmotionsMain():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
-                                    trainingEpochsRBM=args.rbmepochs)
+                                    trainingEpochsRBM=args.rbmepochs,
+                                    nesterovRbm=True,
+                                    sparsityConstraint=args.sparsity,
+                                    sparsityRegularization=0.001,
+                                    sparsityTraget=0.01)
 
   print "training with ", trainLabels.sum(), "positive examples"
   print "training with ", len(trainLabels) - trainLabels.sum(), "negative examples"
@@ -603,7 +614,11 @@ def similarityEmotionsSameSubject():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
-                                    trainingEpochsRBM=args.rbmepochs)
+                                    trainingEpochsRBM=args.rbmepochs,
+                                    nesterovRbm=True,
+                                    sparsityConstraint=args.sparsity,
+                                    sparsityRegularization=0.001,
+                                    sparsityTraget=0.01)
 
   print "training with ", trainLabels.sum(), "positive examples"
   print "training with ", len(trainLabels) - trainLabels.sum(), "negative examples"
