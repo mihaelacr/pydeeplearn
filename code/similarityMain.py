@@ -316,7 +316,8 @@ def similarityCV():
     if args.rmsprop:
       # params = [(0.00005, 0.001, 0.01), (0.00005, 0.001, 0.1), (0.00005, 0.001, 0.001), (0.00005, 0.001, 0.0001)]
       # params = [(0.00005, 0.001), (0.00005, 0.001, 0.1), (0.00005, 0.001, 0.001), (0.00005, 0.001, 0.0001)]
-      params = [(0.001, 0.005), (0.001, 0.001), (0.005, 0.001), (0.005, 0.005)]
+      params = [ (0.005, 0.01), (0.005, 0.005), (0.005, 0.05)]
+      # params = [(0.001, 0.005), (0.001, 0.001), (0.005, 0.001), (0.005, 0.005)]
     else:
       # params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
       params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.05), (0.01, 0.1), (0.01, 0.05), (0.01, 0.5)]
@@ -347,7 +348,7 @@ def similarityCV():
                                       rbmNrHid=args.nrHidden,
                                       rbmLearningRate=params[fold][1],
                                       rbmDropoutHid=1.0,
-                                      rmsprop=args.rmsprop,
+                                      rmsprop=False,
                                       rbmDropoutVis=1.0,
                                       trainingEpochsRBM=args.rbmepochs,
                                       nesterovRbm=True,
