@@ -124,7 +124,7 @@ def similarityMainTestYale():
   subjectsToImgs = readMultiPIESubjects(args.equalize)
 
   trainData1, trainData2, trainSubjects1, trainSubjects2 =\
-    splitDataAccordingToLabels(subjectsToImgs, None, imgsPerSubject=None)
+    splitDataAccordingToLabels(subjectsToImgs, None, instanceToPairRatio=None)
 
   similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
 
@@ -217,11 +217,11 @@ def similarityDifferentSubjectsMain():
   print len(subjectTest)
 
   trainData1, trainData2, trainSubjects1, trainSubjects2 =\
-    splitDataAccordingToLabels(subjectsToImgs, subjectTrain, imgsPerSubject=None)
+    splitDataAccordingToLabels(subjectsToImgs, subjectTrain, instanceToPairRatio=None)
 
 
   testData1, testData2, testSubjects1, testSubjects2 =\
-    splitDataAccordingToLabels(subjectsToImgs, subjectTest, imgsPerSubject=None)
+    splitDataAccordingToLabels(subjectsToImgs, subjectTest, instanceToPairRatio=None)
 
   print "training with dataset of size ", len(trainData1)
   print "testing with dataset of size ", len(testData1)
