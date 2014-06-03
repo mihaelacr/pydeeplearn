@@ -126,7 +126,7 @@ def similarityMainTestYale():
   trainData1, trainData2, trainSubjects1, trainSubjects2 =\
     splitDataAccordingToLabels(subjectsToImgs, None, instanceToPairRatio=2)
 
-  similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
+  similaritiesTrain =  similarityDifferentLabels(trainSubjects1, trainSubjects2)
 
   testData1, testData2, similaritiesTest = splitSimilarityYale(args.equalize)
 
@@ -226,8 +226,8 @@ def similarityDifferentSubjectsMain():
   print "training with dataset of size ", len(trainData1)
   print "testing with dataset of size ", len(testData1)
 
-  similaritiesTrain =  similarityDifferentSubjects(trainSubjects1, trainSubjects2)
-  similaritiesTest =  similarityDifferentSubjects(testSubjects1, testSubjects2)
+  similaritiesTrain =  similarityDifferentLabels(trainSubjects1, trainSubjects2)
+  similaritiesTest =  similarityDifferentLabels(testSubjects1, testSubjects2)
 
   print "training with ", similaritiesTrain.sum(), "positive examples"
   print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
