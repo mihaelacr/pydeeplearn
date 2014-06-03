@@ -631,7 +631,7 @@ def readCroppedYale(equalize):
     img = cv2.imread(f, 0)
 
     if equalize:
-      img = equalizeImg(img)
+      img = equalizeImgGlobal(img)
 
     img = resize(img, SMALL_SIZE)
 
@@ -670,7 +670,7 @@ def readCroppedYaleSubjects(equalize=False, show=False):
 
 
       if equalize:
-        img = equalizeImg(img)
+        img = equalizeImgGlobal(img)
 
       img = resize(img, SMALL_SIZE)
 
