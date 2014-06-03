@@ -58,11 +58,11 @@ def similarityMain():
 
   if args.relu:
     if args.rmsprop:
-      learningRate = 0.001
+      learningRate = 0.005
       rbmLearningRate = 0.005
       maxMomentum = 0.95
     else:
-      learningRate = 0.001
+      learningRate = 0.005
       rbmLearningRate = 0.005
       maxMomentum = 0.95
 
@@ -144,11 +144,11 @@ def similarityMainTestYale():
 
   if args.relu:
     if args.rmsprop:
-      learningRate = 0.001
+      learningRate = 0.005
       rbmLearningRate = 0.005
       maxMomentum = 0.95
     else:
-      learningRate = 0.001
+      learningRate = 0.005
       rbmLearningRate = 0.005
       maxMomentum = 0.95
 
@@ -237,11 +237,11 @@ def similarityDifferentSubjectsMain():
 
   if args.relu:
     if args.rmsprop:
-      learningRate = 0.001
+      learningRate = 0.005
       rbmLearningRate = 0.005
       maxMomentum = 0.95
     else:
-      learningRate = 0.001
+      learningRate = 0.005
       rbmLearningRate = 0.005
       maxMomentum = 0.95
 
@@ -316,7 +316,7 @@ def similarityCV():
     if args.rmsprop:
       # params = [(0.00005, 0.001, 0.01), (0.00005, 0.001, 0.1), (0.00005, 0.001, 0.001), (0.00005, 0.001, 0.0001)]
       # params = [(0.00005, 0.001), (0.00005, 0.001, 0.1), (0.00005, 0.001, 0.001), (0.00005, 0.001, 0.0001)]
-      params = [ (0.001, 0.01), (0.001, 0.005), (0.001, 0.05)]
+      params = [ (0.0001, 0.01), (0.0001, 0.005), (0.0001, 0.05)]
       # params = [(0.001, 0.005), (0.001, 0.001), (0.005, 0.001), (0.005, 0.005)]
     else:
       # params = [(0.001, 0.01), (0.001, 0.005), (0.001, 0.1), (0.001, 0.05)]
