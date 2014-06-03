@@ -184,7 +184,11 @@ def similarityMainTestYale():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
-                                    trainingEpochsRBM=args.rbmepochs)
+                                    trainingEpochsRBM=args.rbmepochs,
+                                    nesterovRbm=True,
+                                    sparsityConstraint=args.sparsity,
+                                    sparsityRegularization=0.01,
+                                    sparsityTraget=0.01)
 
   simNet.train(trainData1, trainData2, similaritiesTrain)
 
