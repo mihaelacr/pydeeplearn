@@ -130,7 +130,7 @@ class SimilarityNet(object):
     self.trainer = trainer
 
     # error = T.sum(T.sqr(trainer.output-z))
-    error = T.nnet.binary_crossentropy(trainer.output, z)
+    error = T.sum(T.nnet.binary_crossentropy(trainer.output, z))
 
     updates = self.buildUpdates(trainer, error, learningRate, momentum)
 
