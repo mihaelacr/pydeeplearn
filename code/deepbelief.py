@@ -657,7 +657,8 @@ class DBN(object):
     trainingErrorNoDropout = []
 
     try:
-      while (epoch < maxEpochs) and not doneTraining:
+      # while (epoch < maxEpochs) and not doneTraining:
+      while (epoch < maxEpochs):
         # Train the net with all data
         print "epoch " + str(epoch)
 

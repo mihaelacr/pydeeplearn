@@ -16,7 +16,8 @@ export CUDA_ROOT=/usr/local/export
 # for opencv
 export LD_LIBRARY_PATH=/data/mcr10/opencv/lib/:$LD_LIBRARY_PATH
 export PKG_CONFIG_PATH=/data/mcr10/opencv/lib/pkgconfig:$PKG_CONFIG_PATH
-export PYTHONPATH=/data/mcr10/opencv/lib/python2.7/site-packagesPYTHONPATH=$PYTHONPATH:/path/to/cudamat
+export PYTHONPATH=/data/mcr10/opencv/lib/python2.7/site-packages
+PYTHONPATH=$PYTHONPATH:/path/to/cudamat
 
 # For cudamat: trial in nolearn
 export PYTHONPATH=$PYTHONPATH:/data/mcr10/theanoopenblas/cudamat

@@ -339,7 +339,8 @@ def deepbeliefKanade(big=False):
              rbmHiddenDropout=1.0,
              preTrainEpochs=args.preTrainEpochs)
 
-  unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
+  # unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
+  unsupervisedData = None
   # print "unsupervisedData.shape"
   # print unsupervisedData.shape
 
