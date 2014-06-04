@@ -30,7 +30,7 @@ parser.add_argument('--equalize',dest='equalize',action='store_true', default=Fa
                     help="if true, the input images are equalized before being fed into the net")
 parser.add_argument('--nrHidden',dest='nrHidden', type=int, default=1000,
                     help="how many hidden units should be used for the net")
-parser.add_argument('--epochs', type=int, default=1000,
+parser.add_argument('--epochs', type=int, default=500,
                     help='the maximum number of supervised epochs')
 parser.add_argument('--rbmepochs', type=int, default=10,
                     help='the maximum number of unsupervised epochs')
