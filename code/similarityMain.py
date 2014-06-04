@@ -190,9 +190,9 @@ def similarityMainTestYale():
                                     sparsityRegularization=0.01,
                                     sparsityTraget=0.01)
 
-  simNet.train(trainData1, trainData2, similaritiesTrain)
+  simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
 
-  res = simNet.test(testData1, testData2, epochs=args.epochs)
+  res = simNet.test(testData1, testData2)
 
   predicted = res > 0.5
 
