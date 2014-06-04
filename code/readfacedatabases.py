@@ -585,6 +585,9 @@ def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=True):
   # For now: check that the data is binary
   assert np.all(np.min(data, axis=1) >= 0.0) and np.all(np.max(data, axis=1) < 1.0 + 1e-8)
 
+  print "length of the Kande dataset"
+  print len(data)
+
   return data, labels
 
 
@@ -831,3 +834,4 @@ if __name__ == '__main__':
   # facedetectionMultiPie()
   # makeMultiPosesPlot()
   # makeKanadeImages()
+  readKanade()
