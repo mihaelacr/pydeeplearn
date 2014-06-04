@@ -192,7 +192,7 @@ def similarityMainTestYale():
 
   simNet.train(trainData1, trainData2, similaritiesTrain)
 
-  res = simNet.test(testData1, testData2)
+  res = simNet.test(testData1, testData2, epochs=args.epochs)
 
   predicted = res > 0.5
 
