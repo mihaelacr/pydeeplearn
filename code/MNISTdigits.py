@@ -768,7 +768,7 @@ def deepbeliefMNISTGaussian():
                  hiddenDropout=0.5,
                  visibleDropout=0.8,
                  rbmHiddenDropout=1.0,
-                 rbmVisibleDropout=1.0,
+                 rbmVisibleDropout=0.8,
                  weightDecayL1=0,
                  weightDecayL2=0,
                  sparsityTragetRbm=sparsityTragetRbm,
