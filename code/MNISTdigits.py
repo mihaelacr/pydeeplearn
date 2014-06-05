@@ -749,7 +749,7 @@ def deepbeliefMNISTGaussian():
   sparsityRegularizationRbm = 0.05
 
   if args.train:
-    net = db.DBN(5, [784, 1000, 1000, 1000, 10],
+    net = db.DBN(5, [784, 1200, 1200, 1200, 10],
                  binary=False,
                  unsupervisedLearningRate=unsupervisedLearningRate,
                  supervisedLearningRate=supervisedLearningRate,
