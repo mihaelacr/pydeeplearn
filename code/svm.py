@@ -33,7 +33,7 @@ def SVMCV(dbnNet, train, trainLabels, test, testLabels):
   # testHiddenRepresentation = scale(testHiddenRepresentation)
 
   parameters = {'kernel':('linear', 'rbf'), 'C':[1, 10]}
-  classifier = svm.SVC()
+  classifier = svm.LinearSVC()
   gridseach = grid_search.GridSearchCV(classifier, parameters)
   gridseach.fit(trainHiddenRepresentations, trainLabels)
 
