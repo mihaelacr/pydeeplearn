@@ -741,19 +741,14 @@ def deepbeliefMNISTGaussian():
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  # unsupervisedLearningRate = 0.005
-  # supervisedLearningRate = 0.005
-  # momentumMax =0.95
   unsupervisedLearningRate = 0.005
   supervisedLearningRate = 0.005
-  momentumMax = 0.95
+  momentumMax = 0.9
   sparsityTragetRbm = 0.01
   sparsityConstraintRbm = False
   sparsityRegularizationRbm = 0.05
 
   if args.train:
-    # Try 1200, 1200, 1200
-    # [784, 500, 500, 2000, 10
     net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                  binary=False,
                  unsupervisedLearningRate=unsupervisedLearningRate,
