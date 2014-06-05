@@ -1300,6 +1300,29 @@ def makeMissingDataImage():
   plt.axis('off')
   plt.show()
 
+
+def getVariance(middle):
+  eps = 0.001
+  return  np.sqrt(- middle * middle / np.log(eps))
+
+# Required for the missing data plot
+def makeGaussianRect(n):
+  middle = (n - 1) * 1.0 / 2
+  # middle = n / 2
+
+  var = getVariance(n) # TODO: compute this
+  # var = 1 # TODO: compute this
+  def gaussianDistance(x, y):
+    return np.exp(- ((x - middle) **2 + (y-middle) **2) / (2 * var))
+
+  res = np.zeros((n,n))
+  for i in xrange(n):
+    for j in xrange(n):
+      res[i,j] = gaussianDistance(i,j)
+
+  return res
+
+
 """Train with PIE test with Kanade. Check the equalization code. """
 def missingData():
   data, labels = readMultiPIE(equalize=args.equalize)
