@@ -1437,7 +1437,7 @@ def missingData():
       correct += 1
       for i in xrange(squaresize):
         for j in xrange(squaresize):
-          correctDict[m + i, n + j] += gaussDistances[i,j]
+          correctDict[m + i, n + j] += 1
     else:
       errorCases.append(i)
 
