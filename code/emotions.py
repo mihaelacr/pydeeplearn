@@ -1343,6 +1343,8 @@ def missingData():
 
   testData, indices = addBlobsOfMissingData(testData, sqSize=squaresize, returnIndices=True)
 
+  gaussDistances = makeGaussianRect(10)
+
   for i in xrange(3):
     plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
     plt.show()
@@ -1435,7 +1437,7 @@ def missingData():
       correct += 1
       for i in xrange(squaresize):
         for j in xrange(squaresize):
-          correctDict[m + i, n + j] += 1
+          correctDict[m + i, n + j] += gaussDistances[i,j]
     else:
       errorCases.append(i)
 
