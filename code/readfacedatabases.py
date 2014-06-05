@@ -840,8 +840,8 @@ def readKaggleCompetition():
         instance = np.fromstring(row[1], dtype=int, sep=' ')
         data += [instance]
         labels += [emotion]
-        plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
-        plt.show()
+        # plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
+        # plt.show()
       i += 1
 
   return data, labels
