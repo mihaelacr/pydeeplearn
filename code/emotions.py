@@ -1410,17 +1410,16 @@ def missingData():
     else:
       errorCases.append(i)
 
+    m, n = indices[i]
+    for i in xrange(squaresize):
+      for j in xrange(squaresize):
+        dictSquares[m + i, n + j] += 1
+
   print "correct"
   print correct
 
   print "percentage correct"
   print correct  * 1.0/ len(testLabels)
-
-  m, n = indices[i]
-
-  for i in xrange(squaresize):
-    for j in xrange(squaresize):
-      dictSquares[m + i, n + j] += 1
 
   print type(predicted)
   print type(actualLabels)
