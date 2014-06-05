@@ -1387,7 +1387,8 @@ def missingData():
       testData = addBlobsOfMissingData(testData, sqSize=5)
 
 
-  dictSquares = np.zeros((40, 30))
+  total = np.zeros((40, 30))
+  correctDict = np.zeros((40, 30))
 
 
   probs, predicted = net.classify(testData)
@@ -1405,15 +1406,19 @@ def missingData():
     print "actual"
     actual = actualLabels[i]
     print np.argmax(actual)
+
+    m, n = indices[i]
     if predicted[i] == np.argmax(actual):
       correct += 1
+      for i in xrange(squaresize):
+        for j in xrange(squaresize):
+          correctDict[m + i, n + j] += 1
     else:
       errorCases.append(i)
 
-    m, n = indices[i]
     for i in xrange(squaresize):
       for j in xrange(squaresize):
-        dictSquares[m + i, n + j] += 1
+        total[m + i, n + j] += 1
 
   print "correct"
   print correct
@@ -1432,10 +1437,11 @@ def missingData():
   print confMatrix
 
   with open("missingDatamat", "wb") as f:
-        pickle.dump(dictSquares, f)
+        pickle.dump(total, f)
+        pickle.dump(correctDict, f)
 
-  print dictSquares
-  plt.matshow(dictSquares, cmap=plt.get_cmap("YlOrRd"),interpolation='none')
+  print total
+  plt.matshow(total, cmap=plt.get_cmap("YlOrRd"),interpolation='none')
   plt.show()
 
 
