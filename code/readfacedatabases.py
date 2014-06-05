@@ -857,5 +857,5 @@ if __name__ == '__main__':
   # makeCrossDbPlot()
   # facedetectionMultiPie()
   # makeMultiPosesPlot()
-  # makeKanadeImages()
-  readKanade()
+  # makeKanadeImag
+  readKaggleCompetition()

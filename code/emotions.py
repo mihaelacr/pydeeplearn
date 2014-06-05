@@ -740,6 +740,104 @@ def deepbeliefPIECV(big=False):
   for i in xrange(len(params)):
     print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
 
+def deepbeliefKaggleCompetition(big=False):
+  data, labels = readKaggleCompetition()
+
+  data, labels = shuffle(data, labels)
+
+  print "data.shape"
+  print data.shape
+  print "labels.shape"
+  print labels.shape
+
+  # Random data for training and testing
+  kf = cross_validation.KFold(n=len(data), n_folds=5)
+  for train, test in kf:
+    break
+
+  if args.relu:
+    activationFunction = Rectified()
+    unsupervisedLearningRate = 0.05
+    supervisedLearningRate = 0.01
+    momentumMax = 0.95
+    data = scale(data)
+    rbmActivationFunctionVisible = Identity()
+    rbmActivationFunctionHidden = RectifiedNoisy()
+
+  else:
+    activationFunction = Sigmoid()
+    rbmActivationFunctionVisible = Sigmoid()
+    rbmActivationFunctionHidden = Sigmoid()
+
+    unsupervisedLearningRate = 0.5
+    supervisedLearningRate = 0.1
+    momentumMax = 0.9
+
+  trainData = data[train]
+  trainLabels = labels[train]
+
+  # TODO: this might require more thought
+  net = db.DBN(5, [2304, 1500, 1500, 1500, 7],
+             binary=1-args.relu,
+             activationFunction=activationFunction,
+             rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+             rbmActivationFunctionHidden=rbmActivationFunctionHidden,
+             unsupervisedLearningRate=unsupervisedLearningRate,
+             supervisedLearningRate=supervisedLearningRate,
+             momentumMax=momentumMax,
+             nesterovMomentum=args.nesterov,
+             rbmNesterovMomentum=args.rbmnesterov,
+             rmsprop=args.rmsprop,
+             miniBatchSize=args.miniBatchSize,
+             hiddenDropout=0.5,
+             visibleDropout=0.8,
+             rbmVisibleDropout=1.0,
+             rbmHiddenDropout=1.0,
+             preTrainEpochs=args.preTrainEpochs)
+
+  # unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
+  unsupervisedData = None
+  # print "unsupervisedData.shape"
+  # print unsupervisedData.shape
+
+  net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
+            validation=args.validation,
+            unsupervisedData=unsupervisedData)
+
+  probs, predicted = net.classify(data[test])
+
+  actualLabels = labels[test]
+  correct = 0
+  errorCases = []
+
+  for i in xrange(len(test)):
+    print "predicted"
+    print "probs"
+    print probs[i]
+    print "predicted"
+    print predicted[i]
+    print "actual"
+    actual = actualLabels[i]
+    print np.argmax(actual)
+    if predicted[i] == np.argmax(actual):
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  print "correct"
+  print correct
+
+  print "percentage correct"
+  print correct  * 1.0/ len(test)
+
+  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+  print "confusion matrix"
+  print confMatrix
+
+  if args.save:
+    with open(args.netFile, "wb") as f:
+      pickle.dump(net, f)
+
 
 def svmPIE():
   with open(args.netFile, "rb") as f:
