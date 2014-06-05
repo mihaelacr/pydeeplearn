@@ -1254,7 +1254,7 @@ def crossDataBaseCV():
 
 
 
-def addBlobsOfMissingData(testData, sqSize=5):
+def addBlobsOfMissingData(testData, sqSize=5, returnIndices=False):
   maxHeight = SMALL_SIZE[0] - sqSize
   maxLength = SMALL_SIZE[1] - sqSize
 
@@ -1267,9 +1267,20 @@ def addBlobsOfMissingData(testData, sqSize=5):
       for j in xrange(sqSize):
         x[m + i, n + j] = 0
 
-    return x.reshape(-1)
+    if returnIndices:
+      return x.reshape(-1), (m, n)
+    else:
+      return x.reshape(-1)
 
-  return np.array(map(makeBlob, testData))
+  if returnIndices:
+    imgsAndIndices = map(makeBlob, testData)
+    imgs = [x[0] for x in imgsAndIndices]
+    indices = [x[1] for x in imgsAndIndices]
+    return np.array(imgs), indices
+
+  else:
+    return np.array(map(makeBlob, testData))
+
 
 def makeMissingDataImage():
   data, labels = readMultiPIE(equalize=args.equalize)
@@ -1305,11 +1316,13 @@ def missingData():
   testData = data[test]
   testLabels = labels[test]
 
-  testData = addBlobsOfMissingData(testData, sqSize=10)
+  squaresize = 10
 
-  # for i in xrange(10):
-  #   plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
-  #   plt.show()
+  testData, indices = addBlobsOfMissingData(testData, sqSize=squaresize, returnIndices=True)
+
+  for i in xrange(3):
+    plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
+    plt.show()
 
   if args.relu:
     activationFunction = Rectified()
@@ -1374,7 +1387,8 @@ def missingData():
       testData = addBlobsOfMissingData(testData, sqSize=5)
 
 
-  print net.__dict__
+  dictSquares = np.zeros((40, 30))
+
 
   probs, predicted = net.classify(testData)
 
@@ -1402,6 +1416,12 @@ def missingData():
   print "percentage correct"
   print correct  * 1.0/ len(testLabels)
 
+  m, n = indices[i]
+
+  for i in xrange(squaresize):
+    for j in xrange(squaresize):
+      dictSquares[m + i, n + j] += 1
+
   print type(predicted)
   print type(actualLabels)
   print predicted.shape
@@ -1411,6 +1431,14 @@ def missingData():
 
   print "confusion matrix"
   print confMatrix
+
+  with open("missingDatamat", "wb") as f:
+        pickle.dump(dictSquares, f)
+
+  print dictSquares
+  plt.matshow(dictSquares, cmap=plt.get_cmap("YlOrRd"),interpolation='none')
+  plt.show()
+
 
 def makeMissingDataOnly12Positions(testData):
   def makeBlob(x):
