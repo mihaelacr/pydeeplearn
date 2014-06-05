@@ -173,7 +173,7 @@ class DBN(object):
                 rbmNesterovMomentum=True,
                 momentumFactorForLearningRate=True,
                 momentumMax=0.9,
-                momentumForEpochFunction=getMomentumForEpochLinearIncrease,
+                momentumForEpochFunction=getMomentumForEpochSimple,
                 rmsprop=True,
                 miniBatchSize=10,
                 hiddenDropout=0.5,
