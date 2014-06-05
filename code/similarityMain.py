@@ -96,7 +96,7 @@ def similarityMain():
                                     rbmNrHid=args.nrHidden,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
-                                    rbmDropoutVis=0.8,
+                                    rbmDropoutVis=1.0,
                                     rmsprop=False,
                                     trainingEpochsRBM=args.rbmepochs,
                                     nesterovRbm=True,
