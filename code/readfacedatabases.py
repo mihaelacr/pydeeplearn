@@ -10,6 +10,9 @@ import cv2
 import facedetection
 import fnmatch
 
+import csv
+
+
 import matplotlib.image as io
 # from skimage import io
 # from skimage import color
@@ -822,6 +825,27 @@ def readAberdeen(crop, detectFaces, equalize):
   # PATH = "/home/aela/uni/project/Aberdeen"
   return readCropEqualize(PATH, "jpg", crop, detectFaces, equalize=equalize,
                            isColoured=True)
+
+
+def readKaggleCompetition():
+  data = []
+  labels = []
+  i = 0
+  with open('train.csv', 'rb') as f:
+    reader = csv.reader(f)
+    for row in reader:
+      if i > 0:
+        # print row
+        emotion = int(row[0])
+        instance = np.fromstring(row[1], dtype=int, sep=' ')
+        data += [instance]
+        labels += [emotion]
+        plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
+        plt.show()
+      i += 1
+
+  return data, labels
+
 
 if __name__ == '__main__':
   # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
