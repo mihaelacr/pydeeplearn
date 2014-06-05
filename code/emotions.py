@@ -83,6 +83,9 @@ parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--preTrainEpochs', type=int, default=1,
                     help='the number of pretraining epochs')
+parser.add_argument('--kaggle',dest='kaggle',action='store_true', default=False,
+                      help='if true, trains a net on the kaggle data')
+
 
 # DEBUG mode?
 parser.add_argument('--debug', dest='debug',action='store_false', default=False,
@@ -1587,6 +1590,9 @@ def main():
 
   if args.average:
     deepbeliefMultiPIEAverage()
+
+  if args.kaggle:
+    deepbeliefKaggleCompetition()
 
 
 # You can also group the emotions into positive and negative to see
