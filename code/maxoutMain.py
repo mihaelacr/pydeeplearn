@@ -134,7 +134,7 @@ def MultiPIEmain():
                                                  save_path="/data/mcr10/train_best.pkl"),
                 MomentumAdjustor(final_momentum=0.7, start=1, saturate=250)]
 
-  algorithm = sgd.SGD(0.05, batch_size=100, cost=Dropout(), learning_rule=Momentum(0.5),
+  algorithm = sgd.SGD(0.001, batch_size=100, cost=Dropout(), learning_rule=Momentum(0.5),
                       monitoring_dataset=monitoring, termination_criterion=termination)
 
   save_path = "/data/mcr10/train_best.pkl"
