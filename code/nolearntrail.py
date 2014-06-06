@@ -28,7 +28,7 @@ def KanadeClassifier():
       use_re_lu=True,
       nesterov=True,
       momentum=0.95,
-      dropouts=[0.8, 0.5, 0.5, 0.5],
+      dropouts=[0.2, 0.5, 0.5, 0.5],
       real_valued_vis=True,
       minibatch_size=20,
       epochs=args.maxEpochs,
