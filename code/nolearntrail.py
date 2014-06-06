@@ -33,7 +33,7 @@ def KanadeClassifier():
       real_valued_vis=True,
       minibatch_size=20,
       epochs=args.maxEpochs,
-      verbose=False)
+      verbose=True)
 
   data, labels = readKanade(False, None, equalize=args.equalize)
 
