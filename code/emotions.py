@@ -1160,24 +1160,17 @@ def crossDataBaseCV():
     activationFunction = Rectified()
     rbmActivationFunctionHidden = RectifiedNoisy()
     rbmActivationFunctionVisible = Identity()
-    # unsupervisedLearningRate = 0.05
-    # supervisedLearningRate = 0.01
-    # momentumMax = 0.95
     trainData = scale(trainData)
     testData = scale(testData)
   else:
     activationFunction = Sigmoid()
     rbmActivationFunctionHidden = Sigmoid()
     rbmActivationFunctionVisible = Sigmoid()
-    # unsupervisedLearningRate = 0.05
-    # supervisedLearningRate = 0.01
-    # momentumMax = 0.95
 
 
   for param in params:
 
     if args.train:
-      # TODO: this might require more thought
       net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                  binary=1-args.relu,
                  activationFunction=activationFunction,
