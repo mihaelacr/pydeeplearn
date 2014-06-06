@@ -110,9 +110,13 @@ def MNISTmain():
   print 'accuracy', (y==yhat).sum() / y.size
 
 def MultiPIEmain():
-  h0 = maxout.Maxout(layer_name='h0', num_units=500, num_pieces=3, W_lr_scale=1.0, max_col_norm = 1.0,irange=0.005, b_lr_scale=1.0)
-  h1 = maxout.Maxout(layer_name='h1', num_units=500, num_pieces=3, W_lr_scale=1.0, max_col_norm = 1.0,irange=0.005, b_lr_scale=1.0)
-  h2 = maxout.Maxout(layer_name='h2', num_units=500, num_pieces=3, W_lr_scale=1.0, max_col_norm = 1.0,irange=0.005, b_lr_scale=1.0)
+  # h0 = maxout.Maxout(layer_name='h0', num_units=500, num_pieces=3, W_lr_scale=1.0, max_col_norm = 1.0,irange=0.005, b_lr_scale=1.0)
+  # h1 = maxout.Maxout(layer_name='h1', num_units=500, num_pieces=3, W_lr_scale=1.0, max_col_norm = 1.0,irange=0.005, b_lr_scale=1.0)
+  # h2 = maxout.Maxout(layer_name='h2', num_units=500, num_pieces=3, W_lr_scale=1.0, max_col_norm = 1.0,irange=0.005, b_lr_scale=1.0)
+  h0 = maxout.Maxout(layer_name='h0', num_units=500, num_pieces=3, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
+  h1 = maxout.Maxout(layer_name='h1', num_units=500, num_pieces=3, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
+  h2 = maxout.Maxout(layer_name='h2', num_units=500, num_pieces=3, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
+
   outlayer = mlp.Softmax(layer_name='y', n_classes=6, irange=0)
 
   layers = [h0, h1, h2, outlayer]
@@ -128,7 +132,7 @@ def MultiPIEmain():
   termination = MonitorBased(channel_name="valid_y_misclass", N=100)
   extensions = [best_params.MonitorBasedSaveBest(channel_name="valid_y_misclass",
                                                  save_path="/data/mcr10/train_best.pkl"),
-                MomentumAdjustor(0.95, 5, 100)]
+                MomentumAdjustor(final_momentum=0.95, start=1, saturate=100)]
 
   algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(), learning_rule=Momentum(0.5),
                       monitoring_dataset=monitoring, termination_criterion=termination)
