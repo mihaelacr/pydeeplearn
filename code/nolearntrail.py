@@ -50,7 +50,7 @@ def KanadeClassifier():
 
   clf.fit(trainData, trainLabels)
 
-  predictedLabels = clf.predicted(testData)
+  predictedLabels = clf.predict(testData)
 
   print "Accuracy:", zero_one_score(testLabels, predictedLabels)
   print "Classification report:"
