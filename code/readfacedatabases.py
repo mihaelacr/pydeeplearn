@@ -844,6 +844,7 @@ def readKaggleCompetition():
         # plt.show()
       i += 1
 
+  labels = labelsToVectors(labels)
   return data, labels
 
 
