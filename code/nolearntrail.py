@@ -7,6 +7,7 @@ from sklearn.metrics import classification_report
 import argparse
 import numpy as np
 
+from common import *
 
 parser = argparse.ArgumentParser(description='nolearn test')
 parser.add_argument('--equalize',dest='equalize',action='store_true', default=False,
@@ -34,6 +35,8 @@ def KanadeClassifier():
       )
 
   data, labels = readKanade(False, None, equalize=args.equalize)
+
+  data = scale(data)
   data, labels = shuffle(data, labels)
 
   labels = np.argmax(labels, axis=1)
