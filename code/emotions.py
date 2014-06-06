@@ -1349,6 +1349,9 @@ def missingData():
   indices = np.vstack(allIndices)
   testLabels  = np.hstack(allTestLabels)
 
+  print "testLabels.shape"
+  print testLabels.shape
+
   gaussDistances = makeGaussianRect(10)
 
   for i in xrange(3):
@@ -1459,8 +1462,9 @@ def missingData():
 
   print type(predicted)
   print type(actualLabels)
+  print "predicted.shape"
   print predicted.shape
-  print actualLabels.shape
+  print "actualLabels.shape"
 
   confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
 
