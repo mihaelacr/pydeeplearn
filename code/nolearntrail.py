@@ -1,6 +1,7 @@
 from nolearn.dbn import DBN
 from readfacedatabases import *
 from sklearn import cross_validation
+from sklearn.metrics import zero_one_score
 from sklearn.metrics import classification_report
 
 import argparse
