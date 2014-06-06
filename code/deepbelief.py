@@ -310,6 +310,12 @@ class DBN(object):
     assert len(self.weights) == self.nrLayers - 1
     assert len(self.biases) == self.nrLayers - 1
 
+  # For sklearn compatibility
+  def fit(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
+            unsupervisedData=None, trainingIndices=None):
+    return self.train(data, labels, maxEpochs, validation, percentValidation, unsupervisedData, trainingIndices)
+
+
   """
     Choose a percentage (percentValidation) of the data given to be
     validation data, used for early stopping of the model.
@@ -776,6 +782,10 @@ class DBN(object):
             )
     lastLayers = classifyFunction()
     return lastLayers, np.argmax(lastLayers, axis=1)
+
+  # For compatibility with sklearn
+  def predict(self, dataInstaces):
+    return self.classify(dataInstaces)
 
 
   """The speed of this function could be improved but since it is never called
