@@ -1351,7 +1351,7 @@ def missingData():
 
   testData = np.vstack(allTestData)
   indices = np.vstack(allIndices)
-  testLabels  = np.hstack(allTestLabels)
+  testLabels  = np.vstack(allTestLabels)
 
   print "testLabels.shape"
   print testLabels.shape
