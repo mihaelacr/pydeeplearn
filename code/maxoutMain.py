@@ -113,9 +113,9 @@ def MultiPIEmain():
   # h0 = maxout.Maxout(layer_name='h0', num_units=500, num_pieces=3, W_lr_scale=1.0, max_col_norm = 1.0,irange=0.005, b_lr_scale=1.0)
   # h1 = maxout.Maxout(layer_name='h1', num_units=500, num_pieces=3, W_lr_scale=1.0, max_col_norm = 1.0,irange=0.005, b_lr_scale=1.0)
   # h2 = maxout.Maxout(layer_name='h2', num_units=500, num_pieces=3, W_lr_scale=1.0, max_col_norm = 1.0,irange=0.005, b_lr_scale=1.0)
-  h0 = maxout.Maxout(layer_name='h0', num_units=700, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
-  h1 = maxout.Maxout(layer_name='h1', num_units=700, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
-  h2 = maxout.Maxout(layer_name='h2', num_units=700, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
+  h0 = maxout.Maxout(layer_name='h0', num_units=1000, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
+  h1 = maxout.Maxout(layer_name='h1', num_units=1000, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
+  h2 = maxout.Maxout(layer_name='h2', num_units=1000, num_pieces=2, W_lr_scale=1.0, irange=0.005, b_lr_scale=1.0)
 
   outlayer = mlp.Softmax(layer_name='y', n_classes=6, irange=0)
 
@@ -134,7 +134,7 @@ def MultiPIEmain():
                                                  save_path="/data/mcr10/train_best.pkl"),
                 MomentumAdjustor(final_momentum=0.7, start=1, saturate=250)]
 
-  algorithm = sgd.SGD(0.05, batch_size=20, cost=Dropout(), learning_rule=Momentum(0.5),
+  algorithm = sgd.SGD(0.01, batch_size=20, cost=Dropout(), learning_rule=Momentum(0.5),
                       monitoring_dataset=monitoring, termination_criterion=termination)
 
   save_path = "/data/mcr10/train_best.pkl"
