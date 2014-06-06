@@ -22,7 +22,7 @@ def KanadeClassifier():
 
   clf = DBN(
       [1200, 1500, 1500, 1500, 7],
-      learn_rates=0.1,
+      learn_rates=0.01,
       learn_rates_pretrain=0.05,
       learn_rate_decays=0.9,
       use_re_lu=True,
