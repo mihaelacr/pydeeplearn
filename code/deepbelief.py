@@ -254,12 +254,12 @@ class DBN(object):
         initialWeights = None
         initialBiases = None
 
-      if i == 0:
-        print "different learning rate for the first rbm"
-        # Do not let the learning rate be bigger than 1
-        unsupervisedLearningRate = min(self.unsupervisedLearningRate * 10, 1.0)
-      else:
-        unsupervisedLearningRate = self.unsupervisedLearningRate
+      # if i == 0:
+      #   print "different learning rate for the first rbm"
+      #   # Do not let the learning rate be bigger than 1
+      #   unsupervisedLearningRate = min(self.unsupervisedLearningRate * 10, 1.0)
+      # else:
+      unsupervisedLearningRate = self.unsupervisedLearningRate
 
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                       learningRate=unsupervisedLearningRate,
