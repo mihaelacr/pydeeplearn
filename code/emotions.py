@@ -1136,7 +1136,7 @@ def crossDataBaseCV():
   confustionMatrices = []
   correctAll = []
 
-  params = [0.005, 0.005), (0.001, 0.005), (0.001, 0.05), (0.01, 0.05), (0.01, 0.005)]
+  params = [(0.005, 0.005), (0.001, 0.005), (0.001, 0.05), (0.01, 0.05), (0.01, 0.005)]
 
 
   testData, testLabels = readKanade(False, None, equalize=args.equalize, vectorizeLabels=False)
