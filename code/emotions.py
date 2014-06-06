@@ -6,6 +6,8 @@ import argparse
 import cPickle as pickle
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
+# Wow: this is nice
+from sklearn.metrics import classification_report
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -380,6 +382,9 @@ def deepbeliefKanade(big=False):
   confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
   print "confusion matrix"
   print confMatrix
+
+  print classification_report(np.argmax(actualLabels, axis=1), predicted)
+
 
   if args.save:
     with open(args.netFile, "wb") as f:
