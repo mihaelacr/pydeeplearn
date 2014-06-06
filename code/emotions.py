@@ -1337,14 +1337,17 @@ def missingData():
 
   allTestData  = []
   allIndices  = []
+  allTestLabels = []
 
   for i in xrange(5):
     testDataMissing, indicesMissing = addBlobsOfMissingData(testData, sqSize=squaresize, returnIndices=True)
     allTestData += [testDataMissing]
     allIndices += [indicesMissing]
+    allTestLabels += [testLabels]
 
   testData = np.vstack(allTestData)
   indices = np.vstack(allIndices)
+  testLabels  = np.hstack(allTestLabels)
 
   gaussDistances = makeGaussianRect(10)
 
