@@ -1339,7 +1339,7 @@ def missingData():
   testData = data[test]
   testLabels = labels[test]
 
-  squaresize = 5
+  squaresize = 10
 
   testData, indices = addBlobsOfMissingData(testData, sqSize=squaresize, returnIndices=True)
 
