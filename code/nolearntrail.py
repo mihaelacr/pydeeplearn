@@ -3,6 +3,8 @@ from readfacedatabases import *
 
 from sklearn.metrics import classification_report
 
+import argparse
+
 
 
 parser = argparse.ArgumentParser(description='nolearn test')
