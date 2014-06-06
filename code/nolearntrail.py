@@ -53,6 +53,10 @@ def KanadeClassifier():
 
   predictedLabels = clf.predict(testData)
 
+  print "testLabels"
+  print testLabels
+  print predictedLabels
+
   print "Accuracy:", zero_one_score(testLabels, predictedLabels)
   print "Classification report:"
   print classification_report(testLabels, predictedLabels)
