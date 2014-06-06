@@ -1413,7 +1413,7 @@ def missingData():
 
 
   total = np.zeros((40, 30))
-  correctDict = np.zeros((40, 30))
+  errorDict = np.zeros((40, 30))
 
 
   probs, predicted = net.classify(testData)
@@ -1435,10 +1435,10 @@ def missingData():
     m, n = indices[i]
     if predicted[i] == np.argmax(actual):
       correct += 1
+    else:
       for i in xrange(squaresize):
         for j in xrange(squaresize):
-          correctDict[m + i, n + j] += 1
-    else:
+          errorDict[m + i, n + j] += gaussDistances[i,j]
       errorCases.append(i)
 
     for i in xrange(squaresize):
@@ -1463,7 +1463,7 @@ def missingData():
 
   with open("missingDatamat", "wb") as f:
         pickle.dump(total, f)
-        pickle.dump(correctDict, f)
+        pickle.dump(errorDict, f)
 
   print total
   plt.matshow(total, cmap=plt.get_cmap("YlOrRd"),interpolation='none')
