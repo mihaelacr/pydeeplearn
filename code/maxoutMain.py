@@ -85,7 +85,7 @@ def MNISTmain():
   extensions = [best_params.MonitorBasedSaveBest(channel_name="valid_y_misclass",
                                                  save_path="/data/mcr10/train_best.pkl")]
 
-  algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(), learning_rule=Momentum(0.9)
+  algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(), learning_rule=Momentum(0.9),
                       monitoring_dataset = monitoring, termination_criterion = termination)
 
   save_path = "/data/mcr10/train_best.pkl"
@@ -128,7 +128,7 @@ def MultiPIEmain():
   extensions = [best_params.MonitorBasedSaveBest(channel_name="valid_y_misclass",
                                                  save_path="/data/mcr10/train_best.pkl")]
 
-  algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(),
+  algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(), learning_rule=Momentum(0.9),
                       monitoring_dataset=monitoring, termination_criterion=termination)
 
   save_path = "/data/mcr10/train_best.pkl"
