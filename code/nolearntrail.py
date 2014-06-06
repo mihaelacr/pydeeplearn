@@ -54,3 +54,5 @@ def KanadeClassifier():
   print "Classification report:"
   print classification_report(testLabels, predictedLabels)
 
+if __name__ == '__main__':
+  KanadeClassifier()
