@@ -21,7 +21,7 @@ args = parser.parse_args()
 def KanadeClassifier():
 
   clf = DBN(
-      [1200, 1500, 1500, 7],
+      [1200, 1500, 1500, 1500, 7],
       learn_rates=0.1,
       learn_rates_pretrain=0.05,
       learn_rate_decays=0.9,
@@ -37,6 +37,7 @@ def KanadeClassifier():
   data, labels = readKanade(False, None, equalize=args.equalize)
 
   data = scale(data)
+
   data, labels = shuffle(data, labels)
 
   labels = np.argmax(labels, axis=1)
