@@ -32,7 +32,7 @@ def KanadeClassifier():
       verbose=False
       )
 
-  data, labels = readKanade(big, None, equalize=args.equalize)
+  data, labels = readKanade(False, None, equalize=args.equalize)
   data, labels = shuffle(data, labels)
 
   # Split data for training and testing
