@@ -127,9 +127,10 @@ def MultiPIEmain():
   monitoring = dict(valid=valid)
   termination = MonitorBased(channel_name="valid_y_misclass", N=100)
   extensions = [best_params.MonitorBasedSaveBest(channel_name="valid_y_misclass",
-                                                 save_path="/data/mcr10/train_best.pkl")]
+                                                 save_path="/data/mcr10/train_best.pkl"),
+                MomentumAdjustor(0.95, 5, 100)]
 
-  algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(), learning_rule=MomentumAdjustor(0.95, 5, 100),
+  algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(), learning_rule=Momentum(0.5), training_extension=
                       monitoring_dataset=monitoring, termination_criterion=termination)
 
   save_path = "/data/mcr10/train_best.pkl"
@@ -138,7 +139,7 @@ def MultiPIEmain():
       model = serial.load(save_path)
   else:
     print 'Running training'
-    train_job = Train(train, model, algorithm, extensions=extensions, save_path="/data/mcr10/trainpie.pkl", save_freq=1)
+    train_job = Train(train, model, algorithm, extensions=extensions, save_path="/data/mcr10/trainpie.pkl", save_freq=50)
     train_job.main_loop()
 
   X = model.get_input_space().make_batch_theano()
