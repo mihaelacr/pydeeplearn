@@ -257,7 +257,7 @@ class DBN(object):
       if i == 0:
         print "different learning rate for the first rbm"
         # Do not let the learning rate be bigger than 1
-        unsupervisedLearningRate = min(elf.unsupervisedLearningRate * 10, 1.0)
+        unsupervisedLearningRate = min(self.unsupervisedLearningRate * 10, 1.0)
       else:
         unsupervisedLearningRate = self.unsupervisedLearningRate
 
