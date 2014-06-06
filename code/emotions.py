@@ -1332,6 +1332,10 @@ def missingData():
   testData = data[test]
   testLabels = labels[test]
 
+  print "testLabels.shape"
+  print testLabels.shape
+
+
   squaresize = 10
 
 
