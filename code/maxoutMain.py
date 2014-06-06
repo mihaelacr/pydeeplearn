@@ -10,6 +10,7 @@ from pylearn2.models import mlp, maxout
 from pylearn2.training_algorithms import sgd
 from pylearn2.termination_criteria import MonitorBased
 from pylearn2.train_extensions import best_params
+from pylearn2.training_algorithms.learning_rule import Momentum
 from pylearn2.utils import serial
 from pylearn2.costs.mlp.dropout import Dropout
 from theano import function
@@ -84,7 +85,7 @@ def MNISTmain():
   extensions = [best_params.MonitorBasedSaveBest(channel_name="valid_y_misclass",
                                                  save_path="/data/mcr10/train_best.pkl")]
 
-  algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(),
+  algorithm = sgd.SGD(0.1, batch_size=100, cost=Dropout(), learning_rule=Momentum(0.9)
                       monitoring_dataset = monitoring, termination_criterion = termination)
 
   save_path = "/data/mcr10/train_best.pkl"
@@ -93,7 +94,7 @@ def MNISTmain():
       model = serial.load(save_path)
   else:
     print 'Running training'
-    train_job = Train(train, model, algorithm, extensions=extensions, save_path="/data/mcr10/train.pkl", save_freq=1)
+    train_job = Train(train, model, algorithm, extensions=extensions, save_path="/data/mcr10/train.pkl", save_freq=10)
     train_job.main_loop()
 
   X = model.get_input_space().make_batch_theano()
