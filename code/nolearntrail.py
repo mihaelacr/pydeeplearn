@@ -5,7 +5,7 @@ from sklearn.metrics import zero_one_score
 from sklearn.metrics import classification_report
 
 import argparse
-
+import numpy as np
 
 
 parser = argparse.ArgumentParser(description='nolearn test')
@@ -35,6 +35,8 @@ def KanadeClassifier():
 
   data, labels = readKanade(False, None, equalize=args.equalize)
   data, labels = shuffle(data, labels)
+
+  labels = np.argmax(labels, axis=1)
 
   # Split data for training and testing
   kf = cross_validation.KFold(n=len(data), n_folds=5)
