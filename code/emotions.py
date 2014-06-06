@@ -1346,9 +1346,9 @@ def missingData():
   allIndices  = []
 
   for i in xrange(5):
-    testData, indices = addBlobsOfMissingData(testData, sqSize=squaresize, returnIndices=True)
-    allTestData += [testData]
-    allIndices += [indices]
+    testDataMissing, indicesMissing = addBlobsOfMissingData(testData, sqSize=squaresize, returnIndices=True)
+    allTestData += [testDataMissing]
+    allIndices += [indicesMissing]
 
   testData = np.vstack(allTestData)
   indices = np.vstack(allIndices)
