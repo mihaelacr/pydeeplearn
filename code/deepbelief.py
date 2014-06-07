@@ -160,6 +160,67 @@ class DBN(object):
         type: integer
     layerSizes: the sizes of the individual layers.
         type: list of integers of size nrLayers
+    binary: is binary data used
+        type: bool
+    activationFunction: the activation function used for the forward pass in the network
+        type: ActivationFunction (see module activationfunctions)
+    rbmActivationFunctionVisible: the activation function used for the visible layer in the
+        stacked RBMs during pre training
+        type: ActivationFunction (see module activationfunctions)
+    rbmActivationFunctionHidden: the activation function used for the hidden layer in the
+        stacked RBMs during pre training
+        type: ActivationFunction (see module activationfunctions)
+    classificationActivationFunction: the activation function used for the classification layer
+        type: ActivationFunction (see module activationfunctions)
+    unsupervisedLearningRate: learning rate for pretraining
+        type: float
+    supervisedLearningRate: learning rate for discriminative training
+        type: float
+    nesterovMomentum: if true, nesterov momentum is used for discriminative training
+        type: bool
+    rbmNesterovMomentum: if true, nesterov momentum is used for  pretraining
+        type: bool
+    momentumFactorForLearningRate: if true, the learning rate is multiplied by 1 - momentum
+        for parameter updates
+        type: bool
+    momentumMax: the maximum value momentum is allowed to increase to
+        type: float
+    momentumForEpochFunction: the function used to increase momentum during training
+        type: python function (for examples see module common)
+    rmsprop: if true, rmsprop is used for training
+        type: bool
+    miniBatchSize: the number of instances to be used in a mini batch during training
+        type: int
+    hiddenDropout: the dropout used for the hidden layers during discriminative training
+        type: float
+    visibleDropout: the dropout used for the visible layers during discriminative training
+        type: float
+    rbmHiddenDropout: the dropout used for the hidden layer stacked rbms during pre training.
+       Unless you are using multiple pre-training epochs, set this to be 1. If you want the
+       hidden activation to be sparse, use sparsity constraints instead.
+        type: float
+    rbmVisibleDropout: the dropout used for the stacked rbms during pre training.
+        type: float
+    weightDecayL1: regularization parameter for L1 weight decay
+        type: float
+    weightDecayL2: regularization parameter for L2 weight decay
+        type: float
+    firstRBMheuristic: if true, we use a heuristic that the first rbm should have a
+        learning rate 10 times bigger than the learning rate obtained using
+        CV with DBN for the unsupervisedLearningRate. The learning rate is capped to 1.0.
+        type: bool
+    sparsityConstraintRbm: if true, sparsity regularization is used for training the RBMs
+       type: bool
+    sparsityRegularizationRbm: the regularization parameter for the sparsity constraints.
+      if sparsityConstraintRbm is False, it is ignore
+      type: float
+    sparsityTragetRbm: the target sparsity for the hidden units in the RBMs
+      type: float
+    preTrainEpochs: the number of pre training epochs
+      type: int
+    nameDataset: the name of the dataset
+      type: string
+
   """
   def __init__(self, nrLayers, layerSizes,
                 binary,
@@ -177,11 +238,12 @@ class DBN(object):
                 rmsprop=True,
                 miniBatchSize=10,
                 hiddenDropout=0.5,
-                rbmHiddenDropout=0.5,
                 visibleDropout=0.8,
+                rbmHiddenDropout=0.5,
                 rbmVisibleDropout=1,
                 weightDecayL1=0.0001,
                 weightDecayL2=0.0001,
+                firstRBMheuristic=False,
                 sparsityConstraintRbm=False,
                 sparsityRegularizationRbm=None,
                 sparsityTragetRbm=None,
@@ -212,6 +274,7 @@ class DBN(object):
     self.momentumMax = momentumMax
     self.momentumForEpochFunction = momentumForEpochFunction
     self.binary = binary
+    self.firstRBMheuristic = firstRBMheuristic
 
     self.sparsityRegularizationRbm = sparsityRegularizationRbm
     self.sparsityConstraintRbm = sparsityConstraintRbm
@@ -241,7 +304,6 @@ class DBN(object):
     lastRbmBiases = None
     lastRbmTrainWeights = None
 
-    # TODO: refactor: make this dropout list more top level and reuse it
     dropoutList = [self.visibleDropout] + [self.hiddenDropout] * (self.nrLayers -1)
 
     for i in xrange(nrRbms):
@@ -254,12 +316,12 @@ class DBN(object):
         initialWeights = None
         initialBiases = None
 
-      # if i == 0:
-      #   print "different learning rate for the first rbm"
-      #   # Do not let the learning rate be bigger than 1
-      #   unsupervisedLearningRate = min(self.unsupervisedLearningRate * 10, 1.0)
-      # else:
-      unsupervisedLearningRate = self.unsupervisedLearningRate
+      if i == 0 and self.firstRBMheuristic:
+        print "different learning rate for the first rbm"
+        # Do not let the learning rate be bigger than 1
+        unsupervisedLearningRate = min(self.unsupervisedLearningRate * 10, 1.0)
+      else:
+        unsupervisedLearningRate = self.unsupervisedLearningRate
 
       net = rbm.RBM(self.layerSizes[i], self.layerSizes[i+1],
                       learningRate=unsupervisedLearningRate,
