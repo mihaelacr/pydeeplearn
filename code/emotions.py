@@ -806,10 +806,8 @@ def deepbeliefKaggleCompetition(big=False):
              rbmHiddenDropout=1.0,
              preTrainEpochs=args.preTrainEpochs)
 
-  # unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
-  unsupervisedData = readKaggleCompetitionUnlabelled()
-  # print "unsupervisedData.shape"
-  # print unsupervisedData.shape
+  # unsupervisedData = readKaggleCompetitionUnlabelled()
+  unsupervisedData = None
 
   net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
             validation=args.validation,
