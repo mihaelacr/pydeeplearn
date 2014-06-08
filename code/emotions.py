@@ -799,6 +799,7 @@ def deepbeliefKaggleCompetition(big=False):
              rbmNesterovMomentum=args.rbmnesterov,
              rmsprop=args.rmsprop,
              miniBatchSize=args.miniBatchSize,
+             firstRBMheuristic=True,
              hiddenDropout=0.5,
              visibleDropout=0.8,
              rbmVisibleDropout=1.0,
