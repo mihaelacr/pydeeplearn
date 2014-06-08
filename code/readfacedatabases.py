@@ -845,6 +845,7 @@ def readKaggleCompetition():
       i += 1
 
   labels = labelsToVectors(labels, 7)
+  data = np.array(data)
   return data, labels
 
 
