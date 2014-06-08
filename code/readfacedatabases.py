@@ -866,6 +866,49 @@ def readKaggleCompetitionUnlabelled():
   data = np.array(data)
   return data
 
+def makeKagglePlot():
+  data, labels = readKaggleCompetition()
+  data, labels = shuffle(data, labels)
+  labels = np.argmax(labels, axis=1)
+  print np.unique(labels)
+
+  final = []
+  for i in xrange(7):
+    print i
+    instances = data[labels == i]
+    print instances[0].shape
+    final += [instances[0].reshape((48, 48))]
+
+  final = np.hstack(final)
+
+
+  finalUnsup = makeKagglePlotUnlabelled()
+  print final.shape
+  print finalUnsup.shape
+
+  supAndUnsup = np.vstack((final, finalUnsup))
+  plt.imshow(supAndUnsup, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.show()
+
+def makeKagglePlotUnlabelled():
+  data = readKaggleCompetitionUnlabelled()
+  # data = shuffle(data, np.zeros(data.shape))
+  np.random.shuffle(data)
+
+  final = []
+  for i in xrange(7):
+    final += [data[i].reshape((48, 48))]
+
+  final = np.hstack(final)
+  plt.imshow(final, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.show()
+
+  return final
+
+
+
 if __name__ == '__main__':
   # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   # readMultiPIE(show=True)
@@ -878,4 +921,5 @@ if __name__ == '__main__':
   # makeMultiPosesPlot()
   # makeKanadeImag
   # readKaggleCompetitionUnlabelled()
-  readKaggleCompetition()
+  # readKaggleCompetition()
+  makeKagglePlot()
