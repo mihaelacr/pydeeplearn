@@ -806,7 +806,7 @@ def deepbeliefKaggleCompetition(big=False):
              preTrainEpochs=args.preTrainEpochs)
 
   # unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
-  unsupervisedData = None
+  unsupervisedData = readKaggleCompetitionUnlabelled()
   # print "unsupervisedData.shape"
   # print unsupervisedData.shape
 

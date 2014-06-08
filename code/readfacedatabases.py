@@ -849,6 +849,23 @@ def readKaggleCompetition():
   return data, labels
 
 
+def readKaggleCompetitionUnlabelled():
+  data = []
+  i = 0
+  with open('test.csv', 'rb') as f:
+    reader = csv.reader(f)
+    for row in reader:
+      if i > 0:
+        # print row
+        instance = np.fromstring(row[0], dtype=int, sep=' ')
+        data += [instance]
+        # plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
+        # plt.show()
+      i += 1
+
+  data = np.array(data)
+  return data
+
 if __name__ == '__main__':
   # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   # readMultiPIE(show=True)
@@ -860,4 +877,5 @@ if __name__ == '__main__':
   # facedetectionMultiPie()
   # makeMultiPosesPlot()
   # makeKanadeImag
+  # readKaggleCompetitionUnlabelled()
   readKaggleCompetition()
