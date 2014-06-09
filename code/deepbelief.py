@@ -603,17 +603,22 @@ class DBN(object):
 
 
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
-    trainingErrors = []
+    # trainingErrors = []
+    epochTrainingErrors = []
 
     try:
       for epoch in xrange(maxEpochs):
         print "epoch " + str(epoch)
 
         momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
-
+        s = 0
         for batchNr in xrange(self.nrMiniBatchesTrain):
           trainError = trainModel(batchNr, momentum) / self.miniBatchSize
-          trainingErrors += [trainError]
+          s += trainError
+
+        s = s / self.nrMiniBatchesTrain
+        print "training error" + str(trainError)
+        epochTrainingErrors += [s]
     except KeyboardInterrupt:
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
@@ -622,7 +627,7 @@ class DBN(object):
     # plotTraningError(trainingErrors)
 
     print "number of epochs"
-    print epoch
+    print epoch + 1
 
 
   def trainLoopWithValidation(self, trainModel, validateModel, maxEpochs):
