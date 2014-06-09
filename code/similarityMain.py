@@ -702,8 +702,6 @@ def similaritySameSubjectDifferentEmotionsValues():
 
     simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
 
-
-
     res = simNet.test(testData1, testData2)
 
     predicted = res > 0.5
@@ -713,7 +711,7 @@ def similaritySameSubjectDifferentEmotionsValues():
     for pair in emotionParis:
       print pair
 
-      indices = (pairs == pair)
+      indices = (pairs == np.array(pair))
       print "indices"
       print indices
       print predicted[indices]
