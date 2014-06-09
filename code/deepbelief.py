@@ -624,7 +624,7 @@ class DBN(object):
       print "we will continue testing with the state of the network as it is"
 
 
-    # plotTraningError(trainingErrors)
+    # plotTraningError(epochTrainingError)
 
     print "number of epochs"
     print epoch + 1
@@ -644,10 +644,12 @@ class DBN(object):
 
         momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
+        s = 0
         for batchNr in xrange(self.nrMiniBatchesTrain):
           trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
+          s+ = trainingErrorBatch
 
-        trainingErrors += [trainingErrorBatch]
+        trainingErrors += [s / self.nrMiniBatchesTrain]
 
         meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
         meanValidation = sum(meanValidations) / len(meanValidations)
@@ -667,7 +669,7 @@ class DBN(object):
     plotTrainingAndValidationErros(trainingErrors, validationErrors)
 
     print "number of epochs"
-    print epoch
+    print epoch + 1
 
 
 
