@@ -712,6 +712,8 @@ def similaritySameSubjectDifferentEmotionsValues():
       print pair
 
       indices = (pairs == np.array(pair))
+      indices = np.all(indices, axis=1)
+
       print "indices"
       print indices
       print predicted[indices]
