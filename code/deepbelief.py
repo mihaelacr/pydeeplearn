@@ -309,7 +309,9 @@ class DBN(object):
     for i in xrange(nrRbms):
       # If the RBM can be initialized from the previous one,
       # do so, by using the transpose of the already trained net
-      if i > 0 and self.layerSizes[i+1] == self.layerSizes[i-1]:
+      if i > 0 and self.layerSizes[i+1] == self.layerSizes[i-1]
+          and type(rbmActivationFunctionVisible) == type(rbmActivationFunctionHidden):
+
         initialWeights = lastRbmTrainWeights.T
         initialBiases = lastRbmBiases
       else:
