@@ -463,7 +463,7 @@ def makeTestGroups(subjectToEmotionsTest):
   totalData2 = []
   totalLabels = []
   for subject, emotionToImages in enumerate(subjectToEmotionsTest):
-    data1, data2, labels1, labels2 = splitDataAccordingToLabels(emotionToImages, None, None, instanceToPairRatio)
+    data1, data2, labels1, labels2 = splitDataAccordingToLabels(emotionToImages, None, None, instanceToPairRatio=2)
     combinedLabel = zip(labels1, labels2)
     totalData1 += [data1]
     totalData2 += [data2]
