@@ -710,6 +710,14 @@ def similaritySameSubjectDifferentEmotionsValues():
 
     predicted = res > 0.5
 
+    # make all pairs
+    emotionParis = [(x,y) for x in emotions for y in emotions]
+    for pair in emotionParis:
+      print pair
+      indices = (pairs == pair)
+      print np.mean(predicted[indices])
+
+
 
 
 def main():
