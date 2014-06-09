@@ -312,6 +312,7 @@ class DBN(object):
       if i > 0 and self.layerSizes[i+1] == self.layerSizes[i-1]
           and type(rbmActivationFunctionVisible) == type(rbmActivationFunctionHidden):
 
+        print "compatible rbms: initializing rbm number " + str(i) + "with the trained weights of rbm " + str(i-1)
         initialWeights = lastRbmTrainWeights.T
         initialBiases = lastRbmBiases
       else:
