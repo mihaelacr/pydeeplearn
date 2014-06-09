@@ -473,7 +473,7 @@ def makeTestGroups(subjectToEmotionsTest):
   totalData2 = np.vstack(totalData2)
   totalLabels = np.hstack(totalLabels)
 
-  for i in xrange(len(totalData1)):
+  for i in xrange(0, len(totalData1), step=10):
     plt.imshow(totalData1[i].reshape((40, 30)),  cmap=plt.cm.gray)
     plt.show()
 
