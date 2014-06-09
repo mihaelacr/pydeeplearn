@@ -758,8 +758,8 @@ def deepbeliefPIECV(big=False):
 
   with open("resultsPIECV.txt", "a") as resfile:
     for i in xrange(len(params)):
-    test = "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
-    resfile.write(str(params[fold]))
+      test = "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
+      resfile.write(str(params[fold]))
 
 def deepbeliefKaggleCompetition(big=False):
   data, labels = readKaggleCompetition()
