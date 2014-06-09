@@ -646,7 +646,7 @@ class DBN(object):
         s = 0
         for batchNr in xrange(self.nrMiniBatchesTrain):
           trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
-          s+ = trainingErrorBatch
+          s += trainingErrorBatch
 
         trainingErrors += [s / self.nrMiniBatchesTrain]
 
