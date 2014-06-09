@@ -716,6 +716,7 @@ def similaritySameSubjectDifferentEmotionsValues():
 
       print "indices"
       print indices
+      print indices.sum()
       print predicted[indices]
       print np.mean(predicted[indices])
 
