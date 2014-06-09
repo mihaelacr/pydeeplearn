@@ -480,6 +480,8 @@ def makeTestGroups(subjectToEmotionsTest):
     plt.imshow(totalData2[i].reshape((40, 30)),  cmap=plt.cm.gray)
     plt.show()
 
+    print totalLabels[i]
+
   return totalData1, totalData2, totalLabels
 
 
