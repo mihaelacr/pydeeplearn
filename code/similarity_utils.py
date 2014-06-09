@@ -410,6 +410,40 @@ def splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio, equalize):
   return (totalData1[train], totalData2[train], labels[train],
           totalData1[test], totalData2[test], labels[test])
 
+# TODO: you can also make a simpler version in which you build
+#  different models for different emotions testing
+# However in that case you can get slightly different results due to
+# the model differences
+def splitForSimilaritySameSubjectsDifferentEmotions(equalize, emotions, perSubject):
+
+  #  For now only do these types of comparisons for 3 emotions
+  assert len(emotions) == 3
+  subjectToEmotions = readMultiPIEEmotionsPerSubject(equalize)
+
+  subjectToEmotionsTest = []
+  subjectsToImgsTrain = {}
+  for subject, emotionToImages in enumerate(subjectToEmotions):
+    subjectsToImgsTrain[subject] = []
+    for emotion, images in emotionToImages.iteritems():
+      images = shuffle(images)
+      # Split the images: training and testing
+      # For the testing images we do not have more requirements than
+      # the usual subject testing
+      if emotion not in emotions:
+        subjectsToImgsTrain[subject] += images
+      else:
+        # take a multiple of 5 of images for this emotion
+        # we will use them to create the testing data
+        testImages = images[0: 5 * perSubject]
+        trainImages = images[5 * perSubject, :]
+        subjectsToImgsTrain[subject] += trainImages
+
+
+  splitDataAccordingToLabels(subjectsToImgsTrain, None, imgsPerLabel=None, instanceToPairRatio=2)
+
+
+
+
 
 def testShuffling():
   shuffling = [1,2,3, 4]

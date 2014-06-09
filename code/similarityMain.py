@@ -634,6 +634,81 @@ def similarityEmotionsSameSubject():
 
   print correct
 
+  def similaritySameSubjectDifferentEmotions():
+    trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
+     splitDataMultiPIESubject(instanceToPairRatio=2, equalize=args.equalize)
+
+    print "training with dataset of size ", len(trainData1)
+    print len(trainData1)
+
+    print "testing with dataset of size ", len(testData1)
+
+    print "training with ", similaritiesTrain.sum(), "positive examples"
+    print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
+
+
+    print "testing with ", similaritiesTest.sum(), "positive examples"
+    print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
+    print len(testData1)
+
+    if args.relu:
+      if args.rmsprop:
+        learningRate = 0.005
+        rbmLearningRate = 0.005
+        maxMomentum = 0.95
+      else:
+        learningRate = 0.005
+        rbmLearningRate = 0.005
+        maxMomentum = 0.95
+
+      visibleActivationFunction = Identity()
+      hiddenActivationFunction = RectifiedNoisy()
+      # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
+      testData1 = scale(testData1)
+      testData2 = scale(testData2)
+      trainData1 = scale(trainData1)
+      trainData2 = scale(trainData2)
+
+    # Stochastic binary units
+    else:
+      if args.rmsprop:
+        learningRate = 0.001
+        rbmLearningRate = 0.005
+        maxMomentum = 0.95
+      else:
+        learningRate = 0.001
+        rbmLearningRate = 0.05
+        maxMomentum = 0.95
+
+      visibleActivationFunction = Sigmoid()
+      hiddenActivationFunction = Sigmoid()
+
+    simNet = similarity.SimilarityNet(learningRate=learningRate,
+                                      maxMomentum=maxMomentum,
+                                      visibleActivationFunction=visibleActivationFunction,
+                                      hiddenActivationFunction=hiddenActivationFunction,
+                                      rbmNrVis=1200,
+                                      rbmNrHid=args.nrHidden,
+                                      rbmLearningRate=rbmLearningRate,
+                                      rbmDropoutHid=1.0,
+                                      rbmDropoutVis=1.0,
+                                      rmsprop=False,
+                                      trainingEpochsRBM=args.rbmepochs,
+                                      nesterovRbm=True,
+                                      sparsityConstraint=args.sparsity,
+                                      sparsityRegularization=0.01,
+                                      sparsityTraget=0.01)
+
+    simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
+
+    res = simNet.test(testData1, testData2)
+
+    # Try to change this threshold?
+    predicted = res > 0.5
+
+    correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
+
+
 def main():
   if args.cv:
     similarityCV()
