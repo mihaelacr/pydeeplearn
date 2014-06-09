@@ -1,6 +1,6 @@
 from sklearn import cross_validation
 from readfacedatabases import *
-
+import random
 import matplotlib.pyplot as plt
 
 DEBUG = False
@@ -412,6 +412,8 @@ def splitEmotionsMultiPieKeepSubjectsTestTrain(instanceToPairRatio, equalize):
   return (totalData1[train], totalData2[train], labels[train],
           totalData1[test], totalData2[test], labels[test])
 
+
+
 # TODO: you can also make a simpler version in which you build
 #  different models for different emotions testing
 # However in that case you can get slightly different results due to
@@ -429,7 +431,8 @@ def splitForSimilaritySameSubjectsDifferentEmotions(equalize, emotions, perSubje
     emotionToTest = {}
 
     for emotion, images in emotionToImages.iteritems():
-      images = shuffle(images)
+      images = np.array(images)
+      np.random.shuffle(images)
       # Split the images: training and testing
       # For the testing images we do not have more requirements than
       # the usual subject testing
@@ -440,10 +443,10 @@ def splitForSimilaritySameSubjectsDifferentEmotions(equalize, emotions, perSubje
         # we will use them to create the testing data
         testImages = images[0: 5 * perSubject]
         trainImages = images[5 * perSubject, :]
-        subjectsToImgsTrain[subject] += trainImages
-        emotionToTest[emotion] = testImages
+        subjectsToImgsTrain[subject] += trainImages.tolist()
+        emotionToTest[emotion] = testImages.tolist()
 
-        subjectToEmotionsTest += [emotionToTest]
+      subjectToEmotionsTest += [emotionToTest]
 
   data1, data2, labels1, labels2 = splitDataAccordingToLabels(subjectsToImgsTrain,
                                      None, imgsPerLabel=None, instanceToPairRatio=2)
