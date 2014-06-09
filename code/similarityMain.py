@@ -642,8 +642,8 @@ def similaritySameSubjectDifferentEmotionsValues():
                                                                         emotions, perSubject=2)
 
 
-    print "pairs"
-    print pairs
+    # print "pairs"
+    # print pairs
     print "training with dataset of size ", len(trainData1)
     print len(trainData1)
 
