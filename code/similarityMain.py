@@ -649,11 +649,6 @@ def similaritySameSubjectDifferentEmotionsValues():
     print "training with ", similaritiesTrain.sum(), "positive examples"
     print "training with ", len(similaritiesTrain) - similaritiesTrain.sum(), "negative examples"
 
-
-    print "testing with ", similaritiesTest.sum(), "positive examples"
-    print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
-    print len(testData1)
-
     if args.relu:
       if args.rmsprop:
         learningRate = 0.005
