@@ -641,6 +641,9 @@ def similaritySameSubjectDifferentEmotionsValues():
     trainData1, trainData2, similaritiesTrain, testData1, testData2, pairs = splitForSimilaritySameSubjectsDifferentEmotions(args.equalize,
                                                                         emotions, perSubject=2)
 
+
+    print "pairs"
+    print pairs
     print "training with dataset of size ", len(trainData1)
     print len(trainData1)
 
