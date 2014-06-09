@@ -424,6 +424,8 @@ def splitForSimilaritySameSubjectsDifferentEmotions(equalize, emotions, perSubje
   subjectsToImgsTrain = {}
   for subject, emotionToImages in enumerate(subjectToEmotions):
     subjectsToImgsTrain[subject] = []
+    emotionToTest = {}
+
     for emotion, images in emotionToImages.iteritems():
       images = shuffle(images)
       # Split the images: training and testing
@@ -437,12 +439,35 @@ def splitForSimilaritySameSubjectsDifferentEmotions(equalize, emotions, perSubje
         testImages = images[0: 5 * perSubject]
         trainImages = images[5 * perSubject, :]
         subjectsToImgsTrain[subject] += trainImages
+        emotionToTest[emotion] = testImages
+
+        subjectToEmotionsTest += [emotionToTest]
+
+  data1, data2, labels1, labels2 = splitDataAccordingToLabels(subjectsToImgsTrain,
+                                     None, imgsPerLabel=None, instanceToPairRatio=2)
+
+  similaritiesTrain = similarityDifferentLabels(labels1, labels2)
+
+  testData1, testData2, groups = makeTestGroups(subjectToEmotionsTest)
+
+  return data1, data2, similaritiesTrain, testData1, testData2, groups
 
 
-  splitDataAccordingToLabels(subjectsToImgsTrain, None, imgsPerLabel=None, instanceToPairRatio=2)
+def makeTestGroups(subjectToEmotionsTest):
+  totalData1 = []
+  totalData2 = []
+  totalLabels = []
+  for subject, emotionToImages in enumerate(subjectToEmotionsTest):
+    data1, data2, labels1, labels2 = splitDataAccordingToLabels(emotionToImages, None, None, instanceToPairRatio)
+    combinedLabel = zip(labels1, labels2)
+    totalData1 += [data1]
+    totalData2 += [data2]
+    totalLabels += [combinedLabel]
 
-
-
+  totalData1 = np.vstack(totalData1)
+  totalData2 = np.vstack(totalData2)
+  totalLabels = np.hstack(totalLabels)
+  return totalData1, totalData2, totalLabels
 
 
 def testShuffling():

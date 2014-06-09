@@ -634,9 +634,8 @@ def similarityEmotionsSameSubject():
 
   print correct
 
-  def similaritySameSubjectDifferentEmotions():
-    trainData1, trainData2, testData1, testData2, similaritiesTrain, similaritiesTest =\
-     splitDataMultiPIESubject(instanceToPairRatio=2, equalize=args.equalize)
+  def similaritySameSubjectDifferentEmotionsValues():
+    trainData1, trainData2, similaritiesTrain, testData1, testData2, pairs = splitForSimilaritySameSubjectsDifferentEmotions(args.equalize, emotions, perSubject=2)
 
     print "training with dataset of size ", len(trainData1)
     print len(trainData1)
@@ -701,12 +700,12 @@ def similarityEmotionsSameSubject():
 
     simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
 
+
+
     res = simNet.test(testData1, testData2)
 
-    # Try to change this threshold?
     predicted = res > 0.5
 
-    correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
 
 def main():

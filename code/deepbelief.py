@@ -616,7 +616,7 @@ class DBN(object):
           s += trainError
 
         s = s / self.nrMiniBatchesTrain
-        print "training error" + str(trainError)
+        print "training error " + str(trainError)
         epochTrainingErrors += [s]
     except KeyboardInterrupt:
       print "you have interrupted training"
