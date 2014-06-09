@@ -26,6 +26,8 @@ parser.add_argument('--emotionsdiff', dest='emotionsdiff',action='store_true', d
                     help=("if true, trains a net to distinguish between emotions"))
 parser.add_argument('--emotionsdiffsamesubj', dest='emotionsdiffsamesubj',action='store_true', default=False,
                     help=("if true, trains a net to distinguish between emotions where the pictures presented are the same people"))
+parser.add_argument('--emotionssim', dest='emotionssim',action='store_true', default=False,
+                    help=("if true, trains a network to distinguish between subjects and then looks at the reported similarities depending on the emotion"))
 parser.add_argument('--equalize',dest='equalize',action='store_true', default=False,
                     help="if true, the input images are equalized before being fed into the net")
 parser.add_argument('--nrHidden',dest='nrHidden', type=int, default=1000,
@@ -721,6 +723,8 @@ def main():
     similarityEmotionsMain()
   elif args.emotionsdiffsamesubj:
     similarityEmotionsSameSubject()
+  elif args.emotionssim:
+    similaritySameSubjectDifferentEmotionsValues()
   else:
     similarityMain()
 
