@@ -756,7 +756,7 @@ def deepbeliefPIECV(big=False):
   for i in xrange(len(params)):
     print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
 
- with open("resultsPIECV.txt", "a") as resfile:
+  with open("resultsPIECV.txt", "a") as resfile:
     for i in xrange(len(params)):
     test = "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
     resfile.write(str(params[fold]))
