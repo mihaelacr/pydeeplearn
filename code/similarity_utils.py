@@ -442,7 +442,7 @@ def splitForSimilaritySameSubjectsDifferentEmotions(equalize, emotions, perSubje
         # take a multiple of 5 of images for this emotion
         # we will use them to create the testing data
         testImages = images[0: 5 * perSubject]
-        trainImages = images[5 * perSubject, :]
+        trainImages = images[5 * perSubject: ]
         subjectsToImgsTrain[subject] += list(trainImages)
         emotionToTest[emotion] = list(testImages)
 
