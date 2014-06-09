@@ -1,7 +1,8 @@
 from sklearn import cross_validation
 from readfacedatabases import *
-import random
 import matplotlib.pyplot as plt
+import itertools
+
 
 DEBUG = False
 
@@ -472,9 +473,10 @@ def makeTestGroups(subjectToEmotionsTest):
   totalData1 = np.vstack(totalData1)
   totalData2 = np.vstack(totalData2)
   print totalLabels
-  totalLabels = np.hstack(totalLabels)
+  totalLabels = list(itertools.chain(*totalLabels))
   print totalLabels
 
+  totalLabels = np.array(totalLabels)
 
   for i in xrange(0, len(totalData1), 10):
     plt.imshow(totalData1[i].reshape((40, 30)),  cmap=plt.cm.gray)
