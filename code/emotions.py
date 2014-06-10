@@ -738,13 +738,13 @@ def deepbeliefPIECV(big=False):
       bestCorrect = correct
       bestParam = params[fold]
       bestProbs = correctProbs
+
+    with open("resultsPIECV.txt", "a") as resfile:
+      resfile.write(str(params[fold]))
+      resfile.write(str(correctProbs))
+      resfile.write(str(correct))
+
     fold += 1
-
-  with open("resultsPIECV.txt", "a") as resfile:
-    resfile.write(str(params[fold]))
-    resfile.write(str(correctProbs))
-    resfile.write(str(correct))
-
 
   print "bestParam"
   print bestParam
