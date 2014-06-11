@@ -745,8 +745,8 @@ def deepbeliefMNISTGaussian():
   supervisedLearningRate = 0.005
   momentumMax = 0.95
   sparsityTragetRbm = 0.01
-  sparsityConstraintRbm = False
-  sparsityRegularizationRbm = 0.05
+  sparsityConstraintRbm = True
+  sparsityRegularizationRbm = 0.005
 
   if args.train:
     net = db.DBN(5, [784, 1200, 1200, 1200, 10],
@@ -756,7 +756,7 @@ def deepbeliefMNISTGaussian():
                  momentumMax=momentumMax,
                  activationFunction=RectifiedNoisy(),
                  rbmActivationFunctionVisible=Identity(),
-                 rbmActivationFunctionHidden=RectifiedNoisy(),
+                 rbmActivationFunctionHidden=Rectified(),
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
