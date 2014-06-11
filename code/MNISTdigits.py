@@ -754,7 +754,7 @@ def deepbeliefMNISTGaussian():
                  unsupervisedLearningRate=unsupervisedLearningRate,
                  supervisedLearningRate=supervisedLearningRate,
                  momentumMax=momentumMax,
-                 activationFunction=Rectified(),
+                 activationFunction=RectifiedNoisy(),
                  rbmActivationFunctionVisible=Identity(),
                  rbmActivationFunctionHidden=RectifiedNoisy(),
                  nesterovMomentum=args.nesterov,
