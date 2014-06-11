@@ -1,9 +1,0 @@
-Done today:
-  getting more and more familiarized with pandoc
-  fixed some of the issues I had with it and installed tex live which came with a lot of packages
-
-  wrote more on the report (especially about using the softmax function for classification)
-
-  read some code online about how to do things
-
-  implemented more on the backprop things and changes some stuff

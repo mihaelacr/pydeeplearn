@@ -1,8 +1,0 @@
-Done today:
-  Backprop recap
-  Pandoc installing and reading
-  Start writing intial report notes
-  Start implementing backprop and deep belief nets
-  properly understand softmax
-TODO:
-  keep writing on report, understanding stuff and finish deep belief with MNIST

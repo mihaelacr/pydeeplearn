@@ -1,8 +1,0 @@
-Done today:
-  implemented dropout properly and looked at it
-  running PCA on MNIST data and seeing what is happening
-  running mnist with more layers with dropout but for some reason more layers does not work and we get the same predicition no matter what
-
-  worked on Pandoc for citation generation. Got something done but clicking on the citation still does not work which is very annoying
-
-  read a bit of zhen's report

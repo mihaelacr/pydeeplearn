@@ -1,3 +1,0 @@
-Done today:
-  Still working on MNISt data with backprop.
-  Not much progress being made in terms of results, but got a lot more things clearer.

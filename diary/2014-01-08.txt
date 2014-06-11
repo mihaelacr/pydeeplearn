@@ -1,6 +1,0 @@
-Done today:
-  Reading paper on using ReLU for botlzmann machines
-  Readin part of Zhen's report
-
-  Trying to vectorize the mini-batch code but I end up realising I do not know
-     a lot of numpy's features and that I need to learn them
