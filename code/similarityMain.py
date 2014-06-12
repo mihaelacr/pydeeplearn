@@ -60,7 +60,7 @@ def similarityMain():
 
   if args.relu:
     if args.rmsprop:
-      learningRate = 0.005
+      learningRate = 0.001
       rbmLearningRate = 0.005
       maxMomentum = 0.95
     else:
