@@ -55,8 +55,6 @@ class Trainer(object):
 
 class SimilarityNet(object):
 
-  # TODO: add sizes and activation functions here as well
-  # plus rbm learning rates
   def __init__(self, learningRate, maxMomentum, rbmNrVis, rbmNrHid, rbmLearningRate,
                 visibleActivationFunction, hiddenActivationFunction,
                 rbmDropoutVis, rbmDropoutHid, rmsprop,trainingEpochsRBM,
