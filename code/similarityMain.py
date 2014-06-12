@@ -59,14 +59,10 @@ def similarityMain():
   print len(testData1)
 
   if args.relu:
-    if args.rmsprop:
-      learningRate = 0.001
-      rbmLearningRate = 0.005
-      maxMomentum = 0.95
-    else:
-      learningRate = 0.005
-      rbmLearningRate = 0.005
-      maxMomentum = 0.95
+    # Rmsprop does not work well on this with relu so we do not provide values
+    learningRate = 0.001
+    rbmLearningRate = 0.005
+    maxMomentum = 0.95
 
     visibleActivationFunction = Identity()
     hiddenActivationFunction = RectifiedNoisy()
@@ -195,6 +191,7 @@ def similarityMainTestYale():
   simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
 
   res = simNet.test(testData1, testData2)
+
 
   predicted = res > 0.5
 
