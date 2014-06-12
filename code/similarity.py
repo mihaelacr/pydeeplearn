@@ -93,6 +93,7 @@ class SimilarityNet(object):
                     nesterov=self.nesterovRbm,
                     trainingEpochs=self.trainingEpochsRBM,
                     sparsityConstraint=self.sparsityConstraint,
+                    sparsityCostFunction=squaredDiff,
                     sparsityRegularization=self.sparsityRegularization,
                     sparsityTraget=self.sparsityTraget)
     net.train(data)
