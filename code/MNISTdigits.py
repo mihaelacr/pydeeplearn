@@ -743,9 +743,9 @@ def deepbeliefMNISTGaussian():
 
   unsupervisedLearningRate = 0.005
   supervisedLearningRate = 0.005
-  momentumMax = 0.95
+  momentumMax = 0.9
   sparsityTragetRbm = 0.01
-  sparsityConstraintRbm = True
+  sparsityConstraintRbm = False
   sparsityRegularizationRbm = 0.005
 
   if args.train:
