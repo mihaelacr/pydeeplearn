@@ -185,9 +185,13 @@ class DBN(object):
         type: bool
     momentumMax: the maximum value momentum is allowed to increase to
         type: float
+    momentumMax: the maximum value momentum is allowed to increase to in training RBMs
+        type: float
     momentumForEpochFunction: the function used to increase momentum during training
         type: python function (for examples see module common)
     rmsprop: if true, rmsprop is used for training
+        type: bool
+    rmsprop: if true, rmsprop is used for training RBMs
         type: bool
     miniBatchSize: the number of instances to be used in a mini batch during training
         type: int
@@ -234,8 +238,10 @@ class DBN(object):
                 rbmNesterovMomentum=True,
                 momentumFactorForLearningRate=True,
                 momentumMax=0.9,
+                momentumMaxRbm=0.05,
                 momentumForEpochFunction=getMomentumForEpochLinearIncrease,
                 rmsprop=True,
+                rmspropRbm=True,
                 miniBatchSize=10,
                 hiddenDropout=0.5,
                 visibleDropout=0.8,
@@ -263,6 +269,7 @@ class DBN(object):
     self.nesterovMomentum = nesterovMomentum
     self.rbmNesterovMomentum = rbmNesterovMomentum
     self.rmsprop = rmsprop
+    self.rmspropRbm = rmspropRbm
     self.weightDecayL1 = weightDecayL1
     self.weightDecayL2 = weightDecayL2
     self.preTrainEpochs = preTrainEpochs
@@ -272,6 +279,7 @@ class DBN(object):
     self.classificationActivationFunction = classificationActivationFunction
     self.momentumFactorForLearningRate = momentumFactorForLearningRate
     self.momentumMax = momentumMax
+    self.momentumMaxRbm = momentumMaxRbm
     self.momentumForEpochFunction = momentumForEpochFunction
     self.binary = binary
     self.firstRBMheuristic = firstRBMheuristic
@@ -331,7 +339,8 @@ class DBN(object):
                       hiddenActivationFunction=self.rbmActivationFunctionHidden,
                       hiddenDropout=self.rbmHiddenDropout,
                       visibleDropout=self.rbmVisibleDropout,
-                      rmsprop=True, # TODO: argument here as well?
+                      rmsprop=self.rmspropRbm,
+                      momentumMax=momentumMaxRbm,
                       nesterov=self.rbmNesterovMomentum,
                       initialWeights=initialWeights,
                       initialBiases=initialBiases,

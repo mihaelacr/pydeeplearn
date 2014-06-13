@@ -165,6 +165,7 @@ class RBM(object):
                 initialWeights=None,
                 initialBiases=None,
                 trainingEpochs=1,
+                momentumMax=0.95,
                 sparsityCostFunction=T.nnet.binary_crossentropy,
                 sparsityConstraint=False,
                 sparsityRegularization=0.01,
@@ -187,6 +188,7 @@ class RBM(object):
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
     self.trainingEpochs = trainingEpochs
+    self.momentumMax = momentumMax
     self.sparsityConstraint = sparsityConstraint
     self.sparsityRegularization = np.float32(sparsityRegularization)
     self.sparsityTraget = np.float32(sparsityTraget)
@@ -300,7 +302,7 @@ class RBM(object):
       for miniBatchIndex in range(nrMiniBatches):
         iteration = miniBatchIndex + epoch * nrMiniBatches
         momentum = np.float32(min(np.float32(0.5) + iteration * np.float32(0.001),
-                       np.float32(0.95)))
+                       np.float32(self.momentumMax)))
 
         if miniBatchIndex < 10:
           step = 1
