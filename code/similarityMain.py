@@ -99,7 +99,7 @@ def similarityMain():
                                     trainingEpochsRBM=args.rbmepochs,
                                     nesterovRbm=True,
                                     sparsityConstraint=args.sparsity,
-                                    sparsityRegularization=0.01,
+                                    sparsityRegularization=0.001,
                                     sparsityTraget=0.01)
 
   simNet.train(trainData1, trainData2, similaritiesTrain, epochs=args.epochs)
