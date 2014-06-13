@@ -350,10 +350,10 @@ class RBM(object):
 
     wUpdate = momentum * batchTrainer.oldDw
 
-    # # Sparsity cost
-    # if self.sparsityConstraint:
-    #   gradientW = T.grad(sparsityCost, batchTrainer.weights)
-    #   delta -= self.sparsityRegularization * gradientW
+    # Sparsity cost
+    if self.sparsityConstraint:
+      gradientW = T.grad(sparsityCost, batchTrainer.weights)
+      delta -= self.sparsityRegularization * gradientW
 
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
@@ -437,10 +437,10 @@ class RBM(object):
                                batchTrainer.hiddenReconstruction)
     delta = positiveDifference - negativeDifference
 
-    # # Sparsity cost
-    # if self.sparsityConstraint:
-    #   gradientW = T.grad(sparsityCost, batchTrainer.weights)
-    #   delta -= self.sparsityRegularization * gradientW
+    # Sparsity cost
+    if self.sparsityConstraint:
+      gradientW = T.grad(sparsityCost, batchTrainer.weights)
+      delta -= self.sparsityRegularization * gradientW
 
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
