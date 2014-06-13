@@ -165,6 +165,7 @@ class RBM(object):
                 initialWeights=None,
                 initialBiases=None,
                 trainingEpochs=1,
+                momentumFactorForLeanringRate=False,
                 momentumMax=0.95,
                 sparsityCostFunction=T.nnet.binary_crossentropy,
                 sparsityConstraint=False,
@@ -185,6 +186,7 @@ class RBM(object):
     self.weights = initialWeights
     self.biases = initialBiases
     self.weightDecay = np.float32(weightDecay)
+    self.momentumFactorForLeanringRate = momentumFactorForLeanringRate
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
     self.trainingEpochs = trainingEpochs
@@ -331,6 +333,11 @@ class RBM(object):
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
     updates = []
 
+    if self.momentumFactorForLeanringRate:
+      factorLr = 1.0 - momentum
+    else:
+      factorLr = 1.0
+
     if self.sparsityConstraint:
       if self.sparsityCostFunction == T.nnet.binary_crossentropy:
         sparistyCostMeasure = batchTrainer.activationProbabilities
@@ -357,10 +364,10 @@ class RBM(object):
 
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
-      wUpdate += (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
+      wUpdate += factorLr * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
       updates.append((batchTrainer.oldMeanW, meanW))
     else:
-      wUpdate += (1.0 - momentum) * batchLearningRate * delta
+      wUpdate += factorLr * batchLearningRate * delta
 
     wUpdate -= batchLearningRate * self.weightDecay * batchTrainer.oldDw
 
@@ -373,10 +380,10 @@ class RBM(object):
 
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
-      biasVisUpdate += (1.0 - momentum) * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
+      biasVisUpdate += factorLr * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
       updates.append((batchTrainer.oldMeanVis, meanVis))
     else:
-      biasVisUpdate += (1.0 - momentum) * batchLearningRate * visibleBiasDiff
+      biasVisUpdate += factorLr * batchLearningRate * visibleBiasDiff
 
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
     updates.append((batchTrainer.oldDVis, biasVisUpdate))
@@ -391,10 +398,10 @@ class RBM(object):
 
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
-      biasHidUpdate += (1.0 - momentum) * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
+      biasHidUpdate += factorLr * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
       updates.append((batchTrainer.oldMeanHid, meanHid))
     else:
-      biasHidUpdate += (1.0 - momentum) * batchLearningRate * hiddenBiasDiff
+      biasHidUpdate += factorLr * batchLearningRate * hiddenBiasDiff
 
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
     updates.append((batchTrainer.oldDHid, biasHidUpdate))
@@ -408,6 +415,12 @@ class RBM(object):
 
   def buildNesterovUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
     preDeltaUpdates = []
+
+
+    if self.momentumFactorForLeanringRate:
+      factorLr = 1.0 - momentum
+    else:
+      factorLr = 1.0
 
     wUpdateMomentum = momentum * batchTrainer.oldDw
     biasVisUpdateMomentum = momentum * batchTrainer.oldDVis
@@ -444,10 +457,10 @@ class RBM(object):
 
     if self.rmsprop:
       meanW = 0.9 * batchTrainer.oldMeanW + 0.1 * delta ** 2
-      wUpdate = (1.0 - momentum) * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
+      wUpdate = factorLr * batchLearningRate * delta / T.sqrt(meanW + 1e-8)
       updates.append((batchTrainer.oldMeanW, meanW))
     else:
-      wUpdate = (1.0 - momentum) * batchLearningRate * delta
+      wUpdate = factorLr * batchLearningRate * delta
 
     wUpdate -= batchLearningRate * self.weightDecay * batchTrainer.oldDw
 
@@ -459,10 +472,10 @@ class RBM(object):
 
     if self.rmsprop:
       meanVis = 0.9 * batchTrainer.oldMeanVis + 0.1 * visibleBiasDiff ** 2
-      biasVisUpdate = (1.0 - momentum) * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
+      biasVisUpdate = factorLr * batchLearningRate * visibleBiasDiff / T.sqrt(meanVis + 1e-8)
       updates.append((batchTrainer.oldMeanVis, meanVis))
     else:
-      biasVisUpdate = (1.0 - momentum) * batchLearningRate * visibleBiasDiff
+      biasVisUpdate = factorLr * batchLearningRate * visibleBiasDiff
 
     updates.append((batchTrainer.biasVisible, batchTrainer.biasVisible + biasVisUpdate))
     updates.append((batchTrainer.oldDVis, biasVisUpdate + biasVisUpdateMomentum))
@@ -476,10 +489,10 @@ class RBM(object):
 
     if self.rmsprop:
       meanHid = 0.9 * batchTrainer.oldMeanHid + 0.1 * hiddenBiasDiff ** 2
-      biasHidUpdate = (1.0 - momentum) * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
+      biasHidUpdate = factorLr * batchLearningRate * hiddenBiasDiff / T.sqrt(meanHid + 1e-8)
       updates.append((batchTrainer.oldMeanHid, meanHid))
     else:
-      biasHidUpdate = (1.0 - momentum) * batchLearningRate * hiddenBiasDiff
+      biasHidUpdate = factorLr * batchLearningRate * hiddenBiasDiff
 
     updates.append((batchTrainer.biasHidden, batchTrainer.biasHidden + biasHidUpdate))
     updates.append((batchTrainer.oldDHid, biasHidUpdate + biasHidUpdateMomentum))
