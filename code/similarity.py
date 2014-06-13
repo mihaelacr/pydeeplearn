@@ -93,7 +93,7 @@ class SimilarityNet(object):
                     visibleActivationFunction=self.visibleActivationFunction,
                     hiddenActivationFunction=self.hiddenActivationFunction,
                     rmsprop=True,
-                    # momentumFactorForLearningRate=self.momentumFactorForLearningRateRBM,
+                    momentumFactorForLearningRate=self.momentumFactorForLearningRateRBM,
                     nesterov=self.nesterovRbm,
                     trainingEpochs=self.trainingEpochsRBM,
                     sparsityConstraint=self.sparsityConstraint,
