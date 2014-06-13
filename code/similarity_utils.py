@@ -23,6 +23,7 @@ def splitTrainTest(data1, data2, labels1, labels2, ratio):
   return (data1[train], data1[test], data2[train], data2[test],
           labels1[train], labels1[test], labels2[train], labels2[test])
 
+""" Splits the data in pairs such that no instances in the same pairs have the same label. """
 def splitShuffling(shuffling, labelsShuffling):
 
   shuffling, labelsShuffling = shuffle(shuffling, labelsShuffling)
@@ -454,7 +455,7 @@ def splitForSimilaritySameSubjectsDifferentEmotions(equalize, emotions, perSubje
 
   similaritiesTrain = similarityDifferentLabels(labels1, labels2)
 
-  testData1, testData2, groups = makeTestGroups(subjectToEmotionsTest)
+  testData1, testData2, groups = makeTestGroupsDifferentSubjects(subjectToEmotionsTest)
 
   return data1, data2, similaritiesTrain, testData1, testData2, groups
 
@@ -477,6 +478,28 @@ def makeTestGroups(subjectToEmotionsTest):
   print totalLabels
 
   totalLabels = np.array(totalLabels)
+
+def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
+  # splitShuffling is what I need for the subjects
+  totalData1 = []
+  totalData2 = []
+  totalLabels = []
+
+
+  # flatten out to two arrays: one for subjects and one for (emotion, image) tuples
+  subjects = []
+  emotionImageTuples = []
+  for subject, emotionToImages in enumerate(subjectToEmotionsTest):
+    for emotion, images in emotionToImages.iteritems():
+      subjects += [subject]
+      emotionImageTuples = [(emotion, images)]
+
+  data1, data2, _, _ = splitShuffling(emotionImageTuples, subjects)
+  for i in xrange(len(data1)):
+    totalData1 += [data1[i][1]]
+    totalData2 += [data2[i][1]]
+    totalLabels+= [(data1[i][0], data1[i][1])]
+
 
   # for i in xrange(0, len(totalData1), 10):
   #   plt.imshow(totalData1[i].reshape((40, 30)),  cmap=plt.cm.gray)
