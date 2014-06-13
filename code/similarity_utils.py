@@ -492,7 +492,7 @@ def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
   for subject, emotionToImages in enumerate(subjectToEmotionsTest):
     for emotion, images in emotionToImages.iteritems():
       subjects += [subject]
-      emotionImageTuples = [(emotion, images)]
+      emotionImageTuples += [(emotion, images)]
 
   data1, data2, _, _ = splitShuffling(emotionImageTuples, subjects)
   for i in xrange(len(data1)):
