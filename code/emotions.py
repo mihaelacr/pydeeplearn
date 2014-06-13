@@ -312,9 +312,9 @@ def deepbeliefKanade(big=False):
 
   if args.relu:
     activationFunction = Rectified()
-    unsupervisedLearningRate = 0.05
+    unsupervisedLearningRate = 0.005
     supervisedLearningRate = 0.01
-    momentumMax = 0.95
+    momentumMax = 0.99
     data = scale(data)
     rbmActivationFunctionVisible = Identity()
     rbmActivationFunctionHidden = RectifiedNoisy()
