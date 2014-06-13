@@ -61,7 +61,7 @@ def similarityMain():
   if args.relu:
     # Rmsprop does not work well on this with relu so we do not provide values
     learningRate = 0.001
-    rbmLearningRate = 0.005
+    rbmLearningRate = 0.0005
     maxMomentum = 0.95
 
     visibleActivationFunction = Identity()
