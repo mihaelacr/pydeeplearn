@@ -334,9 +334,9 @@ class RBM(object):
     updates = []
 
     if self.momentumFactorForLeanringRate:
-      factorLr = 1.0 - momentum
+      factorLr = np.float32(1.0 - momentum)
     else:
-      factorLr = 1.0
+      factorLr = np.float32(1.0)
 
     if self.sparsityConstraint:
       if self.sparsityCostFunction == T.nnet.binary_crossentropy:
@@ -418,9 +418,9 @@ class RBM(object):
 
 
     if self.momentumFactorForLeanringRate:
-      factorLr = 1.0 - momentum
+      factorLr = np.float32(1.0 - momentum)
     else:
-      factorLr = 1.0
+      factorLr = np.float32(1.0)
 
     wUpdateMomentum = momentum * batchTrainer.oldDw
     biasVisUpdateMomentum = momentum * batchTrainer.oldDVis
