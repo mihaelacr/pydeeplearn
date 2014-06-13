@@ -84,7 +84,8 @@ class SimilarityNet(object):
   def _trainRBM(self, data1, data2):
     data = np.vstack([data1, data2])
 
-    net = rbm.RBM(self.rbmNrVis, self.rbmNrHid, self.rbmLearningRate,
+    net = rbm.RBM(self.rbmNrVis, self.rbmNrHid,
+                    self.rbmLearningRate,
                     hiddenDropout=self.rbmDropoutHid,
                     visibleDropout=self.rbmDropoutVis,
                     visibleActivationFunction=self.visibleActivationFunction,
