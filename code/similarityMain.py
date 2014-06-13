@@ -108,7 +108,6 @@ def similarityMain():
 
   # Try to change this threshold?
   predicted = res > 0.5
-
   correct = (similaritiesTest == predicted).sum() * 1.0 / len(res)
 
   confMatrix = confusion_matrix(similaritiesTest, predicted)
@@ -691,6 +690,7 @@ def similaritySameSubjectDifferentEmotionsValues():
                                       rbmDropoutHid=1.0,
                                       rbmDropoutVis=1.0,
                                       rmsprop=False,
+                                      momentumFactorForLearningRate=True,
                                       trainingEpochsRBM=args.rbmepochs,
                                       nesterovRbm=True,
                                       sparsityConstraint=args.sparsity,
