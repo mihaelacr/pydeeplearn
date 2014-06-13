@@ -343,7 +343,7 @@ class DBN(object):
                       visibleDropout=self.rbmVisibleDropout,
                       rmsprop=self.rmspropRbm,
                       momentumMax=self.momentumMaxRbm,
-                      momentumFactorForLearningRateRBM=self.momentumFactorForLearningRateRBM,
+                      momentumFactorForLearningRate=self.momentumFactorForLearningRateRBM,
                       nesterov=self.rbmNesterovMomentum,
                       initialWeights=initialWeights,
                       initialBiases=initialBiases,
