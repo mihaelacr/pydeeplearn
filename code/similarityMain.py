@@ -515,7 +515,7 @@ def similarityEmotionsMain():
                                     visibleActivationFunction=visibleActivationFunction,
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     rbmNrVis=1200,
-                                    momentumFactorForLearningRate=True,
+                                    momentumFactorForLearningRateRBM=True,
                                     rbmNrHid=args.nrHidden,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
