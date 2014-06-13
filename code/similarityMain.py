@@ -98,6 +98,7 @@ def similarityMain():
                                     rmsprop=False,
                                     trainingEpochsRBM=args.rbmepochs,
                                     nesterovRbm=True,
+                                    momentumFactorForLearningRateRBM=False,
                                     sparsityConstraint=args.sparsity,
                                     sparsityRegularization=0.001,
                                     sparsityTraget=0.01)
