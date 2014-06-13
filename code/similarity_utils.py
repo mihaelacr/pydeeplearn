@@ -491,10 +491,10 @@ def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
   emotions = []
   images = []
   for subject, emotionToImages in enumerate(subjectToEmotionsTest):
-    for emotion, images in emotionToImages.iteritems():
+    for emotion, imagesemotion in emotionToImages.iteritems():
       subjects += [subject]
       emotions += [emotion]
-      images += images
+      images += imagesemotion
 
   subjects = np.array(subjects)
   images = np.array(images)
