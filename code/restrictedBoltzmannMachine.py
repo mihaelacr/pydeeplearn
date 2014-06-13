@@ -334,7 +334,7 @@ class RBM(object):
     updates = []
 
     if self.momentumFactorForLearningRate:
-      factorLr = np.float32(1.0 - momentum)
+      factorLr = 1.0 - momentum
     else:
       factorLr = np.float32(1.0)
 
@@ -418,7 +418,7 @@ class RBM(object):
 
 
     if self.momentumFactorForLearningRate:
-      factorLr = np.float32(1.0 - momentum)
+      factorLr = 1.0 - momentum
     else:
       factorLr = np.float32(1.0)
 
