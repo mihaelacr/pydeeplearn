@@ -237,6 +237,7 @@ class DBN(object):
                 nesterovMomentum=True,
                 rbmNesterovMomentum=True,
                 momentumFactorForLearningRate=True,
+                momentumFactorForLearningRateRBM=True,
                 momentumMax=0.9,
                 momentumMaxRbm=0.05,
                 momentumForEpochFunction=getMomentumForEpochLinearIncrease,
@@ -283,6 +284,7 @@ class DBN(object):
     self.momentumForEpochFunction = momentumForEpochFunction
     self.binary = binary
     self.firstRBMheuristic = firstRBMheuristic
+    self.momentumFactorForLearningRateRBM = momentumFactorForLearningRateRBM
 
     self.sparsityRegularizationRbm = sparsityRegularizationRbm
     self.sparsityConstraintRbm = sparsityConstraintRbm
@@ -341,6 +343,7 @@ class DBN(object):
                       visibleDropout=self.rbmVisibleDropout,
                       rmsprop=self.rmspropRbm,
                       momentumMax=self.momentumMaxRbm,
+                      momentumFactorForLearningRateRBM=self.momentumFactorForLearningRateRBM,
                       nesterov=self.rbmNesterovMomentum,
                       initialWeights=initialWeights,
                       initialBiases=initialBiases,
