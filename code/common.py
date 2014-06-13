@@ -121,8 +121,8 @@ def makeParamsGrid(paramBorders):
   return list(itertools.product(*tuple(linspaces)))
 
 
-def getMomentumForEpochLinearIncrease(momentumMax, epoch):
-  return np.float32(min(np.float32(0.5) + epoch * np.float32(0.05),
+def getMomentumForEpochLinearIncrease(momentumMax, epoch, step=0.1):
+  return np.float32(min(np.float32(0.5) + epoch * np.float32(step),
                      np.float32(momentumMax)))
 
 # This is called once per epoch so doing the
