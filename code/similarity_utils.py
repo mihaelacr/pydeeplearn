@@ -488,18 +488,27 @@ def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
 
   # flatten out to two arrays: one for subjects and one for (emotion, image) tuples
   subjects = []
-  emotionImageTuples = []
+  emotions = []
+  images = []
   for subject, emotionToImages in enumerate(subjectToEmotionsTest):
     for emotion, images in emotionToImages.iteritems():
       subjects += [subject]
-      emotionImageTuples += [(emotion, images)]
+      emotions += [emotion]
+      images += images
 
-  data1, data2, _, _ = splitShuffling(emotionImageTuples, subjects)
-  for i in xrange(len(data1)):
-    totalData1 += [data1[i][1]]
-    totalData2 += [data2[i][1]]
-    totalLabels+= [(data1[i][0], data1[i][1])]
+  subjects = np.array(subjects)
+  images = np.array(images)
+  emotions = np.array(emotions)
 
+  indices = np.arange(len(subjects))
+  indices1, indices2, _, _ = splitShuffling(indices, subjects)
+  totalData1 = images[indices1]
+  totalData2 = images[indices2]
+
+  emotions1 = emotions1[indices1]
+  emotions2 = emotions2[indices1]
+
+  totalLabels = zip(emotions1, emotions2)
 
   # for i in xrange(0, len(totalData1), 10):
   #   plt.imshow(totalData1[i].reshape((40, 30)),  cmap=plt.cm.gray)
