@@ -165,7 +165,7 @@ class RBM(object):
                 initialWeights=None,
                 initialBiases=None,
                 trainingEpochs=1,
-                momentumFactorForLeanringRate=False,
+                momentumFactorForLearningRate=False,
                 momentumMax=0.95,
                 sparsityCostFunction=T.nnet.binary_crossentropy,
                 sparsityConstraint=False,
@@ -186,7 +186,7 @@ class RBM(object):
     self.weights = initialWeights
     self.biases = initialBiases
     self.weightDecay = np.float32(weightDecay)
-    self.momentumFactorForLeanringRate = momentumFactorForLeanringRate
+    self.momentumFactorForLearningRate = momentumFactorForLearningRate
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
     self.trainingEpochs = trainingEpochs
@@ -333,7 +333,7 @@ class RBM(object):
   def buildUpdates(self, batchTrainer, momentum, batchLearningRate, cdSteps):
     updates = []
 
-    if self.momentumFactorForLeanringRate:
+    if self.momentumFactorForLearningRate:
       factorLr = np.float32(1.0 - momentum)
     else:
       factorLr = np.float32(1.0)
@@ -417,7 +417,7 @@ class RBM(object):
     preDeltaUpdates = []
 
 
-    if self.momentumFactorForLeanringRate:
+    if self.momentumFactorForLearningRate:
       factorLr = np.float32(1.0 - momentum)
     else:
       factorLr = np.float32(1.0)
