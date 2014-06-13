@@ -697,9 +697,9 @@ def similaritySameSubjectDifferentEmotionsValues():
                                       rbmDropoutHid=1.0,
                                       rbmDropoutVis=1.0,
                                       rmsprop=False,
-                                      momentumFactorForLearningRateRBM=True,
                                       trainingEpochsRBM=args.rbmepochs,
                                       nesterovRbm=True,
+                                      momentumFactorForLearningRateRBM=True,
                                       sparsityConstraint=args.sparsity,
                                       sparsityRegularization=0.01,
                                       sparsityTraget=0.01)
