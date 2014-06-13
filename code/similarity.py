@@ -59,6 +59,7 @@ class SimilarityNet(object):
                 visibleActivationFunction, hiddenActivationFunction,
                 rbmDropoutVis, rbmDropoutHid, rmsprop,trainingEpochsRBM,
                 nesterovRbm,
+                momentumFactorForLearningRateRBM,
                 sparsityConstraint, sparsityRegularization, sparsityTraget):
 
     self.learningRate = np.float32(learningRate)
@@ -73,6 +74,7 @@ class SimilarityNet(object):
     self.visibleActivationFunction = visibleActivationFunction
     self.hiddenActivationFunction = hiddenActivationFunction
     self.nesterovRbm = nesterovRbm
+    self.momentumFactorForLearningRateRBM = momentumFactorForLearningRateRBM
 
     self.sparsityConstraint = sparsityConstraint
     self.sparsityRegularization = sparsityRegularization
@@ -91,6 +93,7 @@ class SimilarityNet(object):
                     visibleActivationFunction=self.visibleActivationFunction,
                     hiddenActivationFunction=self.hiddenActivationFunction,
                     rmsprop=True,
+                    momentumFactorForLearningRate=self.momentumFactorForLearningRateRBM,
                     nesterov=self.nesterovRbm,
                     trainingEpochs=self.trainingEpochsRBM,
                     sparsityConstraint=self.sparsityConstraint,
