@@ -505,8 +505,8 @@ def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
   totalData1 = images[indices1]
   totalData2 = images[indices2]
 
-  emotions1 = emotions1[indices1]
-  emotions2 = emotions2[indices1]
+  emotions1 = emotions[indices1]
+  emotions2 = emotions[indices1]
 
   totalLabels = zip(emotions1, emotions2)
 
