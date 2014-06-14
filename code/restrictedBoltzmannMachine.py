@@ -522,7 +522,7 @@ class RBM(object):
             updates=self.reconstructer.updates,
             givens={self.x: dataInstacesConverted[index * miniBatchSize: (index + 1) * miniBatchSize]})
 
-    data = np.vstack([representHidden(miniBatchIndex) for i in xrange(nrMiniBatches)])
+    data = np.vstack([representHidden(i) for i in xrange(nrMiniBatches)])
 
     return data
 
@@ -543,7 +543,7 @@ class RBM(object):
             updates=self.reconstructer.updates,
             givens={self.x: dataInstacesConverted[index * miniBatchSize: (index + 1) * miniBatchSize]})
 
-    data = np.vstack([reconstructFunction(miniBatchIndex) for i in xrange(nrMiniBatches)])
+    data = np.vstack([reconstructFunction(i) for i in xrange(nrMiniBatches)])
 
     return data
 
