@@ -872,7 +872,14 @@ def deepbeliefKaggleCompetition(big=False):
 
   trainData, trainLabels = shuffle(trainData, trainLabels)
 
+  trainData = trainData[0:args.trainSize]
+  trainLabels = trainLabels[0:args.trainSize]
+
   testData, testLabels = readBigKaggleTestPublic()
+
+
+  testData = testData[0:args.trainSize]
+  testLabels = testLabels[0:args.trainSize]
 
 
   if args.relu:
