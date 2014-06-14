@@ -521,6 +521,9 @@ def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
 
   #   print totalLabels[i]
 
+  print totalData1.shape
+  print totalData2.shape
+
   return totalData1, totalData2, totalLabels
 
 
