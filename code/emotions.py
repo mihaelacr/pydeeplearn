@@ -993,8 +993,9 @@ def deepbeliefKaggleCompetitionBigCV():
   fold = 0
   for train, test in kf:
     trainData = data[train]
-    testData = data[train]
     trainLabels = labels[train]
+
+    testData = data[test]
     testLabels = labels[test]
 
     net = db.DBN(5, [2304, 1500, 1500, 1500, 7],
