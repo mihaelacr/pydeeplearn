@@ -909,9 +909,15 @@ def makeKagglePlotUnlabelled():
 
 
 def readBigKaggle():
-  data = []
-  labels = []
-  types = []
+  trainingData = []
+  trainingLabels = []
+
+  publicTestData = []
+  publicTestLabels = []
+
+  privateTestData = []
+  privateTestLabels = []
+
   i = 0
   with open('fer2013/fer2013.csv', 'rb') as f:
     reader = csv.reader(f)
@@ -920,18 +926,38 @@ def readBigKaggle():
         # print row
         emotion = int(row[0])
         instance = np.fromstring(row[1], dtype=int, sep=' ')
-        data += [instance]
-        labels += [emotion]
-        types += [row[3]]
+        if row[2]  == "PublicTest":
+          publicTestData+= [instance]
+          publicTestLabels+= [emotion]
+        elif row[2]  == "Training":
+          trainingData+= [instance]
+          trainingLabels+= [emotion]
+        elif row[2]  == "PrivateTest":
+          privateTestData+= [instance]
+          privateTestLabels+= [emotion]
+        else:
+          raise Exception("bad label in bigKaggle reading")
 
-        # plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
-        # plt.show()
+        plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
+        plt.show()
       i += 1
 
-  labels = labelsToVectors(labels, 7)
-  data = np.array(data)
-  print set(types)
-  return data, labels
+  return trainingData, trainingLabels, publicTestData, publicTestLabels, privateTestData, privateTestLabels
+
+
+def readBigKaggleTrain():
+  trainingData, trainingLabels, _, _, _, _ = readBigKaggle()
+  return trainingData, trainingLabels
+
+def readBigKaggleTestPublic():
+  _, _, publicTestData, publicTestLabels, _, _ = readBigKaggle()
+  return publicTestData, publicTestLabels
+
+
+def readBigKaggleTestPrivate():
+  _, _, _, _, privateTestData, privateTestLabels = readBigKaggle()
+  return privateTestData, privateTestLabels
+
 
 
 if __name__ == '__main__':
@@ -947,4 +973,5 @@ if __name__ == '__main__':
   # makeKanadeImag
   # readKaggleCompetitionUnlabelled()
   # readKaggleCompetition()
-  makeKagglePlot()
+  # makeKagglePlot()
+  readBigKaggle()
