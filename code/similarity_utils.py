@@ -521,6 +521,8 @@ def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
 
   #   print totalLabels[i]
 
+  totalData1 = np.squeeze(totalData1)
+  totalData2 = np.squeeze(totalData2)
   print totalData1.shape
   print totalData2.shape
 
