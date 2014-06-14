@@ -908,6 +908,31 @@ def makeKagglePlotUnlabelled():
   return final
 
 
+def readBigKaggle():
+  data = []
+  labels = []
+  types = []
+  i = 0
+  with open('fer2013/fer2013.csv', 'rb') as f:
+    reader = csv.reader(f)
+    for row in reader:
+      if i > 0:
+        # print row
+        emotion = int(row[0])
+        instance = np.fromstring(row[1], dtype=int, sep=' ')
+        data += [instance]
+        labels += [emotion]
+        types += [row[3]]
+
+        # plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
+        # plt.show()
+      i += 1
+
+  labels = labelsToVectors(labels, 7)
+  data = np.array(data)
+  print set(types)
+  return data, labels
+
 
 if __name__ == '__main__':
   # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
