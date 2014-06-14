@@ -508,16 +508,16 @@ def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
   emotions1 = emotions[indices1]
   emotions2 = emotions[indices1]
 
-  totalLabels = zip(emotions1, emotions2)
+  totalLabels = [(emotions1[i], emotions2[i]) for i in xrange(len(emotions1))]
 
-  for i in xrange(0, len(totalData1), 10):
-    plt.imshow(totalData1[i].reshape((40, 30)),  cmap=plt.cm.gray)
-    plt.show()
+  # for i in xrange(0, len(totalData1), 10):
+  #   plt.imshow(totalData1[i].reshape((40, 30)),  cmap=plt.cm.gray)
+  #   plt.show()
 
-    plt.imshow(totalData2[i].reshape((40, 30)),  cmap=plt.cm.gray)
-    plt.show()
+  #   plt.imshow(totalData2[i].reshape((40, 30)),  cmap=plt.cm.gray)
+  #   plt.show()
 
-    print totalLabels[i]
+  #   print totalLabels[i]
 
   return totalData1, totalData2, totalLabels
 
