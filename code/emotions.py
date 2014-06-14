@@ -85,6 +85,8 @@ parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--preTrainEpochs', type=int, default=1,
                     help='the number of pretraining epochs')
+parser.add_argument('--machine', type=str, default=0,
+                    help='the host number of the machine running the experiment')
 parser.add_argument('--kaggle',dest='kaggle',action='store_true', default=False,
                       help='if true, trains a net on the kaggle data')
 parser.add_argument('--kagglecv',dest='kagglecv',action='store_true', default=False,
@@ -982,8 +984,12 @@ def deepbeliefKaggleCompetitionBigCV():
   rbmActivationFunctionVisible = Identity()
   rbmActivationFunctionHidden = RectifiedNoisy()
 
-
-  params = [(0.005, 0.001), (0.05, 0.001), (0.005, 0.01), (0.05, 0.01)]
+  if args.machine == 0:
+    params = [(0.005, 0.001), (0.05, 0.001)]
+  elif args.machine == 1:
+    params = [(0.005, 0.01), (0.05, 0.01)]
+  elif args.machine == 2:
+    params = [(0.05, 0.01)]
 
   kf = cross_validation.KFold(n=len(data), k=len(params))
 
