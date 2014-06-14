@@ -771,26 +771,20 @@ def deepbeliefPIECV(big=False):
       resfile.write(str(params[i]))
 
 def deepbeliefKaggleCompetition(big=False):
-  data, labels = readKaggleCompetition()
+  trainData, trainLabels = readBigKaggleTrain()
 
-  data, labels = shuffle(data, labels)
+  trainData, trainLabels = shuffle(trainData, trainLabels)
 
-  print "data.shape"
-  print data.shape
-  print "labels.shape"
-  print labels.shape
+  testData, testLabels = readBigKaggleTestPublic()
 
-  # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), n_folds=5)
-  for train, test in kf:
-    break
 
   if args.relu:
     activationFunction = Rectified()
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95
-    data = scale(data)
+    trainData = scale(trainData)
+    trainData = scale(trainData)
     rbmActivationFunctionVisible = Identity()
     rbmActivationFunctionHidden = RectifiedNoisy()
 
@@ -802,9 +796,6 @@ def deepbeliefKaggleCompetition(big=False):
     unsupervisedLearningRate = 0.5
     supervisedLearningRate = 0.1
     momentumMax = 0.9
-
-  trainData = data[train]
-  trainLabels = labels[train]
 
   # TODO: this might require more thought
   net = db.DBN(5, [2304, 1500, 1500, 1500, 7],
@@ -833,9 +824,9 @@ def deepbeliefKaggleCompetition(big=False):
             validation=args.validation,
             unsupervisedData=unsupervisedData)
 
-  probs, predicted = net.classify(data[test])
+  probs, predicted = net.classify(testData)
 
-  actualLabels = labels[test]
+  actualLabels = testLabels
   correct = 0
   errorCases = []
 
