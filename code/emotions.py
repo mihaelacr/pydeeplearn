@@ -1051,7 +1051,7 @@ def deepbeliefKaggleCompetitionBigCV():
       bestParam = params[fold]
       bestProbs = correctProbs
 
-    with open("resultsKaggle.txt", "a") as resfile:
+    with open("resultsKagglemachine" + str(args.machine) + ".txt", "a") as resfile:
       resfile.write(str(params[fold]))
       resfile.write(str(correctProbs))
       resfile.write(str(correct))
@@ -1072,7 +1072,7 @@ def deepbeliefKaggleCompetitionBigCV():
   for i in xrange(len(params)):
     print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
 
-  with open("resultsKaggle.txt", "a") as resfile:
+  with open("resultsKagglemachine" + str(args.machine)+ ".txt", "a") as resfile:
     for i in xrange(len(params)):
       test = "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
       resfile.write(str(params[i]))

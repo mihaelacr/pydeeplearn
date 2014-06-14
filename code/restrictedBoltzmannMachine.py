@@ -244,7 +244,6 @@ class RBM(object):
 
     print len(data)
 
-    # TODO: bring it back if it helps
     # If we have gaussian units, we need to scale the data
     # to unit variance and zero mean
     if isinstance(self.visibleActivationFunction, Identity):
