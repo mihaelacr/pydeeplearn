@@ -85,7 +85,7 @@ parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--preTrainEpochs', type=int, default=1,
                     help='the number of pretraining epochs')
-parser.add_argument('--machine', type=str, default=0,
+parser.add_argument('--machine', type=int, default=0,
                     help='the host number of the machine running the experiment')
 parser.add_argument('--kaggle',dest='kaggle',action='store_true', default=False,
                       help='if true, trains a net on the kaggle data')
