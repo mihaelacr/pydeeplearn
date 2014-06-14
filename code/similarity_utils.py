@@ -455,7 +455,7 @@ def splitForSimilaritySameSubjectsDifferentEmotions(equalize, emotions, perSubje
 
   similaritiesTrain = similarityDifferentLabels(labels1, labels2)
 
-  testData1, testData2, groups = makeTestGroups(subjectToEmotionsTest)
+  testData1, testData2, groups = makeTestGroupsDifferentSubjects(subjectToEmotionsTest)
 
   return data1, data2, similaritiesTrain, testData1, testData2, groups
 
@@ -473,11 +473,12 @@ def makeTestGroups(subjectToEmotionsTest):
 
   totalData1 = np.vstack(totalData1)
   totalData2 = np.vstack(totalData2)
-  print totalLabels
   totalLabels = list(itertools.chain(*totalLabels))
-  print totalLabels
 
   totalLabels = np.array(totalLabels)
+  return totalData1, totalData2, totalLabels
+
+
 
 def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
   # splitShuffling is what I need for the subjects
@@ -509,6 +510,7 @@ def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
   emotions2 = emotions[indices1]
 
   totalLabels = [(emotions1[i], emotions2[i]) for i in xrange(len(emotions1))]
+  totalLabels = np.array(totalLabels)
 
   # for i in xrange(0, len(totalData1), 10):
   #   plt.imshow(totalData1[i].reshape((40, 30)),  cmap=plt.cm.gray)
