@@ -512,7 +512,7 @@ def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
   totalLabels = [(emotions1[i], emotions2[i]) for i in xrange(len(emotions1))]
   totalLabels = np.array(totalLabels)
 
-  print totalLabels
+  print totalLabels.shape
 
   # for i in xrange(0, len(totalData1), 10):
   #   plt.imshow(totalData1[i].reshape((40, 30)),  cmap=plt.cm.gray)
