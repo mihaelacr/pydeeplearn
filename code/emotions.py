@@ -987,17 +987,19 @@ def deepbeliefKaggleCompetitionBigCV():
   if args.machine == 0:
     params = [(0.005, 0.001), (0.05, 0.001)]
   elif args.machine == 1:
-    params = [(0.005, 0.01), (0.05, 0.01)]
+    params = [(0.005, 0.01)]
   elif args.machine == 2:
     params = [(0.05, 0.01)]
 
-  kf = cross_validation.KFold(n=len(data), k=len(params))
+  kf = cross_validation.KFold(n=len(data), k=5)
 
   bestCorrect = 0
   bestProbs = 0
   probsforParms = []
   fold = 0
   for train, test in kf:
+    if fold >= len(params):
+      break
     trainData = data[train]
     trainLabels = labels[train]
 
