@@ -934,7 +934,7 @@ def deepbeliefKaggleCompetition(big=False):
   correct = 0
   errorCases = []
 
-  for i in xrange(len(test)):
+  for i in xrange(len(testLabels)):
     print "predicted"
     print "probs"
     print probs[i]
