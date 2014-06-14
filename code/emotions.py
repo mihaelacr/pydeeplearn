@@ -1033,9 +1033,8 @@ def deepbeliefKaggleCompetitionBigCV():
       print np.argmax(actual)
       if predicted[i] == np.argmax(actual):
         correct += 1
-      else:
-        errorCases.append(i)
 
+    correctProbs = correct * 1.0 / len(test)
     probsforParms += [correctProbs]
 
     if bestCorrect < correct:
