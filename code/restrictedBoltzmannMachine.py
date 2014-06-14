@@ -504,20 +504,28 @@ class RBM(object):
 
     return preDeltaUpdates, updates
 
+
+  #  Even though this function has no side effects, we need mini batches in
+  # order to ensure that we do not go out of memory
   def hiddenRepresentation(self, dataInstances):
     dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
     miniBatchSize = 1000
+    nrMiniBatches = len(dataInstances) / nrMiniBatches + 1
+
 
     representHidden = theano.function(
-            inputs=[],
+            inputs=[index],
             outputs=self.reconstructer.hiddenActivations,
             updates=self.reconstructer.updates,
-            givens={self.x: dataInstacesConverted})
+            givens={self.x: dataInstacesConverted[index * miniBatchSize: (index + 1) * miniBatchSize]})
 
-    return representHidden()
+    data = np.vstack([representHidden(miniBatchIndex) for i in xrange(nrMiniBatches)])
 
+    return data
 
+  #  Even though this function has no side effects, we need mini batches in
+  # order to ensure that we do not go out of memory
   def reconstruct(self, dataInstances, cdSteps=1):
     dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
