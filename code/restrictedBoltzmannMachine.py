@@ -511,7 +511,7 @@ class RBM(object):
     dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
     miniBatchSize = 1000
-    nrMiniBatches = len(dataInstances) / nrMiniBatches + 1
+    nrMiniBatches = len(dataInstances) / miniBatchSize + 1
 
 
     representHidden = theano.function(
@@ -530,7 +530,7 @@ class RBM(object):
     dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
     miniBatchSize = 1000
-    nrMiniBatches = len(dataInstances) / nrMiniBatches + 1
+    nrMiniBatches = len(dataInstances) / miniBatchSize + 1
 
     reconstructFunction = theano.function(
             inputs=[index],
