@@ -828,6 +828,8 @@ def readAberdeen(crop, detectFaces, equalize):
 
 
 def readKaggleCompetition():
+  # Got data from here:
+  # https://inclass.kaggle.com/c/facial-keypoints-detector/data
   data = []
   labels = []
   i = 0
