@@ -507,7 +507,7 @@ def makeTestGroupsDifferentSubjects(subjectToEmotionsTest):
   totalData2 = images[indices2]
 
   emotions1 = emotions[indices1]
-  emotions2 = emotions[indices1]
+  emotions2 = emotions[indices2]
 
   totalLabels = [(emotions1[i], emotions2[i]) for i in xrange(len(emotions1))]
   totalLabels = np.array(totalLabels)
