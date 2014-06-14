@@ -978,8 +978,7 @@ def deepbeliefKaggleCompetitionBigCV():
   # unsupervisedLearningRate = 0.05
   # supervisedLearningRate = 0.01
   momentumMax = 0.95
-  trainData = scale(trainData)
-  trainData = scale(trainData)
+  data = scale(data)
   rbmActivationFunctionVisible = Identity()
   rbmActivationFunctionHidden = RectifiedNoisy()
 
@@ -1019,7 +1018,7 @@ def deepbeliefKaggleCompetitionBigCV():
 
     unsupervisedData = None
 
-    net.train(testData, trainLabels, maxEpochs=args.maxEpochs,
+    net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
               validation=args.validation,
               unsupervisedData=unsupervisedData)
 
