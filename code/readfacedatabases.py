@@ -938,8 +938,7 @@ def readBigKaggle():
         else:
           raise Exception("bad label in bigKaggle reading")
 
-        plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
-        plt.show()
+
       i += 1
 
   return trainingData, trainingLabels, publicTestData, publicTestLabels, privateTestData, privateTestLabels
@@ -947,10 +946,16 @@ def readBigKaggle():
 
 def readBigKaggleTrain():
   trainingData, trainingLabels, _, _, _, _ = readBigKaggle()
+  for instance in trainingData:
+    plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
+    plt.show()
   return trainingData, trainingLabels
 
 def readBigKaggleTestPublic():
   _, _, publicTestData, publicTestLabels, _, _ = readBigKaggle()
+  for instance in publicTestData:
+    plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
+    plt.show()
   return publicTestData, publicTestLabels
 
 
@@ -974,4 +979,4 @@ if __name__ == '__main__':
   # readKaggleCompetitionUnlabelled()
   # readKaggleCompetition()
   # makeKagglePlot()
-  readBigKaggle()
+  readBigKaggleTestPrivate()
