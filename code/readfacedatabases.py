@@ -946,16 +946,16 @@ def readBigKaggle():
 
 def readBigKaggleTrain():
   trainingData, trainingLabels, _, _, _, _ = readBigKaggle()
-  for instance in trainingData:
-    plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
-    plt.show()
+  # for instance in trainingData:
+  #   plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
+  #   plt.show()
   return trainingData, trainingLabels
 
 def readBigKaggleTestPublic():
   _, _, publicTestData, publicTestLabels, _, _ = readBigKaggle()
-  for instance in publicTestData:
-    plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
-    plt.show()
+  # for instance in publicTestData:
+  #   plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
+  #   plt.show()
   return publicTestData, publicTestLabels
 
 
