@@ -952,7 +952,7 @@ def deepbeliefKaggleCompetition(big=False):
   print correct
 
   print "percentage correct"
-  print correct  * 1.0/ len(test)
+  print correct  * 1.0/ len(testLabels)
 
   confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
   print "confusion matrix"
