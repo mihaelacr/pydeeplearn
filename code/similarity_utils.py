@@ -455,7 +455,7 @@ def splitForSimilaritySameSubjectsDifferentEmotions(equalize, emotions, perSubje
 
   similaritiesTrain = similarityDifferentLabels(labels1, labels2)
 
-  testData1, testData2, groups = makeTestGroupsDifferentSubjects(subjectToEmotionsTest)
+  testData1, testData2, groups = makeTestGroups(subjectToEmotionsTest)
 
   return data1, data2, similaritiesTrain, testData1, testData2, groups
 
