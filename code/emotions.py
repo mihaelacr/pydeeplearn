@@ -963,6 +963,112 @@ def deepbeliefKaggleCompetition(big=False):
       pickle.dump(net, f)
 
 
+def deepbeliefKaggleCompetitionBigCV():
+  data, labels = readBigKaggleTrain()
+  data, labels = shuffle(data, labels)
+
+  data = data[0:args.trainSize]
+  labels = labels[0:args.trainSize]
+
+  assert args.relu , " only rectified linear units are supported for second kaggle competition"
+
+  activationFunction = Rectified()
+  # unsupervisedLearningRate = 0.05
+  # supervisedLearningRate = 0.01
+  momentumMax = 0.95
+  trainData = scale(trainData)
+  trainData = scale(trainData)
+  rbmActivationFunctionVisible = Identity()
+  rbmActivationFunctionHidden = RectifiedNoisy()
+
+
+  params = [(0.005, 0.001), (0.05, 0.001), (0.005, 0.01), (0.05, 0.01)]
+
+  kf = cross_validation.KFold(n=len(data), k=len(params))
+
+  bestCorrect = 0
+  bestProbs = 0
+  probsforParms = []
+  fold = 0
+  for train, test in kf:
+    trainData = data[train]
+    testData = data[train]
+    trainLabels = labels[train]
+    testLabels = labels[test]
+
+    net = db.DBN(5, [2304, 1500, 1500, 1500, 7],
+               binary=1-args.relu,
+               activationFunction=activationFunction,
+               rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+               rbmActivationFunctionHidden=rbmActivationFunctionHidden,
+               unsupervisedLearningRate=unsupervisedLearningRate,
+               supervisedLearningRate=supervisedLearningRate,
+               momentumMax=momentumMax,
+               nesterovMomentum=args.nesterov,
+               rbmNesterovMomentum=args.rbmnesterov,
+               rmsprop=args.rmsprop,
+               miniBatchSize=args.miniBatchSize,
+               firstRBMheuristic=False,
+               hiddenDropout=0.5,
+               visibleDropout=0.8,
+               rbmVisibleDropout=1.0,
+               rbmHiddenDropout=1.0,
+               preTrainEpochs=args.preTrainEpochs)
+
+    unsupervisedData = None
+
+    net.train(testData, trainLabels, maxEpochs=args.maxEpochs,
+              validation=args.validation,
+              unsupervisedData=unsupervisedData)
+
+    probs, predicted = net.classify(testData)
+
+    actualLabels = testLabels
+    correct = 0
+    errorCases = []
+
+    for i in xrange(len(testLabels)):
+      actual = actualLabels[i]
+      print np.argmax(actual)
+      if predicted[i] == np.argmax(actual):
+        correct += 1
+      else:
+        errorCases.append(i)
+
+    probsforParms += [correctProbs]
+
+    if bestCorrect < correct:
+      bestCorrect = correct
+      bestParam = params[fold]
+      bestProbs = correctProbs
+
+    with open("resultsKaggle" +args.relu+".txt", "a") as resfile:
+      resfile.write(str(params[fold]))
+      resfile.write(str(correctProbs))
+      resfile.write(str(correct))
+
+
+    print "correct"
+    print correct
+
+    print "percentage correct"
+    print correct  * 1.0/ len(testLabels)
+
+    confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+    print "confusion matrix"
+    print confMatrix
+
+    fold += 1
+
+  for i in xrange(len(params)):
+    print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
+
+  with open("resultsKaggle.txt", "a") as resfile:
+    for i in xrange(len(params)):
+      test = "parameter tuple " + str(params[i]) + " achieved correctness of " + str(probsforParms[i])
+      resfile.write(str(params[i]))
+
+
 def svmPIE():
   with open(args.netFile, "rb") as f:
     dbnNet = pickle.load(f)
