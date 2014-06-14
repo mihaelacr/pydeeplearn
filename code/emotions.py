@@ -87,6 +87,8 @@ parser.add_argument('--preTrainEpochs', type=int, default=1,
                     help='the number of pretraining epochs')
 parser.add_argument('--kaggle',dest='kaggle',action='store_true', default=False,
                       help='if true, trains a net on the kaggle data')
+parser.add_argument('--kagglecv',dest='kagglecv',action='store_true', default=False,
+                      help='if true, cv for kaggle data')
 
 
 # DEBUG mode?
@@ -1892,6 +1894,9 @@ def main():
 
   if args.kaggle:
     deepbeliefKaggleCompetition()
+
+  if args.kagglecv:
+    deepbeliefKaggleCompetitionBigCV()
 
 
 # You can also group the emotions into positive and negative to see
