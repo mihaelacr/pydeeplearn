@@ -513,6 +513,8 @@ class RBM(object):
     miniBatchSize = 1000
     nrMiniBatches = len(dataInstances) / miniBatchSize + 1
 
+    # Symbolic variable for index
+    index = T.iscalar()
 
     representHidden = theano.function(
             inputs=[index],
@@ -531,6 +533,9 @@ class RBM(object):
 
     miniBatchSize = 1000
     nrMiniBatches = len(dataInstances) / miniBatchSize + 1
+
+    # Symbolic variable for index
+    index = T.iscalar()
 
     reconstructFunction = theano.function(
             inputs=[index],
