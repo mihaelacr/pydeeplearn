@@ -507,31 +507,32 @@ class RBM(object):
   def hiddenRepresentation(self, dataInstances):
     dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
+    miniBatchSize = 1000
+
     representHidden = theano.function(
             inputs=[],
-            # TODO: instead of using hiddenActivations how about using
-            #  the expectation?
-            # or just make hidden activations to be the expectation?
             outputs=self.reconstructer.hiddenActivations,
             updates=self.reconstructer.updates,
             givens={self.x: dataInstacesConverted})
 
     return representHidden()
 
-    # TODO: you have to take into account that you are passing in too much
-    # data here and it will be too slow
-    # so send the data in via mini bathes for reconstruction as well
 
   def reconstruct(self, dataInstances, cdSteps=1):
     dataInstacesConverted = theano.shared(np.asarray(dataInstances, dtype=theanoFloat))
 
+    miniBatchSize = 1000
+    nrMiniBatches = len(dataInstances) / nrMiniBatches + 1
+
     reconstructFunction = theano.function(
-            inputs=[],
+            inputs=[index],
             outputs=self.reconstructer.visibleReconstruction,
             updates=self.reconstructer.updates,
-            givens={self.x: dataInstacesConverted})
+            givens={self.x: dataInstacesConverted[index * miniBatchSize: (index + 1) * miniBatchSize]})
 
-    return reconstructFunction()
+    data = np.vstack([reconstructFunction(miniBatchIndex) for i in xrange(nrMiniBatches)])
+
+    return data
 
   def reconstructionError(self, dataInstances):
     reconstructions = self.reconstruct(dataInstances)
