@@ -743,11 +743,12 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
 
         img = cv2.imread(fullPath, 0)
 
-        if equalize:
-          img = equalizeFromFloatCLAHE(img)
-
         face = facedetection.cropFace(img)
+
+
         if not face == None:
+          if equalize:
+            img = equalizeFromFloatCLAHE(img)
           # Only do the resizing once you are done with the cropping of the faces
           face = resize(face, SMALL_SIZE)
           # Check that you are always saving them in the right format
