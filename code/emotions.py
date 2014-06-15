@@ -91,6 +91,9 @@ parser.add_argument('--kaggle',dest='kaggle',action='store_true', default=False,
                       help='if true, trains a net on the kaggle data')
 parser.add_argument('--kagglecv',dest='kagglecv',action='store_true', default=False,
                       help='if true, cv for kaggle data')
+parser.add_argument('--kagglesmall',dest='kagglesmall',action='store_true', default=False,
+                      help='if true, cv for kaggle data')
+
 
 
 # DEBUG mode?
@@ -925,8 +928,8 @@ def deepbeliefKaggleCompetition(big=False):
              rbmHiddenDropout=1.0,
              preTrainEpochs=args.preTrainEpochs)
 
-  # unsupervisedData = readKaggleCompetitionUnlabelled()
-  unsupervisedData = None
+  unsupervisedData = readKaggleCompetitionUnlabelled()
+  # unsupervisedData = None
 
   net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
             validation=args.validation,
@@ -1906,6 +1909,9 @@ def main():
 
   if args.kagglecv:
     deepbeliefKaggleCompetitionBigCV()
+
+  if args.kagglesmall:
+    deepbeliefKaggleCompetition()
 
 
 # You can also group the emotions into positive and negative to see
