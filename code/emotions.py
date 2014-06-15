@@ -888,8 +888,8 @@ def deepbeliefKaggleCompetition(big=False):
 
   if args.relu:
     activationFunction = Rectified()
-    unsupervisedLearningRate = 0.05
-    supervisedLearningRate = 0.01
+    unsupervisedLearningRate = 0.001
+    supervisedLearningRate = 0.001
     momentumMax = 0.95
     trainData = scale(trainData)
     trainData = scale(trainData)
@@ -1008,7 +1008,7 @@ def deepbeliefKaggleCompetitionBigCV():
     testData = data[test]
     testLabels = labels[test]
 
-    net = db.DBN(5, [2304, 1500, 1500, 1500, 7],
+    net = db.DBN(5, [2304, 1500, 1500, 2000, 7],
                binary=1-args.relu,
                activationFunction=activationFunction,
                rbmActivationFunctionVisible=rbmActivationFunctionVisible,
