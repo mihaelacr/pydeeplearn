@@ -63,7 +63,7 @@ class RectifiedNoisy(ActivationFunction):
     return x * (x > 0.0)
 
   def deterministic(self, x):
-    return expectedValueGaussian(x, T.nnet.sigmoid(x) + 1e-08)
+    return expectedValueRectified(x, T.nnet.sigmoid(x) + 1e-08)
 
   def activationProbablity(self, x):
     return 1.0 - cdf(0, miu=x, variance=T.nnet.sigmoid(x))
@@ -78,7 +78,7 @@ class RectifiedNoisyVar1(ActivationFunction):
     return x * (x > 0.0)
 
   def deterministic(self, x):
-    return expectedValueGaussian(x, 1.0)
+    return expectedValueRectified(x, 1.0)
 
   def activationProbablity(self, x):
     return 1.0 - cdf(0, miu=x, variance=1.0)
@@ -115,7 +115,7 @@ class CappedRectifiedNoisy(ActivationFunction):
     return None
 
 
-def expectedValueGaussian(mean, variance):
+def expectedValueRectified(mean, variance):
   std = T.sqrt(variance)
   return std / T.sqrt(2.0 * np.pi) * T.exp(- mean**2 / (2.0 * std)) + mean * cdf(mean / std)
 
