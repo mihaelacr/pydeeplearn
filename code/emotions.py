@@ -778,7 +778,7 @@ def deepbeliefPIECV(big=False):
       resfile.write(str(params[i]))
 
 def deepbeliefKaggleCompetitionSmallDataset(big=False):
-  data, labels = readKaggleCompetition()
+  data, labels = readKaggleCompetition(args.equalize)
 
   data, labels = shuffle(data, labels)
 
