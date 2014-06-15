@@ -236,7 +236,7 @@ class RBM(object):
     self.x = x
 
 
-  def train(self, data, miniBatchSize=10):
+  def train(self, data, miniBatchSize=20):
     print "rbm learningRate"
     print self.learningRate
 
