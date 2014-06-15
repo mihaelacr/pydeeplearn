@@ -276,7 +276,7 @@ def similarityDifferentSubjectsMain():
                                     hiddenActivationFunction=hiddenActivationFunction,
                                     rbmNrVis=1200,
                                     rbmNrHid=args.nrHidden,
-                                    momentumFactorForLearningRateRBM=True,
+                                    momentumFactorForLearningRateRBM=False,
                                     rbmLearningRate=rbmLearningRate,
                                     rbmDropoutHid=1.0,
                                     rmsprop=False,
