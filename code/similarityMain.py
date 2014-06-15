@@ -182,7 +182,7 @@ def similarityMainTestYale():
                                     rbmDropoutHid=1.0,
                                     rbmDropoutVis=1.0,
                                     rmsprop=False,
-                                    momentumFactorForLearningRate=True,
+                                    momentumFactorForLearningRateRBM=True,
                                     trainingEpochsRBM=args.rbmepochs,
                                     nesterovRbm=True,
                                     sparsityConstraint=args.sparsity,
