@@ -928,8 +928,8 @@ def deepbeliefKaggleCompetition(big=False):
              rbmHiddenDropout=1.0,
              preTrainEpochs=args.preTrainEpochs)
 
-  unsupervisedData = readKaggleCompetitionUnlabelled()
-  # unsupervisedData = None
+  # unsupervisedData = readKaggleCompetitionUnlabelled()
+  unsupervisedData = None
 
   net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
             validation=args.validation,
