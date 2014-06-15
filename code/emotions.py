@@ -908,8 +908,7 @@ def deepbeliefKaggleCompetition(big=False):
     supervisedLearningRate = 0.1
     momentumMax = 0.9
 
-  # TODO: this might require more thought
-  net = db.DBN(5, [2304, 1500, 1500, 1500, 7],
+  net = db.DBN(5, [2304, 1500, 1500, 2000, 7],
              binary=1-args.relu,
              activationFunction=activationFunction,
              rbmActivationFunctionVisible=rbmActivationFunctionVisible,
