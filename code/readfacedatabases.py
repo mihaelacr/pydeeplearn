@@ -747,10 +747,10 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
 
 
         if not face == None:
+          face = resize(face, SMALL_SIZE)
           if equalize:
             img = equalizeFromFloatCLAHE(img)
           # Only do the resizing once you are done with the cropping of the faces
-          face = resize(face, SMALL_SIZE)
           # Check that you are always saving them in the right format
           print "face.min"
           print face.min()
