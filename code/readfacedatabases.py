@@ -33,10 +33,10 @@ def equalizeCLAHE(x):
   return clahe.apply(x)
 
 
-def equalizeFromFloatGlobal(x):
+def equalizeFromFloatGlobal(x, reshapeSize=SMALL_SIZE):
   x = x * 255
   x = np.asarray(x, dtype='uint8')
-  y = x.reshape(SMALL_SIZE)
+  y = x.reshape(reshapeSize)
   y =  equalizeImgGlobal(y).reshape(-1)
   return y / 255.0
 
@@ -841,7 +841,7 @@ def readKaggleCompetition(equalize):
         emotion = int(row[0])
         instance = np.fromstring(row[1], dtype=int, sep=' ')
         if equalize:
-          instance = equalizeFromFloatGlobal(instance)
+          instance = equalizeFromFloatGlobal(instance, (48, 48))
 
         data += [instance]
         labels += [emotion]
