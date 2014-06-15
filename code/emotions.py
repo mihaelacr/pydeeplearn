@@ -966,7 +966,7 @@ def deepbeliefKaggleCompetition(big=False):
     with open(args.netFile, "wb") as f:
       pickle.dump(net, f)
 
-
+# TODO should average out (0.001, 0.005)  and  (0.001, 0.001)
 def deepbeliefKaggleCompetitionBigCV():
   data, labels = readBigKaggleTrain()
   data, labels = shuffle(data, labels)
@@ -1008,7 +1008,7 @@ def deepbeliefKaggleCompetitionBigCV():
     testData = data[test]
     testLabels = labels[test]
 
-    net = db.DBN(5, [2304, 1500, 1500, 2000, 7],
+    net = db.DBN(5, [2304, 1500, 1500, 1500, 7],
                binary=1-args.relu,
                activationFunction=activationFunction,
                rbmActivationFunctionVisible=rbmActivationFunctionVisible,
