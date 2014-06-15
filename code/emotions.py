@@ -1911,7 +1911,7 @@ def main():
     deepbeliefKaggleCompetitionBigCV()
 
   if args.kagglesmall:
-    deepbeliefKaggleCompetition()
+    deepbeliefKaggleCompetitionSmallDataset()
 
 
 # You can also group the emotions into positive and negative to see
