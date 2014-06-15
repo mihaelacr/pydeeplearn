@@ -140,7 +140,7 @@ class SimilarityNet(object):
     # Now you have to define the theano function
     discriminativeTraining = theano.function(
       inputs=[miniBatchIndex, learningRate, momentum],
-      outputs=[trainer.output, trainer.cos],
+      outputs=[trainer.output, trainer.cos, error],
       updates=updates,
       givens={
             x: data1[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
@@ -154,7 +154,9 @@ class SimilarityNet(object):
                        np.float32(0.95)))
 
       for miniBatch in xrange(nrMiniBatches):
-        output, cos = discriminativeTraining(miniBatch, learningRateMiniBatch, momentum)
+        output, cos, error = discriminativeTraining(miniBatch, learningRateMiniBatch, momentum)
+
+      print error
 
     print trainer.w.get_value()
     print trainer.b.get_value()
