@@ -312,6 +312,9 @@ def deepbeliefKanade(big=False):
   print "labels.shape"
   print labels.shape
 
+  unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
+
+
   # Random data for training and testing
   kf = cross_validation.KFold(n=len(data), n_folds=5)
   for train, test in kf:
@@ -319,9 +322,15 @@ def deepbeliefKanade(big=False):
 
   if args.relu:
     activationFunction = Rectified()
-    unsupervisedLearningRate = 0.005
-    supervisedLearningRate = 0.01
-    momentumMax = 0.99
+    if unsupervisedData == None:
+      unsupervisedLearningRate = 0.005
+      supervisedLearningRate = 0.01
+      momentumMax = 0.99
+    else:
+      unsupervisedLearningRate = 0.001
+      supervisedLearningRate = 0.01
+      momentumMax = 0.9
+
     data = scale(data)
     rbmActivationFunctionVisible = Identity()
     rbmActivationFunctionHidden = RectifiedNoisy()
@@ -362,7 +371,6 @@ def deepbeliefKanade(big=False):
              sparsityRegularizationRbm=0.001,
              sparsityTragetRbm=0.01)
 
-  unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
   # unsupervisedData = None
   # print "unsupervisedData.shape"
   # print unsupervisedData.shape

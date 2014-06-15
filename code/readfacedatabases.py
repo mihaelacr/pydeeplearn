@@ -876,7 +876,7 @@ def readKaggleCompetitionUnlabelled():
   return data
 
 def makeKagglePlot():
-  data, labels = readKaggleCompetition()
+  data, labels = readKaggleCompetition(False)
   data, labels = shuffle(data, labels)
   labels = np.argmax(labels, axis=1)
   print np.unique(labels)
@@ -891,11 +891,18 @@ def makeKagglePlot():
   final = np.hstack(final)
 
 
-  finalUnsup = makeKagglePlotUnlabelled()
-  print final.shape
-  print finalUnsup.shape
+  final2 = []
+  for i in xrange(7):
+    print i
+    instances = data[labels == i]
+    print instances[0].shape
+    final2 += [instances[2].reshape((48, 48))]
 
-  supAndUnsup = np.vstack((final, finalUnsup))
+  final2 = np.hstack(final2)
+
+
+
+  supAndUnsup = np.vstack((final, final2))
   plt.imshow(supAndUnsup, cmap=plt.cm.gray)
   plt.axis('off')
   plt.show()
@@ -987,5 +994,5 @@ if __name__ == '__main__':
   # makeKanadeImag
   # readKaggleCompetitionUnlabelled()
   # readKaggleCompetition()
-  # makeKagglePlot()
-  readBigKaggleTestPrivate()
+  makeKagglePlot()
+  # readBigKaggleTestPrivate()
