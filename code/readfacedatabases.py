@@ -827,7 +827,7 @@ def readAberdeen(crop, detectFaces, equalize):
                            isColoured=True)
 
 
-def readKaggleCompetition():
+def readKaggleCompetition(equalize):
   # Got data from here:
   # https://inclass.kaggle.com/c/facial-keypoints-detector/data
   data = []
@@ -840,6 +840,9 @@ def readKaggleCompetition():
         # print row
         emotion = int(row[0])
         instance = np.fromstring(row[1], dtype=int, sep=' ')
+        if equalize:
+          instance = equalizeFromFloatGlobal(instance)
+
         data += [instance]
         labels += [emotion]
         # plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
