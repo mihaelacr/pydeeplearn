@@ -1520,8 +1520,8 @@ def makeMissingDataImage():
   data, labels = shuffle(data, labels)
 
   testData = data[0:20]
-
   testData = addBlobsOfMissingData(testData, sqSize=10)
+
   final = []
   for i in xrange(6):
     final += [testData[i].reshape(SMALL_SIZE)]
