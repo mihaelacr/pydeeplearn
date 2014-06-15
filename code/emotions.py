@@ -362,8 +362,8 @@ def deepbeliefKanade(big=False):
              sparsityRegularizationRbm=0.001,
              sparsityTragetRbm=0.01)
 
-  # unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
-  unsupervisedData = None
+  unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
+  # unsupervisedData = None
   # print "unsupervisedData.shape"
   # print unsupervisedData.shape
 
