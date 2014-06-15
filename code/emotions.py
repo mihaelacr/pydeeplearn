@@ -991,8 +991,7 @@ def deepbeliefKaggleCompetitionBigCV():
   elif args.machine == 2:
     params = [(0.001, 0.005)]
   elif args.machine == 3:
-    params = [(0.005, 0.1)]
-
+    params = [(0.005, 0.001)]
 
   kf = cross_validation.KFold(n=len(data), k=5)
 
