@@ -60,6 +60,10 @@ def similarityMain():
   print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
   print len(testData1)
 
+
+  trainData1, trainData2, similaritiesTrain = shuffle(trainData1, trainData2, similaritiesTrain)
+  testData1, testData2, similaritiesTest = shuffle(testData1, testData2, similaritiesTest)
+
   if args.relu:
     # Rmsprop does not work well on this with relu so we do not provide values
     learningRate = 0.001
@@ -129,6 +133,9 @@ def similarityMainTestYale():
   similaritiesTrain =  similarityDifferentLabels(trainSubjects1, trainSubjects2)
 
   testData1, testData2, similaritiesTest = splitSimilarityYale(1, args.equalize)
+
+  trainData1, trainData2, similaritiesTrain = shuffle(trainData1, trainData2, similaritiesTrain)
+  testData1, testData2, similaritiesTest = shuffle(testData1, testData2, similaritiesTest)
 
   print "training with dataset of size ", len(trainData1)
   print len(trainData1)
