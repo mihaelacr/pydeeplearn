@@ -819,8 +819,8 @@ def readJaffe(crop, detectFaces, equalize):
                           isColoured=False)
 
 def readNottingham(crop, detectFaces, equalize):
-  PATH = "/home/aela/uni/project/nottingham"
-  # PATH = "/data/mcr10/nottingham"
+  # PATH = "/home/aela/uni/project/nottingham"
+  PATH = "/data/mcr10/nottingham"
   return readCropEqualize(PATH, "gif", crop, detectFaces, equalize=equalize,
                           isColoured=False)
 
