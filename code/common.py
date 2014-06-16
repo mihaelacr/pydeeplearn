@@ -96,7 +96,7 @@ def shuffle3(data1, data2, labels):
 
   return shuffledData1, shuffledData2, shuffledLabels
 
-
+# Cost required for the sparsity in RBMs
 def squaredDiff(first, second):
   return T.sqr(first - second)
 

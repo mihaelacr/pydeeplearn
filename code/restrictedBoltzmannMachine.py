@@ -167,7 +167,7 @@ class RBM(object):
                 trainingEpochs=1,
                 momentumFactorForLearningRate=False,
                 momentumMax=0.95,
-                sparsityCostFunction=T.nnet.binary_crossentropy,
+                sparsityCostFunction=squaredDiff,
                 sparsityConstraint=False,
                 sparsityRegularization=0.01,
                 sparsityTraget=0.01):
