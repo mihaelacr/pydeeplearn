@@ -333,7 +333,7 @@ def deepbeliefKanade(big=False):
       momentumMax = 0.99
     else:
       unsupervisedLearningRate = 0.001
-      supervisedLearningRate = 0.05
+      supervisedLearningRate = 0.01
       momentumMax = 0.99
 
 
