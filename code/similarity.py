@@ -148,15 +148,19 @@ class SimilarityNet(object):
             z: similarities[miniBatchIndex * miniBatchSize:(miniBatchIndex + 1) * miniBatchSize],
             })
 
-    for epoch in xrange(epochs):
-      print "epoch", epoch
-      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.05),
-                       np.float32(0.95)))
+    try:
+      for epoch in xrange(epochs):
+        print "epoch", epoch
+        momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.05),
+                         np.float32(0.95)))
 
-      for miniBatch in xrange(nrMiniBatches):
-        output, cos, error = discriminativeTraining(miniBatch, learningRateMiniBatch, momentum)
+        for miniBatch in xrange(nrMiniBatches):
+          output, cos, error = discriminativeTraining(miniBatch, learningRateMiniBatch, momentum)
 
-      print error
+        print error
+    except KeyboardInterrupt:
+      print "you have decided to interrupt training"
+      print "we continue testing"
 
     print trainer.w.get_value()
     print trainer.b.get_value()
