@@ -345,7 +345,7 @@ def similarityCV():
     hiddenActivationFunction = Sigmoid()
 
   if args.relu:
-    if args.rmsprop:
+    if not args.sparsity:
       params = [(0.001, 0.005), (0.001, 0.001), (0.005, 0.001), (0.005, 0.005)]
                 # (0.001, 0.005), (0.001, 0.001), (0.005, 0.001), (0.005, 0.005),
                 # (0.001, 0.005), (0.001, 0.001), (0.005, 0.001), (0.005, 0.005)]
@@ -737,7 +737,7 @@ def similaritySameSubjectDifferentEmotionsValues():
 
     predicted = res > 0.5
 
-    correct = (predicted == 1).sum() * 1.0 / len(predicted)
+    correct = (predicted == 1.0).sum() * 1.0 / len(predicted)
 
     # make all pairs
     emotionParis = [(x,y) for x in emotions for y in emotions]
