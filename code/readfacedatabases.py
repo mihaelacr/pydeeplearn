@@ -744,6 +744,7 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
         print fullPath
         print shortPath
         img = cv2.imread(fullPath, 0)
+        print img == None
 
         face = facedetection.cropFace(img)
 
