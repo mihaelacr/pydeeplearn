@@ -224,6 +224,7 @@ def similarityDifferentSubjectsMain():
     splitDataAccordingToLabels(subjectsToImgs, subjectTrain, instanceToPairRatio=2)
 
 
+
   testData1, testData2, testSubjects1, testSubjects2 =\
     splitDataAccordingToLabels(subjectsToImgs, subjectTest, instanceToPairRatio=2)
 
@@ -238,6 +239,17 @@ def similarityDifferentSubjectsMain():
 
   print "testing with ", similaritiesTest.sum(), "positive examples"
   print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
+
+  for i in xrange(10):
+    plt.imshow(trainData1[i].reshape((40, 30)), cmap=plt.cm.gray)
+    plt.show()
+
+    plt.imshow(trainData2[i].reshape((40, 30)), cmap=plt.cm.gray)
+    plt.show()
+
+    print similaritiesTrain[i]
+
+
 
   if args.relu:
     learningRate = 0.005
