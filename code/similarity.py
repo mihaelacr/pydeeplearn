@@ -150,7 +150,7 @@ class SimilarityNet(object):
 
     for epoch in xrange(epochs):
       print "epoch", epoch
-      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.1),
+      momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.05),
                        np.float32(0.95)))
 
       for miniBatch in xrange(nrMiniBatches):
