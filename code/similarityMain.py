@@ -240,9 +240,9 @@ def similarityDifferentSubjectsMain():
   print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
 
   if args.relu:
-      learningRate = 0.005
-      rbmLearningRate = 0.0005
-      maxMomentum = 0.95
+    learningRate = 0.005
+    rbmLearningRate = 0.0005
+    maxMomentum = 0.95
 
     visibleActivationFunction = Identity()
     hiddenActivationFunction = RectifiedNoisy()
