@@ -705,7 +705,7 @@ def readAttData(equalize=False):
   for f in imageFiles:
     img = cv2.imread(f, 0)
     if equalize:
-      img = equalizeImg(img)
+      img = equalizeImgGlobal(img)
     img = resize(img, SMALL_SIZE)
     images += [img.reshape(-1)]
 
