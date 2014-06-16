@@ -9,7 +9,7 @@ import os
 import cv2
 import facedetection
 import fnmatch
-
+import Image
 import csv
 
 
@@ -743,7 +743,8 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
 
         print fullPath
         print shortPath
-        img = cv2.imread(fullPath, 0)
+        img = Image.open(fullPath)
+        # img = cv2.imread(fullPath, 0)
         print img == None
 
         face = facedetection.cropFace(img)
