@@ -743,10 +743,10 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
 
         print fullPath
         print shortPath
-        img = Image.open(fullPath)
-        img = np.array(img.getdata()).reshape(img.size[0], img.size[1])
-        print img.shape
-        # img = cv2.imread(fullPath, 0)
+        # img = Image.open(fullPath)
+        # img = np.array(img.getdata()).reshape(img.size[0], img.size[1])
+        # print img.shape
+        img = cv2.imread(fullPath, 0)
         print img == None
 
         face = facedetection.cropFace(img)
@@ -827,7 +827,7 @@ def readJaffe(crop, detectFaces, equalize):
 def readNottingham(crop, detectFaces, equalize):
   # PATH = "/home/aela/uni/project/nottingham"
   PATH = "/data/mcr10/nottingham"
-  return readCropEqualize(PATH, "gif", crop, detectFaces, equalize=equalize,
+  return readCropEqualize(PATH, "png", crop, detectFaces, equalize=equalize,
                           isColoured=False)
 
 def readAberdeen(crop, detectFaces, equalize):
