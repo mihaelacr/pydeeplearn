@@ -106,6 +106,7 @@ class SimilarityNet(object):
 
 
   def train(self, data1, data2, similarities, miniBatchSize=20, epochs=200):
+    self.miniBatchSize = miniBatchSize
     nrMiniBatches = len(data1) / miniBatchSize
     miniBatchIndex = T.lscalar()
     momentum = T.fscalar()
@@ -157,7 +158,8 @@ class SimilarityNet(object):
         for miniBatch in xrange(nrMiniBatches):
           output, cos, error = discriminativeTraining(miniBatch, learningRateMiniBatch, momentum)
 
-        print error
+        print error /self.miniBatchSize
+
     except KeyboardInterrupt:
       print "you have decided to interrupt training"
       print "we continue testing"
