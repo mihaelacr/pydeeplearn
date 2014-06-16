@@ -322,6 +322,10 @@ def deepbeliefKanade(big=False):
 
   if args.relu:
     activationFunction = Rectified()
+    data = scale(data)
+    rbmActivationFunctionVisible = Identity()
+    rbmActivationFunctionHidden = RectifiedNoisy()
+
     if unsupervisedData == None:
       unsupervisedLearningRate = 0.005
       supervisedLearningRate = 0.01
@@ -331,9 +335,6 @@ def deepbeliefKanade(big=False):
       supervisedLearningRate = 0.05
       momentumMax = 0.99
 
-    data = scale(data)
-    rbmActivationFunctionVisible = Identity()
-    rbmActivationFunctionHidden = RectifiedNoisy()
 
   else:
     activationFunction = Sigmoid()
