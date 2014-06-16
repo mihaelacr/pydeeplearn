@@ -240,12 +240,7 @@ def similarityDifferentSubjectsMain():
   print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
 
   if args.relu:
-    if args.rmsprop:
-      learningRate = 0.001
-      rbmLearningRate = 0.0005
-      maxMomentum = 0.95
-    else:
-      learningRate = 0.001
+      learningRate = 0.005
       rbmLearningRate = 0.0005
       maxMomentum = 0.95
 
