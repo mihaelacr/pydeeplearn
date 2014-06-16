@@ -152,7 +152,7 @@ class SimilarityNet(object):
       for epoch in xrange(epochs):
         print "epoch", epoch
         momentum = np.float32(min(np.float32(0.5) + epoch * np.float32(0.05),
-                         np.float32(0.95)))
+                         np.float32(self.maxMomentum)))
 
         for miniBatch in xrange(nrMiniBatches):
           output, cos, error = discriminativeTraining(miniBatch, learningRateMiniBatch, momentum)
