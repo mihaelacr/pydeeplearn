@@ -117,7 +117,7 @@ class CappedRectifiedNoisy(ActivationFunction):
 
 def expectedValueRectified(mean, variance):
   std = T.sqrt(variance)
-  return std / T.sqrt(2.0 * np.pi) * T.exp(- mean**2 / (2.0 * std)) + mean * cdf(mean / std)
+  return std / T.sqrt(2.0 * np.pi) * T.exp(- mean**2 / (2.0 * std * std)) + mean * cdf(mean / std)
 
 # Approximation of the cdf of a standard normal
 def cdf(x, miu=0.0, variance=1.0):
