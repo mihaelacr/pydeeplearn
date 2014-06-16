@@ -253,17 +253,23 @@ def similarityDifferentSubjectsMain():
   trainData1, trainData2, similaritiesTrain = shuffle(trainData1, trainData2, similaritiesTrain)
   testData1, testData2, similaritiesTest = shuffle(testData1, testData2, similaritiesTest)
 
+  # for i in xrange(10):
+  #   plt.imshow(trainData1[i].reshape((40, 30)), cmap=plt.cm.gray)
+  #   plt.show()
+
+  #   plt.imshow(trainData2[i].reshape((40, 30)), cmap=plt.cm.gray)
+  #   plt.show()
+
+  #   print similaritiesTrain[i]
+
   for i in xrange(10):
-    plt.imshow(trainData1[i].reshape((40, 30)), cmap=plt.cm.gray)
+    plt.imshow(testData1[i].reshape((40, 30)), cmap=plt.cm.gray)
     plt.show()
 
-    plt.imshow(trainData2[i].reshape((40, 30)), cmap=plt.cm.gray)
+    plt.imshow(testData2[i].reshape((40, 30)), cmap=plt.cm.gray)
     plt.show()
 
-    print similaritiesTrain[i]
-
-
-
+    print similaritiesTest[i]
 
   if args.relu:
     learningRate = 0.005
@@ -730,6 +736,8 @@ def similaritySameSubjectDifferentEmotionsValues():
     res = simNet.test(testData1, testData2)
 
     predicted = res > 0.5
+
+    correct = (predicted == 1).sum() * 1.0 / len(predicted)
 
     # make all pairs
     emotionParis = [(x,y) for x in emotions for y in emotions]
