@@ -272,8 +272,8 @@ def similarityDifferentSubjectsMain():
   #   print similaritiesTest[i]
 
   if args.relu:
-    learningRate = 0.005
-    rbmLearningRate = 0.0005
+    learningRate = 0.001
+    rbmLearningRate = 0.001
     maxMomentum = 0.95
 
     visibleActivationFunction = Identity()
