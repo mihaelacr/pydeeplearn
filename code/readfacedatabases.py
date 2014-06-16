@@ -745,6 +745,7 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
         print shortPath
         img = Image.open(fullPath)
         img = np.array(img.getdata()).reshape(img.size[0], img.size[1])
+        print img.shape
         # img = cv2.imread(fullPath, 0)
         print img == None
 
