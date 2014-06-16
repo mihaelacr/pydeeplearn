@@ -242,6 +242,10 @@ def similarityDifferentSubjectsMain():
   print "testing with ", similaritiesTest.sum(), "positive examples"
   print "testing with ", len(similaritiesTest) - similaritiesTest.sum(), "negative examples"
 
+
+  trainData1, trainData2, similaritiesTrain = shuffle(trainData1, trainData2, similaritiesTrain)
+  testData1, testData2, similaritiesTest = shuffle(testData1, testData2, similaritiesTest)
+
   for i in xrange(10):
     plt.imshow(trainData1[i].reshape((40, 30)), cmap=plt.cm.gray)
     plt.show()
@@ -250,6 +254,7 @@ def similarityDifferentSubjectsMain():
     plt.show()
 
     print similaritiesTrain[i]
+
 
 
 
