@@ -262,14 +262,14 @@ def similarityDifferentSubjectsMain():
 
   #   print similaritiesTrain[i]
 
-  for i in xrange(10):
-    plt.imshow(testData1[i].reshape((40, 30)), cmap=plt.cm.gray)
-    plt.show()
+  # for i in xrange(10):
+  #   plt.imshow(testData1[i].reshape((40, 30)), cmap=plt.cm.gray)
+  #   plt.show()
 
-    plt.imshow(testData2[i].reshape((40, 30)), cmap=plt.cm.gray)
-    plt.show()
+  #   plt.imshow(testData2[i].reshape((40, 30)), cmap=plt.cm.gray)
+  #   plt.show()
 
-    print similaritiesTest[i]
+  #   print similaritiesTest[i]
 
   if args.relu:
     learningRate = 0.005
