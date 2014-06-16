@@ -227,7 +227,7 @@ def deepbeliefKanadeCV(big=False):
            (0.001, 0.01, 0.99), (0.001, 0.05, 0.99), (0.005, 0.01, 0.99), (0.005, 0.05, 0.99)]
 
 
-  unsupervisedData = None
+  unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
   # print "unsupervisedData.shape"
   # print unsupervisedData.shape
 
