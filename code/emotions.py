@@ -1,6 +1,7 @@
-""" The aim of this file is to contain all the function
+""" The aim of this file is to contain all the functions
 and the main which have to do with emotion recognition, especially
-with the Kanade database."""
+with the Kanade and Multi PiE databases. Note that the versions of both databases I used
+the faces were already aligned. Those databases are not publicly available. """
 
 import argparse
 import cPickle as pickle
