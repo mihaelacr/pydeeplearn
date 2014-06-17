@@ -215,5 +215,5 @@ class SimilarityNet(object):
 def cosineDistance(first, second):
   normFirst = T.sqrt(T.sum(T.sqr(first), axis=1))
   normSecond = T.sqrt(T.sum(T.sqr(second), axis=1))
-  return 1.0 - T.sum(first * second, axis=1) / (normFirst * normSecond)
+  return 1.0 - T.sum(first * second, axis=1) / (normFirst * normSecond +  1e-08)
 
