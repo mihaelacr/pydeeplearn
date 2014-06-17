@@ -86,7 +86,7 @@ def similarityMain():
       maxMomentum = 0.95
     else:
       learningRate = 0.001
-      rbmLearningRate = 0.05
+      rbmLearningRate = 0.005
       maxMomentum = 0.95
 
     visibleActivationFunction = Sigmoid()
