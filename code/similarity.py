@@ -32,7 +32,6 @@ class Trainer(object):
     self.oldDBias = theano.shared(value=np.zeros(self.net.biases[1].shape , dtype=theanoFloat))
 
     hiddenBias = net.sharedBiases[1]
-    # Do I need to add all biases? Probably only the hidden ones
     self.params = [self.w, self.b, self.net.sharedWeights, hiddenBias]
     self.oldDParams = [self.oldDw, self.oldDb, self.oldDWeights, self.oldDBias]
     self.oldMeanSquares =  [self.oldMeanSquarew, self.oldMeanSquareb, self.oldMeanSquareWeights, self.oldMeanSquareBias]

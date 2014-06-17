@@ -232,8 +232,6 @@ def similarityDifferentSubjectsMain():
   trainData1, trainData2, trainSubjects1, trainSubjects2 =\
     splitDataAccordingToLabels(subjectsToImgs, subjectTrain, instanceToPairRatio=2)
 
-
-
   testData1, testData2, testSubjects1, testSubjects2 =\
     splitDataAccordingToLabels(subjectsToImgs, subjectTest, instanceToPairRatio=2)
 
@@ -324,7 +322,6 @@ def similarityDifferentSubjectsMain():
 
   confMatrix = confusion_matrix(similaritiesTest, predicted)
   print confMatrix
-
 
   print correct
 
