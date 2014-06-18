@@ -829,33 +829,38 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
   trainData = data[train]
   trainLabels = labels[train]
 
-  # TODO: this might require more thought
-  net = db.DBN(5, [2304, 1500, 1500, 1500, 7],
-             binary=1-args.relu,
-             activationFunction=activationFunction,
-             rbmActivationFunctionVisible=rbmActivationFunctionVisible,
-             rbmActivationFunctionHidden=rbmActivationFunctionHidden,
-             unsupervisedLearningRate=unsupervisedLearningRate,
-             supervisedLearningRate=supervisedLearningRate,
-             momentumMax=momentumMax,
-             nesterovMomentum=args.nesterov,
-             rbmNesterovMomentum=args.rbmnesterov,
-             rmsprop=args.rmsprop,
-             miniBatchSize=args.miniBatchSize,
-             firstRBMheuristic=False,
-             hiddenDropout=0.5,
-             visibleDropout=0.8,
-             rbmVisibleDropout=1.0,
-             rbmHiddenDropout=1.0,
-             initialInputShape=(48, 48),
-             preTrainEpochs=args.preTrainEpochs)
+  if args.train:
+    # TODO: this might require more thought
+    net = db.DBN(5, [2304, 1500, 1500, 1500, 7],
+               binary=1-args.relu,
+               activationFunction=activationFunction,
+               rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+               rbmActivationFunctionHidden=rbmActivationFunctionHidden,
+               unsupervisedLearningRate=unsupervisedLearningRate,
+               supervisedLearningRate=supervisedLearningRate,
+               momentumMax=momentumMax,
+               nesterovMomentum=args.nesterov,
+               rbmNesterovMomentum=args.rbmnesterov,
+               rmsprop=args.rmsprop,
+               miniBatchSize=args.miniBatchSize,
+               firstRBMheuristic=False,
+               hiddenDropout=0.5,
+               visibleDropout=0.8,
+               rbmVisibleDropout=1.0,
+               rbmHiddenDropout=1.0,
+               initialInputShape=(48, 48),
+               preTrainEpochs=args.preTrainEpochs)
 
-  # unsupervisedData = readKaggleCompetitionUnlabelled()
-  unsupervisedData = None
+    # unsupervisedData = readKaggleCompetitionUnlabelled()
+    unsupervisedData = None
 
-  net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
-            validation=args.validation,
-            unsupervisedData=unsupervisedData)
+    net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
+              validation=args.validation,
+              unsupervisedData=unsupervisedData)
+  else:
+    # Take the saved network and use that for reconstructions
+    with open(args.netFile, "rb") as f:
+      net = pickle.load(f)
 
   probs, predicted = net.classify(data[test])
 
