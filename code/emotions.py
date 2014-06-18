@@ -897,6 +897,7 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
 
   if args.save:
     with open(args.netFile, "wb") as f:
+      print "you are saving in file", args.netFile
       pickle.dump(net, f)
 
 def deepbeliefKaggleCompetition(big=False):
