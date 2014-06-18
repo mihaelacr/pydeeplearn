@@ -299,6 +299,21 @@ class DBN(object):
     print "hidden dropout in DBN", hiddenDropout
     print "visible dropout in DBN", visibleDropout
 
+  def __getstate__(self):
+    odict = self.__dict__.copy() # copy the dict since we change it
+    kept = ['x', 'classifier']
+    for key in self.dict:
+      if key not in kept:
+        del odict[key]
+    return odict
+
+  def __setstate__(self, dict):
+    self.__dict__.update(dict)   # update attributes
+
+  def __getinitargs__():
+    return None
+
+
   def pretrain(self, data, unsupervisedData):
     nrRbms = self.nrLayers - 2
 
