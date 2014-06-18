@@ -805,7 +805,7 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
   print labels.shape
 
   # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), n_folds=5)
+  kf = cross_validation.KFold(n=len(data), k=5)
   for train, test in kf:
     break
 
