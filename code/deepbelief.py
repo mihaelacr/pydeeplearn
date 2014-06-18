@@ -302,7 +302,7 @@ class DBN(object):
   def __getstate__(self):
     odict = self.__dict__.copy() # copy the dict since we change it
     kept = ['x', 'classifier']
-    for key in self.dict:
+    for key in self.__dict__:
       if key not in kept:
         del odict[key]
     return odict
