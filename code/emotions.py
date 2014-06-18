@@ -794,6 +794,7 @@ def deepbeliefPIECV(big=False):
       resfile.write(str(params[i]))
 
 def deepbeliefKaggleCompetitionSmallDataset(big=False):
+  print "you are using the net file" , args.netFile
   data, labels = readKaggleCompetition(args.equalize)
 
   data, labels = shuffle(data, labels)
