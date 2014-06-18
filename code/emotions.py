@@ -862,6 +862,8 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
     with open(args.netFile, "rb") as f:
       net = pickle.load(f)
 
+  print net.layerSize
+
   probs, predicted = net.classify(data[test])
 
   actualLabels = labels[test]
