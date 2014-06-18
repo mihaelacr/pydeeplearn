@@ -27,4 +27,5 @@ def cropFace(image, rescaleForReconigtion=2):
 
   x, y, w, h = map(lambda x: x * rescaleForReconigtion,  rects[0])
   face = image[y:y + h, x:x + w]
+  # face = image[x:x + w, y:y + h]
   return face

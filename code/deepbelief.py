@@ -222,6 +222,8 @@ class DBN(object):
       type: float
     preTrainEpochs: the number of pre training epochs
       type: int
+    initialInputShape: the initial shape of input data (it had to be vectorized to be made an input)
+      type: tuple of ints
     nameDataset: the name of the dataset
       type: string
 
@@ -255,6 +257,7 @@ class DBN(object):
                 sparsityRegularizationRbm=None,
                 sparsityTragetRbm=None,
                 preTrainEpochs=1,
+                initialInputShape=None,
                 nameDataset=''):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
