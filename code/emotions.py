@@ -847,6 +847,7 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
              visibleDropout=0.8,
              rbmVisibleDropout=1.0,
              rbmHiddenDropout=1.0,
+             initialInputShape=(48, 48),
              preTrainEpochs=args.preTrainEpochs)
 
   # unsupervisedData = readKaggleCompetitionUnlabelled()
