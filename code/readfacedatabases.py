@@ -52,10 +52,10 @@ def cropFromFloat(x):
 
 
 
-def equalizeFromFloatCLAHE(x):
+def equalizeFromFloatCLAHE(x, reshapeSize=SMALL_SIZE):
   x = x * 255
   x = np.asarray(x, dtype='uint8')
-  y = x.reshape(SMALL_SIZE)
+  y = x.reshape(reshapeSize)
   y =  equalizeCLAHE(y).reshape(-1)
   return y / 255.0
 
