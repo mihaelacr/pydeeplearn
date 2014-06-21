@@ -271,7 +271,7 @@ def makeMultiPosesPlot():
   plt.show()
 
 
-def makeMultiPosesPlot():
+def makeMultiIlluminationsPlot():
   finalPics = []
   for i in xrange(5):
     pics, _, _, _ = readMultiPieDifferentIlluminations([i], show=False, equalize=False)
@@ -1023,4 +1023,4 @@ if __name__ == '__main__':
   # makeKagglePlot()
   # readBigKaggleTestPrivate()
   # makeMultiDatabasePlot()
-  makeMultiPosesPlot()
+  makeMultiIlluminationsPlot()
