@@ -22,8 +22,8 @@ from common import *
 
 SMALL_SIZE = ((40, 30))
 
-# TODO: make some general things with the path in order to make it work easily between
-# lab machine and local
+PATH = "/home/aela/uni/project/"
+
 def equalizeImgGlobal(x):
   return cv2.equalizeHist(x)
 
@@ -82,14 +82,12 @@ def equalizeKanade(big=False):
     pickle.dump(data, f)
     pickle.dump(labels, f)
 
-# TODO: add equalize argument
-def readMultiPIE(show=False, equalize=False, vectorizeLabels=True):
-  PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
-  # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+def readMultiPIE(show=False, equalize=False, vectorizeLabels=True, globalPath=PATH):
+  path = os.path.join(globalPath, "Multi-PIE_Aligned/A_MultiPIE.mat")
 
   if equalize:
     print "equalizing multi pie data"
-  mat = scipy.io.loadmat(PATH)
+  mat = scipy.io.loadmat(path)
   data = mat['a_multipie']
   # For all the subjects
   imgs = []
@@ -118,10 +116,10 @@ def readMultiPIE(show=False, equalize=False, vectorizeLabels=True):
   return np.array(imgs), labels
 
 
-def readMultiPieDifferentIlluminations(illuminationTrain, show=False, equalize=False):
-  PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
-  # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
-  mat = scipy.io.loadmat(PATH)
+def readMultiPieDifferentIlluminations(illuminationTrain, show=False, equalize=False, globalPath=PATH):
+  path = os.path.join(globalPath, "Multi-PIE_Aligned/A_MultiPIE.mat")
+
+  mat = scipy.io.loadmat(path)
   data = mat['a_multipie']
   # For all the subjects
   imgsTrain = []
@@ -165,10 +163,10 @@ def readMultiPieDifferentIlluminations(illuminationTrain, show=False, equalize=F
   return (imgsTrain, labelsToVectors(labelsTrain, 6),
           imgsTest,  labelsToVectors(labelsTest, 6))
 
-def readMultiPieDifferentSubjects(subjectsTrain, show=False, equalize=False):
-  PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
-  # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
-  mat = scipy.io.loadmat(PATH)
+def readMultiPieDifferentSubjects(subjectsTrain, show=False, equalize=False, globalPath=PATH):
+  path = os.path.join(globalPath, "Multi-PIE_Aligned/A_MultiPIE.mat")
+
+  mat = scipy.io.loadmat(path)
   data = mat['a_multipie']
   # For all the subjects
   imgsTrain = []
@@ -212,10 +210,10 @@ def readMultiPieDifferentSubjects(subjectsTrain, show=False, equalize=False):
   return (imgsTrain, labelsToVectors(labelsTrain, 6),
           imgsTest,  labelsToVectors(labelsTest, 6))
 
-def readMultiPieDifferentPoses(posesTrain, show=False, equalize=False):
-  PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
-  # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
-  mat = scipy.io.loadmat(PATH)
+def readMultiPieDifferentPoses(posesTrain, show=False, equalize=False, globalPath=PATH):
+  path = os.path.join(globalPath, "Multi-PIE_Aligned/A_MultiPIE.mat")
+
+  mat = scipy.io.loadmat(path)
   data = mat['a_multipie']
   # For all the subjects
   imgsTrain = []
@@ -273,11 +271,22 @@ def makeMultiPosesPlot():
   plt.show()
 
 
-def readMultiPIESubjects(equalize=False):
-  PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
-  # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+def makeMultiPosesPlot():
+  finalPics = []
+  for i in xrange(5):
+    pics, _, _, _ = readMultiPieDifferentIlluminations([i], show=False, equalize=False)
+    finalPics += [pics[0].reshape(SMALL_SIZE)]
 
-  mat = scipy.io.loadmat(PATH)
+  img = np.hstack(tuple(finalPics))
+
+  plt.imshow(img, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.show()
+
+def readMultiPIESubjects(equalize=False, globalPath=PATH):
+  path = os.path.join(globalPath, "Multi-PIE_Aligned/A_MultiPIE.mat")
+
+  mat = scipy.io.loadmat(path)
   data = mat['a_multipie']
   subjectsToImgs = {}
   # For all the subjects
@@ -300,11 +309,10 @@ def readMultiPIESubjects(equalize=False):
   return subjectsToImgs
 
 
-def readMultiPIEEmotions(equalize=False):
-  PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
-  # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+def readMultiPIEEmotions(equalize=False, globalPath=PATH):
+  path = os.path.join(globalPath, "Multi-PIE_Aligned/A_MultiPIE.mat")
 
-  mat = scipy.io.loadmat(PATH)
+  mat = scipy.io.loadmat(path)
   data = mat['a_multipie']
   emotionToImages = {}
   # For all the subjects
@@ -348,10 +356,9 @@ def makeKanadeImages():
   plt.axis('off')
   plt.show()
 
-def makeMultiPieImagesForReport():
-
-  PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
-  mat = scipy.io.loadmat(PATH)
+def makeMultiPieImagesForReport(globalPath=PATH):
+  path = os.path.join(globalPath, "Multi-PIE_Aligned/A_MultiPIE.mat")
+  mat = scipy.io.loadmat(path)
   data = mat['a_multipie']
 
   nrSubjects = 3
@@ -488,11 +495,10 @@ def makeCrossDbPlot():
   plt.show()
 
 
-def readMultiPIEEmotionsPerSubject(equalize):
-  PATH = '/data/mcr10/Multi-PIE_Aligned/A_MultiPIE.mat'
-  # PATH = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
+def readMultiPIEEmotionsPerSubject(equalize, globalPath=PATH):
+  path = os.path.join(globalPath, "Multi-PIE_Aligned/A_MultiPIE.mat")
 
-  mat = scipy.io.loadmat(PATH)
+  mat = scipy.io.loadmat(path)
   data = mat['a_multipie']
   # For all the subjects
   subjectToEmotions = []
@@ -621,9 +627,8 @@ def mapKanadeToPIELabels(kanadeData, kanadeLabels):
 
 
 # TODO: get big, small as argument in order to be able to fit the resizing
-def readCroppedYale(equalize):
-  PATH = "/data/mcr10/yaleb/CroppedYale"
-  # PATH = "/home/aela/uni/project/CroppedYale"
+def readCroppedYale(equalize, globalPath=PATH):
+  path = os.path.join(globalPath, "CroppedYale")
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -645,10 +650,8 @@ def readCroppedYale(equalize):
 
   return np.array(images)
 
-def readCroppedYaleSubjects(equalize=False, show=False):
-  PATH = "/data/mcr10/yaleb/CroppedYale"
-  # PATH = "/home/aela/uni/project/CroppedYale"
-
+def readCroppedYaleSubjects(equalize=False, show=False, globalPath=PATH):
+  path = os.path.join(globalPath, "CroppedYale")
   subject = 0
   subjectsToImgs = {}
   for subjectImagePath in os.listdir(PATH):
@@ -693,9 +696,8 @@ def readCroppedYaleSubjects(equalize=False, show=False):
 
 
 
-def readAttData(equalize=False):
-  PATH = "/data/mcr10/att"
-  # PATH = "/home/aela/uni/project/code/pics/cambrdige_pics"
+def readAttData(equalize=False, globalPath=PATH):
+  path = os.path.join(globalPath, "att")
 
   imageFiles = [os.path.join(dirpath, f)
     for dirpath, dirnames, files in os.walk(PATH)
@@ -818,23 +820,41 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
 
 
 # This needs some thought: remove the cropped folder from path?
-def readJaffe(crop, detectFaces, equalize):
-  PATH = "/data/mcr10/jaffe"
-  # PATH = "/home/aela/uni/project/jaffe"
-  return readCropEqualize(PATH , "tiff", crop, detectFaces, equalize=equalize,
+def readJaffe(crop, detectFaces, equalize, globalPath=PATH):
+  path = os.path.join(globalPath, "jaffe")
+  return readCropEqualize(path , "tiff", crop, detectFaces, equalize=equalize,
                           isColoured=False)
 
-def readNottingham(crop, detectFaces, equalize):
-  # PATH = "/home/aela/uni/project/nottingham"
-  PATH = "/data/mcr10/nottingham"
-  return readCropEqualize(PATH, "png", crop, detectFaces, equalize=equalize,
+def readNottingham(crop, detectFaces, equalize, globalPath=PATH):
+  path = os.path.join(globalPath, "nottingham")
+  return readCropEqualize(path, "png", crop, detectFaces, equalize=equalize,
                           isColoured=False)
 
-def readAberdeen(crop, detectFaces, equalize):
-  PATH = "/data/mcr10/Aberdeen"
-  # PATH = "/home/aela/uni/project/Aberdeen"
-  return readCropEqualize(PATH, "jpg", crop, detectFaces, equalize=equalize,
+def readAberdeen(crop, detectFaces, equalize, globalPath=PATH):
+  path = os.path.join(globalPath, "Aberdeen")
+  return readCropEqualize(path, "jpg", crop, detectFaces, equalize=equalize,
                            isColoured=True)
+
+
+def makeMultiDatabasePlot():
+  jaffe = readJaffe(True, True, False)
+  nottingham = readNottingham(True, True, False)
+  aber = readAberdeen(True, True, False)
+  yale = readCroppedYale(False)
+  # att = readAttData()
+
+  jaffe = jaffe[0]
+  nottingham = nottingham[0]
+  aber = aber[0]
+  # att = att[0]
+
+  final = np.hstack((jaffe.reshape(SMALL_SIZE),
+                    nottingham.reshape(SMALL_SIZE),
+                    aber.reshape(SMALL_SIZE)))
+                    # att.reshape(SMALL_SIZE)))
+  plt.imshow(final, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.show()
 
 
 def readKaggleCompetition(equalize):
@@ -855,8 +875,8 @@ def readKaggleCompetition(equalize):
 
         data += [instance]
         labels += [emotion]
-        # plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
-        # plt.show()
+        plt.imshow(instance.reshape((48, 48)), cmap=plt.cm.gray)
+        plt.show()
       i += 1
 
   labels = labelsToVectors(labels, 7)
@@ -999,6 +1019,8 @@ if __name__ == '__main__':
   # makeMultiPosesPlot()
   # makeKanadeImag
   # readKaggleCompetitionUnlabelled()
-  # readKaggleCompetition()
-  makeKagglePlot()
+  # readKaggleCompetition(False)
+  # makeKagglePlot()
   # readBigKaggleTestPrivate()
+  # makeMultiDatabasePlot()
+  makeMultiPosesPlot()
