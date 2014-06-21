@@ -10,7 +10,15 @@ def getClassificationError(predicted, actual):
   return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
 
 def scale(data):
-  return preprocessing.scale(data, axis=1)
+  # return preprocessing.scale(data, axis=1)
+  data = data / data.std(axis=1)[:, np.newaxis]
+  data = data - data.mean(axis=1)[:, np.newaxis]
+
+  # print data.std(axis=1).sum()
+  # print np.ones((data.shape[0]), dtype='float')
+  # assert np.array_equal(data.std(axis=1), np.ones((data.shape[0]), dtype='float'))
+  # assert np.array_equal(data.mean(axis=1), np.zeros(data.shape[0]))
+  return data
 
 def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,
