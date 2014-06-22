@@ -71,6 +71,7 @@ parser.add_argument('--miniBatchSize', type=int, default=10,
 parser.add_argument('netFile', help="file where the serialized network should be saved")
 parser.add_argument('--validation',dest='validation',action='store_true', default=False,
                     help="if true, the network is trained using a validation set")
+parser.add_argument('--path',dest='path', default="MNIST", help="the path to the MNIST files")
 
 
 # DEBUG mode?
@@ -85,9 +86,9 @@ db.DEBUG = args.debug
 
 def rbmMain(reconstructRandom=False):
   trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path=args.path)
   testingVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path=args.path)
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -170,7 +171,7 @@ def rbmMain(reconstructRandom=False):
 
 
 def makeMNISTpic():
-  f = lambda x: readmnist.read(0, 1000, digits=[x], path="MNIST")[0][0].reshape((28,28))
+  f = lambda x: readmnist.read(0, 1000, digits=[x], path=args.path)[0][0].reshape((28,28))
   img = np.hstack(map(f, xrange(10)))
   print img.shape
   plt.imshow(img, cmap=plt.cm.gray)
@@ -185,7 +186,7 @@ def getMissclassifiedDigits():
     dbnNet = pickle.load(f)
 
   testVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path=args.path)
 
   testVectors = testVectors / 255.0
 
@@ -245,7 +246,7 @@ def displayWeightsAndDbSample():
   plt.savefig('samples.png', transparent=True)
 
   testVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path=args.path)
 
   testVectors = testVectors / 255.0
   activationList = dbnNet.getHiddenActivations(testVectors)
@@ -272,9 +273,9 @@ def displayWeightsAndDbSample():
 
 def rbmMainGauss(reconstructRandom=False):
   trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path=args.path)
   testVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path=args.path)
 
   trainVectors = np.array(trainVectors, dtype='float')
   trainingScaledVectors = scale(trainVectors)
@@ -343,9 +344,9 @@ def rbmMainGauss(reconstructRandom=False):
 
 def makeNicePlots():
   trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=[2], bTrain=True, path=args.path)
   testingVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=[2], bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=[2], bTrain=False, path=args.path)
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -463,7 +464,7 @@ def cvMNIST():
   training = args.trainSize
 
   data, labels =\
-      readmnist.read(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path=args.path)
 
   data, labels = shuffle(data, labels)
   scaledData = data / 255.0
@@ -553,9 +554,9 @@ def annMNIST():
   testing = args.testSize
 
   trainVectors, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path=args.path)
   testVectors, testLabels =\
-      readmnist.read(0, testing, bTrain=False, path="MNIST")
+      readmnist.read(0, testing, bTrain=False, path=args.path)
   print trainVectors[0].shape
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
@@ -614,10 +615,10 @@ def svmMNIST():
     dbnNet = pickle.load(f)
 
   trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, bTrain=True, path=args.path)
 
   testVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path=args.path)
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testVectors / 255.0
@@ -634,9 +635,9 @@ def deepbeliefMNIST():
   testing = args.testSize
 
   trainVectors, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path=args.path)
   testVectors, testLabels =\
-      readmnist.read(0, testing, bTrain=False, path="MNIST")
+      readmnist.read(0, testing, bTrain=False, path=args.path)
   print trainVectors[0].shape
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
@@ -726,9 +727,9 @@ def deepbeliefMNISTGaussian():
   testing = args.testSize
 
   trainVectors, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path=args.path)
   testVectors, testLabels =\
-      readmnist.read(0, testing, bTrain=False, path="MNIST")
+      readmnist.read(0, testing, bTrain=False, path=args.path)
   print trainVectors[0].shape
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
@@ -809,7 +810,7 @@ def cvMNISTGaussian():
   training = args.trainSize
 
   trainVectors, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path=args.path)
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
@@ -895,9 +896,9 @@ def pcaMain():
   testing = args.testSize
 
   train, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path=args.path)
   testVectors, testLabels =\
-      readmnist.read(0, testing, bTrain=False, path="MNIST")
+      readmnist.read(0, testing, bTrain=False, path=args.path)
   print train[0].shape
 
   pcaSklearn(train, dimension=400)

@@ -36,6 +36,8 @@ parser.add_argument('--trainSize', type=int, default=10000,
 parser.add_argument('--testSize', type=int, default=1000,
                     help='the number of testing cases to be considered')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
+parser.add_argument('--path',dest='path', default="MNIST", help="the path to the MNIST files")
+
 
 
 # Get the arguments of the program
@@ -47,9 +49,9 @@ def visualizeWeights(weights, imgShape, tileShape):
 
 def rbmMain(reconstructRandom=True):
   trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path=args.path)
   testingVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None, bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None, bTrain=False, path=args.path)
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -107,9 +109,9 @@ def rbmMain(reconstructRandom=True):
 
 def rbmMainPCD():
   trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path="MNIST")
+      readmnist.read(0, args.trainSize, digits=None, bTrain=True, path=args.path)
   testingVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None,bTrain=False, path="MNIST")
+      readmnist.read(0, args.testSize, digits=None,bTrain=False, path=args.path)
 
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testingVectors / 255.0
@@ -184,9 +186,9 @@ def deepbeliefMNIST():
   testing = args.testSize
 
   trainVectors, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path=args.path)
   testVectors, testLabels =\
-      readmnist.read(0, testing, bTrain=False, path="MNIST")
+      readmnist.read(0, testing, bTrain=False, path=args.path)
   print trainVectors[0].shape
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
@@ -296,9 +298,9 @@ def pcaMain():
   testing = args.testSize
 
   train, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path="MNIST")
+      readmnist.read(0, training, bTrain=True, path=args.path)
   testVectors, testLabels =\
-      readmnist.read(0, testing, bTrain=False, path="MNIST")
+      readmnist.read(0, testing, bTrain=False, path=args.path)
   print train[0].shape
 
   pcaOnMnist(train, dimension=100)
