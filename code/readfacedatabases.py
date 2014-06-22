@@ -268,9 +268,11 @@ def makeMultiPiePlot():
     indices = labels == i
     finalPics += [data[indices][0]]
 
-
-
   img = np.hstack(tuple(finalPics))
+
+  plt.imshow(img, cmap=plt.cm.gray)
+  plt.axis('off')
+  plt.show()
 
 
 def makeMultiPosesPlot():
