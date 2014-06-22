@@ -266,7 +266,7 @@ def makeMultiPiePlot():
   finalPics = []
   for i in xrange(6):
     indices = labels == i
-    finalPics += [data[indices][0]]
+    finalPics += [data[indices][0].reshape(SMALL_SIZE)]
 
   img = np.hstack(tuple(finalPics))
 
