@@ -258,6 +258,21 @@ def readMultiPieDifferentPoses(posesTrain, show=False, equalize=False, globalPat
           imgsTest,  labelsToVectors(labelsTest, 6))
 
 
+
+def makeMultiPiePlot():
+  data, labels = readMultiPIE(False, False, vectorizeLabels=False, globalPath=PATH)
+
+  data, labels  = shuffle(data, labels)
+  finalPics = []
+  for i in xrange(6):
+    indices = labels == i
+    finalPics += [data[indices][0]]
+
+
+
+  img = np.hstack(tuple(finalPics))
+
+
 def makeMultiPosesPlot():
   finalPics = []
   for i in xrange(5):
@@ -1006,7 +1021,6 @@ def readBigKaggleTestPrivate():
   return privateTestData, labelsToVectors(privateTestLabels, 7)
 
 
-
 if __name__ == '__main__':
   # path = '/home/aela/uni/project/Multi-PIE_Aligned/A_MultiPIE.mat'
   # readMultiPIE(show=True)
@@ -1023,4 +1037,5 @@ if __name__ == '__main__':
   # makeKagglePlot()
   # readBigKaggleTestPrivate()
   # makeMultiDatabasePlot()
-  makeMultiIlluminationsPlot()
+  # makeMultiIlluminationsPlot()
+  makeMultiPiePlot()
