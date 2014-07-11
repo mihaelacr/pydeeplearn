@@ -2,18 +2,14 @@ import numpy as np
 
 import restrictedBoltzmannMachine as rbm
 from activationfunctions import *
+from common import *
+from debug import *
 
 import theano
 from theano import tensor as T
 from theano.tensor.shared_randomstreams import RandomStreams
 
 theanoFloat  = theano.config.floatX
-
-"""In all the above topLayer does not mean the top most layer, but rather the
-layer above the current one."""
-
-from common import *
-from debug import *
 
 DEBUG = False
 

@@ -13,12 +13,12 @@ from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
 import numpy as np
 
-import deepbelief as db
-import restrictedBoltzmannMachine as rbm
+from lib import deepbelief as db
+from lib import restrictedBoltzmannMachine as rbm
 
-from common import *
+from lib.activationfunctions import *
+from lib.common import *
 from readfacedatabases import *
-from activationfunctions import *
 
 
 parser = argparse.ArgumentParser(description='emotion recongnition')

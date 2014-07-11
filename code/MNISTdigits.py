@@ -6,16 +6,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cPickle as pickle
 import readmnist
-import restrictedBoltzmannMachine as rbm
-import deepbelief as db
 import ann
 import PCA
 import svm
 
 from sklearn import cross_validation
 
-from common import *
-from activationfunctions import *
+from lib import deepbelief as db
+from lib import restrictedBoltzmannMachine as rbm
+from lib.common import *
+from lib.activationfunctions import *
 
 
 parser = argparse.ArgumentParser(description='digit recognition')

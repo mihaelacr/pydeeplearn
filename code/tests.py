@@ -5,12 +5,12 @@ import argparse
 
 import numpy as np
 
-import deepbelief as db
-import restrictedBoltzmannMachine as rbm
+from lib import deepbelief as db
+from lib import restrictedBoltzmannMachine as rbm
 
-from common import *
-from readfacedatabases import *
-from activationfunctions import *
+from lib.common import *
+from lib.readfacedatabases import *
+from lib.activationfunctions import *
 
 parser = argparse.ArgumentParser(description='tests')
 parser.add_argument('netFile', help="file where the serialized network should be saved")
