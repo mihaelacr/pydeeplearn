@@ -3,7 +3,12 @@ import matplotlib.pyplot as plt
 
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
-from lib.similarityUtils import *
+
+import sys
+# We need this to import other modules
+sys.path.append("..")
+
+from similarityUtils import *
 from lib.activationfunctions import *
 from readfacedatabases import *
 

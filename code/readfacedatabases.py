@@ -18,7 +18,7 @@ import matplotlib.image as io
 # from skimage import color
 from skimage.transform import resize
 
-from common import *
+from lib.common import *
 
 SMALL_SIZE = ((40, 30))
 

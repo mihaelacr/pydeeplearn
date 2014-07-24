@@ -1,14 +1,18 @@
 """ This module implements the idea of finding out emotions similarities
 by using the experiments similar to what Hinton describes in his NRelu paper."""
 
-import restrictedBoltzmannMachine as rbm
 
 import numpy as np
 import theano
 from theano import tensor as T
 
-from common import *
-from similarity_utils import *
+import sys
+# We need this to import other modules
+sys.path.append("..")
+
+from lib import restrictedBoltzmannMachine as rbm
+from lib.common import *
+from similarityUtils import *
 
 theanoFloat  = theano.config.floatX
 

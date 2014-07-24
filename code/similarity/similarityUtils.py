@@ -1,9 +1,12 @@
 from sklearn import cross_validation
-from readfacedatabases import *
 import matplotlib.pyplot as plt
 import itertools
 
+import sys
+# We need this to import other modules
+sys.path.append("..")
 
+from readfacedatabases import *
 DEBUG = False
 
 # TODO: move to common?
