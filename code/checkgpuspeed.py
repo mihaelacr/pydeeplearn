@@ -1,5 +1,6 @@
-# this file is made to see how theano works and the speedup
-# it gives you on GPU versus a normal implementation on CPU (ran on my computer)
+""" Use this file to check the speed difference between a big matrix multiplication
+performed on the GPU or on the CPU.
+"""
 
 import theano
 import theano.tensor as T
