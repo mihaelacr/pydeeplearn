@@ -10,7 +10,7 @@ sys.path.append("..")
 
 from similarityUtils import *
 from lib.activationfunctions import *
-from readfacedatabases import *
+from read.readfacedatabases import *
 
 import similarity
 

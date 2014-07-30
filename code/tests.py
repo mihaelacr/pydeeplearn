@@ -9,7 +9,7 @@ from lib import deepbelief as db
 from lib import restrictedBoltzmannMachine as rbm
 
 from lib.common import *
-from lib.readfacedatabases import *
+from read.readfacedatabases import *
 from lib.activationfunctions import *
 
 parser = argparse.ArgumentParser(description='tests')

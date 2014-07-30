@@ -22,7 +22,7 @@ from sklearn.metrics import confusion_matrix
 
 from pylearn2.datasets.dense_design_matrix import DenseDesignMatrix
 
-from readfacedatabases import *
+from read.readfacedatabases import *
 from common import *
 
 theanoFloat = config.floatX

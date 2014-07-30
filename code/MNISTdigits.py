@@ -5,7 +5,6 @@ import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 import cPickle as pickle
-import readmnist
 import ann
 import PCA
 import svm
@@ -16,6 +15,8 @@ from lib import deepbelief as db
 from lib import restrictedBoltzmannMachine as rbm
 from lib.common import *
 from lib.activationfunctions import *
+
+from read import readmnist
 
 
 parser = argparse.ArgumentParser(description='digit recognition')

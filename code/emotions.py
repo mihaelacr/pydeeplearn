@@ -18,7 +18,7 @@ from lib import restrictedBoltzmannMachine as rbm
 
 from lib.activationfunctions import *
 from lib.common import *
-from readfacedatabases import *
+from read.readfacedatabases import *
 
 
 parser = argparse.ArgumentParser(description='emotion recongnition')
