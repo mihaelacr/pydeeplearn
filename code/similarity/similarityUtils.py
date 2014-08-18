@@ -6,7 +6,7 @@ import sys
 # We need this to import other modules
 sys.path.append("..")
 
-from readfacedatabases import *
+from read.readfacedatabases import *
 DEBUG = False
 
 # TODO: move to common?

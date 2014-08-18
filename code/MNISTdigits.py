@@ -5,13 +5,13 @@ import argparse
 import matplotlib.pyplot as plt
 import numpy as np
 import cPickle as pickle
-import ann
 import PCA
 import svm
 
 from sklearn import cross_validation
 
 from lib import deepbelief as db
+from lib import ann
 from lib import restrictedBoltzmannMachine as rbm
 from lib.common import *
 from lib.activationfunctions import *
