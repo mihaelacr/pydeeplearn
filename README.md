@@ -1,7 +1,7 @@
 pydeeplearn
 ===========
 
-Library for deep belief nets and rbms. Provides code for dropout, rmsprop rectified linear units, sparsity constraints, weight decay, etc.
+Library for deep belief nets and rbms. Provides code for dropout, rmsprop rectified linear units, sparsity constraints, weight decay, etc. Runs on GPU for high performance by using theano.
 
 # TO INSTALL
 
