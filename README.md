@@ -9,7 +9,7 @@ A link to the report which used this code:
 A link to a poster for the project:
    http://elarosca.net/poster.pdf
    
-The project was made as part of the requirements for a master degree at Imperial College London and received a prize.
+The project was made as part of the requirements for a master degree at Imperial College London and received a prize of excellence.
 
 # TO INSTALL
 
