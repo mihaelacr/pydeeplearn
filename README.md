@@ -4,10 +4,10 @@ pydeeplearn
 Library for deep belief nets and rbms. Provides code for dropout, rmsprop rectified linear units, sparsity constraints, weight decay, etc. Runs on GPU for high performance by using theano.
 
 A link to the report which used this code:
-  [http://elarosca.net/report.pdf]
+  http://elarosca.net/report.pdf
 
 A link to a poster for the project:
-   [http://elarosca.net/poster.pdf]
+   http://elarosca.net/poster.pdf
 
 # TO INSTALL
 
