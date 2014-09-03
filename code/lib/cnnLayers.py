@@ -17,8 +17,6 @@ class ConvolutionalLayer(object):
    2) the number of input channels (or number of kernels for the previous layer)
    3) height
    4) width
-  note that for now we assume that we construct all possible receptive fields
-  for convolutions
 
   The weights are also a 4D tensor:
     1) Nr filters at next layer (chosen hyperparameter)
@@ -28,6 +26,7 @@ class ConvolutionalLayer(object):
     4) Width at the next layer
 
   InitialWeights should be created randomly or with RBM.
+  Note that for now we assume that we construct all possible receptive fields for convolutions.
   """
   def __init__(self, input, initialWeights, initialBiases, activationFun):
 
