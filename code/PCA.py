@@ -9,7 +9,7 @@ from os.path import isfile, join
 from scipy import misc
 
 # Import all common functions
-from common import *
+from lib.common import *
 
 
 # The directory path to the images

@@ -1,6 +1,6 @@
 from sklearn import svm, grid_search
 
-from common import *
+from lib.common import *
 
 def svmOnHiddenActivations(dbnNet, train, test, trainLabels, testLabels):
   classifier = svm.SVC()
