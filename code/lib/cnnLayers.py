@@ -27,7 +27,7 @@ class ConvolutionalLayer(object):
     3) Height at next layer (given by the size of the filters)
     4) Width at the next layer
 
-  initialWeights should be created randomly or with rbm
+  InitialWeights should be created randomly or with RBM.
   """
   def __init__(self, input, initialWeights, initialBiases, activationFun):
 
@@ -47,7 +47,8 @@ class ConvolutionalLayer(object):
 
 class PoolingLayer(object):
 
-  def __init__(self, poolingFactor):
+  # TODO: implement also average pooling
+  def __init__(self, poolingFactor, poolingFunction='max'):
     pass
 
 
