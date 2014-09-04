@@ -60,7 +60,7 @@ class PoolingLayer(object):
   def __init__(self, input, poolingFactor):
 
     # downsample.max_pool_2d only downsamples on the last 2 dimensions of the input tensor
-    self.output = downsample.max_pool_2d(input, poolingFactor)
+    self.output = downsample.max_pool_2d(input, poolingFactor, ignore_border=False)
 
 
 
