@@ -1,13 +1,16 @@
-
-
 import theano
 from theano import tensor as T
 from theano.tensor.nnet import conv
 from theano.tensor.signal import downsample
 
+from activationfunctions import *
+
+
 
 theanoFloat  = theano.config.floatX
 
+# TODO: maybe set initialWeights to None so that you allow the user to initialize in the layer
+# and not care so much for the process
 
 class ConvolutionalLayer(object):
 
@@ -30,18 +33,17 @@ class ConvolutionalLayer(object):
   """
   def __init__(self, input, initialWeights, initialBiases, activationFun):
 
-    self.W = theano.shared(value=np.asarray(initialWeights,
+    W = theano.shared(value=np.asarray(initialWeights,
                                          dtype=theanoFloat),
                         name='W')
-    self.b = theano.shared(value=np.asarray(initialBiases,
+    b = theano.shared(value=np.asarray(initialBiases,
                                          dtype=theanoFloat),
                         name='b')
 
 
-    self.output = activationFun.deterministic(conv.conv2(input, self.W) + self.b.dimshuffle('x', 0, 'x', 'x'))
+    self.output = activationFun.deterministic(conv.conv2(input, W) + b.dimshuffle('x', 0, 'x', 'x'))
 
-    self.params = [self.W, self.b]
-
+    self.params = [W, b]
 
 
 class PoolingLayer(object):
@@ -58,9 +60,37 @@ class PoolingLayer(object):
   poolingFactor needs to be a 2D tuple (eg: (2, 2))
   """
   def __init__(self, input, poolingFactor):
-
     # downsample.max_pool_2d only downsamples on the last 2 dimensions of the input tensor
     self.output = downsample.max_pool_2d(input, poolingFactor, ignore_border=False)
+    # each layer has to have a parameter field so that it is easier to concatenate all the parameters
+    # when performing gradient descent
+    self.params = []
 
+
+
+class SoftmaxLayer(object):
+
+  """
+    input: 2D matrix
+  """
+  def __init__(self, input, initialWeights, initialBiases):
+    W = theano.shared(value=np.asarray(initialWeights, dtype=theanoFloat),
+                        name='W')
+    b = theano.shared(value=np.asarray(initialBiases, dtype=theanoFloat),
+                        name='b')
+
+    softmax = Softmax()
+    linearSum = T.dot(input, W) + b
+    currentLayerValues = softmax.deterministic(linearSum)
+
+    self.output = currentLayerValues
+
+    self.params = [W, b]
+
+
+# TODO: move from here
+# Let's build a simple convolutional neural network for classification
+# Note that the last layer has to perform sub sampling such that you only
+# end up with a vector
 
 
