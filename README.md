@@ -1,7 +1,7 @@
 pydeeplearn
 ===========
 
-Library for deep belief nets and rbms (convolutional neural networks are work in progress). Provides code for dropout, rmsprop rectified linear units, sparsity constraints, weight decay, etc. Runs on GPU for high performance by using [theano](http://deeplearning.net/software/theano/).
+Library for deep belief nets and rbms (convolutional neural networks are work in progress). Provides code for dropout, rmsprop rectified linear units, sparsity constraints, weight decay, etc. Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/).
 
 
 For more details see the [report](http://elarosca.net/report.pdf) of the project which used this code and the [ poster](http://elarosca.net/poster.pdf) submitted for the participation to the SET awards. The project was made as part of the requirements for a master degree at Imperial College London and received a [prize of excellence] (http://www3.imperial.ac.uk/computing/teaching/ug/ug-distinguished-projects).
