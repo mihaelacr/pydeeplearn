@@ -46,9 +46,8 @@ class ConvolutionalLayer(object):
 
 class PoolingLayer(object):
 
-  # TODO: implement also average pooling
-  # TODO: also support different pooling and subsampling factors
-
+  # TODO: implement average pooling
+  # TODO: support different pooling and subsampling factors
   """
   Input is again a 4D tensor just like in ConvolutionalLayer
 
