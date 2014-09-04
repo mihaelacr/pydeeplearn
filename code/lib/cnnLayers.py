@@ -3,7 +3,7 @@
 import theano
 from theano import tensor as T
 from theano.tensor.nnet import conv
-
+from theano.tensor.signal import downsample
 
 
 theanoFloat  = theano.config.floatX
@@ -47,8 +47,21 @@ class ConvolutionalLayer(object):
 class PoolingLayer(object):
 
   # TODO: implement also average pooling
-  def __init__(self, poolingFactor, poolingFunction='max'):
-    pass
+  # TODO: also support different pooling and subsampling factors
+
+  """
+  Input is again a 4D tensor just like in ConvolutionalLayer
+
+  Note that if you combine the pooling and the convolutional operation then you
+  can save a bit of time by not applying the activation function before the subsampling.
+  You can still try and do that as an optimization even if you have 2 layers separated.
+
+  poolingFactor needs to be a 2D tuple (eg: (2, 2))
+  """
+  def __init__(self, input, poolingFactor):
+
+    # downsample.max_pool_2d only downsamples on the last 2 dimensions of the input tensor
+    self.output = downsample.max_pool_2d(input, poolingFactor)
 
 
 
