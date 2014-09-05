@@ -12,9 +12,10 @@ from common import *
 
 theanoFloat  = theano.config.floatX
 
-# TODO: maybe set initialWeights to None so that you allow the user to initialize in the layer
-# and not care so much for the process
 
+
+# maybe set a field in each layer "isFullyConnected" that can tell you what you need to do depending
+# on that: much more scalable and supports a bigger variety of architectures
 
 #  Note that these layers that I have now are not transparent to the user in their creation
 #  you can use the builder pattern to make them transparent and add the theano
@@ -53,7 +54,10 @@ class ConvolutionalLayer(object):
     self.nrKernels = nrKernels
 
 
-  def _setUp(self, input, nrKernelsPrevious):
+  def _setUp(self, input, inputDimensions):
+    self.inputDimensions = inputDimensions
+    nrKernelsPrevious = inputDimensions[0]
+
     initialWeights = random.normal(loc=0.0, scale=0.1,
                                    size=(self.nrKernels, nrKernelsPrevious, self.kernelSize[0], self.kernelSize[1]))
     initialBiases = np.zeros(self.nrKernels)
@@ -69,6 +73,12 @@ class ConvolutionalLayer(object):
     self.output = self.activationFun.deterministic(conv.conv2d(input, W) + b.dimshuffle('x', 0, 'x', 'x'))
 
     self.params = [W, b]
+
+  def _outputDimensions(self):
+    a = self.inputDimensions[1]
+    b = self.inputDimensions[2]
+    return (self.nrKernels, a - self.kernelSize[0] + 1, b - self.kernelSize[1] + 1)
+
 
 
 class PoolingLayer(object):
@@ -88,17 +98,20 @@ class PoolingLayer(object):
   def __init__(self, poolingFactor):
     self.poolingFactor = poolingFactor
 
-  def _setUp(self, input, nrKernelsPrevious):
+  def _setUp(self, input, inputDimensions):
     # The pooling operation does not change the number of kernels
-    self.nrKernels = nrKernelsPrevious
+    self.inputDimensions = inputDimensions
     # downsample.max_pool_2d only downsamples on the last 2 dimensions of the input tensor
     self.output = downsample.max_pool_2d(input, self.poolingFactor, ignore_border=False)
     # each layer has to have a parameter field so that it is easier to concatenate all the parameters
     # when performing gradient descent
     self.params = []
 
-    # you need to set a nrKernels for this a swell
 
+  def _outputDimensions(self):
+    a = self.inputDimensions[1]
+    b = self.inputDimensions[2]
+    return (self.inputDimensions[0], a / self.poolingFactor[0], b / self.poolingFactor[1])
 
 
 class SoftmaxLayer(object):
@@ -163,33 +176,45 @@ class BatchTrainer(object):
 class ConvolutionalNN(object):
 
   """
-    layersSize
+
   """
   def __init__(self, layers, miniBatchSize, learningRate):
     self.layers = layers
     self.miniBatchSize = miniBatchSize
     self.learningRate = learningRate
 
-  # TODO: not at all modular but let us see how this works
-  def _setUpLayers(self, x, inputKernels):
+  def _setUpLayers(self, x, inputDimensions):
 
     inputVar = x
-    nrKernelsPrevious = inputKernels
+    inputDimensionsPrevious = inputDimensions
+
     for layer in self.layers[0:-1]:
-      layer._setUp(inputVar, nrKernelsPrevious)
-      nrKernelsPrevious = layer.nrKernels
+      layer._setUp(inputVar, inputDimensionsPrevious)
+      inputDimensionsPrevious = layer._outputDimensions()
       inputVar = layer.output
 
     # the fully connected layer, the softmax layer
     # TODO: if you allow (and you should) multiple all to all layers you need to change this
     # after some point
-    self.layers[-1]._setUp(inputVar.flatten(2), nrKernelsPrevious)
+
+    # what I need is actually the size of my input which will be the reduced one
+    # after the pooling. so I do not even need the previous kernel size
+
+    self.layers[-1]._setUp(inputVar.flatten(2), inputDimensionsPrevious[0] * inputDimensionsPrevious[1] * inputDimensionsPrevious[2])
 
 
   def train(self, data, labels, epochs=100):
 
     print "shuffling training data"
     data, labels = shuffle(data, labels)
+    # transform the labels into vector (one hot encoding)
+    labels = labelsToVectors(labels, 10)
+
+    print "data.shape"
+    print data.shape
+
+    print "labels.shape"
+    print labels.shape
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
@@ -212,7 +237,7 @@ class ConvolutionalNN(object):
     miniBatchIndex = T.lscalar()
 
     # Set up the layers with the appropriate theano structures
-    self._setUpLayers(x, 1)
+    self._setUpLayers(x, (1, 28, 28))
 
     #  create the batch trainer and using it create the updates
     batchTrainer = BatchTrainer(self.layers, batchLearningRate)
@@ -260,11 +285,11 @@ def main():
 
   layers = [layer1, layer2, layer3, layer4, layer5]
 
-  net = ConvolutionalNN(layers, 100, 0.01)
+  net = ConvolutionalNN(layers, 10, 0.01)
 
   trainData, trainLabels =\
       readmnist.read(0, 100, digits=None, bTrain=True, path="../MNIST")
-  net.train(trainData, trainLabels)
+  net.train(trainData, trainLabels, epochs=10)
 
 if __name__ == '__main__':
   main()
