@@ -11,7 +11,8 @@ from array import array as pyarray
 Arguments:
 Returns:
 """
-def read(startExample, count, digits=None, bTrain=True, path="."):
+def read(startExample, count, digits=None, bTrain=True, path=".",
+        returnImages=False):
   if digits == None:
     digits = range(0, 10)
 
@@ -62,4 +63,8 @@ def read(startExample, count, digits=None, bTrain=True, path="."):
   fImages.close()
   fLabels.close()
 
-  return np.array(inputVectors), np.array(labels)
+  if returnImages:
+    images = map(lambda x: x.reshape(28,28), inputVectors)
+    return np.array(images), np.array(labels)
+  else:
+    return np.array(inputVectors), np.array(labels)
