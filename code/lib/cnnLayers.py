@@ -200,7 +200,8 @@ class ConvolutionalNN(object):
     # what I need is actually the size of my input which will be the reduced one
     # after the pooling. so I do not even need the previous kernel size
 
-    self.layers[-1]._setUp(inputVar.flatten(2), inputDimensionsPrevious[0] * inputDimensionsPrevious[1] * inputDimensionsPrevious[2])
+    self.layers[-1]._setUp(inputVar.flatten(2),
+                           inputDimensionsPrevious[0] * inputDimensionsPrevious[1] * inputDimensionsPrevious[2])
 
 
   def train(self, data, labels, epochs=100):
