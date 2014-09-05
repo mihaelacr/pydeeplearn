@@ -66,7 +66,7 @@ class ConvolutionalLayer(object):
                         name='b')
 
 
-    self.output = self.activationFun.deterministic(conv.conv2(input, W) + b.dimshuffle('x', 0, 'x', 'x'))
+    self.output = self.activationFun.deterministic(conv.conv2d(input, W) + b.dimshuffle('x', 0, 'x', 'x'))
 
     self.params = [W, b]
 
