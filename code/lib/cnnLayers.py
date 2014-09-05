@@ -201,9 +201,9 @@ class ConvolutionalNN(object):
     batchLearningRate = np.float32(batchLearningRate)
 
     # Symbolic variable for the data matrix
-    vecInput = T.matrix('vecInput', dtype=theanoFloat)
+    vectorizedInput = T.matrix('vectorizedInput', dtype=theanoFloat)
     # TODO: change this
-    x = vecInput.reshape((self.miniBatchSize, 1, 28, 28))
+    x = vectorizedInput.reshape((self.miniBatchSize, 1, 28, 28))
 
 
     # the labels
@@ -225,8 +225,9 @@ class ConvolutionalNN(object):
             outputs=error,
             updates=updates,
             givens={
-                x: sharedData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-                y: sharedLabels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+                # this is the problem
+                vectorizedInput: sharedData[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize],
+                y: sharedLabels[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize]})
 
 
     #  run the loop that trains the net
