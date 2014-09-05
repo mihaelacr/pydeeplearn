@@ -10,7 +10,6 @@ from activationfunctions import *
 from common import *
 
 
-
 theanoFloat  = theano.config.floatX
 
 # TODO: maybe set initialWeights to None so that you allow the user to initialize in the layer
@@ -162,7 +161,7 @@ class ConvolutionalNN(object):
   """
     layersSize
   """
-  def __init__(self, layers, miniBatchSize ,learningRate):
+  def __init__(self, layers, miniBatchSize, learningRate):
     self.layers = layers
     self.miniBatchSize = miniBatchSize
     self.learningRate = learningRate
@@ -171,12 +170,16 @@ class ConvolutionalNN(object):
   def _setUpLayers(self, x):
 
     inputVar = x
-    for layer in layers:
+    for i, layer in enumerate(layers):
       layer._setUp(inputVar)
-      inputVar = layer.output
+      if i != len(layers) -1:
+        inputVar = layer.output
+      else:
+        inputVar = layer.output.flatten(2)
 
 
-  def train(self, data, labels, epochs = 100):
+
+  def train(self, data, labels, epochs=100):
 
     print "shuffling training data"
     data, labels = shuffle(data, labels)
@@ -232,7 +235,26 @@ class ConvolutionalNN(object):
 # end up with a vector
 
 def main():
-  pass
+  # Import here because we need to make sure that this gets removed when refactoring
+  import sys
+  # We need this to import other modules
+  sys.path.append("..")
+  from read import readmnist
+
+  layer1 = ConvolutionalLayer(50, (5, 5) , Sigmoid())
+  layer2 = PoolingLayer((2, 2))
+  layer3 = ConvolutionalLayer(20, (5, 5), Sigmoid())
+  layer4 = PoolingLayer((2, 2))
+  layer5 = SoftmaxLayer(10)
+
+  layers = [layer1, layer2, layer3, layer4, layer5]
+
+  net = ConvolutionalNN(layers, 100, 0.01)
+
+  # start reading from the 55000 example because I do not want a lot of examples
+  trainVectors, trainLabels =\
+      readmnist.read(55000, args.trainSize, digits=None, bTrain=True, path=args.path)
+  net.train(trainData, trainLabels)
 
 if __name__ == '__main__':
   main()
