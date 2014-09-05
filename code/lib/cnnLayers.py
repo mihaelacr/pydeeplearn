@@ -53,8 +53,9 @@ class ConvolutionalLayer(object):
     self.nrKernels = nrKernels
 
 
-  def _setUp(self, input):
-    initialWeights = random.normal(loc=0.0, scale=0.1, size=(self.nrKernels, input.shape[0], self.kernelSize[0], self.kernelSize[1]))
+  def _setUp(self, input, nrKernelsPrevious):
+    print input.shape[0]
+    initialWeights = random.normal(loc=0.0, scale=0.1, size=(self.nrKernels, nrKernelsPrevious, self.kernelSize[0], self.kernelSize[1]))
     initialBiases = np.zeros(self.nrKernels)
 
     W = theano.shared(value=np.asarray(initialWeights,
@@ -167,11 +168,14 @@ class ConvolutionalNN(object):
     self.learningRate = learningRate
 
   # TODO: not at all modular but let us see how this works
-  def _setUpLayers(self, x):
+  def _setUpLayers(self, x, inputKernels):
 
     inputVar = x
-    for i, layer in enumerate(layers):
-      layer._setUp(inputVar)
+    nrKernelsPrevious = inputKernels
+    for i, layer in enumerate(self.layers):
+      layer._setUp(inputVar, nrKernelsPrevious)
+
+      nrKernelsPrevious = layer.nrKernels
       if i != len(layers) -1:
         inputVar = layer.output
       else:
@@ -202,7 +206,8 @@ class ConvolutionalNN(object):
     miniBatchIndex = T.lscalar()
 
     #  Create the layers and the mini batch trainer
-    layers = self._setUpLayers(x)
+    # TODO: get the number of kernels from the data (1 or 3 depending on the type of the image)
+    layers = self._setUpLayers(x, 1)
 
     #  create the batch trainer and using it create the updates
     batchTrainer = BatchTrainer(layers)
@@ -251,9 +256,8 @@ def main():
 
   net = ConvolutionalNN(layers, 100, 0.01)
 
-  # start reading from the 55000 example because I do not want a lot of examples
-  trainVectors, trainLabels =\
-      readmnist.read(55000, args.trainSize, digits=None, bTrain=True, path=args.path)
+  trainData, trainLabels =\
+      readmnist.read(0, 100, digits=None, bTrain=True, path="../MNIST")
   net.train(trainData, trainLabels)
 
 if __name__ == '__main__':
