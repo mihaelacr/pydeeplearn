@@ -48,13 +48,11 @@ class ConvolutionalLayer(object):
   InitialWeights should be created randomly or with RBM.
   Note that for now we assume that we construct all possible receptive fields for convolutions.
   """
-  def __init__(self, kernelSize, nrKernels, activationFun):
+  def __init__(self, nrKernels, kernelSize, activationFun):
     self.activationFun = activationFun
     self.kernelSize = kernelSize
     self.nrKernels = nrKernels
 
-
-  # you can initialize the weights here for sure
 
   def _setUp(self, input):
     initialWeights = random.normal(loc=0.0, scale=0.1, size=(self.nrKernels, input.shape[0], self.kernelSize[0], self.kernelSize[1]))
