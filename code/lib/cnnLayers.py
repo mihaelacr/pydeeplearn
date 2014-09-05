@@ -153,8 +153,8 @@ class BatchTrainer(object):
 
     updates = []
 
-    for param, delta in zip(params, deltas):
-      updates.append(param, param - self.batchLearningRate * delta)
+    for param, delta in zip(self.params, deltas):
+      updates.append((param, param - self.batchLearningRate * delta))
 
     return updates
 
@@ -175,15 +175,15 @@ class ConvolutionalNN(object):
 
     inputVar = x
     nrKernelsPrevious = inputKernels
-    for i, layer in enumerate(self.layers):
+    for layer in self.layers[0:-1]:
       layer._setUp(inputVar, nrKernelsPrevious)
+      nrKernelsPrevious = layer.nrKernels
+      inputVar = layer.output
 
-      if i != len(self.layers) -1:
-        nrKernelsPrevious = layer.nrKernels
-        inputVar = layer.output
-      else:
-        inputVar = layer.output.flatten(2)
-
+    # the fully connected layer, the softmax layer
+    # TODO: if you allow (and you should) multiple all to all layers you need to change this
+    # after some point
+    self.layers[-1]._setUp(inputVar.flatten(2), nrKernelsPrevious)
 
 
   def train(self, data, labels, epochs=100):
@@ -211,19 +211,18 @@ class ConvolutionalNN(object):
 
     miniBatchIndex = T.lscalar()
 
-    #  Create the layers and the mini batch trainer
-    # TODO: get the number of kernels from the data (1 or 3 depending on the type of the image)
-    layers = self._setUpLayers(x, 1)
+    # Set up the layers with the appropriate theano structures
+    self._setUpLayers(x, 1)
 
     #  create the batch trainer and using it create the updates
-    batchTrainer = BatchTrainer(layers, batchLearningRate)
-    trainError = batchTrainer.cost(y)
+    batchTrainer = BatchTrainer(self.layers, batchLearningRate)
+    error = T.sum(batchTrainer.cost(y))
     updates = batchTrainer.buildUpdates(error)
 
     # the train function
     trainModel = theano.function(
             inputs=[miniBatchIndex],
-            outputs=trainError,
+            outputs=error,
             updates=updates,
             givens={
                 x: sharedData[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
