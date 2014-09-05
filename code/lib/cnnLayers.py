@@ -208,14 +208,17 @@ class ConvolutionalNN(object):
 
     print "shuffling training data"
     data, labels = shuffle(data, labels)
-    # transform the labels into vector (one hot encoding)
-    labels = labelsToVectors(labels, 10)
+
 
     print "data.shape"
     print data.shape
 
     print "labels.shape"
     print labels.shape
+
+    if len(data[0].shape) == 2:
+      inputShape = (data.shape[0], 1, data[0].shape[0], data[0].shape[1])
+      data = data.reshape(inputShape)
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
@@ -227,18 +230,14 @@ class ConvolutionalNN(object):
     batchLearningRate = np.float32(batchLearningRate)
 
     # Symbolic variable for the data matrix
-    vectorizedInput = T.matrix('vectorizedInput', dtype=theanoFloat)
-    # TODO: change this
-    x = vectorizedInput.reshape((self.miniBatchSize, 1, 28, 28))
-
-
+    x = T.tensor4('x', dtype=theanoFloat)
     # the labels
     y = T.matrix('y', dtype=theanoFloat)
 
     miniBatchIndex = T.lscalar()
 
     # Set up the layers with the appropriate theano structures
-    self._setUpLayers(x, (1, 28, 28))
+    self._setUpLayers(x, data[0].shape)
 
     #  create the batch trainer and using it create the updates
     batchTrainer = BatchTrainer(self.layers, batchLearningRate)
@@ -252,7 +251,7 @@ class ConvolutionalNN(object):
             updates=updates,
             givens={
                 # this is the problem
-                vectorizedInput: sharedData[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize],
+                x: sharedData[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize],
                 y: sharedLabels[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize]})
 
 
@@ -289,7 +288,12 @@ def main():
   net = ConvolutionalNN(layers, 10, 0.01)
 
   trainData, trainLabels =\
-      readmnist.read(0, 100, digits=None, bTrain=True, path="../MNIST")
+      readmnist.read(0, 100, digits=None, bTrain=True, path="../MNIST", returnImages=True)
+
+  print trainData[0].shape
+
+  # transform the labels into vector (one hot encoding)
+  trainLabels = labelsToVectors(trainLabels, 10)
   net.train(trainData, trainLabels, epochs=10)
 
 if __name__ == '__main__':
