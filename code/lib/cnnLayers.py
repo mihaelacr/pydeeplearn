@@ -54,8 +54,8 @@ class ConvolutionalLayer(object):
 
 
   def _setUp(self, input, nrKernelsPrevious):
-    print input.shape[0]
-    initialWeights = random.normal(loc=0.0, scale=0.1, size=(self.nrKernels, nrKernelsPrevious, self.kernelSize[0], self.kernelSize[1]))
+    initialWeights = random.normal(loc=0.0, scale=0.1,
+                                   size=(self.nrKernels, nrKernelsPrevious, self.kernelSize[0], self.kernelSize[1]))
     initialBiases = np.zeros(self.nrKernels)
 
     W = theano.shared(value=np.asarray(initialWeights,
@@ -88,13 +88,16 @@ class PoolingLayer(object):
   def __init__(self, poolingFactor):
     self.poolingFactor = poolingFactor
 
-
-  def _setUp(self, input):
+  def _setUp(self, input, nrKernelsPrevious):
+    # The pooling operation does not change the number of kernels
+    self.nrKernels = nrKernelsPrevious
     # downsample.max_pool_2d only downsamples on the last 2 dimensions of the input tensor
     self.output = downsample.max_pool_2d(input, self.poolingFactor, ignore_border=False)
     # each layer has to have a parameter field so that it is easier to concatenate all the parameters
     # when performing gradient descent
     self.params = []
+
+    # you need to set a nrKernels for this a swell
 
 
 
@@ -106,9 +109,9 @@ class SoftmaxLayer(object):
   """
     input: 2D matrix
   """
-  def _setUp(self, input):
+  def _setUp(self, input, inputDimensions):
     # can I get the size of the input even though it is a tensor var? should
-    initialWeights = random.normal(loc=0.0, scale=0.1, size=(input.shape[1], self.size))
+    initialWeights = random.normal(loc=0.0, scale=0.1, size=(inputDimensions, self.size))
     initialBiases = np.zeros(self.size)
 
     W = theano.shared(value=np.asarray(initialWeights, dtype=theanoFloat),
@@ -175,8 +178,8 @@ class ConvolutionalNN(object):
     for i, layer in enumerate(self.layers):
       layer._setUp(inputVar, nrKernelsPrevious)
 
-      nrKernelsPrevious = layer.nrKernels
-      if i != len(layers) -1:
+      if i != len(self.layers) -1:
+        nrKernelsPrevious = layer.nrKernels
         inputVar = layer.output
       else:
         inputVar = layer.output.flatten(2)
@@ -198,7 +201,10 @@ class ConvolutionalNN(object):
     batchLearningRate = np.float32(batchLearningRate)
 
     # Symbolic variable for the data matrix
-    x = T.matrix('x', dtype=theanoFloat)
+    vecInput = T.matrix('vecInput', dtype=theanoFloat)
+    # TODO: change this
+    x = vecInput.reshape((self.miniBatchSize, 1, 28, 28))
+
 
     # the labels
     y = T.matrix('y', dtype=theanoFloat)
@@ -210,7 +216,7 @@ class ConvolutionalNN(object):
     layers = self._setUpLayers(x, 1)
 
     #  create the batch trainer and using it create the updates
-    batchTrainer = BatchTrainer(layers)
+    batchTrainer = BatchTrainer(layers, batchLearningRate)
     trainError = batchTrainer.cost(y)
     updates = batchTrainer.buildUpdates(error)
 
