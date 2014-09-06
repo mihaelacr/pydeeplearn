@@ -315,23 +315,24 @@ def main():
   net = ConvolutionalNN(layers, 10, 0.1)
 
   trainData, trainLabels =\
-      readmnist.read(0, 100, digits=None, bTrain=True, path="../MNIST", returnImages=True)
-
-  print trainData[0].shape
+      readmnist.read(0, 1000, digits=None, bTrain=True, path="../MNIST", returnImages=True)
 
   # transform the labels into vector (one hot encoding)
   trainLabels = labelsToVectors(trainLabels, 10)
   net.train(trainData, trainLabels, epochs=100)
 
   testData, testLabels =\
-      readmnist.read(0, 10, digits=None, bTrain=False, path="../MNIST", returnImages=True)
+      readmnist.read(0, 100, digits=None, bTrain=False, path="../MNIST", returnImages=True)
 
   outputData, labels = net.test(testData)
 
-  for i in xrange(10):
+  for i in xrange(100):
     print "labels", labels[i]
     print "testLabels", testLabels[i]
-    print outputData
+
+  print " "
+  print "accuracy"
+  print (labels == testLabels) / 100
 
 if __name__ == '__main__':
   main()
