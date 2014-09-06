@@ -9,6 +9,10 @@ import itertools
 def getClassificationError(predicted, actual):
   return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
 
+
+def concatenateLists(lists):
+  return list(itertools.chain.from_iterable(lists))
+
 def scale(data):
   # return preprocessing.scale(data, axis=1)
   data = data / data.std(axis=1)[:, np.newaxis]

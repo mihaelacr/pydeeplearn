@@ -151,7 +151,7 @@ class BatchTrainer(object):
     self.batchLearningRate = batchLearningRate
 
     # Create the params of the trainer which will be used for gradient descent
-    self.params = list(itertools.chain.from_iterable([l.params for l in layers]))
+    self.params = concatenateLists([l.params for l in layers])
 
 
   def cost(self, y):
@@ -204,6 +204,13 @@ class ConvolutionalNN(object):
                            inputDimensionsPrevious[0] * inputDimensionsPrevious[1] * inputDimensionsPrevious[2])
 
 
+  def _reshapeInputData(self, data):
+    if len(data[0].shape) == 2:
+      inputShape = (data.shape[0], 1, data[0].shape[0], data[0].shape[1])
+      data = data.reshape(inputShape)
+
+    return data
+
   def train(self, data, labels, epochs=100):
 
     print "shuffling training data"
@@ -216,9 +223,7 @@ class ConvolutionalNN(object):
     print "labels.shape"
     print labels.shape
 
-    if len(data[0].shape) == 2:
-      inputShape = (data.shape[0], 1, data[0].shape[0], data[0].shape[1])
-      data = data.reshape(inputShape)
+    data = self._reshapeInputData(data)
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
@@ -234,13 +239,20 @@ class ConvolutionalNN(object):
     # the labels
     y = T.matrix('y', dtype=theanoFloat)
 
+    # Set up the input variable as a field of the conv net
+    # so that we can access it easily for testing
+    self.x = x
+
     miniBatchIndex = T.lscalar()
 
-    # Set up the layers with the appropriate theano structures
+    # Set up the layers with the appropriate theano structuresrecogition
     self._setUpLayers(x, data[0].shape)
 
     #  create the batch trainer and using it create the updates
     batchTrainer = BatchTrainer(self.layers, batchLearningRate)
+    # Set the batch trainer as a field in the conv net
+    # then we can access it for a forward pass during testing
+    self.batchTrainer = batchTrainer
     error = T.sum(batchTrainer.cost(y))
     updates = batchTrainer.buildUpdates(error)
 
@@ -262,8 +274,32 @@ class ConvolutionalNN(object):
 
 
   def test(self, data):
+    miniBatchIndex = T.lscalar()
+
+    data = self._reshapeInputData(data)
+    sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     # the usual: do a forward pass and from that get what you need
-    pass
+
+    # do a forward pass: it is easy to do due to the batch trainer object
+    # set it's input and get the output
+    # the only thing that I need to figure out is how to change the input of the batch trainer
+    # and hence the input of all the other things
+      # the train function
+    forwardPass = theano.function(
+            inputs=[miniBatchIndex],
+            outputs=self.batchTrainer.output,
+            givens={
+                # this is the problem
+                self.x: sharedData[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize]})
+
+    # do the loop that actually predicts the data
+    nrMinibatches = data.shape[0] / self.miniBatchSize
+
+    outputData = concatenateLists([forwardPass(i) for i in xrange(nrMinibatches)])
+    outputData = np.array(outputData)
+
+    return outputData, np.argmax(outputData, axis=1)
+
 
 
 # Let's build a simple convolutional neural network for classification
@@ -285,7 +321,7 @@ def main():
 
   layers = [layer1, layer2, layer3, layer4, layer5]
 
-  net = ConvolutionalNN(layers, 10, 0.01)
+  net = ConvolutionalNN(layers, 10, 0.1)
 
   trainData, trainLabels =\
       readmnist.read(0, 100, digits=None, bTrain=True, path="../MNIST", returnImages=True)
@@ -294,7 +330,17 @@ def main():
 
   # transform the labels into vector (one hot encoding)
   trainLabels = labelsToVectors(trainLabels, 10)
-  net.train(trainData, trainLabels, epochs=10)
+  net.train(trainData, trainLabels, epochs=100)
+
+  testData, testLabels =\
+      readmnist.read(0, 10, digits=None, bTrain=False, path="../MNIST", returnImages=True)
+
+  outputData, labels = net.test(testData)
+
+  for i in xrange(10):
+    print "labels", labels[i]
+    print "testLabels", testLabels[i]
+    print outputData
 
 if __name__ == '__main__':
   main()
