@@ -287,7 +287,7 @@ class ConvolutionalNN(object):
 
     # do the loop that actually predicts the data
     lastLayer = concatenateLists([forwardPass(i) for i in xrange(nrMinibatches)])
-    lastLayer = np.array(outputData)
+    lastLayer = np.array(lastLayer)
 
     return lastLayer, np.argmax(lastLayer, axis=1)
 
