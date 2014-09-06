@@ -332,7 +332,7 @@ def main():
 
   print " "
   print "accuracy"
-  print (labels == testLabels) / 100
+  print sum(labels == testLabels) * 1.0 / 100
 
 if __name__ == '__main__':
   main()
