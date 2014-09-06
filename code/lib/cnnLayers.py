@@ -197,9 +197,6 @@ class ConvolutionalNN(object):
     # TODO: if you allow (and you should) multiple all to all layers you need to change this
     # after some point
 
-    # what I need is actually the size of my input which will be the reduced one
-    # after the pooling. so I do not even need the previous kernel size
-
     self.layers[-1]._setUp(inputVar.flatten(2),
                            inputDimensionsPrevious[0] * inputDimensionsPrevious[1] * inputDimensionsPrevious[2])
 
@@ -245,11 +242,12 @@ class ConvolutionalNN(object):
 
     miniBatchIndex = T.lscalar()
 
-    # Set up the layers with the appropriate theano structuresrecogition
+    # Set up the layers with the appropriate theano structures
     self._setUpLayers(x, data[0].shape)
 
     #  create the batch trainer and using it create the updates
     batchTrainer = BatchTrainer(self.layers, batchLearningRate)
+
     # Set the batch trainer as a field in the conv net
     # then we can access it for a forward pass during testing
     self.batchTrainer = batchTrainer
@@ -262,7 +260,6 @@ class ConvolutionalNN(object):
             outputs=error,
             updates=updates,
             givens={
-                # this is the problem
                 x: sharedData[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize],
                 y: sharedLabels[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize]})
 
@@ -278,27 +275,21 @@ class ConvolutionalNN(object):
 
     data = self._reshapeInputData(data)
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
-    # the usual: do a forward pass and from that get what you need
 
-    # do a forward pass: it is easy to do due to the batch trainer object
-    # set it's input and get the output
-    # the only thing that I need to figure out is how to change the input of the batch trainer
-    # and hence the input of all the other things
-      # the train function
+    # Do a forward pass trough the network
     forwardPass = theano.function(
             inputs=[miniBatchIndex],
             outputs=self.batchTrainer.output,
             givens={
-                # this is the problem
                 self.x: sharedData[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize]})
 
-    # do the loop that actually predicts the data
     nrMinibatches = data.shape[0] / self.miniBatchSize
 
-    outputData = concatenateLists([forwardPass(i) for i in xrange(nrMinibatches)])
-    outputData = np.array(outputData)
+    # do the loop that actually predicts the data
+    lastLayer = concatenateLists([forwardPass(i) for i in xrange(nrMinibatches)])
+    lastLayer = np.array(outputData)
 
-    return outputData, np.argmax(outputData, axis=1)
+    return lastLayer, np.argmax(lastLayer, axis=1)
 
 
 
