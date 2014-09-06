@@ -60,18 +60,18 @@ class MiniBatchTrainer(object):
 
     # Rmsprop
     # The old mean that were performed in the last batch
-    self.oldMeanSquare = []
+    self.oldMeanSquares = []
     for i in xrange(nrWeights):
       oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
                                            dtype=theanoFloat),
                         name='oldDw')
-      self.oldMeanSquare.append(oldDw)
+      self.oldMeanSquares.append(oldDw)
 
     for i in xrange(nrWeights):
       oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
                                            dtype=theanoFloat),
                         name='oldDb')
-      self.oldMeanSquare.append(oldDb)
+      self.oldMeanSquares.append(oldDb)
 
     # Create a theano random number generator
     # Required to sample units for dropout
@@ -822,7 +822,7 @@ class DBN(object):
     parametersTuples = zip(batchTrainer.params,
                            deltaParams,
                            batchTrainer.oldUpdates,
-                           batchTrainer.oldMeanSquare)
+                           batchTrainer.oldMeanSquares)
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       if self.rmsprop:
@@ -852,7 +852,7 @@ class DBN(object):
     parametersTuples = zip(batchTrainer.params,
                            deltaParams,
                            batchTrainer.oldUpdates,
-                           batchTrainer.oldMeanSquare)
+                           batchTrainer.oldMeanSquares)
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
       paramUpdate = momentum * oldUpdate
