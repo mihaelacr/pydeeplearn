@@ -87,7 +87,7 @@ class ConvolutionalNN(object):
     # then we can access it for a forward pass during testing
     self.batchTrainer = batchTrainer
     error = T.sum(batchTrainer.cost(y))
-    updates = batchTrainer.buildUpdates(error, batchLearningRate, 1.0, False, False, False)
+    updates = batchTrainer.buildUpdates(error, batchLearningRate, 0.0, False, False, False)
 
     # the train function
     trainModel = theano.function(
