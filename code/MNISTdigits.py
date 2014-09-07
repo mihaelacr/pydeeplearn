@@ -930,7 +930,7 @@ def convolutionalNNMnist():
 
   # transform the labels into vector (one hot encoding)
   trainLabels = labelsToVectors(trainLabels, 10)
-  net.train(trainData, trainLabels, epochs=10)
+  net.train(trainData, trainLabels, epochs=args.maxEpochs)
 
   testData, testLabels =\
       readmnist.read(0, testing, digits=None, bTrain=False, path="MNIST", returnImages=True)
