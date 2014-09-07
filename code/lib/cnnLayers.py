@@ -194,8 +194,6 @@ class BatchTrainer(object):
             inputs=[miniBatchIndex, momentum],
             outputs=error,
             updates=updates,
-            # TODO: fix
-            on_unused_input='warn',
             givens={
                 x: data[miniBatchIndex * trainingOptions.miniBatchSize:(miniBatchIndex + 1) * trainingOptions.miniBatchSize],
                 y: labels[miniBatchIndex * trainingOptions.miniBatchSize:(miniBatchIndex + 1) * trainingOptions.miniBatchSize]})
