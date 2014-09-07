@@ -13,8 +13,11 @@ class ConvolutionalNN(object):
   """
   TODO: weight decay
   """
-  def __init__(self, layers, trainingOptions, nameDataset=''):
+  def __init__(self, layers, trainingOptions,
+               momentumForEpochFunction=getMomentumForEpochLinearIncrease,
+               nameDataset=''):
     self.layers = layers
+    self.momentumForEpochFunction = momentumForEpochFunction
     self.trainingOptions = trainingOptions
     self.nameDataset = nameDataset
 
@@ -81,23 +84,16 @@ class ConvolutionalNN(object):
     # Set the batch trainer as a field in the conv net
     # then we can access it for a forward pass during testing
     self.batchTrainer = batchTrainer
-    # updates = batchTrainer.buildUpdates(error, self.trainingOptions)
-
-    # # the train function
-    # trainModel = theano.function(
-    #         inputs=[miniBatchIndex],
-    #         outputs=error,
-    #         updates=updates,
-    #         givens={
-    #             x: sharedData[miniBatchIndex * miniBatchSize: (miniBatchIndex + 1) * miniBatchSize],
-    #             y: sharedLabels[miniBatchIndex * miniBatchSize: (miniBatchIndex + 1) * miniBatchSize]})
 
     trainModel = batchTrainer.makeTrainFunction(x, y, sharedData, sharedLabels, self.trainingOptions)
 
+    momentumMax = self.trainingOptions.momentumMax
+
     #  run the loop that trains the net
     for epoch in xrange(epochs):
+      momentum = self.momentumForEpochFunction(momentumMax, epoch)
       for i in xrange(nrMinibatches):
-        trainModel(i, self.trainingOptions.momentum)
+        trainModel(i, momentum)
 
 
   def test(self, data):

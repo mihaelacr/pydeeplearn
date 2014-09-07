@@ -14,15 +14,6 @@ DEBUG = False
 # to implement this
 class BatchTrainer(object):
 
-  # def buildUpdates(self, error, trainingOptions):
-  #   deltas =  T.grad(error, self.params)
-  #   updates = []
-
-  #   for param, delta in zip(self.params, deltas):
-  #     updates.append((param, param - trainingOptions.batchLearningRate * delta))
-
-  #   return updates
-
   # TODO: I will have to deal with the change in momentum.
   # but probably can be done outside of this function
   # TODO: ensure this is used by the deep belief net as well to avoid duplication
