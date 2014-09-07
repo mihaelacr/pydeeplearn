@@ -148,29 +148,64 @@ class SoftmaxLayer(object):
 # to implement this
 class BatchTrainer(object):
 
-  def buildUpdates(self, error, batchLearningRate, momentum, nesterov,
-                            momentumFactorForLearningRate, rmsprop):
-    # deltas =  T.grad(error, self.params)
-    # updates = []
+  def buildUpdates(self, error, trainingOptions):
+    deltas =  T.grad(error, self.params)
+    updates = []
 
-    # for param, delta in zip(self.params, deltas):
-    #   updates.append((param, param - batchLearningRate * delta))
+    for param, delta in zip(self.params, deltas):
+      updates.append((param, param - trainingOptions.batchLearningRate * delta))
 
-    # return updates
-    print "nesterov", nesterov
-    if nesterov == True:
-      return self.buildUpdatesNesterov(error, batchLearningRate, momentum,
-                            momentumFactorForLearningRate, rmsprop)
+    return updates
+
+  # TODO: I will have to deal with the change in momentum.
+  # but probably can be done outside of this function
+  # TODO: ensure this is used by the deep belief net as well to avoid duplication
+  def makeTrainFunction(self, x, y, data, labels, trainingOptions):
+    error = T.sum(self.cost(y))
+
+    miniBatchIndex = T.lscalar()
+    momentum = T.fscalar()
+
+    if trainingOptions.nesterov:
+      preDeltaUpdates, updates = self.buildUpdatesNesterov(error, trainingOptions)
+      updateParamsWithMomentum = theano.function(
+          inputs=[momentum],
+          outputs=[],
+          updates=preDeltaUpdates,
+          mode = mode)
+
+      updateParamsWithGradient = theano.function(
+          inputs =[miniBatchIndex, momentum],
+          outputs=error,
+          updates=updates,
+          givens={
+              x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+              y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
+          mode=mode)
+
+      def trainModel(miniBatchIndex, momentum):
+        updateParamsWithMomentum(momentum)
+        return updateParamsWithGradient(miniBatchIndex, momentum)
+
     else:
-      return self.buildUpdatesSimpleMomentum(error, batchLearningRate, momentum,
-                                      momentumFactorForLearningRate, rmsprop)
+      updates = self.buildUpdatesSimpleMomentum(error, trainingOptions)
+      trainModel = theano.function(
+            inputs=[miniBatchIndex, momentum],
+            outputs=error,
+            updates=updates,
+            # TODO: fix
+            on_unused_input='warn',
+            givens={
+                x: data[miniBatchIndex * trainingOptions.miniBatchSize:(miniBatchIndex + 1) * trainingOptions.miniBatchSize],
+                y: labels[miniBatchIndex * trainingOptions.miniBatchSize:(miniBatchIndex + 1) * trainingOptions.miniBatchSize]})
 
+    # returns the function that trains the model
+    return trainModel
 
-  def buildUpdatesNesterov(self, error, batchLearningRate, momentum,
-                            momentumFactorForLearningRate, rmsprop):
+  def buildUpdatesNesterov(self, error, trainingOptions):
 
-    if momentumFactorForLearningRate:
-      lrFactor = np.float32(1.0 - momentum)
+    if trainingOptions.momentumFactorForLearningRate:
+      lrFactor = np.float32(1.0 - trainingOptions.momentum)
     else:
       lrFactor = np.float32(1.0)
 
@@ -188,24 +223,23 @@ class BatchTrainer(object):
                            self.oldMeanSquare)
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
-      if rmsprop:
+      if trainingOptions.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-        paramUpdate = - lrFactor * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+        paramUpdate = - lrFactor * trainingOptions.batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
         updates.append((oldMeanSquare, meanSquare))
       else:
-        paramUpdate = - lrFactor * batchLearningRate * delta
+        paramUpdate = - lrFactor * trainingOptions.batchLearningRate * delta
 
       newParam = param + paramUpdate
 
       updates.append((param, newParam))
-      updates.append((oldUpdate, momentum * oldUpdate + paramUpdate))
+      updates.append((oldUpdate, trainingOptions.momentum * oldUpdate + paramUpdate))
 
     return preDeltaUpdates, updates
 
-  def buildUpdatesSimpleMomentum(self, error, batchLearningRate, momentum,
-                                 momentumFactorForLearningRate, rmsprop):
-    if momentumFactorForLearningRate:
-      lrFactor = 1.0 - momentum
+  def buildUpdatesSimpleMomentum(self, error, trainingOptions):
+    if trainingOptions.momentumFactorForLearningRate:
+      lrFactor = 1.0 - trainingOptions.momentum
     else:
       lrFactor = 1.0
 
@@ -217,13 +251,13 @@ class BatchTrainer(object):
                            self.oldMeanSquares)
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
-      paramUpdate = momentum * oldUpdate
-      if rmsprop:
+      paramUpdate = trainingOptions.momentum * oldUpdate
+      if trainingOptions.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-        paramUpdate += - lrFactor * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+        paramUpdate += - lrFactor * trainingOptions.batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
         updates.append((oldMeanSquare, meanSquare))
       else:
-        paramUpdate += - lrFactor * batchLearningRate * delta
+        paramUpdate += - lrFactor * trainingOptions.batchLearningRate * delta
 
       newParam = param + paramUpdate
 

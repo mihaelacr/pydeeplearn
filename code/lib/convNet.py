@@ -3,6 +3,7 @@ import numpy as np
 import theano
 from theano import tensor as T
 
+from trainingoptions import *
 from common import *
 from cnnLayers import *
 
@@ -13,21 +14,9 @@ class ConvolutionalNN(object):
   """
   TODO: weight decay
   """
-  def __init__(self, layers,
-        miniBatchSize,
-        learningRate,
-        momentum=0.0,
-        rmsprop=False,
-        nesterovMomentum=False,
-        momentumFactorForLearningRate=False,
-        nameDataset=''):
+  def __init__(self, layers, trainingOptions, nameDataset=''):
     self.layers = layers
-    self.miniBatchSize = miniBatchSize
-    self.learningRate = learningRate
-    self.rmsprop = rmsprop
-    self.momentum = np.float32(momentum)
-    self.nesterovMomentum = nesterovMomentum
-    self.momentumFactorForLearningRate = momentumFactorForLearningRate
+    self.trainingOptions = trainingOptions
     self.nameDataset = nameDataset
 
   def _setUpLayers(self, x, inputDimensions):
@@ -72,11 +61,8 @@ class ConvolutionalNN(object):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
-    nrMinibatches = len(data) / self.miniBatchSize
-
-
-    batchLearningRate = self.learningRate / self.miniBatchSize
-    batchLearningRate = np.float32(batchLearningRate)
+    miniBatchSize = self.trainingOptions.miniBatchSize
+    nrMinibatches = len(data) / miniBatchSize
 
     # Symbolic variable for the data matrix
     x = T.tensor4('x', dtype=theanoFloat)
@@ -86,8 +72,6 @@ class ConvolutionalNN(object):
     # Set up the input variable as a field of the conv net
     # so that we can access it easily for testing
     self.x = x
-
-    miniBatchIndex = T.lscalar()
 
     # Set up the layers with the appropriate theano structures
     self._setUpLayers(x, data[0].shape)
@@ -99,29 +83,29 @@ class ConvolutionalNN(object):
     # then we can access it for a forward pass during testing
     self.batchTrainer = batchTrainer
     error = T.sum(batchTrainer.cost(y))
-    updates = batchTrainer.buildUpdates(error, batchLearningRate, self.momentum,
-                                         self.nesterovMomentum,
-                                         self.momentumFactorForLearningRate,
-                                         self.rmsprop)
+    # updates = batchTrainer.buildUpdates(error, self.trainingOptions)
 
-    # the train function
-    trainModel = theano.function(
-            inputs=[miniBatchIndex],
-            outputs=error,
-            updates=updates,
-            givens={
-                x: sharedData[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize],
-                y: sharedLabels[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize]})
+    # # the train function
+    # trainModel = theano.function(
+    #         inputs=[miniBatchIndex],
+    #         outputs=error,
+    #         updates=updates,
+    #         givens={
+    #             x: sharedData[miniBatchIndex * miniBatchSize: (miniBatchIndex + 1) * miniBatchSize],
+    #             y: sharedLabels[miniBatchIndex * miniBatchSize: (miniBatchIndex + 1) * miniBatchSize]})
 
+    trainModel = batchTrainer.makeTrainFunction(x, y, sharedData, sharedLabels, self.trainingOptions)
 
     #  run the loop that trains the net
     for epoch in xrange(epochs):
       for i in xrange(nrMinibatches):
-        trainModel(i)
+        trainModel(i, self.trainingOptions.momentum)
 
 
   def test(self, data):
     miniBatchIndex = T.lscalar()
+
+    miniBatchSize = self.trainingOptions.miniBatchSize
 
     data = self._reshapeInputData(data)
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
@@ -131,9 +115,9 @@ class ConvolutionalNN(object):
             inputs=[miniBatchIndex],
             outputs=self.batchTrainer.output,
             givens={
-                self.x: sharedData[miniBatchIndex * self.miniBatchSize: (miniBatchIndex + 1) * self.miniBatchSize]})
+                self.x: sharedData[miniBatchIndex * miniBatchSize: (miniBatchIndex + 1) * miniBatchSize]})
 
-    nrMinibatches = data.shape[0] / self.miniBatchSize
+    nrMinibatches = data.shape[0] / miniBatchSize
 
     # do the loop that actually predicts the data
     lastLayer = concatenateLists([forwardPass(i) for i in xrange(nrMinibatches)])
@@ -162,17 +146,17 @@ def main():
 
   layers = [layer1, layer2, layer3, layer4, layer5]
 
-  net = ConvolutionalNN(layers, 10, 0.1)
+  net = ConvolutionalNN(layers, TrainingOptions(10, 0.1))
 
   trainData, trainLabels =\
-      readmnist.read(0, 60000, digits=None, bTrain=True, path="../MNIST", returnImages=True)
+      readmnist.read(0, 60, digits=None, bTrain=True, path="../MNIST", returnImages=True)
 
   # transform the labels into vector (one hot encoding)
   trainLabels = labelsToVectors(trainLabels, 10)
-  net.train(trainData, trainLabels, epochs=100)
+  net.train(trainData, trainLabels, epochs=10)
 
   testData, testLabels =\
-      readmnist.read(0, 10000, digits=None, bTrain=False, path="../MNIST", returnImages=True)
+      readmnist.read(0, 10, digits=None, bTrain=False, path="../MNIST", returnImages=True)
 
   outputData, labels = net.test(testData)
 
@@ -182,7 +166,7 @@ def main():
 
   print " "
   print "accuracy"
-  print sum(labels == testLabels) * 1.0 / 10000
+  print sum(labels == testLabels) * 1.0 / 10
 
 if __name__ == '__main__':
   main()
