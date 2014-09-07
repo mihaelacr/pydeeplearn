@@ -2,10 +2,9 @@ import numpy as np
 
 import theano
 from theano import tensor as T
-
+from cnnLayers import *
 from trainingoptions import *
 from common import *
-from cnnLayers import *
 
 theanoFloat  = theano.config.floatX
 
@@ -82,7 +81,6 @@ class ConvolutionalNN(object):
     # Set the batch trainer as a field in the conv net
     # then we can access it for a forward pass during testing
     self.batchTrainer = batchTrainer
-    error = T.sum(batchTrainer.cost(y))
     # updates = batchTrainer.buildUpdates(error, self.trainingOptions)
 
     # # the train function
@@ -124,49 +122,3 @@ class ConvolutionalNN(object):
     lastLayer = np.array(lastLayer)
 
     return lastLayer, np.argmax(lastLayer, axis=1)
-
-
-
-# Let's build a simple convolutional neural network for classification
-# Note that the last layer has to perform sub sampling such that you only
-# end up with a vector
-
-def main():
-  # Import here because we need to make sure that this gets removed when refactoring
-  import sys
-  # We need this to import other modules
-  sys.path.append("..")
-  from read import readmnist
-
-  layer1 = ConvolutionalLayer(50, (5, 5) , Sigmoid())
-  layer2 = PoolingLayer((2, 2))
-  layer3 = ConvolutionalLayer(20, (5, 5), Sigmoid())
-  layer4 = PoolingLayer((2, 2))
-  layer5 = SoftmaxLayer(10)
-
-  layers = [layer1, layer2, layer3, layer4, layer5]
-
-  net = ConvolutionalNN(layers, TrainingOptions(10, 0.1))
-
-  trainData, trainLabels =\
-      readmnist.read(0, 60, digits=None, bTrain=True, path="../MNIST", returnImages=True)
-
-  # transform the labels into vector (one hot encoding)
-  trainLabels = labelsToVectors(trainLabels, 10)
-  net.train(trainData, trainLabels, epochs=10)
-
-  testData, testLabels =\
-      readmnist.read(0, 10, digits=None, bTrain=False, path="../MNIST", returnImages=True)
-
-  outputData, labels = net.test(testData)
-
-  for i in xrange(10):
-    print "labels", labels[i]
-    print "testLabels", testLabels[i]
-
-  print " "
-  print "accuracy"
-  print sum(labels == testLabels) * 1.0 / 10
-
-if __name__ == '__main__':
-  main()

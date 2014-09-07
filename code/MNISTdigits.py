@@ -10,11 +10,14 @@ import svm
 
 from sklearn import cross_validation
 
+from lib import convNet
 from lib import deepbelief as db
 from lib import ann
 from lib import restrictedBoltzmannMachine as rbm
 from lib.common import *
+from lib.cnnLayers import *
 from lib.activationfunctions import *
+from lib.trainingoptions import *
 
 from read import readmnist
 
@@ -51,6 +54,8 @@ parser.add_argument('--rbmrmsprop', dest='rbmrmsprop',action='store_true', defau
                     help=("if true, rmsprop is used when training the rbms."))
 parser.add_argument('--cvgauss', dest='cvgauss',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data with gaussian units"))
+parser.add_argument('--conv', dest='conv',action='store_true', default=False,
+                    help=("if true, trains a conv neural net on MNIST"))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
 parser.add_argument('--display', dest='display',action='store_true', default=False,
@@ -904,13 +909,45 @@ def pcaMain():
 
   pcaSklearn(train, dimension=400)
 
+
+def convolutionalNNMnist():
+  training = args.trainSize
+  testing = args.testSize
+
+  # building the layers
+  layer1 = ConvolutionalLayer(50, (5, 5) , Sigmoid())
+  layer2 = PoolingLayer((2, 2))
+  layer3 = ConvolutionalLayer(20, (5, 5), Sigmoid())
+  layer4 = PoolingLayer((2, 2))
+  layer5 = SoftmaxLayer(10)
+
+  layers = [layer1, layer2, layer3, layer4, layer5]
+
+  net = convNet.ConvolutionalNN(layers, TrainingOptions(10, 0.1))
+
+  trainData, trainLabels =\
+      readmnist.read(0, training, digits=None, bTrain=True, path="../MNIST", returnImages=True)
+
+  # transform the labels into vector (one hot encoding)
+  trainLabels = labelsToVectors(trainLabels, 10)
+  net.train(trainData, trainLabels, epochs=10)
+
+  testData, testLabels =\
+      readmnist.read(0, testing, digits=None, bTrain=False, path="../MNIST", returnImages=True)
+
+  outputData, labels = net.test(testData)
+
+  print " "
+  print "accuracy"
+  print sum(labels == testLabels) * 1.0 / testing
+
 def main():
   import random
   print "FIXING RANDOMNESS"
   random.seed(6)
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv +\
-      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display + args.svm != 1:
+      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display + args.svm + args.conv != 1:
     raise Exception("You have to decide on one main method to run")
 
   # makeNicePlots()
@@ -935,6 +972,8 @@ def main():
     displayWeightsAndDbSample()
   if args.svm:
     svmMNIST()
+  if args.conv:
+    convolutionalNNMnist()
 
 
 if __name__ == '__main__':
