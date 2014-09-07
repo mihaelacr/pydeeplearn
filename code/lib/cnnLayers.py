@@ -179,8 +179,8 @@ class BatchTrainer(object):
           outputs=error,
           updates=updates,
           givens={
-              x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-              y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
+              x: data[miniBatchIndex * trainingOptions.miniBatchSize:(miniBatchIndex + 1) * trainingOptions.miniBatchSize],
+              y: labels[miniBatchIndex * trainingOptions.miniBatchSize:(miniBatchIndex + 1) * trainingOptions.miniBatchSize]},
           mode=mode)
 
       def trainModel(miniBatchIndex, momentum):
