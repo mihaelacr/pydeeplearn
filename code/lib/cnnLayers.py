@@ -188,7 +188,6 @@ class BatchTrainer(object):
         return updateParamsWithGradient(miniBatchIndex, momentum)
 
     else:
-      print "in else"
       updates = self.buildUpdatesSimpleMomentum(error, trainingOptions, momentum)
       trainModel = theano.function(
             inputs=[miniBatchIndex, momentum],
