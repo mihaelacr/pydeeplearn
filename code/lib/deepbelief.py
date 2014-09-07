@@ -1,9 +1,11 @@
 import numpy as np
 
 import restrictedBoltzmannMachine as rbm
+from batchtrainer import *
 from activationfunctions import *
 from common import *
 from debug import *
+from trainingoptions import *
 
 import theano
 from theano import tensor as T
@@ -13,7 +15,7 @@ theanoFloat  = theano.config.floatX
 
 DEBUG = False
 
-class MiniBatchTrainer(object):
+class MiniBatchTrainer(BatchTrainer):
 
   def __init__(self, input, nrLayers, initialWeights, initialBiases,
                activationFunction, classificationActivationFunction,
@@ -520,7 +522,7 @@ class DBN(object):
     # allocate symbolic variables for the data
     # index of a mini-batch
     miniBatchIndex = T.lscalar()
-    momentum = T.fscalar()
+    # momentum = T.fscalar()
 
     # The mini-batch data is a matrix
     x = T.matrix('x', dtype=theanoFloat)
@@ -551,45 +553,50 @@ class DBN(object):
     for w in batchTrainer.weights:
       error+= self.weightDecayL1 * T.sum(abs(w)) + self.weightDecayL2 * T.sum(w ** 2)
 
-    if DEBUG:
-      mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
-                                        'local_elemwise_fusion', 'inplace')
-    else:
-      mode = None
+    # if DEBUG:
+    #   mode = theano.compile.MonitorMode(post_func=detect_nan).excluding(
+    #                                     'local_elemwise_fusion', 'inplace')
+    # else:
+    #   mode = None
+    self.trainingOptions = TrainingOptions(self.miniBatchSize, self.supervisedLearningRate, self.momentumMax, self.rmsprop,
+                                           self.nesterovMomentum, self.momentumFactorForLearningRate)
 
-    if self.nesterovMomentum:
-      preDeltaUpdates, updates = self.buildUpdatesNesterov(batchTrainer, momentum,
-                    batchLearningRate, error)
-      updateParamsWithMomentum = theano.function(
-          inputs=[momentum],
-          outputs=[],
-          updates=preDeltaUpdates,
-          mode = mode)
+    trainModel = batchTrainer.makeTrainFunction(x, y, data, labels, self.trainingOptions)
 
-      updateParamsWithGradient = theano.function(
-          inputs =[miniBatchIndex, momentum],
-          outputs=trainingError,
-          updates=updates,
-          givens={
-              x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-              y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
-          mode=mode)
+    # if self.nesterovMomentum:
+    #   preDeltaUpdates, updates = self.buildUpdatesNesterov(batchTrainer, momentum,
+    #                 batchLearningRate, error)
+    #   updateParamsWithMomentum = theano.function(
+    #       inputs=[momentum],
+    #       outputs=[],
+    #       updates=preDeltaUpdates,
+    #       mode = mode)
 
-      def trainModel(miniBatchIndex, momentum):
-        updateParamsWithMomentum(momentum)
-        return updateParamsWithGradient(miniBatchIndex, momentum)
-    else:
+    #   updateParamsWithGradient = theano.function(
+    #       inputs =[miniBatchIndex, momentum],
+    #       outputs=trainingError,
+    #       updates=updates,
+    #       givens={
+    #           x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+    #           y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]},
+    #       mode=mode)
 
-      updates = self.buildUpdatesSimpleMomentum(batchTrainer, momentum,
-                    batchLearningRate, error)
-      trainModel = theano.function(
-            inputs=[miniBatchIndex, momentum],
-            outputs=trainingError,
-            updates=updates,
-            givens={
-                x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-                y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+    #   def trainModel(miniBatchIndex, momentum):
+    #     updateParamsWithMomentum(momentum)
+    #     return updateParamsWithGradient(miniBatchIndex, momentum)
+    # else:
 
+    #   updates = self.buildUpdatesSimpleMomentum(batchTrainer, momentum,
+    #                 batchLearningRate, error)
+    #   trainModel = theano.function(
+    #         inputs=[miniBatchIndex, momentum],
+    #         outputs=trainingError,
+    #         updates=updates,
+    #         givens={
+    #             x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
+    #             y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+
+    if not self.nesterovMomentum:
       theano.printing.pydotprint(trainModel)
 
     trainingErrorNoDropout = theano.function(
@@ -803,72 +810,72 @@ class DBN(object):
     print epoch
 
 
-  def buildUpdatesNesterov(self, batchTrainer, momentum,
-                  batchLearningRate, error):
+  # def buildUpdatesNesterov(self, batchTrainer, momentum,
+  #                 batchLearningRate, error):
 
-    if self.momentumFactorForLearningRate:
-      lrFactor = 1.0 - momentum
-    else:
-      lrFactor = 1.0
+  #   if self.momentumFactorForLearningRate:
+  #     lrFactor = 1.0 - momentum
+  #   else:
+  #     lrFactor = 1.0
 
-    preDeltaUpdates = []
-    for param, oldUpdate in zip(batchTrainer.params, batchTrainer.oldUpdates):
-      preDeltaUpdates.append((param, param + momentum * oldUpdate))
+  #   preDeltaUpdates = []
+  #   for param, oldUpdate in zip(batchTrainer.params, batchTrainer.oldUpdates):
+  #     preDeltaUpdates.append((param, param + momentum * oldUpdate))
 
-    # specify how to update the parameters of the model as a list of
-    # (variable, update expression) pairs
-    deltaParams = T.grad(error, batchTrainer.params)
-    updates = []
-    parametersTuples = zip(batchTrainer.params,
-                           deltaParams,
-                           batchTrainer.oldUpdates,
-                           batchTrainer.oldMeanSquares)
+  #   # specify how to update the parameters of the model as a list of
+  #   # (variable, update expression) pairs
+  #   deltaParams = T.grad(error, batchTrainer.params)
+  #   updates = []
+  #   parametersTuples = zip(batchTrainer.params,
+  #                          deltaParams,
+  #                          batchTrainer.oldUpdates,
+  #                          batchTrainer.oldMeanSquares)
 
-    for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
-      if self.rmsprop:
-        meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-        paramUpdate = - lrFactor * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
-        updates.append((oldMeanSquare, meanSquare))
-      else:
-        paramUpdate = - lrFactor * batchLearningRate * delta
+  #   for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
+  #     if self.rmsprop:
+  #       meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
+  #       paramUpdate = - lrFactor * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+  #       updates.append((oldMeanSquare, meanSquare))
+  #     else:
+  #       paramUpdate = - lrFactor * batchLearningRate * delta
 
-      newParam = param + paramUpdate
+  #     newParam = param + paramUpdate
 
-      updates.append((param, newParam))
-      updates.append((oldUpdate, momentum * oldUpdate + paramUpdate))
+  #     updates.append((param, newParam))
+  #     updates.append((oldUpdate, momentum * oldUpdate + paramUpdate))
 
-    return preDeltaUpdates, updates
+  #   return preDeltaUpdates, updates
 
-  def buildUpdatesSimpleMomentum(self, batchTrainer, momentum,
-                  batchLearningRate, error):
+  # def buildUpdatesSimpleMomentum(self, batchTrainer, momentum,
+  #                 batchLearningRate, error):
 
-    if self.momentumFactorForLearningRate:
-      lrFactor = 1.0 - momentum
-    else:
-      lrFactor = 1.0
+  #   if self.momentumFactorForLearningRate:
+  #     lrFactor = 1.0 - momentum
+  #   else:
+  #     lrFactor = 1.0
 
-    deltaParams = T.grad(error, batchTrainer.params)
-    updates = []
-    parametersTuples = zip(batchTrainer.params,
-                           deltaParams,
-                           batchTrainer.oldUpdates,
-                           batchTrainer.oldMeanSquares)
+  #   deltaParams = T.grad(error, batchTrainer.params)
+  #   updates = []
+  #   parametersTuples = zip(batchTrainer.params,
+  #                          deltaParams,
+  #                          batchTrainer.oldUpdates,
+  #                          batchTrainer.oldMeanSquares)
 
-    for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
-      paramUpdate = momentum * oldUpdate
-      if self.rmsprop:
-        meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
-        paramUpdate += - lrFactor * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
-        updates.append((oldMeanSquare, meanSquare))
-      else:
-        paramUpdate += - lrFactor * batchLearningRate * delta
+  #   for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
+  #     paramUpdate = momentum * oldUpdate
+  #     if self.rmsprop:
+  #       meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
+  #       paramUpdate += - lrFactor * batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
+  #       updates.append((oldMeanSquare, meanSquare))
+  #     else:
+  #       paramUpdate += - lrFactor * batchLearningRate * delta
 
-      newParam = param + paramUpdate
+  #     newParam = param + paramUpdate
 
-      updates.append((param, newParam))
-      updates.append((oldUpdate, paramUpdate))
+  #     updates.append((param, newParam))
+  #     updates.append((oldUpdate, paramUpdate))
 
-    return updates
+  #   return updates
 
   def classify(self, dataInstaces):
     dataInstacesConverted = theano.shared(np.asarray(dataInstaces, dtype=theanoFloat))
