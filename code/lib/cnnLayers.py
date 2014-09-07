@@ -150,20 +150,20 @@ class BatchTrainer(object):
 
   def buildUpdates(self, error, batchLearningRate, momentum, nesterov,
                             momentumFactorForLearningRate, rmsprop):
-    deltas =  T.grad(error, self.params)
-    updates = []
+    # deltas =  T.grad(error, self.params)
+    # updates = []
 
-    for param, delta in zip(self.params, deltas):
-      updates.append((param, param - batchLearningRate * delta))
+    # for param, delta in zip(self.params, deltas):
+    #   updates.append((param, param - batchLearningRate * delta))
 
-    return updates
+    # return updates
 
-    # if nesterov == True:
-    #   self.buildUpdatesNesterov(error, momentum, batchLearningRate,
-    #                         momentumFactorForLearningRate, rmsprop)
-    # else:
-    #   self.buildUpdatesSimpleMomentum(error, momentum, batchLearningRate,
-    #                                   momentumFactorForLearningRate, rmsprop)
+    if nesterov == True:
+      self.buildUpdatesNesterov(error, batchLearningRate, momentum,
+                            momentumFactorForLearningRate, rmsprop)
+    else:
+      self.buildUpdatesSimpleMomentum(error, batchLearningRate, momentum,
+                                      momentumFactorForLearningRate, rmsprop)
 
 
   def buildUpdatesNesterov(self, error, batchLearningRate, momentum,
@@ -261,20 +261,3 @@ class CNNBatchTrainer(BatchTrainer):
 
   def cost(self, y):
     return T.nnet.categorical_crossentropy(self.output, y)
-
-
-  # TODO: think if there is a simple way to reuse momentum, rmsprop and all that from
-  # the deep belief net code
-  # The easiest way to do this is move everything in a BatchTrainer class that is common
-  # def buildUpdates(self, error, batchLearningRate):
-  #   self.buildUpdates()
-    # deltas =  T.grad(error, self.params)
-
-    # updates = []
-
-    # for param, delta in zip(self.params, deltas):
-    #   updates.append((param, param - batchLearningRate * delta))
-
-    # return updates
-
-
