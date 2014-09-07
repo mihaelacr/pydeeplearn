@@ -926,14 +926,14 @@ def convolutionalNNMnist():
   net = convNet.ConvolutionalNN(layers, TrainingOptions(10, 0.1))
 
   trainData, trainLabels =\
-      readmnist.read(0, training, digits=None, bTrain=True, path="../MNIST", returnImages=True)
+      readmnist.read(0, training, digits=None, bTrain=True, path="MNIST", returnImages=True)
 
   # transform the labels into vector (one hot encoding)
   trainLabels = labelsToVectors(trainLabels, 10)
   net.train(trainData, trainLabels, epochs=10)
 
   testData, testLabels =\
-      readmnist.read(0, testing, digits=None, bTrain=False, path="../MNIST", returnImages=True)
+      readmnist.read(0, testing, digits=None, bTrain=False, path="MNIST", returnImages=True)
 
   outputData, labels = net.test(testData)
 
