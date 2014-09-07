@@ -188,6 +188,7 @@ class BatchTrainer(object):
         return updateParamsWithGradient(miniBatchIndex, momentum)
 
     else:
+      print "in else"
       updates = self.buildUpdatesSimpleMomentum(error, trainingOptions)
       trainModel = theano.function(
             inputs=[miniBatchIndex, momentum],
@@ -239,9 +240,9 @@ class BatchTrainer(object):
 
   def buildUpdatesSimpleMomentum(self, error, trainingOptions):
     if trainingOptions.momentumFactorForLearningRate:
-      lrFactor = 1.0 - trainingOptions.momentum
+      lrFactor = np.float32(1.0 - trainingOptions.momentum)
     else:
-      lrFactor = 1.0
+      lrFactor = np.float32(1.0)
 
     deltaParams = T.grad(error, self.params)
     updates = []
