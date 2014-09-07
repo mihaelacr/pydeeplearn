@@ -167,7 +167,7 @@ class BatchTrainer(object):
     momentum = T.fscalar()
 
     if trainingOptions.nesterov:
-      preDeltaUpdates, updates = self.buildUpdatesNesterov(error, trainingOptions)
+      preDeltaUpdates, updates = self.buildUpdatesNesterov(error, trainingOptions, momentum)
       updateParamsWithMomentum = theano.function(
           inputs=[momentum],
           outputs=[],
@@ -189,7 +189,7 @@ class BatchTrainer(object):
 
     else:
       print "in else"
-      updates = self.buildUpdatesSimpleMomentum(error, trainingOptions)
+      updates = self.buildUpdatesSimpleMomentum(error, trainingOptions, momentum)
       trainModel = theano.function(
             inputs=[miniBatchIndex, momentum],
             outputs=error,
@@ -203,10 +203,10 @@ class BatchTrainer(object):
     # returns the function that trains the model
     return trainModel
 
-  def buildUpdatesNesterov(self, error, trainingOptions):
+  def buildUpdatesNesterov(self, error, trainingOptions, momentum):
 
     if trainingOptions.momentumFactorForLearningRate:
-      lrFactor = np.float32(1.0 - trainingOptions.momentum)
+      lrFactor = np.float32(1.0 - momentum)
     else:
       lrFactor = np.float32(1.0)
 
@@ -234,13 +234,13 @@ class BatchTrainer(object):
       newParam = param + paramUpdate
 
       updates.append((param, newParam))
-      updates.append((oldUpdate, trainingOptions.momentum * oldUpdate + paramUpdate))
+      updates.append((oldUpdate, momentum * oldUpdate + paramUpdate))
 
     return preDeltaUpdates, updates
 
-  def buildUpdatesSimpleMomentum(self, error, trainingOptions):
+  def buildUpdatesSimpleMomentum(self, error, trainingOptions, momentum):
     if trainingOptions.momentumFactorForLearningRate:
-      lrFactor = np.float32(1.0 - trainingOptions.momentum)
+      lrFactor = np.float32(1.0 - momentum)
     else:
       lrFactor = np.float32(1.0)
 
@@ -252,7 +252,7 @@ class BatchTrainer(object):
                            self.oldMeanSquares)
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
-      paramUpdate = trainingOptions.momentum * oldUpdate
+      paramUpdate = momentum * oldUpdate
       if trainingOptions.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
         paramUpdate += - lrFactor * trainingOptions.batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
