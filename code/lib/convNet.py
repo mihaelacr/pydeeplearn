@@ -25,7 +25,7 @@ class ConvolutionalNN(object):
     self.miniBatchSize = miniBatchSize
     self.learningRate = learningRate
     self.rmsprop = rmsprop
-    self.momentum = momentum
+    self.momentum = np.float32(momentum)
     self.nesterovMomentum = nesterovMomentum
     self.momentumFactorForLearningRate = momentumFactorForLearningRate
     self.nameDataset = nameDataset

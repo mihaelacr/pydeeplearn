@@ -157,7 +157,7 @@ class BatchTrainer(object):
     #   updates.append((param, param - batchLearningRate * delta))
 
     # return updates
-
+    print "nesterov", nesterov
     if nesterov == True:
       return self.buildUpdatesNesterov(error, batchLearningRate, momentum,
                             momentumFactorForLearningRate, rmsprop)
