@@ -170,9 +170,9 @@ class BatchTrainer(object):
                             momentumFactorForLearningRate, rmsprop):
 
     if momentumFactorForLearningRate:
-      lrFactor = 1.0 - momentum
+      lrFactor = np.float32(1.0 - momentum)
     else:
-      lrFactor = 1.0
+      lrFactor = np.float32(1.0)
 
     preDeltaUpdates = []
     for param, oldUpdate in zip(self.params, self.oldUpdates):
