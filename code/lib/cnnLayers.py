@@ -150,14 +150,20 @@ class BatchTrainer(object):
 
   def buildUpdates(self, error, batchLearningRate, momentum, nesterov,
                             momentumFactorForLearningRate, rmsprop):
-    print "error"
-    print error
-    if nesterov == True:
-      self.buildUpdatesNesterov(error, momentum, batchLearningRate,
-                            momentumFactorForLearningRate, rmsprop)
-    else:
-      self.buildUpdatesSimpleMomentum(error, momentum, batchLearningRate,
-                                      momentumFactorForLearningRate, rmsprop)
+    deltas =  T.grad(error, self.params)
+    updates = []
+
+    for param, delta in zip(self.params, deltas):
+      updates.append((param, param - batchLearningRate * delta))
+
+    return updates
+
+    # if nesterov == True:
+    #   self.buildUpdatesNesterov(error, momentum, batchLearningRate,
+    #                         momentumFactorForLearningRate, rmsprop)
+    # else:
+    #   self.buildUpdatesSimpleMomentum(error, momentum, batchLearningRate,
+    #                                   momentumFactorForLearningRate, rmsprop)
 
 
   def buildUpdatesNesterov(self, error, batchLearningRate, momentum,
