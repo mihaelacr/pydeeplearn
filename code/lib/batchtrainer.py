@@ -110,6 +110,7 @@ class BatchTrainer(object):
         paramUpdate += - lrFactor * trainingOptions.batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
         updates.append((oldMeanSquare, meanSquare))
       else:
+        print "in else: try exception catch"
         paramUpdate += - lrFactor * trainingOptions.batchLearningRate * delta
 
       newParam = param + paramUpdate
