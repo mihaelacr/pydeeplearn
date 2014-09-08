@@ -104,6 +104,7 @@ class BatchTrainer(object):
                            self.oldMeanSquares)
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
+      print param.name
       paramUpdate = momentum * oldUpdate
       if trainingOptions.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
