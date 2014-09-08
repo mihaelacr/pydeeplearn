@@ -53,10 +53,10 @@ class ConvolutionalLayer(object):
 
     W = theano.shared(value=np.asarray(initialWeights,
                                          dtype=theanoFloat),
-                        name='W')
+                        name='Wconv')
     b = theano.shared(value=np.asarray(initialBiases,
                                          dtype=theanoFloat),
-                        name='b')
+                        name='bconv')
 
 
     self.output = self.activationFun.deterministic(conv.conv2d(input, W) + b.dimshuffle('x', 0, 'x', 'x'))
@@ -117,9 +117,9 @@ class SoftmaxLayer(object):
     initialBiases = np.zeros(self.size)
 
     W = theano.shared(value=np.asarray(initialWeights, dtype=theanoFloat),
-                        name='W')
+                        name='Wsoftmax')
     b = theano.shared(value=np.asarray(initialBiases, dtype=theanoFloat),
-                        name='b')
+                        name='bsoftmax')
 
     softmax = Softmax()
     linearSum = T.dot(input, W) + b
