@@ -119,4 +119,5 @@ class BatchTrainer(object):
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
 
+    print "finished loop"
     return updates
