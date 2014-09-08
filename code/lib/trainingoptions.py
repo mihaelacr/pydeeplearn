@@ -16,5 +16,4 @@ class TrainingOptions(object):
     self.rmsprop = rmsprop
     self.nesterov = nesterovMomentum
     self.momentumFactorForLearningRate = momentumFactorForLearningRate
-
     self.batchLearningRate = np.float32(learningRate / miniBatchSize)

@@ -22,12 +22,6 @@ theanoFloat  = theano.config.floatX
 #  but in that case you do not get much advantage in between that and a string.
 
 # you can have a basic init and a fill method that takes the current arguments for init
-
-# if you think about it is is weird that the user has to deal with the input matrices and so on when they do not
-# care about these things
-
-# you could just add a 'setInput' method
-
 class ConvolutionalLayer(object):
 
   """

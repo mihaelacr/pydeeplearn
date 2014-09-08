@@ -34,7 +34,6 @@ class ConvolutionalNN(object):
     # the fully connected layer, the softmax layer
     # TODO: if you allow (and you should) multiple all to all layers you need to change this
     # after some point
-
     self.layers[-1]._setUp(inputVar.flatten(2),
                            inputDimensionsPrevious[0] * inputDimensionsPrevious[1] * inputDimensionsPrevious[2])
 

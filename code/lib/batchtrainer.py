@@ -1,5 +1,3 @@
-import numpy as np
-
 import theano
 from theano import tensor as T
 
@@ -7,16 +5,8 @@ import debug
 
 DEBUG = False
 
-# you could add the methods to a batch trainer class that could be common between
-# cnns and dbns with the common feature trains
-# TODO: you could even put the y in the constructor here
-# TODO: move this from here and make the minibatch trainer from db
-# to implement this
 class BatchTrainer(object):
 
-  # TODO: I will have to deal with the change in momentum.
-  # but probably can be done outside of this function
-  # TODO: ensure this is used by the deep belief net as well to avoid duplication
   def makeTrainFunction(self, x, y, data, labels, trainingOptions):
     error = T.sum(self.cost(y))
 
@@ -65,7 +55,6 @@ class BatchTrainer(object):
     return trainModel
 
   def buildUpdatesNesterov(self, error, trainingOptions, momentum):
-    print momentum
     if trainingOptions.momentumFactorForLearningRate:
       lrFactor = 1.0 - momentum
     else:
