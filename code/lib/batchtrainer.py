@@ -1,3 +1,4 @@
+import numpy as np
 import theano
 from theano import tensor as T
 
@@ -92,9 +93,9 @@ class BatchTrainer(object):
     print "build simple"
     print type(momentum)
     if trainingOptions.momentumFactorForLearningRate:
-      lrFactor = 1.0 - momentum
+      lrFactor = np.float32(1.0) - momentum
     else:
-      lrFactor = 1.0
+      lrFactor = np.float32(1.0)
 
     deltaParams = T.grad(error, self.params)
     updates = []
@@ -112,7 +113,7 @@ class BatchTrainer(object):
         updates.append((oldMeanSquare, meanSquare))
       else:
         print "in else: try exception catch"
-        paramUpdate += -  trainingOptions.batchLearningRate * delta
+        paramUpdate += - lrFactor * trainingOptions.batchLearningRate * delta
 
       newParam = param + paramUpdate
 
