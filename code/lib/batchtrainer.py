@@ -90,6 +90,7 @@ class BatchTrainer(object):
 
   def buildUpdatesSimpleMomentum(self, error, trainingOptions, momentum):
     print "build simple"
+    print type(momentum)
     if trainingOptions.momentumFactorForLearningRate:
       lrFactor = 1.0 - momentum
     else:
