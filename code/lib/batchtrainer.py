@@ -89,6 +89,7 @@ class BatchTrainer(object):
     return preDeltaUpdates, updates
 
   def buildUpdatesSimpleMomentum(self, error, trainingOptions, momentum):
+    print "build simple"
     if trainingOptions.momentumFactorForLearningRate:
       lrFactor = 1.0 - momentum
     else:

@@ -7,17 +7,13 @@ from theano.tensor.nnet import conv
 from theano.tensor.signal import downsample
 
 from activationfunctions import *
-from batchtrainer import *
 from common import *
 
 theanoFloat  = theano.config.floatX
 
-
 # maybe set a field in each layer "isFullyConnected" that can tell you what you need to do depending
 # on that: much more scalable and supports a bigger variety of architectures
 
-#  Note that these layers that I have now are not transparent to the user in their creation
-#  you can use the builder pattern to make them transparent and add the theano
 # elements after the user has told you what they want
 #  but in that case you do not get much advantage in between that and a string.
 
@@ -132,32 +128,3 @@ class SoftmaxLayer(object):
     self.output = currentLayerValues
 
     self.params = [W, b]
-
-
-class CNNBatchTrainer(BatchTrainer):
-
-  def __init__(self, layers):
-    self.output = layers[-1].output
-
-    # Create the params of the trainer which will be used for gradient descent
-    self.params = concatenateLists([l.params for l in layers])
-
-    # ok so now we define the old values using the eval function from theano
-    # if this is too expensive we will just keep some fields in
-    self.oldUpdates = []
-    self.oldMeanSquares = []
-    for param in self.params:
-      oldDParam = theano.shared(value=np.zeros(shape=param.shape.eval(),
-                                              dtype=theanoFloat),
-                                name='oldDParam')
-
-      self.oldUpdates += [oldDParam]
-      oldMeanSquare = theano.shared(value=np.zeros(shape=param.shape.eval(),
-                                              dtype=theanoFloat),
-                                name='oldMeanSquare')
-
-      self.oldMeanSquares += [oldMeanSquare]
-
-
-  def cost(self, y):
-    return T.nnet.categorical_crossentropy(self.output, y)
