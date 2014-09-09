@@ -122,7 +122,6 @@ class ConvolutionalNN(object):
     #  run the loop that trains the net
     for epoch in xrange(epochs):
       momentum = self.momentumForEpochFunction(momentumMax, epoch)
-      print type(momentum)
       for i in xrange(nrMinibatches):
         trainModel(i, momentum)
 
