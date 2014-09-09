@@ -90,8 +90,6 @@ class BatchTrainer(object):
     return preDeltaUpdates, updates
 
   def buildUpdatesSimpleMomentum(self, error, trainingOptions, momentum):
-    print "build simple"
-    print type(momentum)
     if trainingOptions.momentumFactorForLearningRate:
       lrFactor = np.float32(1.0) - momentum
     else:
@@ -105,14 +103,12 @@ class BatchTrainer(object):
                            self.oldMeanSquares)
 
     for param, delta, oldUpdate, oldMeanSquare in parametersTuples:
-      print param.name
       paramUpdate = momentum * oldUpdate
       if trainingOptions.rmsprop:
         meanSquare = 0.9 * oldMeanSquare + 0.1 * delta ** 2
         paramUpdate += - lrFactor * trainingOptions.batchLearningRate * delta / T.sqrt(meanSquare + 1e-8)
         updates.append((oldMeanSquare, meanSquare))
       else:
-        print "in else: try exception catch"
         paramUpdate += - lrFactor * trainingOptions.batchLearningRate * delta
 
       newParam = param + paramUpdate
@@ -120,5 +116,4 @@ class BatchTrainer(object):
       updates.append((param, newParam))
       updates.append((oldUpdate, paramUpdate))
 
-    print "finished loop"
     return updates
