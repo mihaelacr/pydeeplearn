@@ -923,7 +923,7 @@ def convolutionalNNMnist():
 
   layers = [layer1, layer2, layer3, layer4, layer5]
 
-  net = convNet.ConvolutionalNN(layers, TrainingOptions(10, 0.1))
+  net = convNet.ConvolutionalNN(layers, TrainingOptions(10, 0.1, momentumMax=0.9))
 
   trainData, trainLabels =\
       readmnist.read(0, training, digits=None, bTrain=True, path="MNIST", returnImages=True)
