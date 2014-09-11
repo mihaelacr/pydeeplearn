@@ -8,6 +8,12 @@ For more details see the [report](http://elarosca.net/report.pdf) of the project
 
 One of the key points of this implementation and API is that they do not impose theano on the user. While theano is a great tool it has quite a steep learning curve so I decided to take advantage of its power without imposing that the user learns theano. Hence all the interface code just requires python and basic numpy knowledge. To the best of my knowledge this is the only library with these features.
 
+# User guide
+  * The library is in `code\lib\`. You can find there the implementations of RBMs, CNNs and DBNs.
+  * Multiple examples on how to use RBMs, DBNs and CNNs are in `code\MNISTdigits.py` and `code\emotions.py`
+  * The code that implements a network which determines the similarity between two inputs is in `code\similarity` 
+  * The old code that is not based on theano but only numpy is in `code\old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
+ 
 # How to install dependencies 
 
 
