@@ -13,6 +13,10 @@ One of the key points of this implementation and API is that they do not impose 
   * Multiple examples on how to use RBMs, DBNs and CNNs are in `code\MNISTdigits.py` and `code\emotions.py`
   * The code that implements a network which determines the similarity between two inputs is in `code\similarity` 
   * The old code that is not based on theano but only numpy is in `code\old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
+
+# Future and current work
+ I am currently working on completing the CNN implementation and thinking of adding Bayesian optimization to avoid doing CV for finding out hyper parameters.
+  
  
 # How to install dependencies 
 
