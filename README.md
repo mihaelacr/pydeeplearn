@@ -8,6 +8,8 @@ For more details see the [report](http://elarosca.net/report.pdf) of the project
 
 One of the key points of this implementation and API is that they do not impose theano on the user. While theano is a great tool it has quite a steep learning curve so I decided to take advantage of its power without imposing that the user learns theano. Hence all the interface code just requires python and basic numpy knowledge. To the best of my knowledge this is the only library with these features.
 
+The API provided by DBNs is compatible with scikit learn so you can use all the functionality from that library in conjuction with my implementation.
+
 # User guide
   * The library is in `code\lib\`. You can find there the implementations of RBMs, CNNs and DBNs.
   * Multiple examples on how to use RBMs, DBNs and CNNs are in `code\MNISTdigits.py` and `code\emotions.py`
