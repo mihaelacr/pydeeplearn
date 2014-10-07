@@ -65,12 +65,18 @@ def objective(nrLayers,layerSizes,
 
 
 def main():
-        activationFunction = Sigmoid()
+    activationFunction = Sigmoid()
     unsupervisedLearningRate = 0.01
     supervisedLearningRate = 0.05
     momentumMax = 0.95    
     nrLayers = 5
     layerSizes = 1000
+    hiddenDropout=0.5
+    visibleDropout=0.8
+    rbmHiddenDropout=1.0
+    rbmVisibleDropout=1.0
+    weightDecayL1=0
+    weightDecayL2=0
     
     trainVectors, trainLabels =\
         readmnist.read(0, training, bTrain=True, path=args.path)
@@ -97,7 +103,7 @@ def main():
     )
 	
     # minimize the objective over the space
-    best = fmin( run_test, space, algo = tpe.suggest, max_evals = 50 )
+    best = fmin( objective, space, algo = tpe.suggest, max_evals = 50 )
 	
     print best
     
