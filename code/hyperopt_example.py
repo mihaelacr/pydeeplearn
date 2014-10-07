@@ -64,17 +64,44 @@ def objective(nrLayers,layerSizes,
                   maxEpochs=maxEpochs, validation=False)
 
 
-# define a search space
-space = ( 
+def main():
+        activationFunction = Sigmoid()
+    unsupervisedLearningRate = 0.01
+    supervisedLearningRate = 0.05
+    momentumMax = 0.95    
+    nrLayers = 5
+    layerSizes = 1000
+    
+    trainVectors, trainLabels =\
+        readmnist.read(0, training, bTrain=True, path=args.path)
+    testVectors, testLabels =\
+        readmnist.read(0, testing, bTrain=False, path=args.path)
+    print trainVectors[0].shape
+    
+    trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
+    
+    activationFunction = Sigmoid()
+    
+    trainingScaledVectors = trainVectors / 255.0
+    testingScaledVectors = testVectors / 255.0
+    
+    
+    # define a search space
+    space = ( 
 	hp.qloguniform( 'l1_dim', log( 10 ), log( 1000 ), 1 ), 
 	hp.qloguniform( 'l2_dim', log( 10 ), log( 1000 ), 1 ),
 	hp.loguniform( 'learning_rate', log( 1e-5 ), log( 1e-2 )),
 	hp.uniform( 'momentum', 0.5, 0.99 ),
 	hp.uniform( 'l1_dropout', 0.1, 0.9 ),
 	hp.uniform( 'decay_factor', 1 + 1e-3, 1 + 1e-1 )
-)
+    )
+	
+    # minimize the objective over the space
+    best = fmin( run_test, space, algo = tpe.suggest, max_evals = 50 )
+	
+    print best
+    
+  
+if __name__ == '__main__':
+  main()
 
-# minimize the objective over the space
-best = fmin( run_test, space, algo = tpe.suggest, max_evals = 50 )
-
-print best
