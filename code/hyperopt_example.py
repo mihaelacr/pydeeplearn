@@ -12,14 +12,23 @@ from read import readmnist
 from lib.activationfunctions import *
 
 # define an objective function
-def objective(args):
-    activationFunction = Sigmoid()
-    unsupervisedLearningRate = 0.01
-    supervisedLearningRate = 0.05
-    momentumMax = 0.95    
-    nrLayers = 5
-    layerSizes = 1000
-    
+def objective(nrLayers,layerSizes,
+              activationFunction,
+              unsupervisedLearningRate,
+              supervisedLearningRate,
+              momentumMax,
+              hiddenDropout,
+              visibleDropout,
+              rbmHiddenDropout,
+              rbmVisibleDropout,
+              weightDecayL1,
+              weightDecayL2,
+              preTrainEpochs,
+              maxEpochs,
+              trainingData,
+              vectorLabels
+              ):
+
     hiddenLayers = []
     for i in range(0,nrLayers-2):
         hiddenLayers.append(layerSizes)
@@ -27,8 +36,8 @@ def objective(args):
     dbnLayers.insert(0,784)
     dbnLayers.append(10)        
     
-    nrFold = 5
-    training =  len(labels)
+    nrFolds = 5
+    training =  len(vectorLabels)
     kf = cross_validation.kFold(n=training, n_folds=nrFolds)
     foldError =[]
     for training, testing in kf:
@@ -44,16 +53,15 @@ def objective(args):
                      nesterovMomentum=True,
                      rbmNesterovMomentum=True,
                      rmsprop=True,
-                     hiddenDropout=0.5,
-                     visibleDropout=0.8,
-                     rbmHiddenDropout=1.0,
-                     rbmVisibleDropout=1.0,
-                     weightDecayL1=0,
-                     weightDecayL2=0,
-                     preTrainEpochs=100)
+                     hiddenDropout=hiddenDropout,
+                     visibleDropout=visibleDropout,
+                     rbmHiddenDropout=rbmHiddenDropout,
+                     rbmVisibleDropout=rbmHiddenDropout,
+                     weightDecayL1=weightDecayL1,
+                     weightDecayL2=weightDecayL2,
+                     preTrainEpochs= preTrainEpochs)
         net.train(trainingData, vectorLabels,
-                  maxEpochs=100, validation=True)  
-                  
+                  maxEpochs=maxEpochs, validation=False)
 
 
 # define a search space
