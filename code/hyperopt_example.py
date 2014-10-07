@@ -11,7 +11,7 @@ from lib import deepbelief as db
 from read import readmnist
 from lib.activationfunctions import *
 
-
+# define an objective function
 def objective(args):
     activationFunction = Sigmoid()
     unsupervisedLearningRate = 0.01
@@ -56,6 +56,7 @@ def objective(args):
                   
 
 
+# define a search space
 space = ( 
 	hp.qloguniform( 'l1_dim', log( 10 ), log( 1000 ), 1 ), 
 	hp.qloguniform( 'l2_dim', log( 10 ), log( 1000 ), 1 ),
@@ -65,7 +66,7 @@ space = (
 	hp.uniform( 'decay_factor', 1 + 1e-3, 1 + 1e-1 )
 )
 
-
+# minimize the objective over the space
 best = fmin( run_test, space, algo = tpe.suggest, max_evals = 50 )
 
 print best
