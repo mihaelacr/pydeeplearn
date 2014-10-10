@@ -10,11 +10,15 @@ One of the key points of this implementation and API is that they do not impose 
 
 The API provided by DBNs is compatible with scikit learn so you can use all the functionality from that library in conjuction with my implementation.
 
+ In case you use my code please cite my report and if you can, add a link to this repository. 
+
 # User guide
   * The library is in `code/lib/`. You can find there the implementations of RBMs, CNNs and DBNs.
   * Multiple examples on how to use RBMs, DBNs and CNNs are in `code/MNISTdigits.py` and `code/emotions.py`
   * The code that implements a network which determines the similarity between two inputs is in `code/similarity` 
   * The old code that is not based on theano but only numpy is in `code/old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
+  * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
+  * If you still have questions, pop me an email or a message.
 
 # Future and current work
  I am currently working on completing the CNN implementation and thinking of adding Bayesian optimization to avoid doing CV for finding out hyper parameters.
