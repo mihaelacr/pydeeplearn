@@ -10,7 +10,7 @@ One of the key points of this implementation and API is that they do not impose 
 
 The API provided by DBNs is compatible with scikit learn so you can use all the functionality from that library in conjuction with my implementation.
 
- In case you use my code please cite my report and if you can, add a link to this repository. 
+ In case you use my code for a paper, study or project please cite my report and if you can, add a link to this repository. 
 
 # User guide
   * The library is in `code/lib/`. You can find there the implementations of RBMs, CNNs and DBNs.
