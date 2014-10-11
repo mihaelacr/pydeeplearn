@@ -1,3 +1,8 @@
+""" Types of conv net layers that pydeeplearn supports now."""
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import numpy as np
 import numpy.random as random
 

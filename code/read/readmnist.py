@@ -1,6 +1,9 @@
 """ Disclaimer: this code was adapted from
 http://g.sweyla.com/blog/2012/mnist-numpy/
 """
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 
 import os, struct
 import numpy as np

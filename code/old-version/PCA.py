@@ -1,3 +1,6 @@
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import heapq
 import matplotlib.pyplot as plt
 import numpy

@@ -1,3 +1,6 @@
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import cPickle as pickle
 from sklearn import cross_validation
 import argparse

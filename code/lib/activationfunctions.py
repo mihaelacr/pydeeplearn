@@ -1,4 +1,7 @@
-""" This class defines activation function that can be used with the nets in this project"""
+""" This file defines activation functions that can be used with the nets in pydeeplearn"""
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
 
 from theano import tensor as T
 from theano.tensor.shared_randomstreams import RandomStreams

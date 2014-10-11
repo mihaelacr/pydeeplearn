@@ -1,3 +1,8 @@
+""" Utils for the similarity experiments. """
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 from sklearn import cross_validation
 import matplotlib.pyplot as plt
 import itertools

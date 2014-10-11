@@ -1,3 +1,8 @@
+"""Maxout examples. """
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 from __future__ import division
 import os
 

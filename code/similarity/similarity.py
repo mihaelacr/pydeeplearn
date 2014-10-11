@@ -1,6 +1,8 @@
 """ This module implements the idea of finding out emotions similarities
 by using the experiments similar to what Hinton describes in his NRelu paper."""
 
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
 
 import numpy as np
 import theano

@@ -1,3 +1,10 @@
+""" Defines a training options class as a holder for options that can be passed
+for training a neural network.
+"""
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import numpy as np
 
 # TODO: does momentum make sense here

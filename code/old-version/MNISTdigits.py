@@ -1,6 +1,9 @@
 """ This module is manily created to test the deep belief and
 rbm implementations on MNIST"""
 
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np

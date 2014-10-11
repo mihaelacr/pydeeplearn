@@ -1,3 +1,8 @@
+""" Let's run some experiments with the similarity networks."""
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import argparse
 import matplotlib.pyplot as plt
 

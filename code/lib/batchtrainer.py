@@ -1,3 +1,11 @@
+""" A neural network trainer with various options: rmsprop, nerterov, momentum etc.
+This trainer is used for multiple types of neural nets: dbns and cnns and it is designed
+to be adaptable to other types of networks as well.
+"""
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import numpy as np
 import theano
 from theano import tensor as T

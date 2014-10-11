@@ -1,3 +1,8 @@
+"""Common functionalities required by the other modules. """
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import numpy as np
 import utils
 from theano import tensor as T

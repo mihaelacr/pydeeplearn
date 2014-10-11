@@ -1,5 +1,8 @@
 """Implementation of restricted Boltzmann machine."""
 
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import numpy as np
 from common import *
 from activationfunctions import *

@@ -1,4 +1,7 @@
-"""The aim of this script is to read the multi pie dataset """
+"""The aim of this script is to read the face databases used for experiments """
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
 
 import scipy.io
 import numpy as np

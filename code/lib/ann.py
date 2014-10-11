@@ -1,9 +1,12 @@
+""" Implementation of a simple ANN. """
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import numpy as np
 
-import restrictedBoltzmannMachine as rbm
 import theano
 from theano import tensor as T
-from theano.ifelse import ifelse as theanoifelse
 from theano.tensor.shared_randomstreams import RandomStreams
 
 import matplotlib.pyplot as plt

@@ -1,3 +1,6 @@
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import numpy as np
 
 import restrictedBoltzmannMachine as rbm

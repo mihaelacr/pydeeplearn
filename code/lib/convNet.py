@@ -1,3 +1,8 @@
+"""Implementation of a convolutional neural network. """
+
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import numpy as np
 
 import theano

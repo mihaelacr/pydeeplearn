@@ -3,6 +3,9 @@ and the main which have to do with emotion recognition, especially
 with the Kanade and Multi PiE databases. Note that the versions of both databases I used
 the faces were already aligned. Those databases are not publicly available. """
 
+__author__ = "Mihaela Rosca"
+__contact__ = "mihaela.c.rosca@gmail.com"
+
 import argparse
 import cPickle as pickle
 from sklearn import cross_validation
