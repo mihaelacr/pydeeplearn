@@ -260,6 +260,8 @@ class DBN(object):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
 
+    print "creating network with " + str(self.nrLayers) + " and layer sizes", str(self.layerSizes)
+
     assert len(layerSizes) == nrLayers
     self.hiddenDropout = hiddenDropout
     self.visibleDropout = visibleDropout
