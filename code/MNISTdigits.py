@@ -77,10 +77,12 @@ parser.add_argument('--maxEpochs', type=int, default=100,
                     help='the maximum number of supervised epochs')
 parser.add_argument('--miniBatchSize', type=int, default=10,
                     help='the number of training points in a mini batch')
-parser.add_argument('netFile', help="file where the serialized network should be saved")
+parser.add_argument('netFile', 
+                    help="file where the serialized network should be saved")
 parser.add_argument('--validation',dest='validation',action='store_true', default=False,
                     help="if true, the network is trained using a validation set")
-parser.add_argument('--path',dest='path', default="MNIST", help="the path to the MNIST files")
+parser.add_argument('--path',dest='path', type = "string", default="MNIST", 
+                    help="the path to the MNIST files")
 
 
 # DEBUG mode?
