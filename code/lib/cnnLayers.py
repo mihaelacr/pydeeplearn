@@ -74,7 +74,11 @@ class ConvolutionalLayer(object):
     return (self.nrKernels, a - self.kernelSize[0] + 1, b - self.kernelSize[1] + 1)
 
 
-
+# Possible types for pooling
+# l2 pooling
+# max pooling
+# average pooling
+# average pooling weighted by the distance to the center
 class PoolingLayer(object):
 
   # TODO: implement average pooling
