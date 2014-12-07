@@ -15,6 +15,9 @@ from common import *
 
 theanoFloat  = theano.config.floatX
 
+# TODO: implicit zero padding for input
+# See Goodfellow book for advantages of that
+
 class CNNBatchTrainer(BatchTrainer):
 
   def __init__(self, layers):
