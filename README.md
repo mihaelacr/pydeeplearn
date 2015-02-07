@@ -1,7 +1,7 @@
 pydeeplearn
 ===========
 
-Library for deep belief nets and rbms  and simple CNNs. Provides code for dropout, rmsprop rectified linear units, sparsity constraints, weight decay, etc. I recently added support for [adversarial training](https://drive.google.com/file/d/0B64011x02sIkX0poOGVyZDI4dUU/view). Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/).
+Library for deep belief nets and rbms (convolutional neural networks are work in progress). Provides code for dropout, rmsprop rectified linear units, sparsity constraints, weight decay, etc. Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/).
 
 
 For more details see the [report](http://elarosca.net/report.pdf) of the project which used this code and the [ poster](http://elarosca.net/poster.pdf) submitted for the participation to the SET awards. The project was made as part of the requirements for a master degree at Imperial College London and received a [prize of excellence] (http://www3.imperial.ac.uk/computing/teaching/ug/ug-distinguished-projects).
@@ -15,18 +15,14 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 # User guide
   * The library is in `code/lib/`. You can find there the implementations of RBMs, CNNs and DBNs.
   * Multiple examples on how to use RBMs, DBNs and CNNs are in `code/MNISTdigits.py` and `code/emotions.py`
-  * If you want to use [spearmint](https://github.com/JasperSnoek/spearmint) with pydeeplearn to avoid cross validation, check out the example I made [here](https://github.com/mihaelacr/pydeeplearn/tree/master/code/spearmint-configs/dbnmnist)
   * The code that implements a network which determines the similarity between two inputs is in `code/similarity` 
   * The old code that is not based on theano but only numpy is in `code/old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
   * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
   * If you still have questions, pop me an email or a message.
 
 # Future and current work
- When [whetlab](https://www.whetlab.com) will be in open beta, I will integrate with their UI to be able to nicely see the results of experiments. In the meantime, if you want to avoid cross validation, see the [spearmint examples](https://github.com/mihaelacr/pydeeplearn/tree/master/code/spearmint-configs/dbnmnist)
- 
- I have added support for [adversarial training](https://drive.google.com/file/d/0B64011x02sIkX0poOGVyZDI4dUU/view) . If you are interested, check out the [adversarialexamples branch](https://github.com/mihaelacr/pydeeplearn/tree/adversarialexamples). This branch will be soon merged into master.
+ I am currently working on completing the CNN implementation and thinking of adding Bayesian optimization to avoid doing CV for finding out hyper parameters.
   
- If you have any feature requests, please let me know.
  
 # How to install dependencies 
 
@@ -69,9 +65,6 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 11. install matplotlib
    `easy_install -m matplotlib`
 
-12. not required: install spearmint (a library that learns hyperparameters by using bayesian optimization)
- Instructions can be found [here](https://github.com/JasperSnoek/spearmint#dependencies)
-
 Note that for theano to work on the GPU you need cuda installed and setting up some environment variables.
 
 `PATH` needs to containt the path to nvcc (usually `/usr/local/cuda/bin`)
@@ -86,4 +79,4 @@ Note that for theano to work on the GPU you need cuda installed and setting up s
 
 # Acknowledgements
 
-I would like to thank the Department of Computing at Imperial College and Prof. Abbas Edalat for their support during my thesis and for allowing me to continue with my experiments on lab equipment after graduation.
+I would like to thank the Department of Computing at Imperial College and Prof. Abbas Edalat for their supoprt during my thesis and for allowing me to continue with my experiments on lab equipment after graduation.
