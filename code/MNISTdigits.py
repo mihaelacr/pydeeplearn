@@ -1035,6 +1035,10 @@ def adversarialMNIST():
     else:
       errorCases.append(i)
 
+  print "correct"
+  print correct
+
+
 # TODO: fix this (look at the ML coursework for it)
 # Even better, use LDA
 # think of normalizing them to 0.1 for pca as well
