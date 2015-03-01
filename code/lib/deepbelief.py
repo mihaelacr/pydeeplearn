@@ -94,7 +94,9 @@ class MiniBatchTrainer(BatchTrainer):
     self.output = self.forwardPass(self.input)
 
     if self.adversarial_training:
-      adversarial_input = self.input + self.adversarial_epsilon * T.sgn(T.sum(T.grad(self.costFun(self.input, self.inputLabels), self.input)))
+      error = T.sum(self.costFun(self.input, self.inputLabels))
+      grad_error = T.grad(error, self.input)
+      adversarial_input = self.input + self.adversarial_epsilon * T.sgn(grad_error)
       self.adversarial_output = forwardPass(adversarial_input)
 
   def forwardPass(self, x):
@@ -130,7 +132,7 @@ class MiniBatchTrainer(BatchTrainer):
     return currentLayerValues
 
   def costFun(self, x, y):
-    return  T.nnet.categorical_crossentropy(x, y)
+    return T.nnet.categorical_crossentropy(x, y)
 
   # TODO: do I still need to pass the y?
   def cost(self, y):
