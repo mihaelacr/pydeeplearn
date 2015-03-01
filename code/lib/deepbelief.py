@@ -124,7 +124,7 @@ class MiniBatchTrainer(BatchTrainer):
     w = self.weights[self.nrWeights - 1]
     b = self.biases[self.nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
-    currentLayerValues = classificationActivationFunction.deterministic(linearSum)
+    currentLayerValues = self.classificationActivationFunction.deterministic(linearSum)
 
     return currentLayerValues
 
