@@ -95,7 +95,7 @@ class MiniBatchTrainer(BatchTrainer):
     if self.adversarial_training:
       # TODO: since we are using this here maybe we should move
       # this to BatchTrainer
-      error = T.sum(self.costFun(self.input, self.inputLabels))
+      error = T.sum(self.costFun(self.output, self.inputLabels))
       grad_error = T.grad(error, self.input)
       # adversarial_input = self.input + self.adversarial_epsilon * T.sgn(grad_error)
       adversarial_input = self.input + self.adversarial_epsilon * grad_error
@@ -138,7 +138,6 @@ class MiniBatchTrainer(BatchTrainer):
 
   def cost(self, y):
     output_error = self.costFun(self.output, y)
-
     if self.adversarial_training:
       adversarial_error = self.costFun(self.adversarial_output, y)
       return self.adversarial_coefficient * output_error + (1.0 - self.adversarial_coefficient) * adversarial_error
@@ -621,7 +620,7 @@ class DBN(object):
     # also add some regularization costs
     error = trainingError
     for w in batchTrainer.weights:
-      error+= self.weightDecayL1 * T.sum(abs(w)) + self.weightDecayL2 * T.sum(w ** 2)
+      error += self.weightDecayL1 * T.sum(abs(w)) + self.weightDecayL2 * T.sum(w ** 2)
 
     self.trainingOptions = TrainingOptions(self.miniBatchSize, self.supervisedLearningRate, self.momentumMax, self.rmsprop,
                                            self.nesterovMomentum, self.momentumFactorForLearningRate)
