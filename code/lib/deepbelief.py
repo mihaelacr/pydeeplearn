@@ -96,7 +96,7 @@ class MiniBatchTrainer(BatchTrainer):
       error = T.sum(self.costFun(self.input, self.inputLabels))
       grad_error = T.grad(error, self.input)
       adversarial_input = self.input + self.adversarial_epsilon * T.sgn(grad_error)
-      self.adversarial_output = forwardPass(adversarial_input)
+      self.adversarial_output = self.forwardPass(adversarial_input)
 
   def forwardPass(x):
     # Sample from the visible layer
