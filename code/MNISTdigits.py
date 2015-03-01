@@ -639,7 +639,6 @@ def deepbeliefMNIST():
 
   activationFunction = Sigmoid()
 
-  # TODO: do not divide for RELU?
   trainingScaledVectors = trainVectors / 255.0
   testingScaledVectors = testVectors / 255.0
 
@@ -966,6 +965,8 @@ def cvadversarialMNIST():
     print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(correctness[i])
 
 def adversarialMNIST():
+  assert not args.relu, "do not run this method for rectified linear units"
+
   training = args.trainSize
   testing = args.testSize
 
@@ -977,30 +978,26 @@ def adversarialMNIST():
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
-  trainVectors = np.array(trainVectors, dtype='float')
-  trainingScaledVectors = scale(trainVectors)
+  activationFunction = Sigmoid()
 
-  testVectors = np.array(testVectors, dtype='float')
-  testingScaledVectors = scale(testVectors)
+  trainingScaledVectors = trainVectors / 255.0
+  testingScaledVectors = testVectors / 255.0
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
-  unsupervisedLearningRate = 0.005
-  supervisedLearningRate = 0.001
-  momentumMax = 0.97
-  sparsityTragetRbm = 0.01
-  sparsityConstraintRbm = False
-  sparsityRegularizationRbm = 0.005
+  unsupervisedLearningRate = 0.01
+  supervisedLearningRate = 0.05
+  momentumMax = 0.95
 
   if args.train:
-    net = db.DBN(5, [784, 1200, 1200, 1200, 10],
+    net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                  binary=False,
                  unsupervisedLearningRate=unsupervisedLearningRate,
                  supervisedLearningRate=supervisedLearningRate,
                  momentumMax=momentumMax,
-                 activationFunction=Rectified(),
-                 rbmActivationFunctionVisible=Identity(),
-                 rbmActivationFunctionHidden=RectifiedNoisy(),
+                 activationFunction=activationFunction,
+                 rbmActivationFunctionVisible=activationFunction,
+                 rbmActivationFunctionHidden=activationFunction,
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
@@ -1008,16 +1005,12 @@ def adversarialMNIST():
                  visibleDropout=0.8,
                  rbmHiddenDropout=1.0,
                  rbmVisibleDropout=1.0,
-                 weightDecayL1=0,
-                 weightDecayL2=0,
                  adversarial_training=args.adversarial_training,
                  adversarial_coefficient=0.5,
                  adversarial_epsilon=1.0 / 255,
-                 sparsityTragetRbm=sparsityTragetRbm,
-                 sparsityConstraintRbm=sparsityConstraintRbm,
-                 sparsityRegularizationRbm=sparsityRegularizationRbm,
+                 weightDecayL1=0,
+                 weightDecayL2=0,
                  preTrainEpochs=args.preTrainEpochs)
-
     net.train(trainingScaledVectors, vectorLabels,
               maxEpochs=args.maxEpochs, validation=args.validation)
   else:
@@ -1026,9 +1019,7 @@ def adversarialMNIST():
     net = pickle.load(f)
     f.close()
 
-
   probs, predicted = net.classify(testingScaledVectors)
-  print type(predicted)
   correct = 0
   errorCases = []
   for i in xrange(testing):
@@ -1043,15 +1034,6 @@ def adversarialMNIST():
       correct += 1
     else:
       errorCases.append(i)
-
-  print "correct"
-  print correct
-
-  if args.save:
-    f = open(args.netFile, "wb")
-    pickle.dump(net, f)
-    f.close()
-
 
 # TODO: fix this (look at the ML coursework for it)
 # Even better, use LDA
