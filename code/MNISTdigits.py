@@ -58,6 +58,8 @@ parser.add_argument('--rbmrmsprop', dest='rbmrmsprop',action='store_true', defau
                     help=("if true, rmsprop is used when training the rbms."))
 parser.add_argument('--cvgauss', dest='cvgauss',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data with gaussian units"))
+parser.add_argument('--cvadv', dest='cvadv',action='store_true', default=False,
+                    help=("if true, performs cv on the MNIST with adversarial training on"))
 parser.add_argument('--conv', dest='conv',action='store_true', default=False,
                     help=("if true, trains a conv neural net on MNIST"))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
@@ -880,6 +882,89 @@ def cvMNISTGaussian():
     print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(correctness[i])
 
 
+def cvadversarialMNIST():
+  training = args.trainSize
+
+  trainVectors, trainLabels =\
+      readmnist.read(0, training, bTrain=True, path=args.path)
+
+  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
+
+  trainVectors = np.array(trainVectors, dtype='float')
+
+  # Ensure the data has zero mean and 1 variance
+  trainingScaledVectors = scale(trainVectors)
+  vectorLabels = labelsToVectors(trainLabels, 10)
+
+  bestFold = -1
+  bestError = np.inf
+
+  params = [(5e-03, 1e-02),  (1e-02, 5e-02), (5e-03, 5e-02), (1e-02, 5e-03), (5e-03, 5e-03), (1e-02, 1e-02) ]
+
+  correctness = []
+
+  nrFolds = len(params)
+
+  kf = cross_validation.KFold(n=training, n_folds=nrFolds)
+
+  i = 0
+  for train, test in kf:
+    # Train the net
+    # Try 1200, 1200, 1200
+    net = db.DBN(5, [784, 1000, 1000, 1000, 10],
+                  binary=False,
+                  unsupervisedLearningRate=params[i][0],
+                  supervisedLearningRate=params[i][1],
+                  momentumMax=0.95,
+                  nesterovMomentum=args.nesterov,
+                  rbmNesterovMomentum=args.rbmnesterov,
+                  activationFunction=Rectified(),
+                  rbmActivationFunctionVisible=Identity(),
+                  rbmActivationFunctionHidden=RectifiedNoisy(),
+                  rmsprop=args.rmsprop,
+                  visibleDropout=0.8,
+                  hiddenDropout=0.5,
+                  weightDecayL1=0,
+                  weightDecayL2=0,
+                  rbmHiddenDropout=1.0,
+                  rbmVisibleDropout=1.0,
+                  adversarial_training=True,
+                  adversarial_coefficient=0.5,
+                  adversarial_epsilon=1.0 / 255,
+                  miniBatchSize=args.miniBatchSize,
+                  preTrainEpochs=args.preTrainEpochs,
+                  sparsityConstraintRbm=False,
+                  sparsityTragetRbm=0.01,
+                  sparsityRegularizationRbm=None)
+
+    net.train(trainingScaledVectors[train], vectorLabels[train],
+              maxEpochs=args.maxEpochs,
+              validation=args.validation)
+
+    proabilities, predicted = net.classify(trainingScaledVectors[test])
+    # Test it with the testing data and measure the missclassification error
+    error = getClassificationError(predicted, trainLabels[test])
+
+    print "error for " + str(params[i])
+    print error
+
+    correct = 1.0 - error
+
+    if error < bestError:
+      bestError = error
+      bestFold = i
+
+    i += 1
+
+    correctness += [correct]
+
+  print "best fold was " + str(bestFold)
+  print "bestParameter " + str(params[bestFold])
+  print "bestError " + str(bestError)
+
+  for i in xrange(len(params)):
+    print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(correctness[i])
+
 def adversarialMNIST():
   training = args.trainSize
   testing = args.testSize
@@ -1020,8 +1105,8 @@ def main():
   print "FIXING RANDOMNESS"
   random.seed(6)
   np.random.seed(6)
-  if args.db + args.pca + args.rbm + args.cv +\
-      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display + args.conv != 1:
+  if args.db + args.pca + args.rbm + args.cv + \
+      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display + args.conv + args.adversarial_training + args.cvadv != 1:
     raise Exception("You have to decide on one main method to run")
 
   # makeNicePlots()
@@ -1048,6 +1133,8 @@ def main():
     convolutionalNNMnist()
   if args.adversarial_training:
     adversarialMNIST()
+  if args.cvadv:
+    cvadversarialMNIST()
 
 
 if __name__ == '__main__':
