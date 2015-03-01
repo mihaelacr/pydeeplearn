@@ -84,13 +84,13 @@ class MiniBatchTrainer(BatchTrainer):
     # Required to sample units for dropout
     self.theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
 
-    self.output = forwardPass(self.input)
+    self.output = self.forwardPass(self.input)
 
     if self.adversarial_training:
       adversarial_input = self.input + self.adversarial_epsilon * T.sgn(T.grad(self.costFun(self.input, y)))
       self.adversarial_output = forwardPass(adversarial_input)
 
-  def forwardPass(x):
+  def forwardPass(self, x):
     # Sample from the visible layer
     # Get the mask that is used for the visible units
     if visibleDropout in [1.0, 1]:
@@ -123,7 +123,7 @@ class MiniBatchTrainer(BatchTrainer):
     return currentLayerValues
 
   # TODO: this will not work in the adversarial definition
-  def costFun(x, y):
+  def costFun(self, x, y):
     return  T.nnet.categorical_crossentropy(x, y)
 
   def cost(self, y):

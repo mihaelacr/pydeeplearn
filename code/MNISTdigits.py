@@ -1020,7 +1020,7 @@ def main():
   print "FIXING RANDOMNESS"
   random.seed(6)
   np.random.seed(6)
-  if args.db + args.pca + args.rbm + args.cv +\
+  if args.db + args.pca + args.rbm + args.cv + \
       args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display + args.conv + args.adversarial_training != 1:
     raise Exception("You have to decide on one main method to run")
 
