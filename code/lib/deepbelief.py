@@ -93,7 +93,9 @@ class MiniBatchTrainer(BatchTrainer):
     self.output = forwardPass(self.input)
 
     if self.adversarial_training:
-      adversarial_input = self.input + self.adversarial_epsilon * T.sgn(T.sum(T.grad(self.costFun(self.input, self.inputLabels), self.input)))
+      error = T.sum(self.costFun(self.input, self.inputLabels))
+      grad_error = T.grad(error, self.input)
+      adversarial_input = self.input + self.adversarial_epsilon * T.sgn(grad_error)
       self.adversarial_output = forwardPass(adversarial_input)
 
   def forwardPass(x):
@@ -128,9 +130,8 @@ class MiniBatchTrainer(BatchTrainer):
 
     return currentLayerValues
 
-  # TODO: this will not work in the adversarial definition
-  def costFun(x, y):
-    return  T.nnet.categorical_crossentropy(x, y)
+  def costFun(self, x, y):
+    return T.nnet.categorical_crossentropy(x, y)
 
   def cost(self, y):
     if self.adversarial_training:
