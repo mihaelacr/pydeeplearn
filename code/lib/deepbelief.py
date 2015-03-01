@@ -19,8 +19,13 @@ class MiniBatchTrainer(BatchTrainer):
 
   def __init__(self, input, nrLayers, initialWeights, initialBiases,
                activationFunction, classificationActivationFunction,
-               visibleDropout, hiddenDropout):
+               visibleDropout, hiddenDropout,
+               adversarial_training, adversarial_epsilon, adversarial_coefficient):
     self.input = input
+    # If we should use adversarial training or not
+    self.adversarial_training = adversarial_training
+    self.adversarial_coefficient = adversarial_coefficient
+    self.adversarial_epsilon = adversarial_epsilon
 
     # Let's initialize the fields
     # The weights and biases, make them shared variables
@@ -79,15 +84,22 @@ class MiniBatchTrainer(BatchTrainer):
     # Required to sample units for dropout
     self.theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
 
+    self.output = forwardPass(self.input)
+
+    if self.adversarial_training:
+      adversarial_input = self.input + self.adversarial_epsilon * T.sgn(T.grad(self.costFun(self.input, y)))
+      self.adversarial_output = forwardPass(adversarial_input)
+
+  def forwardPass(x):
     # Sample from the visible layer
     # Get the mask that is used for the visible units
     if visibleDropout in [1.0, 1]:
-      currentLayerValues = self.input
+      currentLayerValues = x
     else:
       dropoutMask = self.theanoRng.binomial(n=1, p=visibleDropout,
-                                            size=self.input.shape,
+                                            size=x.shape,
                                             dtype=theanoFloat)
-      currentLayerValues = self.input * dropoutMask
+      currentLayerValues = x * dropoutMask
 
     for stage in xrange(nrWeights -1):
       w = self.weights[stage]
@@ -108,10 +120,20 @@ class MiniBatchTrainer(BatchTrainer):
     linearSum = T.dot(currentLayerValues, w) + b
     currentLayerValues = classificationActivationFunction.deterministic(linearSum)
 
-    self.output = currentLayerValues
+    return currentLayerValues
+
+  # TODO: this will not work in the adversarial definition
+  def costFun(x, y):
+    return  T.nnet.categorical_crossentropy(x, y)
 
   def cost(self, y):
-    return T.nnet.categorical_crossentropy(self.output, y)
+    if self.adversarial_training:
+      output_error = self.costFun(self.output, y)
+      adversarial_error = self.costFun(self.adversarial_output, y)
+
+      return self.adversarial_coefficient * output_error + (1.0 - self.adversarial_coefficient) * adversarial_error
+    else:
+      return T.nnet.categorical_crossentropy(self.output, y)
 
 class ClassifierBatch(object):
 
@@ -207,6 +229,28 @@ class DBN(object):
         type: float
     weightDecayL2: regularization parameter for L2 weight decay
         type: float
+    adversarial_training:
+        type: boolean
+    adversarial_coefficient: The coefficient used to define the cost function in case
+        adversarial training is used.
+        the cost function will be:
+          adversarial_coefficient * Cost(params, x, y) +
+           (1 - adversarial_coefficient) * Cost(params, x + adversarial_epsilon * sign(grad (Cost(params, x, y)), y)
+        Defaults to 0.5.
+        type: float
+    adversarial_epsilon: Used to define the cost function during training in case
+        adversarial training is used.
+        Guideline for how to set this field:
+          adversarial_epsilon should be set to the maximal difference in two input fields that is not perceivable
+          by the input storing data structure.
+          Eg: with MNIST, we set the input values to be between 0 and 1, from the original input which had
+          values between 0 and 255.
+          So if the difference between two inputs were to be less than 1/255 in all pixels, we want the network
+          to not assign different classes to them, because our structure would not even distinguish between them.
+          Hence for MNIST we set adversarial_epsilon = 1 / 255
+        See: https://drive.google.com/file/d/0B64011x02sIkX0poOGVyZDI4dUU/view
+        for the original paper and more details
+        type: float
     firstRBMheuristic: if true, we use a heuristic that the first rbm should have a
         learning rate 10 times bigger than the learning rate obtained using
         CV with DBN for the unsupervisedLearningRate. The learning rate is capped to 1.0.
@@ -254,6 +298,9 @@ class DBN(object):
                 sparsityConstraintRbm=False,
                 sparsityRegularizationRbm=None,
                 sparsityTragetRbm=None,
+                adversarial_training=False,
+                adversarial_coefficient=0.5,
+                adversarial_epsilon=1.0/255,
                 preTrainEpochs=1,
                 initialInputShape=None,
                 nameDataset=''):
@@ -292,6 +339,13 @@ class DBN(object):
     self.sparsityRegularizationRbm = sparsityRegularizationRbm
     self.sparsityConstraintRbm = sparsityConstraintRbm
     self.sparsityTragetRbm = sparsityTragetRbm
+
+    # If we should use adversarial training or not
+    # For more details on adversarial training see
+    # https://drive.google.com/file/d/0B64011x02sIkX0poOGVyZDI4dUU/view
+    self.adversarial_training = adversarial_training
+    self.adversarial_coefficient = adversarial_coefficient
+    self.adversarial_epsilon = adversarial_epsilon
 
 
     self.nameDataset = nameDataset
@@ -537,7 +591,10 @@ class DBN(object):
                                     initialWeights=self.weights,
                                     initialBiases=self.biases,
                                     visibleDropout=self.visibleDropout,
-                                    hiddenDropout=self.hiddenDropout)
+                                    hiddenDropout=self.hiddenDropout,
+                                    adversarial_training=self.adversarial_training,
+                                    adversarial_coefficient=self.adversarial_coefficient,
+                                    adversarial_epsilon=self.adversarial_epsilon)
 
     classifier = ClassifierBatch(input=x, nrLayers=self.nrLayers,
                                  activationFunction=self.activationFunction,
