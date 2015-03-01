@@ -27,11 +27,17 @@ class MiniBatchTrainer(BatchTrainer):
     self.adversarial_coefficient = adversarial_coefficient
     self.adversarial_epsilon = adversarial_epsilon
 
+    self.visibleDropout = visibleDropout
+    self.hiddenDropout = hiddenDropout
+    self.activationFunction = activationFunction
+    self.classificationActivationFunction = classificationActivationFunction
+
     # Let's initialize the fields
     # The weights and biases, make them shared variables
     self.weights = []
     self.biases = []
     nrWeights = nrLayers - 1
+    self.nrWeights = nrWeights
     for i in xrange(nrWeights):
       w = theano.shared(value=np.asarray(initialWeights[i],
                                          dtype=theanoFloat),
@@ -93,30 +99,30 @@ class MiniBatchTrainer(BatchTrainer):
   def forwardPass(self, x):
     # Sample from the visible layer
     # Get the mask that is used for the visible units
-    if visibleDropout in [1.0, 1]:
+    if self.visibleDropout in [1.0, 1]:
       currentLayerValues = x
     else:
-      dropoutMask = self.theanoRng.binomial(n=1, p=visibleDropout,
+      dropoutMask = self.theanoRng.binomial(n=1, p=self.visibleDropout,
                                             size=x.shape,
                                             dtype=theanoFloat)
       currentLayerValues = x * dropoutMask
 
-    for stage in xrange(nrWeights -1):
+    for stage in xrange(self.nrWeights -1):
       w = self.weights[stage]
       b = self.biases[stage]
       linearSum = T.dot(currentLayerValues, w) + b
       # dropout: give the next layer only some of the units from this layer
-      if hiddenDropout in  [1.0, 1]:
-        currentLayerValues = activationFunction.deterministic(linearSum)
+      if self.hiddenDropout in  [1.0, 1]:
+        currentLayerValues = self.activationFunction.deterministic(linearSum)
       else:
-        dropoutMaskHidden = self.theanoRng.binomial(n=1, p=hiddenDropout,
+        dropoutMaskHidden = self.theanoRng.binomial(n=1, p=self.hiddenDropout,
                                             size=linearSum.shape,
                                             dtype=theanoFloat)
-        currentLayerValues = dropoutMaskHidden * activationFunction.deterministic(linearSum)
+        currentLayerValues = dropoutMaskHidden * self.activationFunction.deterministic(linearSum)
 
     # Last layer operations, no dropout in the output
-    w = self.weights[nrWeights - 1]
-    b = self.biases[nrWeights - 1]
+    w = self.weights[self.nrWeights - 1]
+    b = self.biases[self.nrWeights - 1]
     linearSum = T.dot(currentLayerValues, w) + b
     currentLayerValues = classificationActivationFunction.deterministic(linearSum)
 
