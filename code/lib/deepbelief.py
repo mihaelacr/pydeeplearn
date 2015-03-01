@@ -98,7 +98,8 @@ class MiniBatchTrainer(BatchTrainer):
       # this to BatchTrainer
       error = T.sum(self.costFun(self.input, self.inputLabels))
       grad_error = T.grad(error, self.input)
-      adversarial_input = self.input + self.adversarial_epsilon * T.sgn(grad_error)
+      adversarial_input = self.input
+      # + self.adversarial_epsilon * T.sgn(grad_error)
       self.adversarial_output = self.forwardPass(adversarial_input)
 
   def forwardPass(self, x):
@@ -142,8 +143,7 @@ class MiniBatchTrainer(BatchTrainer):
 
     if self.adversarial_training:
       adversarial_error = self.costFun(self.adversarial_output, y)
-      # return self.adversarial_coefficient * output_error + (1.0 - self.adversarial_coefficient) * adversarial_error
-      return adversarial_error
+      return self.adversarial_coefficient * output_error + (1.0 - self.adversarial_coefficient) * adversarial_error
     else:
       return output_error
 
