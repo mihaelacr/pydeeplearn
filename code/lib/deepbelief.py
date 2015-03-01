@@ -93,7 +93,7 @@ class MiniBatchTrainer(BatchTrainer):
     self.output = forwardPass(self.input)
 
     if self.adversarial_training:
-      adversarial_input = self.input + self.adversarial_epsilon * T.sgn(T.grad(self.costFun(self.input, y)))
+      adversarial_input = self.input + self.adversarial_epsilon * T.sgn(T.grad(self.costFun(self.input, self.inputLabels), self.input))
       self.adversarial_output = forwardPass(adversarial_input)
 
   def forwardPass(x):
