@@ -17,11 +17,12 @@ DEBUG = False
 
 class MiniBatchTrainer(BatchTrainer):
 
-  def __init__(self, input, nrLayers, initialWeights, initialBiases,
+  def __init__(self, input, inputLabels, nrLayers, initialWeights, initialBiases,
                activationFunction, classificationActivationFunction,
                visibleDropout, hiddenDropout,
                adversarial_training, adversarial_epsilon, adversarial_coefficient):
     self.input = input
+    self.inputLabels = inputLabels
     # If we should use adversarial training or not
     self.adversarial_training = adversarial_training
     self.adversarial_coefficient = adversarial_coefficient
@@ -93,7 +94,7 @@ class MiniBatchTrainer(BatchTrainer):
     self.output = self.forwardPass(self.input)
 
     if self.adversarial_training:
-      adversarial_input = self.input + self.adversarial_epsilon * T.sgn(T.grad(self.costFun(self.input, y)))
+      adversarial_input = self.input + self.adversarial_epsilon * T.sgn(T.grad(self.costFun(self.input, self.inputLabels)))
       self.adversarial_output = forwardPass(adversarial_input)
 
   def forwardPass(self, x):
@@ -128,10 +129,10 @@ class MiniBatchTrainer(BatchTrainer):
 
     return currentLayerValues
 
-  # TODO: this will not work in the adversarial definition
   def costFun(self, x, y):
     return  T.nnet.categorical_crossentropy(x, y)
 
+  # TODO: do I still need to pass the y?
   def cost(self, y):
     if self.adversarial_training:
       output_error = self.costFun(self.output, y)
@@ -592,7 +593,7 @@ class DBN(object):
     # labels[start:end] this needs to be a matrix because we output probabilities
     y = T.matrix('y', dtype=theanoFloat)
 
-    batchTrainer = MiniBatchTrainer(input=x, nrLayers=self.nrLayers,
+    batchTrainer = MiniBatchTrainer(input=x, inputLabels=y, nrLayers=self.nrLayers,
                                     activationFunction=self.activationFunction,
                                     classificationActivationFunction=self.classificationActivationFunction,
                                     initialWeights=self.weights,
