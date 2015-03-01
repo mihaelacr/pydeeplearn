@@ -1046,6 +1046,8 @@ def main():
     displayWeightsAndDbSample()
   if args.conv:
     convolutionalNNMnist()
+  if args.adversarial_training:
+    adversarialMNIST()
 
 
 if __name__ == '__main__':
