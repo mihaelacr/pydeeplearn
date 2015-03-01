@@ -93,6 +93,8 @@ class MiniBatchTrainer(BatchTrainer):
     self.output = forwardPass(self.input)
 
     if self.adversarial_training:
+      # TODO: since we are using this here maybe we should move
+      # this to BatchTrainer
       error = T.sum(self.costFun(self.input, self.inputLabels))
       grad_error = T.grad(error, self.input)
       adversarial_input = self.input + self.adversarial_epsilon * T.sgn(grad_error)
@@ -134,13 +136,14 @@ class MiniBatchTrainer(BatchTrainer):
     return T.nnet.categorical_crossentropy(x, y)
 
   def cost(self, y):
-    if self.adversarial_training:
-      output_error = self.costFun(self.output, y)
-      adversarial_error = self.costFun(self.adversarial_output, y)
+    output_error = self.costFun(self.output, y)
 
-      return self.adversarial_coefficient * output_error + (1.0 - self.adversarial_coefficient) * adversarial_error
+    if self.adversarial_training:
+      adversarial_error = self.costFun(self.adversarial_output, y)
+      # return self.adversarial_coefficient * output_error + (1.0 - self.adversarial_coefficient) * adversarial_error
+      return adversarial_error
     else:
-      return T.nnet.categorical_crossentropy(self.output, y)
+      return output_error
 
 class ClassifierBatch(object):
 
