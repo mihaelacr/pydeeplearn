@@ -347,11 +347,12 @@ class DBN(object):
     self.adversarial_coefficient = adversarial_coefficient
     self.adversarial_epsilon = adversarial_epsilon
 
-
     self.nameDataset = nameDataset
 
     print "hidden dropout in DBN", hiddenDropout
     print "visible dropout in DBN", visibleDropout
+
+    print "using adversarial training"
 
   def __getstate__(self):
     odict = self.__dict__.copy() # copy the dict since we change it
