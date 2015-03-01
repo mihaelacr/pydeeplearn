@@ -901,7 +901,7 @@ def adversarialMNIST():
   vectorLabels = labelsToVectors(trainLabels, 10)
 
   unsupervisedLearningRate = 0.005
-  supervisedLearningRate = 0.005
+  supervisedLearningRate = 0.001
   momentumMax = 0.97
   sparsityTragetRbm = 0.01
   sparsityConstraintRbm = False

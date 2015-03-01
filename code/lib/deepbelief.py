@@ -141,7 +141,8 @@ class MiniBatchTrainer(BatchTrainer):
     output_error = self.costFun(self.output, y)
     if self.adversarial_training:
       adversarial_error = self.costFun(self.adversarial_output, y)
-      return self.adversarial_coefficient * output_error + (1.0 - self.adversarial_coefficient) * adversarial_error
+      alpha = self.adversarial_coefficient
+      return alpha * output_error + (1.0 - alpha) * adversarial_error
     else:
       return output_error
 
