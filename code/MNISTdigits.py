@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cPickle as pickle
 import PCA
-import svm
 
 from sklearn import cross_validation
 
@@ -65,8 +64,6 @@ parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
 parser.add_argument('--display', dest='display',action='store_true', default=False,
                     help=("if true saves images of the net weights and samples from the net"))
-parser.add_argument('--svm', dest='svm',action='store_true', default=False,
-                    help=("if true trains an svm with the hidden activations from the net"))
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--trainSize', type=int, default=10000,
@@ -623,22 +620,6 @@ def annMNIST():
     pickle.dump(net, f)
     f.close()
 
-def svmMNIST():
-  with open(args.netFile, "rb") as f:
-    dbnNet = pickle.load(f)
-
-  trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, bTrain=True, path=args.path)
-
-  testVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None, bTrain=False, path=args.path)
-
-  trainingScaledVectors = trainVectors / 255.0
-  testingScaledVectors = testVectors / 255.0
-
-  svm.SVMCV(dbnNet, trainingScaledVectors, trainLabels,
-            testingScaledVectors, testLabels)
-
 # NOT for relu: use GaussianMNIST for that
 def deepbeliefMNIST():
   assert not args.relu, "do not run this method for rectified linear units"
@@ -1063,8 +1044,6 @@ def main():
     deepbeliefMNISTGaussian()
   if args.display:
     displayWeightsAndDbSample()
-  if args.svm:
-    svmMNIST()
   if args.conv:
     convolutionalNNMnist()
   if args.adversarial_training:
