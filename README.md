@@ -22,7 +22,8 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 
 # Future and current work
  I am currently working on completing the CNN implementation and thinking of adding Bayesian optimization to avoid doing CV for finding out hyper parameters.
- I have added support for [adversarrial training](https://drive.google.com/file/d/0B64011x02sIkX0poOGVyZDI4dUU/view) but it is not merged in master yet. If you are interested, check out the adversarialexamples branch.
+ 
+ I have added support for [adversarial training](https://drive.google.com/file/d/0B64011x02sIkX0poOGVyZDI4dUU/view) but it is not merged in master yet. If you are interested, check out the adversarialexamples branch.
   
  
 # How to install dependencies 
