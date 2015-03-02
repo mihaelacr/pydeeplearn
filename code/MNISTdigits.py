@@ -883,6 +883,22 @@ def cvMNISTGaussian():
 
 def cvadversarialMNIST():
   training = args.trainSize
+  testing = args.testSize
+
+  trainVectors, trainLabels =\
+      readmnist.read(0, training, bTrain=True, path=args.path)
+  testVectors, testLabels =\
+      readmnist.read(0, testing, bTrain=False, path=args.path)
+  print trainVectors[0].shape
+
+  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
+
+  activationFunction = Sigmoid()
+
+  trainingScaledVectors = trainVectors / 255.0
+
+  vectorLabels = labelsToVectors(trainLabels, 10)
+  training = args.trainSize
 
   trainVectors, trainLabels =\
       readmnist.read(0, training, bTrain=True, path=args.path)
@@ -910,31 +926,27 @@ def cvadversarialMNIST():
   for train, test in kf:
     # Train the net
     # Try 1200, 1200, 1200
-    net = db.DBN(5, [784, 1000, 1000, 1000, 10],
-                  binary=False,
-                  unsupervisedLearningRate=params[i][0],
-                  supervisedLearningRate=params[i][1],
-                  momentumMax=0.95,
-                  nesterovMomentum=args.nesterov,
-                  rbmNesterovMomentum=args.rbmnesterov,
-                  activationFunction=Rectified(),
-                  rbmActivationFunctionVisible=Identity(),
-                  rbmActivationFunctionHidden=RectifiedNoisy(),
-                  rmsprop=args.rmsprop,
-                  visibleDropout=0.8,
-                  hiddenDropout=0.5,
-                  weightDecayL1=0,
-                  weightDecayL2=0,
-                  rbmHiddenDropout=1.0,
-                  rbmVisibleDropout=1.0,
-                  adversarial_training=True,
-                  adversarial_coefficient=0.5,
-                  adversarial_epsilon=1.0 / 255,
-                  miniBatchSize=args.miniBatchSize,
-                  preTrainEpochs=args.preTrainEpochs,
-                  sparsityConstraintRbm=False,
-                  sparsityTragetRbm=0.01,
-                  sparsityRegularizationRbm=None)
+    net = db.DBN(5, [784, 1500, 1500, 1500, 10],
+                 binary=False,
+                 unsupervisedLearningRate=unsupervisedLearningRate,
+                 supervisedLearningRate=supervisedLearningRate,
+                 momentumMax=momentumMax,
+                 activationFunction=activationFunction,
+                 rbmActivationFunctionVisible=activationFunction,
+                 rbmActivationFunctionHidden=activationFunction,
+                 nesterovMomentum=args.nesterov,
+                 rbmNesterovMomentum=args.rbmnesterov,
+                 rmsprop=args.rmsprop,
+                 hiddenDropout=0.5,
+                 visibleDropout=0.8,
+                 rbmHiddenDropout=1.0,
+                 rbmVisibleDropout=1.0,
+                 adversarial_training=args.adversarial_training,
+                 adversarial_coefficient=0.5,
+                 adversarial_epsilon=1.0 / 255,
+                 weightDecayL1=0,
+                 weightDecayL2=0,
+                 preTrainEpochs=args.preTrainEpochs)
 
     net.train(trainingScaledVectors[train], vectorLabels[train],
               maxEpochs=args.maxEpochs,
