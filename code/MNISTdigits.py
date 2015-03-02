@@ -931,7 +931,7 @@ def cvadversarialMNIST():
                  binary=False,
                  unsupervisedLearningRate=params[i][0],
                  supervisedLearningRate=params[i][1],
-                 momentumMax=momentumMax,
+                 momentumMax=0.95,
                  activationFunction=activationFunction,
                  rbmActivationFunctionVisible=activationFunction,
                  rbmActivationFunctionHidden=activationFunction,
