@@ -924,12 +924,13 @@ def cvadversarialMNIST():
 
   i = 0
   for train, test in kf:
-    # Train the net
-    # Try 1200, 1200, 1200
+    print "cv fold", i
+    print "params", params[i]
+
     net = db.DBN(5, [784, 1500, 1500, 1500, 10],
                  binary=False,
-                 unsupervisedLearningRate=unsupervisedLearningRate,
-                 supervisedLearningRate=supervisedLearningRate,
+                 unsupervisedLearningRate=params[i][0],
+                 supervisedLearningRate=params[i][1],
                  momentumMax=momentumMax,
                  activationFunction=activationFunction,
                  rbmActivationFunctionVisible=activationFunction,
