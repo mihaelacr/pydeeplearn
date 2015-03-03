@@ -898,18 +898,6 @@ def cvadversarialMNIST():
   trainingScaledVectors = trainVectors / 255.0
 
   vectorLabels = labelsToVectors(trainLabels, 10)
-  training = args.trainSize
-
-  trainVectors, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path=args.path)
-
-  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
-
-  trainVectors = np.array(trainVectors, dtype='float')
-
-  # Ensure the data has zero mean and 1 variance
-  trainingScaledVectors = scale(trainVectors)
-  vectorLabels = labelsToVectors(trainLabels, 10)
 
   bestFold = -1
   bestError = np.inf
