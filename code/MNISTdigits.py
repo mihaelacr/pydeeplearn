@@ -902,7 +902,7 @@ def cvadversarialMNIST():
   bestFold = -1
   bestError = np.inf
 
-  params = [(5e-03, 1e-02),  (1e-02, 5e-02), (5e-03, 5e-02), (1e-02, 5e-03), (5e-03, 5e-03), (1e-02, 1e-02) ]
+  params = [(5e-02, 1e-02),  (1e-02, 5e-02), (5e-02, 5e-02), (1e-02, 5e-03), (5e-02, 5e-03) ]
 
   correctness = []
 
