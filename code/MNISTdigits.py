@@ -78,7 +78,7 @@ parser.add_argument('netFile',
                     help="file where the serialized network should be saved")
 parser.add_argument('--validation',dest='validation',action='store_true', default=False,
                     help="if true, the network is trained using a validation set")
-parser.add_argument('--path',dest='path', type = "string", default="MNIST",
+parser.add_argument('--path',dest='path', type = str, default="MNIST",
                     help="the path to the MNIST files")
 
 
