@@ -1,5 +1,5 @@
 language: PYTHON
-name:     "dbnmnist"
+name:     "mnistdbn"
 
 variable {
  name: "supervisedLearningRate"
