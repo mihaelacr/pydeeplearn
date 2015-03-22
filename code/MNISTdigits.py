@@ -904,6 +904,7 @@ def cvadversarialMNIST():
 
   params = [(5e-02, 1e-02),  (1e-02, 5e-02), (5e-02, 5e-02), (1e-02, 5e-03), (5e-02, 5e-03) ]
 
+
   correctness = []
 
   nrFolds = len(params)

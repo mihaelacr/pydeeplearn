@@ -14,6 +14,11 @@ import itertools
 def getClassificationError(predicted, actual):
   return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
 
+def minDiff(vec):
+  vec = np.sort(vec)
+  rolled = np.roll(vec, -1)
+  diff = rolled - vec
+  return np.min(diff[0:-1])
 
 def concatenateLists(lists):
   return list(itertools.chain.from_iterable(lists))
