@@ -11,7 +11,7 @@ from lib.common import *
 from read import readmnist
 
 parser = argparse.ArgumentParser(description='digit recognition')
-parser.add_argument('--path',dest='path', type = "string", default="MNIST",
+parser.add_argument('--path',dest='path', type = str, default="/data/mcr10/project/pydeeplearn/code/MNIST",
                     help="the path to the MNIST files")
 arser.add_argument('--trainSize', type=int, default=100,
                     help='the number of tranining cases to be considered')
