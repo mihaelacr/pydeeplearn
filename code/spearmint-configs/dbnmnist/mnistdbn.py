@@ -7,13 +7,14 @@ import argparse
 
 from lib import deepbelief as db
 from lib.common import *
+from lib.activationfunctions import *
 
 from read import readmnist
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--path',dest='path', type = str, default="/data/mcr10/project/pydeeplearn/code/MNIST",
                     help="the path to the MNIST files")
-arser.add_argument('--trainSize', type=int, default=100,
+parser.add_argument('--trainSize', type=int, default=100,
                     help='the number of tranining cases to be considered')
 parser.add_argument('--testSize', type=int, default=10,
                     help='the number of testing cases to be considered')
@@ -69,7 +70,7 @@ def trainDBN(unsupervisedLearningRate,
                   sparsityRegularizationRbm=None)
 
   net.train(trainingScaledVectors, trainVectorLabels,
-            maxEpochs=maxEpochs, validation=args.validation)
+            maxEpochs=maxEpochs, validation=False)
 
   proabilities, predicted = net.classify(testingScaledVectors)
   error = getClassificationError(predicted, testLabels)
@@ -87,3 +88,15 @@ def main(job_id, params):
                   miniBatchSize=params['miniBatchSize'][0],
                   momentumMax=params['momentumMax'][0],
                   maxEpochs=params['maxEpochs'][0])
+
+if __name__ == '__main__':
+  params = {
+    'unsupervisedLearningRate': [0],
+    'supervisedLearningRate': [0],
+    'visibleDropout': [0],
+    'hiddenDropout': [0],
+    'miniBatchSize': [0],
+    'momentumMax': [0],
+    'maxEpochs': [0]
+  }
+  main(1, params)
