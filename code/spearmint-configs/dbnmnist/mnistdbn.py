@@ -3,23 +3,16 @@
 __author__ = "Mihaela Rosca"
 __contact__ = "mihaela.c.rosca@gmail.com"
 
-import argparse
-
 from lib import deepbelief as db
 from lib.common import *
 from lib.activationfunctions import *
 
 from read import readmnist
 
-parser = argparse.ArgumentParser(description='digit recognition')
-parser.add_argument('--path',dest='path', type = str, default="/data/mcr10/project/pydeeplearn/code/MNIST",
-                    help="the path to the MNIST files")
-parser.add_argument('--trainSize', type=int, default=100,
-                    help='the number of tranining cases to be considered')
-parser.add_argument('--testSize', type=int, default=10,
-                    help='the number of testing cases to be considered')
 
-args = parser.parse_args()
+PATH = "/data/mcr10/project/pydeeplearn/code/MNIST"
+TRAIN = 100
+TEST = 10
 
 def trainDBN(unsupervisedLearningRate,
              supervisedLearningRate,
@@ -29,11 +22,11 @@ def trainDBN(unsupervisedLearningRate,
              momentumMax,
              maxEpochs):
   trainVectors, trainLabels =\
-    readmnist.read(0, args.trainSize, digits=None, bTrain=True, path=args.path)
+    readmnist.read(0, TRAIN, digits=None, bTrain=True, path=PATH)
 
   testVectors, testLabels =\
-      readmnist.read(args.trainSize,  args.trainSize + args.testSize,
-                     digits=None, bTrain=True, path=args.path)
+      readmnist.read(TRAIN, TRAIN + TEST,
+                     digits=None, bTrain=True, path=PATH)
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
