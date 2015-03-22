@@ -89,14 +89,3 @@ def main(job_id, params):
                   momentumMax=params['momentumMax'][0],
                   maxEpochs=params['maxEpochs'][0])
 
-if __name__ == '__main__':
-  params = {
-    'unsupervisedLearningRate': [0],
-    'supervisedLearningRate': [0],
-    'visibleDropout': [0],
-    'hiddenDropout': [0],
-    'miniBatchSize': [0],
-    'momentumMax': [0],
-    'maxEpochs': [0]
-  }
-  main(1, params)
