@@ -82,4 +82,4 @@ Note that for theano to work on the GPU you need cuda installed and setting up s
 
 # Acknowledgements
 
-I would like to thank the Department of Computing at Imperial College and Prof. Abbas Edalat for their supoprt during my thesis and for allowing me to continue with my experiments on lab equipment after graduation.
+I would like to thank the Department of Computing at Imperial College and Prof. Abbas Edalat for their support during my thesis and for allowing me to continue with my experiments on lab equipment after graduation.
