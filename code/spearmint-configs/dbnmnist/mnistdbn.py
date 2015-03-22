@@ -13,9 +13,9 @@ from read import readmnist
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--path',dest='path', type = "string", default="MNIST",
                     help="the path to the MNIST files")
-arser.add_argument('--trainSize', type=int, default=10000,
+arser.add_argument('--trainSize', type=int, default=100,
                     help='the number of tranining cases to be considered')
-parser.add_argument('--testSize', type=int, default=1000,
+parser.add_argument('--testSize', type=int, default=10,
                     help='the number of testing cases to be considered')
 
 args = parser.parse_args()
