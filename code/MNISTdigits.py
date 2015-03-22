@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cPickle as pickle
 import PCA
-import svm
 
 from sklearn import cross_validation
 
@@ -63,8 +62,6 @@ parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
 parser.add_argument('--display', dest='display',action='store_true', default=False,
                     help=("if true saves images of the net weights and samples from the net"))
-parser.add_argument('--svm', dest='svm',action='store_true', default=False,
-                    help=("if true trains an svm with the hidden activations from the net"))
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
 parser.add_argument('--trainSize', type=int, default=10000,
@@ -77,11 +74,11 @@ parser.add_argument('--maxEpochs', type=int, default=100,
                     help='the maximum number of supervised epochs')
 parser.add_argument('--miniBatchSize', type=int, default=10,
                     help='the number of training points in a mini batch')
-parser.add_argument('netFile', 
+parser.add_argument('netFile',
                     help="file where the serialized network should be saved")
 parser.add_argument('--validation',dest='validation',action='store_true', default=False,
                     help="if true, the network is trained using a validation set")
-parser.add_argument('--path',dest='path', type = "string", default="MNIST", 
+parser.add_argument('--path',dest='path', type = "string", default="MNIST",
                     help="the path to the MNIST files")
 
 
@@ -621,22 +618,6 @@ def annMNIST():
     pickle.dump(net, f)
     f.close()
 
-def svmMNIST():
-  with open(args.netFile, "rb") as f:
-    dbnNet = pickle.load(f)
-
-  trainVectors, trainLabels =\
-      readmnist.read(0, args.trainSize, bTrain=True, path=args.path)
-
-  testVectors, testLabels =\
-      readmnist.read(0, args.testSize, digits=None, bTrain=False, path=args.path)
-
-  trainingScaledVectors = trainVectors / 255.0
-  testingScaledVectors = testVectors / 255.0
-
-  svm.SVMCV(dbnNet, trainingScaledVectors, trainLabels,
-            testingScaledVectors, testLabels)
-
 # NOT for relu: use GaussianMNIST for that
 def deepbeliefMNIST():
 
@@ -952,7 +933,7 @@ def main():
   random.seed(6)
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv +\
-      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display + args.svm + args.conv != 1:
+      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display + args.conv != 1:
     raise Exception("You have to decide on one main method to run")
 
   # makeNicePlots()
@@ -975,8 +956,6 @@ def main():
     deepbeliefMNISTGaussian()
   if args.display:
     displayWeightsAndDbSample()
-  if args.svm:
-    svmMNIST()
   if args.conv:
     convolutionalNNMnist()
 
