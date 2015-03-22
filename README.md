@@ -21,7 +21,7 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
   * If you still have questions, pop me an email or a message.
 
 # Future and current work
- I am currently working on completing the CNN implementation and thinking of adding Bayesian optimization to avoid doing CV for finding out hyper parameters. When [whetlab](https://www.whetlab.com) will be in open beta, I will integrate with their UI as well.
+ I am currently working on completing the CNN implementation and thinking of adding Bayesian optimization to avoid doing CV for finding out hyper parameters. When [whetlab](https://www.whetlab.com) will be in open beta, I will integrate with their UI as well. Currently, see the spearmint branch for an example of how to use spearmint with pydeeplearn. This is still experimental, I am still playing around with it so it's not yet into master.
  
  I have added support for [adversarial training](https://drive.google.com/file/d/0B64011x02sIkX0poOGVyZDI4dUU/view) but it is not merged in master yet. If you are interested, check out the adversarialexamples branch.
   
