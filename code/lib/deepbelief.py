@@ -496,7 +496,7 @@ class DBN(object):
 
     self.pretrain(data, unsupervisedData)
 
-    self.nrMiniBatchesTrain = max(len(data) / self.miniBatchSize)
+    self.nrMiniBatchesTrain = max(len(data) / self.miniBatchSize, 1.0)
 
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels, False, None, None, maxEpochs)
