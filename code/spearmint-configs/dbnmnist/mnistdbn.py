@@ -11,8 +11,8 @@ from read import readmnist
 
 
 PATH = "/data/mcr10/project/pydeeplearn/code/MNIST"
-TRAIN = 100
-TEST = 10
+TRAIN = 10000
+TEST = 1000
 
 def trainDBN(unsupervisedLearningRate,
              supervisedLearningRate,
