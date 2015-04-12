@@ -69,6 +69,9 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 11. install matplotlib
    `easy_install -m matplotlib`
 
+12. not required: install spearmint (a library that learns hyperparameters by using bayesian optimization)
+ Instructions can be found [here](https://github.com/JasperSnoek/spearmint#dependencies)
+
 Note that for theano to work on the GPU you need cuda installed and setting up some environment variables.
 
 `PATH` needs to containt the path to nvcc (usually `/usr/local/cuda/bin`)
