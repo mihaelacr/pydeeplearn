@@ -15,15 +15,17 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 # User guide
   * The library is in `code/lib/`. You can find there the implementations of RBMs, CNNs and DBNs.
   * Multiple examples on how to use RBMs, DBNs and CNNs are in `code/MNISTdigits.py` and `code/emotions.py`
+  * If you want to use [spearmint](https://github.com/JasperSnoek/spearmint) with pydeeplearn to avoid cross validation, check out the example I made [here](https://github.com/mihaelacr/pydeeplearn/tree/master/code/spearmint-configs/dbnmnist)
   * The code that implements a network which determines the similarity between two inputs is in `code/similarity` 
   * The old code that is not based on theano but only numpy is in `code/old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
   * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
   * If you still have questions, pop me an email or a message.
 
 # Future and current work
- I am currently working on completing the CNN implementation and thinking of adding Bayesian optimization to avoid doing CV for finding out hyper parameters. When [whetlab](https://www.whetlab.com) will be in open beta, I will integrate with their UI as well. Currently, see the [spearmint](https://github.com/mihaelacr/pydeeplearn/tree/spearmint) branch for an example of how to use spearmint with pydeeplearn. This is still experimental, I am still playing around with it so it's not yet into master.
+ I am currently working on completing the CNN implementation.
+ When [whetlab](https://www.whetlab.com) will be in open beta, I will integrate with their UI as well.
  
- I have added support for [adversarial training](https://drive.google.com/file/d/0B64011x02sIkX0poOGVyZDI4dUU/view) but it is not merged in master yet. If you are interested, check out the [adversarialexamples branch](https://github.com/mihaelacr/pydeeplearn/tree/adversarialexamples).
+ I have added support for [adversarial training](https://drive.google.com/file/d/0B64011x02sIkX0poOGVyZDI4dUU/view) . If you are interested, check out the [adversarialexamples branch](https://github.com/mihaelacr/pydeeplearn/tree/adversarialexamples). This branch will be soon merged into master.
   
  If you have any feature requests, please let me know.
  
