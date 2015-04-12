@@ -22,8 +22,7 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
   * If you still have questions, pop me an email or a message.
 
 # Future and current work
- I am currently working on completing the CNN implementation.
- When [whetlab](https://www.whetlab.com) will be in open beta, I will integrate with their UI as well.
+ When [whetlab](https://www.whetlab.com) will be in open beta, I will integrate with their UI to be able to nicely see the results of experiments. In the meantime, if you want to avoid cross validation, see the [spearmint examples](https://github.com/mihaelacr/pydeeplearn/tree/master/code/spearmint-configs/dbnmnist)
  
  I have added support for [adversarial training](https://drive.google.com/file/d/0B64011x02sIkX0poOGVyZDI4dUU/view) . If you are interested, check out the [adversarialexamples branch](https://github.com/mihaelacr/pydeeplearn/tree/adversarialexamples). This branch will be soon merged into master.
   
