@@ -50,6 +50,8 @@ parser.add_argument('--nesterov', dest='nesterov',action='store_true', default=F
                     help=("if true, the deep belief net is trained using nesterov momentum"))
 parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
                     help=("if true, rbms are trained using nesterov momentum"))
+parser.add_argument('--adversarial_training', dest='adversarial_training',action='store_true', default=False,
+                    help=("if true, we use adversarial training"))
 parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=False,
                     help=("if true, rmsprop is used when training the deep belief net."))
 parser.add_argument('--rbmrmsprop', dest='rbmrmsprop',action='store_true', default=False,
@@ -620,7 +622,6 @@ def annMNIST():
 
 # NOT for relu: use GaussianMNIST for that
 def deepbeliefMNIST():
-
   assert not args.relu, "do not run this method for rectified linear units"
 
   training = args.trainSize
@@ -878,6 +879,93 @@ def cvMNISTGaussian():
   for i in xrange(len(params)):
     print "parameter tuple " + str(params[i]) + " achieved correctness of " + str(correctness[i])
 
+
+def adversarialMNIST():
+  training = args.trainSize
+  testing = args.testSize
+
+  trainVectors, trainLabels =\
+      readmnist.read(0, training, bTrain=True, path=args.path)
+  testVectors, testLabels =\
+      readmnist.read(0, testing, bTrain=False, path=args.path)
+  print trainVectors[0].shape
+
+  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
+
+  trainVectors = np.array(trainVectors, dtype='float')
+  trainingScaledVectors = scale(trainVectors)
+
+  testVectors = np.array(testVectors, dtype='float')
+  testingScaledVectors = scale(testVectors)
+
+  vectorLabels = labelsToVectors(trainLabels, 10)
+
+  unsupervisedLearningRate = 0.005
+  supervisedLearningRate = 0.005
+  momentumMax = 0.97
+  sparsityTragetRbm = 0.01
+  sparsityConstraintRbm = False
+  sparsityRegularizationRbm = 0.005
+
+  if args.train:
+    net = db.DBN(5, [784, 1200, 1200, 1200, 10],
+                 binary=False,
+                 unsupervisedLearningRate=unsupervisedLearningRate,
+                 supervisedLearningRate=supervisedLearningRate,
+                 momentumMax=momentumMax,
+                 activationFunction=Rectified(),
+                 rbmActivationFunctionVisible=Identity(),
+                 rbmActivationFunctionHidden=RectifiedNoisy(),
+                 nesterovMomentum=args.nesterov,
+                 rbmNesterovMomentum=args.rbmnesterov,
+                 rmsprop=args.rmsprop,
+                 hiddenDropout=0.5,
+                 visibleDropout=0.8,
+                 rbmHiddenDropout=1.0,
+                 rbmVisibleDropout=1.0,
+                 weightDecayL1=0,
+                 weightDecayL2=0,
+                 adversarial_training=args.adversarial_training,
+                 adversarial_coefficient=0.5,
+                 adversarial_epsilon=1.0 / 255,
+                 sparsityTragetRbm=sparsityTragetRbm,
+                 sparsityConstraintRbm=sparsityConstraintRbm,
+                 sparsityRegularizationRbm=sparsityRegularizationRbm,
+                 preTrainEpochs=args.preTrainEpochs)
+
+    net.train(trainingScaledVectors, vectorLabels,
+              maxEpochs=args.maxEpochs, validation=args.validation)
+  else:
+    # Take the saved network and use that for reconstructions
+    f = open(args.netFile, "rb")
+    net = pickle.load(f)
+    f.close()
+
+
+  probs, predicted = net.classify(testingScaledVectors)
+  print type(predicted)
+  correct = 0
+  errorCases = []
+  for i in xrange(testing):
+    print "predicted"
+    print "probs"
+    print probs[i]
+    print predicted[i]
+    print "actual"
+    actual = testLabels[i]
+    print actual
+    if predicted[i] == actual:
+      correct += 1
+    else:
+      errorCases.append(i)
+
+  print "correct"
+  print correct
+
+  if args.save:
+    f = open(args.netFile, "wb")
+    pickle.dump(net, f)
+    f.close()
 
 
 # TODO: fix this (look at the ML coursework for it)
