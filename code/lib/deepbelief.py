@@ -90,7 +90,7 @@ class MiniBatchTrainer(BatchTrainer):
     # Required to sample units for dropout
     self.theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
 
-    self.output = forwardPass(self.input)
+    self.output = self.forwardPass(self.input)
 
     if self.adversarial_training:
       # TODO: since we are using this here maybe we should move
