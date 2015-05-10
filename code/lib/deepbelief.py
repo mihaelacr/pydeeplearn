@@ -100,7 +100,7 @@ class MiniBatchTrainer(BatchTrainer):
       adversarial_input = self.input + self.adversarial_epsilon * T.sgn(grad_error)
       self.adversarial_output = self.forwardPass(adversarial_input)
 
-  def forwardPass(x):
+  def forwardPass(self, x):
     # Sample from the visible layer
     # Get the mask that is used for the visible units
     if self.visibleDropout in [1.0, 1]:
