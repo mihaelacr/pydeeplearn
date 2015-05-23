@@ -664,6 +664,9 @@ def deepbeliefMNIST():
                  visibleDropout=0.8,
                  rbmHiddenDropout=1.0,
                  rbmVisibleDropout=1.0,
+                 adversarial_training=args.adversarial_training,
+                 adversarial_coefficient=0.5,
+                 adversarial_epsilon=1.0 / 255,
                  weightDecayL1=0,
                  weightDecayL2=0,
                  preTrainEpochs=args.preTrainEpochs)
