@@ -1097,7 +1097,7 @@ def main():
   random.seed(6)
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv + \
-      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display + args.conv + args.adversarial_training + args.cvadv != 1:
+      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display + args.conv + args.cvadv != 1:
     raise Exception("You have to decide on one main method to run")
 
   # makeNicePlots()
@@ -1122,8 +1122,6 @@ def main():
     displayWeightsAndDbSample()
   if args.conv:
     convolutionalNNMnist()
-  if args.adversarial_training:
-    adversarialMNIST()
   if args.cvadv:
     cvadversarialMNIST()
 

@@ -10,9 +10,9 @@ from lib.activationfunctions import *
 from read import readmnist
 
 
-PATH = "/data/mcr10/project/pydeeplearn/code/MNIST"
-TRAIN = 10000
-TEST = 1000
+PATH = "/home/aela/uni/project/code/MNIST"
+TRAIN = 100
+TEST = 10
 
 def trainDBN(unsupervisedLearningRate,
              supervisedLearningRate,
