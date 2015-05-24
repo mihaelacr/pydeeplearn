@@ -20,12 +20,11 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
   * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
   * If you still have questions, pop me an email or a message.
 
-# Future and current work
- I am currently working on completing the CNN implementation and thinking of adding Bayesian optimization to avoid doing CV for finding out hyper parameters.
+## Future and current work
+ I am currently working on completing the CNN implementation and also considering adding an LSTM implementation. If anyone has a specific feature request, please let me know.
 
 
 ## How to install dependencies
-
 
 1. Create a python virtualenv
 
