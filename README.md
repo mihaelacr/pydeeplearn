@@ -70,7 +70,7 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 
 When running a pydeeplearn program you might have to set up some environment variables, depending on your configuration. If want to use the GPU for training/testing a model, you have to ensure that theano knows where your CUDA installation is (for detailed instructions see below).
 
- ## Setting up theano to work on the GPU
+## Setting up theano to work on the GPU
 
   `PATH` needs to contain the path to nvcc (usually `/usr/local/cuda/bin`)
 
@@ -85,8 +85,7 @@ When running a pydeeplearn program you might have to set up some environment var
 
   `export THEANO_FLAGS='floatX=float32,device=gpu0,nvcc.fastmath=True'`
 
-
- ## Setting up numpy/ theano to work with openblas
+## Setting up numpy/ theano to work with openblas
 
   `LD_LIBRARY_PATH` needs to contain the path to openblas (for numpy to find it: this is the prefix path you chose at step 3 in the installation instructions above) and the path to OpenCV in case it was not installed globally
 
