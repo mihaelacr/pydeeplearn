@@ -12,7 +12,7 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 
  In case you use my code for a paper, study or project please cite my report and if you can, add a link to this repository.
 
-# User guide
+## User guide
   * The library is in `code/lib/`. You can find there the implementations of RBMs, CNNs and DBNs.
   * Multiple examples on how to use RBMs, DBNs and CNNs are in `code/MNISTdigits.py` and `code/emotions.py`
   * The code that implements a network which determines the similarity between two inputs is in `code/similarity`
@@ -24,7 +24,7 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
  I am currently working on completing the CNN implementation and thinking of adding Bayesian optimization to avoid doing CV for finding out hyper parameters.
 
 
-# How to install dependencies
+## How to install dependencies
 
 
 1. Create a python virtualenv
@@ -66,11 +66,11 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
    `easy_install -m matplotlib`
 
 
-# Set up
+## Set up
 
 When running a pydeeplearn program you might have to set up some environment variables, depending on your configuration. If want to use the GPU for training/testing a model, you have to ensure that theano knows where your CUDA installation is (for detailed instructions see below).
 
-## Setting up theano to work on the GPU
+### Setting up theano to work on the GPU
 
   `PATH` needs to contain the path to nvcc (usually `/usr/local/cuda/bin`)
 
@@ -85,13 +85,13 @@ When running a pydeeplearn program you might have to set up some environment var
 
   `export THEANO_FLAGS='floatX=float32,device=gpu0,nvcc.fastmath=True'`
 
-## Setting up numpy/ theano to work with openblas
+### Setting up numpy/ theano to work with openblas
 
   `LD_LIBRARY_PATH` needs to contain the path to openblas (for numpy to find it: this is the prefix path you chose at step 3 in the installation instructions above) and the path to OpenCV in case it was not installed globally
 
   `LIBRARY_PATH` needs to contain the path to openblas (for numpy to find it: this is the prefix path you chose at step 3 in the installation instructions above) and the path to OpenCV in case it was not installed globally
 
 
-# Acknowledgements
+## Acknowledgements
 
 I would like to thank the Department of Computing at Imperial College and Prof. Abbas Edalat for their supoprt during my thesis and for allowing me to continue with my experiments on lab equipment after graduation.
