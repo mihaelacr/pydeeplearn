@@ -4,27 +4,27 @@ pydeeplearn
 Library for deep belief nets and rbms (convolutional neural networks are work in progress). Provides code for dropout, rmsprop rectified linear units, sparsity constraints, weight decay, etc. Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/).
 
 
-For more details see the [report](http://elarosca.net/report.pdf) of the project which used this code and the [ poster](http://elarosca.net/poster.pdf) submitted for the participation to the SET awards. The project was made as part of the requirements for a master degree at Imperial College London and received a [prize of excellence] (http://www3.imperial.ac.uk/computing/teaching/ug/ug-distinguished-projects).
+For more details see the [report](http://elarosca.net/report.pdf) of the project which used this code and the [ poster](http://elarosca.net/poster.pdf) submitted for the participation to the SET awards. The project was made as part of the requirements for a master degree at Imperial College London and received a [prize of excellence](http://www3.imperial.ac.uk/computing/teaching/ug/ug-distinguished-projects).
 
 One of the key points of this implementation and API is that they do not impose theano on the user. While theano is a great tool it has quite a steep learning curve so I decided to take advantage of its power without imposing that the user learns theano. Hence all the interface code just requires python and basic numpy knowledge. To the best of my knowledge this is the only library with these features.
 
 The API provided by DBNs is compatible with scikit learn so you can use all the functionality from that library in conjuction with my implementation.
 
- In case you use my code for a paper, study or project please cite my report and if you can, add a link to this repository. 
+ In case you use my code for a paper, study or project please cite my report and if you can, add a link to this repository.
 
 # User guide
   * The library is in `code/lib/`. You can find there the implementations of RBMs, CNNs and DBNs.
   * Multiple examples on how to use RBMs, DBNs and CNNs are in `code/MNISTdigits.py` and `code/emotions.py`
-  * The code that implements a network which determines the similarity between two inputs is in `code/similarity` 
+  * The code that implements a network which determines the similarity between two inputs is in `code/similarity`
   * The old code that is not based on theano but only numpy is in `code/old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
   * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
   * If you still have questions, pop me an email or a message.
 
 # Future and current work
  I am currently working on completing the CNN implementation and thinking of adding Bayesian optimization to avoid doing CV for finding out hyper parameters.
-  
- 
-# How to install dependencies 
+
+
+# How to install dependencies
 
 
 1. Create a python virtualenv
@@ -65,17 +65,33 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 11. install matplotlib
    `easy_install -m matplotlib`
 
-Note that for theano to work on the GPU you need cuda installed and setting up some environment variables.
 
-`PATH` needs to containt the path to nvcc (usually `/usr/local/cuda/bin`)
+# Set up
 
-`CUDA_PATH` needs to contain the path to cuda (usually `/usr/local/cuda/`)
+When running a pydeeplearn program you might have to set up some environment variables, depending on your configuration. If want to use the GPU for training/testing a model, you have to ensure that theano knows where your CUDA installation is (for detailed instructions see below).
 
-`LD_LIBRARY_PATH` needs to contain the linker libraries for cuda (`/usr/local/cuda/lib64`)
+ ## Setting up theano to work on the GPU
 
-`LD_LIBRARY_PATH` needs to contain the path to openblas (for numpy to find it: this is the prefix path you chose at step 3) and the path to OpenCV in case it was not installed globally
+  `PATH` needs to contain the path to nvcc (usually `/usr/local/cuda/bin`)
 
-`LIBRARY_PATH` needs to contain the path to the nvidia driver (something like `/usr/lib/nvidia-331`)
+  `CUDA_PATH` needs to contain the path to cuda (usually `/usr/local/cuda/`)
+
+  `LD_LIBRARY_PATH` needs to contain the linker libraries for cuda (`/usr/local/cuda/lib64`)
+
+  `LIBRARY_PATH` needs to contain the path to the nvidia driver (something like `/usr/lib/nvidia-331`)
+
+
+  If you are not configuring theano globally (in /home/user/.theano), then you have to set up the THEANO_FLAGS variable:
+
+  `export THEANO_FLAGS='floatX=float32,device=gpu0,nvcc.fastmath=True'`
+
+
+ ## Setting up numpy/ theano to work with openblas
+
+  `LD_LIBRARY_PATH` needs to contain the path to openblas (for numpy to find it: this is the prefix path you chose at step 3 in the installation instructions above) and the path to OpenCV in case it was not installed globally
+
+  `LIBRARY_PATH` needs to contain the path to openblas (for numpy to find it: this is the prefix path you chose at step 3 in the installation instructions above) and the path to OpenCV in case it was not installed globally
+
 
 # Acknowledgements
 
