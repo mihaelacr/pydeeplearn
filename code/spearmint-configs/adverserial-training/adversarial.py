@@ -21,6 +21,7 @@ def trainDBN(unsupervisedLearningRate,
              miniBatchSize,
              momentumMax,
              maxEpochs):
+  print 'in trainDBN'
   trainVectors, trainLabels =\
     readmnist.read(0, TRAIN, digits=None, bTrain=True, path=PATH)
 
@@ -29,7 +30,7 @@ def trainDBN(unsupervisedLearningRate,
                      digits=None, bTrain=True, path=PATH)
 
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
-
+  print 'done reading'
   trainVectors = np.array(trainVectors, dtype='float')
   trainingScaledVectors = scale(trainVectors)
 
@@ -37,7 +38,8 @@ def trainDBN(unsupervisedLearningRate,
   testingScaledVectors = scale(testVectors)
 
   trainVectorLabels = labelsToVectors(trainLabels, 10)
-
+  print 'done scaling data'
+  print 'creating DBN'
   net = db.DBN(5, [784, 1000, 1000, 1000, 10],
                   binary=False,
                   unsupervisedLearningRate=unsupervisedLearningRate,
