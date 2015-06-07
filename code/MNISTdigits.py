@@ -64,7 +64,7 @@ parser.add_argument('--conv', dest='conv',action='store_true', default=False,
                     help=("if true, trains a conv neural net on MNIST"))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, performs cv on the MNIST data"))
-parser.add_argument('--display', dest='display',action='store_true', default=False,
+parser.add_argument('--display_main', dest='display_main',action='store_true', default=False,
                     help=("if true saves images of the net weights and samples from the net"))
 parser.add_argument('--relu', dest='relu',action='store_true', default=False,
                     help=("if true, trains the RBM or DBN with a rectified linear unit"))
@@ -82,6 +82,10 @@ parser.add_argument('netFile',
                     help="file where the serialized network should be saved")
 parser.add_argument('--validation', dest='validation', action='store_true', default=False,
                     help="if true, the network is trained using a validation set")
+parser.add_argument('--display', dest='display', action='store_true', default=False,
+		    help="if true, figures will be displayed with matplotlib when available"
+                          "Set to false when running the code via ssh, otherwise matplotlib" 
+                          "might crash.")
 parser.add_argument('--path', dest='path', type=str, default="MNIST",
                     help="the path to the MNIST files")
 
@@ -146,35 +150,34 @@ def rbmMain(reconstructRandom=False):
   if reconstructRandom:
     test = np.random.random_sample(test.shape)
 
-  # Show the initial image first
-  recon = net.reconstruct(test.reshape(1, test.shape[0]))
-  plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
-  plt.axis('off')
-  plt.savefig('initial7.png', transparent=True)
-  # plt.show()
+  if args.display:
+    # Show the initial image first
+    recon = net.reconstruct(test.reshape(1, test.shape[0]))
+    plt.imshow(vectorToImage(test, (28,28)), cmap=plt.cm.gray)
+    plt.axis('off')
+    plt.savefig('initial7.png', transparent=True)
+    plt.show()
 
-  hidden = net.hiddenRepresentation(test.reshape(1, test.shape[0]))
-  plt.imshow(vectorToImage(hidden, (25,20)), cmap=plt.cm.gray)
-  plt.axis('off')
-  plt.savefig('hiddenfeatures7.png', transparent=True)
+    hidden = net.hiddenRepresentation(test.reshape(1, test.shape[0]))
+    plt.imshow(vectorToImage(hidden, (25,20)), cmap=plt.cm.gray)
+    plt.axis('off')
+    plt.savefig('hiddenfeatures7.png', transparent=True)
 
+    # Show the reconstruction
+    recon = net.reconstruct(test.reshape(1, test.shape[0]))
+    plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
+    plt.axis('off')
+    plt.savefig('reconstruct7withall.png', transparent=True)
+    plt.show()
 
-  # Show the reconstruction
-  recon = net.reconstruct(test.reshape(1, test.shape[0]))
-  plt.imshow(vectorToImage(recon, (28,28)), cmap=plt.cm.gray)
-  plt.axis('off')
-  plt.savefig('reconstruct7withall.png', transparent=True)
+    # Show the weights and their form in a tile fashion
+    # Plot the weights
+    plt.imshow(t, cmap=plt.cm.gray)
+    plt.axis('off')
+    plt.savefig('weights2srmsprop.png', transparent=True)
+    plt.show()
 
-  # plt.show()
-
-  # Show the weights and their form in a tile fashion
-  # Plot the weights
-  plt.imshow(t, cmap=plt.cm.gray)
-  plt.axis('off')
-  plt.savefig('weights2srmsprop.png', transparent=True)
-  # plt.show()
-
-  print "done"
+    print "done"
 
   if args.save:
     f = open(args.netFile, "wb")
@@ -1097,7 +1100,7 @@ def main():
   random.seed(6)
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv + \
-      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display + args.conv + args.cvadv != 1:
+      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display_main + args.conv + args.cvadv != 1:
     raise Exception("You have to decide on one main method to run")
 
   # makeNicePlots()
@@ -1118,7 +1121,7 @@ def main():
     rbmMainGauss()
   if args.dbgauss:
     deepbeliefMNISTGaussian()
-  if args.display:
+  if args.display_main:
     displayWeightsAndDbSample()
   if args.conv:
     convolutionalNNMnist()

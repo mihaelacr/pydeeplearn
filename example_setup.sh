@@ -5,7 +5,7 @@
 
 
 # Enable the virtual env (not required)
-source /data/mcr10/new/theanoopenblasnew/bin/activate
+source /data/mcr10/theano7/bin/activate
 # Setup the cuda paths (I suggest using a script for this, it can get messy fast)
 source /vol/cuda/6.5.14/setup.sh
 
