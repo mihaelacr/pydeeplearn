@@ -53,39 +53,42 @@ class MiniBatchTrainer(BatchTrainer):
     # Set the parameters of the object
     # Do not set more than this, these will be used for differentiation in the
     # gradient
-    self.params = self.weights + self.biases
+    params = self.weights + self.biases
 
     # Required for momentum
     # The updates that were performed in the last batch
     # It is important that the order in which we add the oldUpdates is the same
     # as which we add the params
-    self.oldUpdates = []
+    oldUpdates = []
     for i in xrange(nrWeights):
       oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
                                            dtype=theanoFloat),
                         name='oldDw')
-      self.oldUpdates.append(oldDw)
+      oldUpdates.append(oldDw)
 
     for i in xrange(nrWeights):
       oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
                                            dtype=theanoFloat),
                         name='oldDb')
-      self.oldUpdates.append(oldDb)
+      oldUpdates.append(oldDb)
 
     # Rmsprop
     # The old mean that were performed in the last batch
-    self.oldMeanSquares = []
+    oldMeanSquares = []
     for i in xrange(nrWeights):
       oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
                                            dtype=theanoFloat),
                         name='oldDw')
-      self.oldMeanSquares.append(oldDw)
+      oldMeanSquares.append(oldDw)
 
     for i in xrange(nrWeights):
       oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
                                            dtype=theanoFloat),
                         name='oldDb')
-      self.oldMeanSquares.append(oldDb)
+      oldMeanSquares.append(oldDb)
+
+    # Initialize the super class
+    super(MiniBatchTrainer, self).__init__(params, oldUpdates, oldMeanSquares)
 
     # Create a theano random number generator
     # Required to sample units for dropout
