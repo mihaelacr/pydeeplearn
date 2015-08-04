@@ -97,8 +97,8 @@ class MiniBatchTrainer(BatchTrainer):
     self.output = self.forwardPass(self.input)
 
     if self.adversarial_training:
-      # TODO: since we are using this here maybe we should move
-      # this to BatchTrainer
+      # TODO(mihaela): move this to the BatchTrainer superclass?
+      # This would require moving the forward functionality there
       error = T.sum(self.costFun(self.output, self.inputLabels))
       grad_error = T.grad(error, self.input)
       adversarial_input = self.input + self.adversarial_epsilon * T.sgn(grad_error)
