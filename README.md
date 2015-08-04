@@ -12,6 +12,9 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 
  In case you use my code for a paper, study or project please cite my report and if you can, add a link to this repository.
 
+## Demo video
+I used pydeeplearn and openCV to make an application which detects emotions live from the webcam stream. You can see a demo video of me fooling around at the camera here: http://elarosca.net/video.ogv
+
 ## User guide
   * The library is in `code/lib/`. You can find there the implementations of RBMs, CNNs and DBNs.
   * Multiple examples on how to use RBMs, DBNs and CNNs are in `code/MNISTdigits.py` and `code/emotions.py`
