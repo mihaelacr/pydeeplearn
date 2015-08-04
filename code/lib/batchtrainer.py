@@ -15,6 +15,18 @@ import debug
 DEBUG = False
 
 class BatchTrainer(object):
+  """
+    Abstract class used to define updates on the parameters of neural networks
+    during training.
+    Subclasses must have the params field set before using functionality provided
+    by this class. Due to momentum, the oldUpdates fields also has to be initialized
+    before using this class. In case rmsprop is used, the oldMeanSquares field
+    has to be initialized in the subclass before using inherited methods from this class.
+
+    This class supports momentum updates and nesterov updates, both with rmsprop
+    or without (see the TrainingOptions class for more details in the available
+    training options.
+  """
 
   def makeTrainFunction(self, x, y, data, labels, trainingOptions):
     error = T.sum(self.cost(y))
