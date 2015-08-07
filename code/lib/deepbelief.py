@@ -802,14 +802,15 @@ class DBN(object):
     epoch = 0
     doneTraining = False
     patience = 10 * self.nrMiniBatchesTrain # do at least 10 passes trough the data no matter what
+    patienceIncrease = 2 # Increase our patience up to patience * patienceIncrease
 
     validationErrors = []
     trainingErrors = []
     trainingErrorNoDropout = []
 
     try:
-      # while (epoch < maxEpochs) and not doneTraining:
-      while (epoch < maxEpochs):
+      while (epoch < maxEpochs) and not doneTraining:
+      # while (epoch < maxEpochs):
         # Train the net with all data
         print "epoch " + str(epoch)
 
@@ -827,7 +828,7 @@ class DBN(object):
             # If we have improved well enough, then increase the patience
             if meanValidation < bestValidationError:
               print "increasing patience"
-              patience = max(patience, iteration * 2)
+              patience = max(patience, iteration * patienceIncrease)
 
             bestValidationError = meanValidation
 
