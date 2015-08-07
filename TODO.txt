@@ -1,3 +1,4 @@
-1. LSTM implementation
-2. Consider using fuel for input data
-3. Spearmint: do not use the maxEpochs as something that you optimize using spearmint
+1. Batch normalization
+2. LSTM implementation
+3. Consider using fuel for input data
+4. Spearmint: do not use the maxEpochs as something that you optimize using spearmint
