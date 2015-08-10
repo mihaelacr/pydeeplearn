@@ -57,8 +57,6 @@ parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, do cross validation"))
 parser.add_argument('--cvPIE', dest='cvPIE',action='store_true', default=False,
                     help=("if true, do cross validation"))
-parser.add_argument('--svmPIE', dest='svmPIE',action='store_true', default=False,
-                    help=("if true, do SVM on top of the last hidden features"))
 parser.add_argument('--average', dest='average',action='store_true', default=False,
                     help=("average out results over multiple runs"))
 parser.add_argument('--illumination',dest='illumination',action='store_true', default=False,
@@ -1111,26 +1109,6 @@ def deepbeliefKaggleCompetitionBigCV():
       resfile.write(str(params[i]))
 
 
-def svmPIE():
-  with open(args.netFile, "rb") as f:
-    dbnNet = pickle.load(f)
-
-  data, labels = readMultiPIE(equalize=args.equalize)
-
-  # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), n_folds=5)
-  for train, test in kf:
-    break
-
-  training = data[train]
-  trainLabels = labels[train]
-
-  testing = data[test]
-  testLabels = labels[test]
-
-  svm.SVMCV(dbnNet, training, trainLabels, testing, testLabels)
-
-
 # Make this more general to be able
 # to say different subjects and different poses
 # I tihnk the different subjects is very intersting
@@ -1916,8 +1894,6 @@ def main():
     deepbeliefMultiPIE()
   if args.cvPIE:
     deepbeliefPIECV()
-  if args.svmPIE:
-    svmPIE()
   if args.crossdb:
     crossDataBase()
   if args.crossdbCV:
