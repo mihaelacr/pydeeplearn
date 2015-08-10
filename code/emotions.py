@@ -97,7 +97,6 @@ parser.add_argument('--kagglesmall',dest='kagglesmall',action='store_true', defa
                       help='if true, cv for kaggle data')
 
 
-
 # DEBUG mode?
 parser.add_argument('--debug', dest='debug',action='store_false', default=False,
                     help=("if true, the deep belief net is ran in DEBUG mode"))
@@ -148,9 +147,6 @@ def rbmEmotions(big=False, reconstructRandom=False):
     net = pickle.load(f)
     f.close()
 
-  # get a random image and see it looks like
-  # if reconstructRandom:
-  #   test = np.random.random_sample(test.shape)
 
   # Show the initial image first
   test = data[-1, :]
@@ -185,13 +181,10 @@ def rbmEmotions(big=False, reconstructRandom=False):
   print hidden.sum()
   print "done"
 
-
   if args.save:
     f = open(args.netFile, "wb")
     pickle.dump(t, f)
     pickle.dump(net, f)
-
-
 
 
 """
@@ -218,20 +211,12 @@ def deepbeliefKanadeCV(big=False):
     rbmActivationFunctionVisible = Sigmoid()
     rbmActivationFunctionHidden = Sigmoid()
 
-
-  # TODO: try boosting for CV in order to increase the number of folds
-  # params =[(0.1, 0.1, 0.9), (0.1,  0.5, 0.9),  (0.5, 0.1, 0.9),  (0.5, 0.5, 0.9),
-  #          (0.1, 0.1, 0.95), (0.1, 0.5, 0.95), (0.5, 0.1, 0.95), (0.5, 0.5, 0.95),
-  #          (0.1, 0.1, 0.99), (0.1, 0.5, 0.99), (0.5, 0.1, 0.99), (0.5, 0.5, 0.99)]
-
   params =[(0.001, 0.01, 0.9),  (0.001, 0.05, 0.9),  (0.005, 0.01, 0.9),  (0.005, 0.05, 0.9),
            (0.001, 0.01, 0.95), (0.001, 0.05, 0.95), (0.005, 0.01, 0.95), (0.005, 0.05, 0.95),
            (0.001, 0.01, 0.99), (0.001, 0.05, 0.99), (0.005, 0.01, 0.99), (0.005, 0.05, 0.99)]
 
 
   unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
-  # print "unsupervisedData.shape"
-  # print unsupervisedData.shape
 
   kf = cross_validation.KFold(n=len(data), k=len(params))
   bestCorrect = 0
@@ -374,10 +359,6 @@ def deepbeliefKanade(big=False):
              sparsityRegularizationRbm=0.001,
              sparsityTragetRbm=0.01)
 
-  # unsupervisedData = None
-  # print "unsupervisedData.shape"
-  # print unsupervisedData.shape
-
   net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
             validation=args.validation,
             unsupervisedData=unsupervisedData)
@@ -421,20 +402,9 @@ def deepbeliefKanade(big=False):
 
 
 def buildUnsupervisedDataSetForKanadeLabelled():
-  # return readJaffe(args.crop, args.facedetection, equalize=args.equalize)
   return np.vstack((readJaffe(args.crop, args.facedetection, equalize=args.equalize),
                     readNottingham(args.crop, args.facedetection, equalize=args.equalize)))
                     # readAberdeen(args.crop, args.facedetection, equalize=args.equalize)))
-    # readCroppedYale(),
-    # readMultiPIE(equalize=args.equalize)[0]))
-
-  # return np.vstack((readAttData(equalize=args.equalize),
-                      # readCroppedYale
-  #                   readJaffe(args.facedetection, equalize=args.equalize)))
-                    # readAberdeen(args.crop, args.facedetection, equalize=args.equalize)))
-    # readNottingham(),
-    # readCroppedYale(),
-    # readMultiPIE(equalize=args.equalize)[0]))
 
 def buildUnsupervisedDataSetForPIE():
   return None
@@ -512,7 +482,7 @@ def deepbeliefMultiPIE(big=False):
               validation=args.validation,
               unsupervisedData=unsupervisedData)
   else:
-     # Take the saved network and use that for reconstructions
+    # Take the saved network and use that for reconstructions
     with open(args.netFile, "rb") as f:
       net = pickle.load(f)
 
@@ -620,7 +590,7 @@ def deepbeliefMultiPIEAverage(big=False):
                 validation=args.validation,
                 unsupervisedData=unsupervisedData)
     else:
-       # Take the saved network and use that for reconstructions
+      # Take the saved network and use that for reconstructions
       with open(args.netFile, "rb") as f:
         net = pickle.load(f)
 
@@ -684,16 +654,6 @@ def deepbeliefPIECV(big=False):
     rbmActivationFunctionVisible = Sigmoid()
     rbmActivationFunctionHidden = Sigmoid()
 
-  # TODO: try boosting for CV in order to increase the number of folds
-  # params =[ (0.01, 0.05, 0.9),  (0.05, 0.01, 0.9),  (0.05, 0.05, 0.9),
-  #           (0.01, 0.05, 0.95), (0.05, 0.01, 0.95), (0.05, 0.05, 0.95),
-  #           (0.01, 0.05, 0.99), (0.05, 0.01, 0.99), (0.05, 0.05, 0.99)]
-
-
-  # params =[(0.005, 0.001, 0.9,  0.8, 1.0), (0.005, 0.001, 0.9,  1.0, 1.0), (0.005, 0.001, 0.9,  0.8, 0.5), (0.05, 0.01, 0.9, 1.0, 0.5),
-  #          (0.005, 0.001, 0.95, 0.8, 1.0), (0.005, 0.001, 0.95, 1.0, 1.0), (0.005, 0.001, 0.95, 0.8, 0.5), (0.05, 0.01, 0.95, 1.0, 0.5),
-  #          (0.005, 0.001, 0.99, 0.8, 1.0), (0.005, 0.001, 0.99, 1.0, 1.0), (0.005, 0.001, 0.99, 0.8, 0.5), (0.05, 0.01, 0.99, 1.0, 0.5)]
-
   if args.relu:
     params = [(0.005, 0.001, 0.95, 0.8, 1.0), (0.005, 0.001, 0.95, 1.0, 1.0), (0.005, 0.001, 0.95, 0.8, 0.5), (0.05, 0.01, 0.95, 1.0, 0.5)]
   else:
@@ -716,7 +676,6 @@ def deepbeliefPIECV(big=False):
     trainData = data[train]
     trainLabels = labels[train]
 
-    # TODO: this might require more thought
     net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                binary=1-args.relu,
                activationFunction=activationFunction,
@@ -995,7 +954,6 @@ def deepbeliefKaggleCompetition(big=False):
     with open(args.netFile, "wb") as f:
       pickle.dump(net, f)
 
-# TODO should average out (0.001, 0.005)  and  (0.001, 0.001)
 def deepbeliefKaggleCompetitionBigCV():
   data, labels = readBigKaggleTrain()
   data, labels = shuffle(data, labels)
@@ -1006,8 +964,6 @@ def deepbeliefKaggleCompetitionBigCV():
   assert args.relu , " only rectified linear units are supported for second kaggle competition"
 
   activationFunction = Rectified()
-  # unsupervisedLearningRate = 0.05
-  # supervisedLearningRate = 0.01
   momentumMax = 0.95
   data = scale(data)
   rbmActivationFunctionVisible = Identity()
@@ -1109,10 +1065,6 @@ def deepbeliefKaggleCompetitionBigCV():
       resfile.write(str(params[i]))
 
 
-# Make this more general to be able
-# to say different subjects and different poses
-# I tihnk the different subjects is very intersting
-# and I should do this for for
 def deepBeliefPieDifferentConditions():
 
   if args.illumination:
@@ -1166,7 +1118,6 @@ def deepBeliefPieDifferentConditions():
       momentumMax = 0.9
 
     if args.train:
-      # TODO: this might require more thought
       net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                  binary=1-args.relu,
                  activationFunction=activationFunction,
@@ -1192,7 +1143,7 @@ def deepBeliefPieDifferentConditions():
                 validation=args.validation,
                 unsupervisedData=None)
     else:
-       # Take the saved network and use that for reconstructions
+      # Take the saved network and use that for reconstructions
       with open(args.netFile, "rb") as f:
         net = pickle.load(f)
 
@@ -1243,8 +1194,8 @@ def deepBeliefPieDifferentConditions():
 
 
 # TODO: try with the same poses, it will work bad with training with all poses I think
-"""Train with PIE test with Kanade. Check the equalization code. """
 # TODO: try to add some unsupervised data
+"""Train with PIE test with Kanade. Check the equalization code. """
 def crossDataBase():
   # Only train with the frontal pose
   trainData, trainLabels, _, _ = readMultiPieDifferentPoses([2], equalize=args.equalize)
@@ -1252,12 +1203,6 @@ def crossDataBase():
 
   print "trainLabels"
   print np.argmax(trainLabels, axis=1)
-
-  # for i in xrange(len(trainLabels)):
-  #   print "emotions", np.argmax(trainLabels[i])
-  #   plt.imshow(vectorToImage(trainData[i], SMALL_SIZE), cmap=plt.cm.gray)
-  #   plt.show()
-
 
   testData, testLabels = readKanade(False, None, equalize=args.equalize, vectorizeLabels=False)
   print "testLabels"
@@ -1270,14 +1215,8 @@ def crossDataBase():
   labelsSimple = np.argmax(testLabels, axis=1)
   print labelsSimple
 
-  # for i in xrange(len(labelsSimple)):
-  #   print "emotions", labelsSimple[i]
-  #   plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray)
-  #   plt.show()
-
-
   if args.relu:
-    activationFunction = Rectified() # Now I can even use rectifiednoisy because I use the deterministic version
+    activationFunction = Rectified()
     rbmActivationFunctionHidden = RectifiedNoisy()
     rbmActivationFunctionVisible = Identity()
 
@@ -1376,15 +1315,10 @@ def crossDataBaseCV():
   print "trainLabels"
   print np.argmax(trainLabels, axis=1)
 
-  # for i in xrange(len(trainLabels)):
-  #   print "emotions", np.argmax(trainLabels[i])
-  #   plt.imshow(vectorToImage(trainData[i], SMALL_SIZE), cmap=plt.cm.gray)
-  #   plt.show()
   confustionMatrices = []
   correctAll = []
 
   params = [(0.005, 0.005), (0.001, 0.005), (0.001, 0.05), (0.01, 0.05), (0.01, 0.005)]
-
 
   testData, testLabels = readKanade(False, None, equalize=args.equalize, vectorizeLabels=False)
   print "testLabels"
@@ -1396,12 +1330,6 @@ def crossDataBaseCV():
   print "testLabels after map"
   labelsSimple = np.argmax(testLabels, axis=1)
   print labelsSimple
-
-  # for i in xrange(len(labelsSimple)):
-  #   print "emotions", labelsSimple[i]
-  #   plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray)
-  #   plt.show()
-
 
   if args.relu:
     activationFunction = Rectified()
@@ -1658,8 +1586,7 @@ def missingData():
         pickle.dump(net, f)
 
   else:
-     # Take the saved network and use that for reconstructions
-
+    # Take the saved network and use that for reconstructions
     print "using ", args.netFile, " for reading the pickled net"
     with open(args.netFile, "rb") as f:
       net = pickle.load(f)
@@ -1757,18 +1684,7 @@ def missingDataTestFromTrainedNet():
   data, labels = shuffle(data,labels)
 
 
-  # with open(args.netFile, "rb") as f:
-  #   net = pickle.load(f)
-
-  # trainingIndices = net.trainingIndices
-  # testIndices = np.setdiff1d(np.arange(len(data)), trainingIndices)
-
-  # print testIndices
-  # testData = data[testIndices]
-  # testLabels = labels[testIndices]
-  # print "len(testData)"
-  # print len(testData)
-   # Random data for training and testing
+  # Random data for training and testing
   kf = cross_validation.KFold(n=len(data), n_folds=5)
   for train, test in kf:
     break
@@ -1780,13 +1696,6 @@ def missingDataTestFromTrainedNet():
   testLabels = labels[test]
 
   testData, pairs = makeMissingDataOnly12Positions(testData)
-
-
-  # testData = addBlobsOfMissingData(testData, sqSize=10)
-
-  # for i in xrange(10):
-  #   plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
-  #   plt.show()
 
   if args.relu:
     activationFunction = Rectified()
@@ -1806,7 +1715,6 @@ def missingDataTestFromTrainedNet():
     momentumMax = 0.95
 
   if args.train:
-    # TODO: this might require more thought
     net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                binary=1-args.relu,
                activationFunction=activationFunction,
@@ -1840,10 +1748,6 @@ def missingDataTestFromTrainedNet():
   for i in xrange(4):
     for j in xrange(3):
       dictSquares[(i,j)] = []
-
-  # for i in xrange(10):
-  #   plt.imshow(vectorToImage(testData[i], SMALL_SIZE), cmap=plt.cm.gray, interpolation="nearest")
-  #   plt.show()
 
   probs, predicted = net.classify(testData)
 
