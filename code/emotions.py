@@ -10,7 +10,6 @@ import argparse
 import cPickle as pickle
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
-# Wow: this is nice
 from sklearn.metrics import classification_report
 
 import matplotlib.pyplot as plt
@@ -145,7 +144,6 @@ def rbmEmotions(big=False, reconstructRandom=False):
     net = pickle.load(f)
     f.close()
 
-
   # Show the initial image first
   test = data[-1, :]
   print "test.shape"
@@ -162,7 +160,6 @@ def rbmEmotions(big=False, reconstructRandom=False):
   plt.axis('off')
   plt.savefig('reconstructface.png', transparent=True)
 
-
   # Show the weights and their form in a tile fashion
   # Plot the weights
   plt.imshow(t, cmap=plt.cm.gray)
@@ -172,7 +169,6 @@ def rbmEmotions(big=False, reconstructRandom=False):
   else:
     st = 'simple'
   plt.savefig('weights' + st + '.png', transparent=True)
-
 
   # let's make some sparsity checks
   hidden = net.hiddenRepresentation(test.reshape(1, test.shape[0]))
@@ -185,11 +181,11 @@ def rbmEmotions(big=False, reconstructRandom=False):
     pickle.dump(net, f)
 
 
-"""
-  Arguments:
-    big: should the big or small images be used?
-"""
 def deepbeliefKanadeCV(big=False):
+  """
+    Arguments:
+      big: should the big or small images be used?
+  """
   data, labels = readKanade(big, None, equalize=args.equalize, train=True)
 
   print "data.shape"
@@ -211,7 +207,6 @@ def deepbeliefKanadeCV(big=False):
            (0.001, 0.01, 0.95), (0.001, 0.05, 0.95), (0.005, 0.01, 0.95), (0.005, 0.05, 0.95),
            (0.001, 0.01, 0.99), (0.001, 0.05, 0.99), (0.005, 0.01, 0.99), (0.005, 0.05, 0.99)]
 
-
   unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
 
   kf = cross_validation.KFold(n=len(data), k=len(params))
@@ -220,7 +215,6 @@ def deepbeliefKanadeCV(big=False):
 
   fold = 0
   for train, test in kf:
-
     trainData = data[train]
     trainLabels = labels[train]
 
@@ -250,7 +244,7 @@ def deepbeliefKanadeCV(big=False):
 
     probs, predicted = net.classify(data[test])
 
-    actualLabels = labels[test]
+    testLabels = labels[test]
     correct = 0
     errorCases = []
 
@@ -260,7 +254,7 @@ def deepbeliefKanadeCV(big=False):
       print probs[i]
       print predicted[i]
       print "actual"
-      actual = actualLabels[i]
+      actual = testLabels[i]
       print np.argmax(actual)
       if predicted[i] == np.argmax(actual):
         correct += 1
@@ -304,8 +298,6 @@ def deepbeliefKanade(big=False):
       unsupervisedLearningRate = 0.001
       supervisedLearningRate = 0.01
       momentumMax = 0.99
-
-
   else:
     activationFunction = Sigmoid()
     rbmActivationFunctionVisible = Sigmoid()
@@ -540,7 +532,7 @@ def deepbeliefPIECV(big=False):
 
     probs, predicted = net.classify(data[test])
 
-    actualLabels = labels[test]
+    testLabels = labels[test]
     correct = 0
     errorCases = []
 
@@ -550,7 +542,7 @@ def deepbeliefPIECV(big=False):
       print probs[i]
       print predicted[i]
       print "actual"
-      actual = actualLabels[i]
+      actual = testLabels[i]
       print np.argmax(actual)
       if predicted[i] == np.argmax(actual):
         correct += 1
@@ -605,7 +597,6 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
     data = scale(data)
     rbmActivationFunctionVisible = Identity()
     rbmActivationFunctionHidden = RectifiedNoisy()
-
   else:
     activationFunction = Sigmoid()
     rbmActivationFunctionVisible = Sigmoid()
@@ -697,7 +688,6 @@ def deepbeliefKaggleCompetition(big=False):
   testData = testData[0:args.trainSize]
   testLabels = testLabels[0:args.trainSize]
 
-
   if args.relu:
     activationFunction = Rectified()
     unsupervisedLearningRate = 0.001
@@ -745,7 +735,6 @@ def deepbeliefKaggleCompetition(big=False):
 
   probs, predicted = net.classify(testData)
 
-  actualLabels = testLabels
   correct = 0
   errorCases = []
 
@@ -756,7 +745,7 @@ def deepbeliefKaggleCompetition(big=False):
     print "predicted"
     print predicted[i]
     print "actual"
-    actual = actualLabels[i]
+    actual = testLabels[i]
     print np.argmax(actual)
     if predicted[i] == np.argmax(actual):
       correct += 1
@@ -769,7 +758,7 @@ def deepbeliefKaggleCompetition(big=False):
   print "percentage correct"
   print correct  * 1.0/ len(testLabels)
 
-  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+  confMatrix = confusion_matrix(np.argmax(testLabels, axis=1), predicted)
   print "confusion matrix"
   print confMatrix
 
@@ -843,12 +832,11 @@ def deepbeliefKaggleCompetitionBigCV():
 
     probs, predicted = net.classify(testData)
 
-    actualLabels = testLabels
     correct = 0
     errorCases = []
 
     for i in xrange(len(testLabels)):
-      actual = actualLabels[i]
+      actual = testLabels[i]
       print np.argmax(actual)
       if predicted[i] == np.argmax(actual):
         correct += 1
@@ -866,14 +854,12 @@ def deepbeliefKaggleCompetitionBigCV():
       resfile.write(str(correctProbs))
       resfile.write(str(correct))
 
-
     print "correct"
     print correct
-
     print "percentage correct"
     print correct  * 1.0/ len(testLabels)
 
-    confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+    confMatrix = confusion_matrix(np.argmax(testLabels, axis=1), predicted)
     print "confusion matrix"
     print confMatrix
 
@@ -970,7 +956,6 @@ def deepBeliefPieDifferentConditions():
 
     probs, predicted = net.classify(testData)
 
-    actualLabels = testLabels
     correct = 0
     errorCases = []
 
@@ -981,7 +966,7 @@ def deepBeliefPieDifferentConditions():
       print "predicted"
       print predicted[i]
       print "actual"
-      actual = actualLabels[i]
+      actual = testLabels[i]
       print np.argmax(actual)
       if predicted[i] == np.argmax(actual):
         correct += 1
@@ -995,7 +980,7 @@ def deepBeliefPieDifferentConditions():
     correct = correct  * 1.0/ len(testLabels)
     print correct
 
-    confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+    confMatrix = confusion_matrix(np.argmax(testLabels, axis=1), predicted)
 
     print "confusion matrix"
     print confMatrix
@@ -1086,7 +1071,6 @@ def crossDataBase():
 
   probs, predicted = net.classify(testData)
 
-  actualLabels = testLabels
   correct = 0
   errorCases = []
 
@@ -1097,7 +1081,7 @@ def crossDataBase():
     print "predicted"
     print predicted[i]
     print "actual"
-    actual = actualLabels[i]
+    actual = testLabels[i]
     print np.argmax(actual)
     if predicted[i] == np.argmax(actual):
       correct += 1
@@ -1110,12 +1094,7 @@ def crossDataBase():
   print "percentage correct"
   print correct  * 1.0/ len(testLabels)
 
-  print type(predicted)
-  print type(actualLabels)
-  print predicted.shape
-  print actualLabels.shape
-
-  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+  confMatrix = confusion_matrix(np.argmax(testLabels, axis=1), predicted)
 
   print "confusion matrix"
   print confMatrix
@@ -1159,7 +1138,6 @@ def crossDataBaseCV():
     rbmActivationFunctionHidden = Sigmoid()
     rbmActivationFunctionVisible = Sigmoid()
 
-
   for param in params:
     if args.train:
       net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
@@ -1193,7 +1171,6 @@ def crossDataBaseCV():
 
     probs, predicted = net.classify(testData)
 
-    actualLabels = testLabels
     correct = 0
     errorCases = []
 
@@ -1204,7 +1181,7 @@ def crossDataBaseCV():
       print "predicted"
       print predicted[i]
       print "actual"
-      actual = actualLabels[i]
+      actual = testLabels[i]
       print np.argmax(actual)
       if predicted[i] == np.argmax(actual):
         correct += 1
@@ -1217,12 +1194,7 @@ def crossDataBaseCV():
     print "percentage correct"
     print correct  * 1.0/ len(testLabels)
 
-    print type(predicted)
-    print type(actualLabels)
-    print predicted.shape
-    print actualLabels.shape
-
-    confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+    confMatrix = confusion_matrix(np.argmax(testLabels, axis=1), predicted)
 
     correctAll += [correct  * 1.0/ len(testLabels)]
     confustionMatrices += [confMatrix]
@@ -1277,7 +1249,6 @@ def makeMissingDataImage():
 
   final = np.hstack(tuple(final))
 
-
   plt.imshow(final, cmap=plt.cm.gray, interpolation="nearest")
   plt.axis('off')
   plt.show()
@@ -1309,7 +1280,6 @@ def makeGaussianRect(n):
 def missingData():
   trainData, trainLabels = readMultiPIE(equalize=args.equalize, train=True)
   testData, testLabels = readMultiPIE(equalize=args.equalize, train=False)
-
   squaresize = 10
 
   allTestData  = []
@@ -1353,7 +1323,6 @@ def missingData():
     momentumMax = 0.95
 
   if args.train:
-    # TODO: this might require more thought
     net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                binary=1-args.relu,
                activationFunction=activationFunction,
@@ -1382,7 +1351,6 @@ def missingData():
     if args.save:
       with open(args.netFile, "wb") as f:
         pickle.dump(net, f)
-
   else:
     # Take the saved network and use that for reconstructions
     print "using ", args.netFile, " for reading the pickled net"
@@ -1400,10 +1368,8 @@ def missingData():
   total = np.zeros((40, 30))
   errorDict = np.zeros((40, 30))
 
-
   probs, predicted = net.classify(testData)
 
-  actualLabels = testLabels
   correct = 0
   errorCases = []
 
@@ -1414,7 +1380,7 @@ def missingData():
     print "predicted"
     print predicted[i]
     print "actual"
-    actual = actualLabels[i]
+    actual = testLabels[i]
     print np.argmax(actual)
 
     m, n = indices[i]
@@ -1436,13 +1402,7 @@ def missingData():
   print "percentage correct"
   print correct  * 1.0/ len(testLabels)
 
-  print type(predicted)
-  print type(actualLabels)
-  print "predicted.shape"
-  print predicted.shape
-  print "actualLabels.shape"
-
-  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+  confMatrix = confusion_matrix(np.argmax(testLabels, axis=1), predicted)
 
   print "confusion matrix"
   print confMatrix
@@ -1536,8 +1496,6 @@ def missingDataTestFromTrainedNet():
       dictSquares[(i,j)] = []
 
   probs, predicted = net.classify(testData)
-
-  actualLabels = testLabels
   correct = 0
   errorCases = []
 
@@ -1548,7 +1506,7 @@ def missingDataTestFromTrainedNet():
     print "predicted"
     print predicted[i]
     print "actual"
-    actual = actualLabels[i]
+    actual = testLabels[i]
     print np.argmax(actual)
     if predicted[i] == np.argmax(actual):
       correct += 1
