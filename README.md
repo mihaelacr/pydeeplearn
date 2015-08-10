@@ -1,7 +1,7 @@
 pydeeplearn
 ===========
 
-Library for deep belief nets and rbms (convolutional neural networks are work in progress). Provides code for dropout, rmsprop rectified linear units, sparsity constraints, weight decay, etc. Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/).
+Library for deep belief nets and rbms and convolutional neural networks (simple version). Provides code for dropout, rmsprop, momentum, rectified linear units, sparsity constraints, weight decay, adversarial training, etc. Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/).
 
 
 For more details see the [report](http://elarosca.net/report.pdf) of the project which used this code and the [ poster](http://elarosca.net/poster.pdf) submitted for the participation to the SET awards. The project was made as part of the requirements for a master degree at Imperial College London and received a [prize of excellence](http://www3.imperial.ac.uk/computing/teaching/ug/ug-distinguished-projects).
@@ -22,10 +22,33 @@ I used pydeeplearn and openCV to make an application which detects emotions live
   * The old code that is not based on theano but only numpy is in `code/old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
   * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
   * If you still have questions, pop me an email or a message.
+ 
+## Key features
+
+### Network types
+  * RBM
+  * DBN
+  * CNN
+  * ANN
+  * similarity networks (with RBM siamese networks)
+
+
+### Training tricks supported
+  * early stopping
+  * simple momentum
+  * Nesterov momentum
+  * dropout (for the hidden and visible layer)
+  * adversarial training 
+  * rmsprop
+  * scaling the learning rate by momentum
+  * multiple activation functions (and with ease we can support more)
+  * integration with bayesian optimization framework for hyperparamter optimization (spearmint)
+  * multiple hidden unit types (binary, real valued)
 
 ## Future and current work
- I am currently working on completing the CNN implementation and also considering adding an LSTM implementation. If anyone has a specific feature request, please let me know.
+For the future plans that I have for the library please see the TODO.txt file. Note that currently pydeeplearn is a side project for me and some features might take some time to implement. 
 
+If you want a feature implemented, please either send a pull request or let me know. I will do my best to get it up and running for you.
 
 ## How to install dependencies
 
