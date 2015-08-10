@@ -57,8 +57,6 @@ parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, do cross validation"))
 parser.add_argument('--cvPIE', dest='cvPIE',action='store_true', default=False,
                     help=("if true, do cross validation"))
-parser.add_argument('--average', dest='average',action='store_true', default=False,
-                    help=("average out results over multiple runs"))
 parser.add_argument('--illumination',dest='illumination',action='store_true', default=False,
                     help="if true, trains and tests the images with different illuminations")
 parser.add_argument('--pose',dest='pose',action='store_true', default=False,
@@ -192,9 +190,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
     big: should the big or small images be used?
 """
 def deepbeliefKanadeCV(big=False):
-  data, labels = readKanade(big, None, equalize=args.equalize)
-
-  data, labels = shuffle(data, labels)
+  data, labels = readKanade(big, None, equalize=args.equalize, train=True)
 
   print "data.shape"
   print data.shape
@@ -228,7 +224,6 @@ def deepbeliefKanadeCV(big=False):
     trainData = data[train]
     trainLabels = labels[train]
 
-    # TODO: this might require more thought
     net = db.DBN(5, [1200, 1800, 1800, 1800, 7],
                binary=1-args.relu,
                activationFunction=activationFunction,
@@ -290,22 +285,10 @@ def deepbeliefKanadeCV(big=False):
 
 
 def deepbeliefKanade(big=False):
-  data, labels = readKanade(big, None, equalize=args.equalize)
-
-  data, labels = shuffle(data, labels)
-
-  print "data.shape"
-  print data.shape
-  print "labels.shape"
-  print labels.shape
+  trainData, trainLabels = readKanade(big, None, equalize=args.equalize, train=True)
+  testData, testLabels = readKanade(big, None, equalize=args.equalize, train=False)
 
   unsupervisedData = buildUnsupervisedDataSetForKanadeLabelled()
-
-
-  # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), n_folds=5)
-  for train, test in kf:
-    break
 
   if args.relu:
     activationFunction = Rectified()
@@ -332,10 +315,6 @@ def deepbeliefKanade(big=False):
     supervisedLearningRate = 0.1
     momentumMax = 0.9
 
-  trainData = data[train]
-  trainLabels = labels[train]
-
-  # TODO: this might require more thought
   net = db.DBN(5, [1200, 1500, 1500, 1500, 7],
              binary=1-args.relu,
              activationFunction=activationFunction,
@@ -363,9 +342,8 @@ def deepbeliefKanade(big=False):
             validation=args.validation,
             unsupervisedData=unsupervisedData)
 
-  probs, predicted = net.classify(data[test])
+  probs, predicted = net.classify(testData)
 
-  actualLabels = labels[test]
   correct = 0
   errorCases = []
 
@@ -376,7 +354,7 @@ def deepbeliefKanade(big=False):
     print "predicted"
     print predicted[i]
     print "actual"
-    actual = actualLabels[i]
+    actual = testLabels[i]
     print np.argmax(actual)
     if predicted[i] == np.argmax(actual):
       correct += 1
@@ -389,12 +367,11 @@ def deepbeliefKanade(big=False):
   print "percentage correct"
   print correct  * 1.0/ len(test)
 
-  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+  confMatrix = confusion_matrix(np.argmax(testLabels, axis=1), predicted)
   print "confusion matrix"
   print confMatrix
 
-  print classification_report(np.argmax(actualLabels, axis=1), predicted)
-
+  print classification_report(np.argmax(testLabels, axis=1), predicted)
 
   if args.save:
     with open(args.netFile, "wb") as f:
@@ -404,38 +381,14 @@ def deepbeliefKanade(big=False):
 def buildUnsupervisedDataSetForKanadeLabelled():
   return np.vstack((readJaffe(args.crop, args.facedetection, equalize=args.equalize),
                     readNottingham(args.crop, args.facedetection, equalize=args.equalize)))
-                    # readAberdeen(args.crop, args.facedetection, equalize=args.equalize)))
 
 def buildUnsupervisedDataSetForPIE():
   return None
 
-# TODO: you need to be able to map the emotions between each other
-# but it might be the case that you won't get higher results which such a big
-#dataset
-def buildSupervisedDataSet():
-  dataKanade, labelsKanade = readKanade(equalize=args.equalize)
-  dataMPie, labelsMPie = readMultiPIE(equalize=args.equalize)
-  print dataMPie.shape
-  print dataKanade.shape
-
-  data = np.vstack((dataKanade, dataMPie))
-  labels = labelsKanade + labelsMPie
-  return data, labels
 
 def deepbeliefMultiPIE(big=False):
-  data, labels = readMultiPIE(equalize=args.equalize)
-
-  data, labels = shuffle(data, labels)
-
-  print "data.shape"
-  print data.shape
-  print "labels.shape"
-  print labels.shape
-
-  # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), n_folds=5)
-  for train, test in kf:
-    break
+  trainData, trainLabels = readMultiPIE(equalize=args.equalize, train=True)
+  testData, testLabels = readMultiPIE(equalize=args.equalize, train=True)
 
   if args.relu:
     activationFunction = RectifiedNoisy()
@@ -453,11 +406,7 @@ def deepbeliefMultiPIE(big=False):
     supervisedLearningRate = 0.01
     momentumMax = 0.95
 
-  trainData = data[train]
-  trainLabels = labels[train]
-
   if args.train:
-    # TODO: this might require more thought
     net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                binary=1-args.relu,
                activationFunction=activationFunction,
@@ -486,9 +435,8 @@ def deepbeliefMultiPIE(big=False):
     with open(args.netFile, "rb") as f:
       net = pickle.load(f)
 
-  probs, predicted = net.classify(data[test])
+  probs, predicted = net.classify(testData)
 
-  actualLabels = labels[test]
   correct = 0
   errorCases = []
 
@@ -499,7 +447,7 @@ def deepbeliefMultiPIE(big=False):
     print "predicted"
     print predicted[i]
     print "actual"
-    actual = actualLabels[i]
+    actual = testLabels[i]
     print np.argmax(actual)
     if predicted[i] == np.argmax(actual):
       correct += 1
@@ -513,11 +461,11 @@ def deepbeliefMultiPIE(big=False):
   print correct  * 1.0/ len(test)
 
   print type(predicted)
-  print type(actualLabels)
+  print type(testLabels)
   print predicted.shape
-  print actualLabels.shape
+  print testLabels.shape
 
-  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+  confMatrix = confusion_matrix(np.argmax(testLabels, axis=1), predicted)
 
   print "confusion matrix"
   print confMatrix
@@ -527,115 +475,8 @@ def deepbeliefMultiPIE(big=False):
       pickle.dump(net, f)
 
 
-def deepbeliefMultiPIEAverage(big=False):
-  data, labels = readMultiPIE(equalize=args.equalize)
-
-  data, labels = shuffle(data, labels)
-
-  print "data.shape"
-  print data.shape
-  print "labels.shape"
-  print labels.shape
-
-  if args.relu:
-    activationFunction = Rectified()
-    rbmActivationFunctionHidden = RectifiedNoisy()
-    rbmActivationFunctionVisible = identityIdentity()
-    unsupervisedLearningRate = 0.005
-    supervisedLearningRate = 0.001
-    momentumMax = 0.95
-    data = scale(data)
-  else:
-    activationFunction = Sigmoid()
-    rbmActivationFunctionHidden = Sigmoid()
-    rbmActivationFunctionVisible = Sigmoid()
-    unsupervisedLearningRate = 0.05
-    supervisedLearningRate = 0.01
-    momentumMax = 0.95
-
-
-  correctAll = []
-  confustionMatrices = []
-  # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), n_folds=5)
-  for train, test in kf:
-
-
-    trainData = data[train]
-    trainLabels = labels[train]
-
-    if args.train:
-      # TODO: this might require more thought
-      net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
-                 binary=1-args.relu,
-                 activationFunction=activationFunction,
-                 rbmActivationFunctionVisible=rbmActivationFunctionVisible,
-                 rbmActivationFunctionHidden=rbmActivationFunctionHidden,
-                 unsupervisedLearningRate=unsupervisedLearningRate,
-                 supervisedLearningRate=supervisedLearningRate,
-                 momentumMax=momentumMax,
-                 nesterovMomentum=args.nesterov,
-                 rbmNesterovMomentum=args.rbmnesterov,
-                 rmsprop=args.rmsprop,
-                 miniBatchSize=args.miniBatchSize,
-                 visibleDropout=0.8,
-                 hiddenDropout=0.5,
-                 rbmHiddenDropout=1.0,
-                 rbmVisibleDropout=1.0,
-                 preTrainEpochs=args.preTrainEpochs)
-
-      unsupervisedData = buildUnsupervisedDataSetForPIE()
-
-      net.train(trainData, trainLabels, maxEpochs=args.maxEpochs,
-                validation=args.validation,
-                unsupervisedData=unsupervisedData)
-    else:
-      # Take the saved network and use that for reconstructions
-      with open(args.netFile, "rb") as f:
-        net = pickle.load(f)
-
-    probs, predicted = net.classify(data[test])
-
-    actualLabels = labels[test]
-    correct = 0
-    errorCases = []
-
-    for i in xrange(len(test)):
-      actual = actualLabels[i]
-      print np.argmax(actual)
-      if predicted[i] == np.argmax(actual):
-        correct += 1
-      else:
-        errorCases.append(i)
-
-    print "correct"
-    print correct
-
-    print "percentage correct"
-    print correct  * 1.0/ len(test)
-
-    print type(predicted)
-    print type(actualLabels)
-    print predicted.shape
-    print actualLabels.shape
-
-    confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
-
-    print "confusion matrix"
-    print confMatrix
-
-    correctAll += [correct  * 1.0/ len(test)]
-    confustionMatrices += [confMatrix]
-
-  print "average correct"
-  print sum(correctAll) / len(correctAll)
-  print "average confusion matrix"
-  print sum(confustionMatrices) * 1.0 / len(confustionMatrices)
-
-
 def deepbeliefPIECV(big=False):
-  data, labels = readMultiPIE(equalize=args.equalize)
-
+  data, labels = readMultiPIE(equalize=args.equalize, train=True)
   data, labels = shuffle(data, labels)
 
   print "data.shape"
@@ -658,8 +499,6 @@ def deepbeliefPIECV(big=False):
     params = [(0.005, 0.001, 0.95, 0.8, 1.0), (0.005, 0.001, 0.95, 1.0, 1.0), (0.005, 0.001, 0.95, 0.8, 0.5), (0.05, 0.01, 0.95, 1.0, 0.5)]
   else:
     params =[(0.05, 0.01, 0.95,  0.8, 1.0), (0.05, 0.01, 0.95, 1.0, 1.0), (0.05, 0.01, 0.95,  0.8, 0.5), (0.05, 0.01, 0.95, 1.0, 0.5)]
-
-
 
   print "cv for params"
   print params
@@ -755,19 +594,8 @@ def deepbeliefPIECV(big=False):
 
 def deepbeliefKaggleCompetitionSmallDataset(big=False):
   print "you are using the net file" , args.netFile
-  data, labels = readKaggleCompetition(args.equalize)
-
-  data, labels = shuffle(data, labels)
-
-  print "data.shape"
-  print data.shape
-  print "labels.shape"
-  print labels.shape
-
-  # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), k=5)
-  for train, test in kf:
-    break
+  trainData, trainLabels = readKaggleCompetitionSmallDataset(args.equalize, train=True)
+  testData, testLabels = readKaggleCompetitionSmallDataset(args.equalize, train=False)
 
   if args.relu:
     activationFunction = Rectified()
@@ -787,11 +615,7 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
     supervisedLearningRate = 0.1
     momentumMax = 0.9
 
-  trainData = data[train]
-  trainLabels = labels[train]
-
   if args.train:
-    # TODO: this might require more thought
     net = db.DBN(5, [2304, 1500, 1500, 1500, 7],
                binary=1-args.relu,
                activationFunction=activationFunction,
@@ -823,11 +647,10 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
     with open(args.netFile, "rb") as f:
       net = pickle.load(f)
 
-  print net.layerSizes
+  print "nr layers: ", net.layerSizes
 
-  probs, predicted = net.classify(data[test])
+  probs, predicted = net.classify(testData)
 
-  actualLabels = labels[test]
   correct = 0
   errorCases = []
 
@@ -838,7 +661,7 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
     print "predicted"
     print predicted[i]
     print "actual"
-    actual = actualLabels[i]
+    actual = testLabels[i]
     print np.argmax(actual)
     if predicted[i] == np.argmax(actual):
       correct += 1
@@ -851,7 +674,7 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
   print "percentage correct"
   print correct  * 1.0/ len(test)
 
-  confMatrix = confusion_matrix(np.argmax(actualLabels, axis=1), predicted)
+  confMatrix = confusion_matrix(np.argmax(testLabels, axis=1), predicted)
   print "confusion matrix"
   print confMatrix
 
@@ -961,7 +784,7 @@ def deepbeliefKaggleCompetitionBigCV():
   data = data[0:args.trainSize]
   labels = labels[0:args.trainSize]
 
-  assert args.relu , " only rectified linear units are supported for second kaggle competition"
+  assert args.relu, " only rectified linear units are supported for second kaggle competition"
 
   activationFunction = Rectified()
   momentumMax = 0.95
@@ -1066,7 +889,6 @@ def deepbeliefKaggleCompetitionBigCV():
 
 
 def deepBeliefPieDifferentConditions():
-
   if args.illumination:
     getDataFunction = readMultiPieDifferentIlluminations
     allConditions = np.array(range(5))
@@ -1076,7 +898,6 @@ def deepBeliefPieDifferentConditions():
   elif args.subjects:
     getDataFunction = readMultiPieDifferentSubjects
     allConditions = np.array(range(147))
-
 
   kf = cross_validation.KFold(n=len(allConditions), k=5)
 
@@ -1192,9 +1013,6 @@ def deepBeliefPieDifferentConditions():
   print "average confusionMatrix was ", sum(confustionMatrices) * 1.0 / len(confustionMatrices)
 
 
-
-# TODO: try with the same poses, it will work bad with training with all poses I think
-# TODO: try to add some unsupervised data
 """Train with PIE test with Kanade. Check the equalization code. """
 def crossDataBase():
   # Only train with the frontal pose
@@ -1204,16 +1022,15 @@ def crossDataBase():
   print "trainLabels"
   print np.argmax(trainLabels, axis=1)
 
-  testData, testLabels = readKanade(False, None, equalize=args.equalize, vectorizeLabels=False)
+  testData, testLabels = readKanade(
+      False, None, equalize=args.equalize, vectorizeLabels=False, train=False)
   print "testLabels"
   print testLabels
   # Some emotions do not correspond for a to b, so we have to map them
   testData, testLabels = mapKanadeToPIELabels(testData, testLabels)
   testLabels = labelsToVectors(testLabels, 6)
 
-  print "testLabels after map"
   labelsSimple = np.argmax(testLabels, axis=1)
-  print labelsSimple
 
   if args.relu:
     activationFunction = Rectified()
@@ -1233,9 +1050,7 @@ def crossDataBase():
     supervisedLearningRate = 0.01
     momentumMax = 0.95
 
-
   if args.train:
-    # TODO: this might require more thought
     net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                binary=1-args.relu,
                activationFunction=activationFunction,
@@ -1305,7 +1120,6 @@ def crossDataBase():
   print "confusion matrix"
   print confMatrix
 
-# TODO: try with the same poses, it will work bad with training with all poses I think
 """Train with PIE test with Kanade. Check the equalization code. """
 def crossDataBaseCV():
   # Only train with the frontal pose
@@ -1320,7 +1134,10 @@ def crossDataBaseCV():
 
   params = [(0.005, 0.005), (0.001, 0.005), (0.001, 0.05), (0.01, 0.05), (0.01, 0.005)]
 
-  testData, testLabels = readKanade(False, None, equalize=args.equalize, vectorizeLabels=False)
+  # The test data to be used during CV should be the taken from the training set, so
+  # that at test time we do not test with the same data used for finding hyperparameters
+  testData, testLabels = readKanade(
+      False, None, equalize=args.equalize, vectorizeLabels=False, train=True)
   print "testLabels"
   print testLabels
   # Some emotions do not correspond for a to b, so we have to map them
@@ -1344,7 +1161,6 @@ def crossDataBaseCV():
 
 
   for param in params:
-
     if args.train:
       net = db.DBN(5, [1200, 1500, 1500, 1500, 6],
                  binary=1-args.relu,
@@ -1414,12 +1230,10 @@ def crossDataBaseCV():
     print "confusion matrix"
     print confMatrix
 
-
   for i, param in enumerate(params):
     print "for param" + str(param)
     print "the correct rate was " + str(correctAll[i])
     print "the confusionMatrix was " + str(confustionMatrices[i])
-
 
 
 def addBlobsOfMissingData(testData, sqSize=5, returnIndices=False):
@@ -1494,7 +1308,6 @@ def makeGaussianRect(n):
 """Train with PIE test with Kanade. Check the equalization code. """
 def missingData():
   data, labels = readMultiPIE(equalize=args.equalize)
-  # data, labels = shuffle(data, labels)
 
   # Random data for training and testing
   kf = cross_validation.KFold(n=len(data), n_folds=5)
@@ -1809,9 +1622,6 @@ def main():
   if args.missing:
     missingData()
 
-  if args.average:
-    deepbeliefMultiPIEAverage()
-
   if args.kaggle:
     deepbeliefKaggleCompetition()
 
@@ -1822,12 +1632,9 @@ def main():
     deepbeliefKaggleCompetitionSmallDataset()
 
 
-# You can also group the emotions into positive and negative to see
-# if you can get better results (probably yes)
 if __name__ == '__main__':
-  # import random
-  # print "FIXING RANDOMNESS"
-  # random.seed(6)
-  # np.random.seed(6)
-  # missingDataTestFromTrainedNet()
+  import random
+  print "FIXING RANDOMNESS"
+  random.seed(6)
+  np.random.seed(6)
   main()

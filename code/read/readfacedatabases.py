@@ -15,10 +15,7 @@ import fnmatch
 import Image
 import csv
 
-
 import matplotlib.image as io
-# from skimage import io
-# from skimage import color
 from skimage.transform import resize
 
 from lib.common import *
@@ -54,7 +51,6 @@ def cropFromFloat(x):
   return y.reshape(SMALL_SIZE)
 
 
-
 def equalizeFromFloatCLAHE(x, reshapeSize=SMALL_SIZE):
   x = x * 255
   x = np.asarray(x, dtype='uint8')
@@ -64,14 +60,14 @@ def equalizeFromFloatCLAHE(x, reshapeSize=SMALL_SIZE):
 
 
 
-def equalizePIE():
-  imgs, labels = readMultiPIE()
+def equalizePIE(train=True):
+  imgs, labels = readMultiPIE(train)
   imgs = np.array(map(lambda x: equalizeFromFloatGlobal(x), imgs))
 
   return imgs, labels
 
 def equalizeKanade(big=False):
-  data, labels = readKanade(big=big, equalize=False)
+  data, labels = 6(big=big, equalize=False)
 
   if big:
       fileName = 'equalized_kanade_big.pickle'
@@ -85,7 +81,8 @@ def equalizeKanade(big=False):
     pickle.dump(data, f)
     pickle.dump(labels, f)
 
-def readMultiPIE(show=False, equalize=False, vectorizeLabels=True, globalPath=PATH):
+def readMultiPIE(
+    show=False, equalize=False, vectorizeLabels=True, globalPath=PATH, train=True):
   path = os.path.join(globalPath, "Multi-PIE_Aligned/A_MultiPIE.mat")
 
   if equalize:
@@ -116,8 +113,12 @@ def readMultiPIE(show=False, equalize=False, vectorizeLabels=True, globalPath=PA
   else:
     labels = np.array(labels)
 
-  return np.array(imgs), labels
+  nrTrain = len(imgs) * 9 / 10
 
+  if train:
+    return np.array(imgs)[0:nrTrain], labels[0:nrTrain]
+  else:
+    return np.array(imgs)[nrTrain:], labels[nrTrain:]
 
 def readMultiPieDifferentIlluminations(illuminationTrain, show=False, equalize=False, globalPath=PATH):
   path = os.path.join(globalPath, "Multi-PIE_Aligned/A_MultiPIE.mat")
@@ -544,7 +545,8 @@ def readMultiPIEEmotionsPerSubject(equalize, globalPath=PATH):
 
   return subjectToEmotions
 
-def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=True):
+def readKanade(
+  big=False, folds=None, equalize=False, vectorizeLabels=True, train=True):
   if not equalize:
     if big:
       files = glob.glob('kanade_150*.pickle')
@@ -556,21 +558,17 @@ def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=True):
 
     # Read the data from them. Sort out the files that do not have
     # the folds that we want
-    # TODO: do this better (with regex in the file name)
-    # DO not reply on the order returned
+    # Do not reply on the order returned
     files = [ files[x -1] for x in folds]
 
     data = np.array([])
     labels = np.array([])
 
-    # TODO: do proper CV in which you use 4 folds for training and one for testing
-    # at that time
     dataFolds = []
     labelFolds = []
     for filename in files:
       with open(filename, "rb") as  f:
         # Sort out the labels from the data
-        # TODO: run the readKanade again tomorrow and change these idnices here
         dataAndLabels = pickle.load(f)
         foldData = dataAndLabels[:, 0:-1]
         print "foldData.shape"
@@ -617,7 +615,20 @@ def readKanade(big=False, folds=None, equalize=False, vectorizeLabels=True):
   print "length of the Kande dataset"
   print len(data)
 
-  return data, labels
+  # Fix the seed, so that we always get the same train and test set.
+  # Before we fix the seed we need a truly random seed for when we want
+  # to go back to random states.
+  futureSeed = numpy.random.randint
+  numpy.random.seed(0)
+  data, labels = shuffle(data, labels)
+  # Ensure the seed is not random after we exit this function
+  numpy.random.seed(futureSeed)
+
+  nrTrain = len(data) * 9 / 10
+  if train:
+    return np.array(data)[0:nrTrain], labels[0:nrTrain]
+  else:
+    return np.array(data)[nrTrain:], labels[nrTrain:]
 
 
 def mapKanadeToPIELabels(kanadeData, kanadeLabels):
@@ -645,8 +656,7 @@ def mapKanadeToPIELabels(kanadeData, kanadeLabels):
 
   return kanadeData[keepIndices], mappedLabels[keepIndices]
 
-
-# TODO: get big, small as argument in order to be able to fit the resizing
+# No labels: only used for unsupervised training
 def readCroppedYale(equalize, globalPath=PATH):
   path = os.path.join(globalPath, "CroppedYale")
 
@@ -715,7 +725,7 @@ def readCroppedYaleSubjects(equalize=False, show=False, globalPath=PATH):
   return subjectsToImgs
 
 
-
+# No labels: only used for unsupervised training
 def readAttData(equalize=False, globalPath=PATH):
   path = os.path.join(globalPath, "att")
 
@@ -735,6 +745,8 @@ def readAttData(equalize=False, globalPath=PATH):
 
   return np.array(images)
 
+# General methods for reading, cropping and equalizing input image data when
+# we have no labels. The resulting images can only be used for unsupervised training.
 def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
                      isColoured=False):
   if not crop and doRecognition:
@@ -765,9 +777,6 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
 
         print fullPath
         print shortPath
-        # img = Image.open(fullPath)
-        # img = np.array(img.getdata()).reshape(img.size[0], img.size[1])
-        # print img.shape
         img = cv2.imread(fullPath, 0)
         print img == None
 
@@ -839,17 +848,19 @@ def readCropEqualize(path, extension, crop, doRecognition, equalize=False,
   return np.array(images)
 
 
-# This needs some thought: remove the cropped folder from path?
+# No labels: only used for unsupervised training
 def readJaffe(crop, detectFaces, equalize, globalPath=PATH):
   path = os.path.join(globalPath, "jaffe")
   return readCropEqualize(path , "tiff", crop, detectFaces, equalize=equalize,
                           isColoured=False)
 
+# No labels: only used for unsupervised training
 def readNottingham(crop, detectFaces, equalize, globalPath=PATH):
   path = os.path.join(globalPath, "nottingham")
   return readCropEqualize(path, "png", crop, detectFaces, equalize=equalize,
                           isColoured=False)
 
+# No labels: only used for unsupervised training
 def readAberdeen(crop, detectFaces, equalize, globalPath=PATH):
   path = os.path.join(globalPath, "Aberdeen")
   return readCropEqualize(path, "jpg", crop, detectFaces, equalize=equalize,
@@ -877,7 +888,7 @@ def makeMultiDatabasePlot():
   plt.show()
 
 
-def readKaggleCompetition(equalize):
+def readKaggleCompetitionSmallDataset(equalize, train=True):
   # Got data from here:
   # https://inclass.kaggle.com/c/facial-keypoints-detector/data
   data = []
@@ -901,7 +912,21 @@ def readKaggleCompetition(equalize):
 
   labels = labelsToVectors(labels, 7)
   data = np.array(data)
-  return data, labels
+
+  # Before we fix the seed we need a truly random seed for when we want
+  # to go back to random states.
+  futureSeed = numpy.random.randint
+  numpy.random.seed(0)
+  data, labels = shuffle(data, labels)
+  # Ensure the seed is not random after we exit this function
+  numpy.random.seed(futureSeed)
+
+  nrTrain = len(data) * 9 / 10
+
+  if train:
+    return np.array(data)[0:nrTrain], labels[0:nrTrain]
+  else:
+    return np.array(data)[nrTrain:], labels[nrTrain:]
 
 
 def readKaggleCompetitionUnlabelled():
