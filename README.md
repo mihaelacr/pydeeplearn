@@ -24,8 +24,9 @@ I used pydeeplearn and openCV to make an application which detects emotions live
   * If you still have questions, pop me an email or a message.
 
 ## Future and current work
- I am currently working on completing the CNN implementation and also considering adding an LSTM implementation. If anyone has a specific feature request, please let me know.
+For the future plans that I have for the library please see the TODO.txt file. Note that currently pydeeplearn is a side project for me and some features might take some time to implement. 
 
+If you want a feature implemeneted, please either send a pull request or let me know. I will do my best to get it up and running for you.
 
 ## How to install dependencies
 
