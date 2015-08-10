@@ -45,6 +45,10 @@ I used pydeeplearn and openCV to make an application which detects emotions live
   * integration with bayesian optimization framework for hyperparamter optimization (spearmint)
   * multiple hidden unit types (binary, real valued)
 
+Supported image preprocessing:
+  * histogram equalization (using openCV)
+  * face cropping (for face images, using openCV) 
+
 ## Future and current work
 For the future plans that I have for the library please see the TODO.txt file. Note that currently pydeeplearn is a side project for me and some features might take some time to implement. 
 
