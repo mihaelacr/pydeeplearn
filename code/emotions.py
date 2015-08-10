@@ -1307,25 +1307,10 @@ def makeGaussianRect(n):
 
 """Train with PIE test with Kanade. Check the equalization code. """
 def missingData():
-  data, labels = readMultiPIE(equalize=args.equalize)
-
-  # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), n_folds=5)
-  for train, test in kf:
-    break
-
-  trainData = data[train]
-  trainLabels = labels[train]
-
-  testData = data[test]
-  testLabels = labels[test]
-
-  print "testLabels.shape"
-  print testLabels.shape
-
+  trainData, trainLabels = readMultiPIE(equalize=args.equalize, train=True)
+  testData, testLabels = readMultiPIE(equalize=args.equalize, train=False)
 
   squaresize = 10
-
 
   allTestData  = []
   allIndices  = []
@@ -1493,20 +1478,8 @@ def makeMissingDataOnly12Positions(testData):
   return np.array(data), coordinates
 
 def missingDataTestFromTrainedNet():
-  data, labels = readMultiPIE(equalize=args.equalize)
-  data, labels = shuffle(data,labels)
-
-
-  # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), n_folds=5)
-  for train, test in kf:
-    break
-
-  trainData = data[train]
-  trainLabels = labels[train]
-
-  testData = data[test]
-  testLabels = labels[test]
+  trainData, trainLabels = readMultiPIE(equalize=args.equalize, train=True)
+  testData, testLabels = readMultiPIE(equalize=args.equalize, train=False)
 
   testData, pairs = makeMissingDataOnly12Positions(testData)
 
