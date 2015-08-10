@@ -93,7 +93,8 @@ If you want a feature implemented, please either send a pull request or let me k
 
 11. install matplotlib
    `easy_install -m matplotlib`
-
+12. install sklearn
+   See the instructions [here](http://scikit-learn.org/stable/install.html)
 
 ## Set up
 
