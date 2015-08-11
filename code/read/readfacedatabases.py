@@ -12,7 +12,6 @@ import os
 import cv2
 import facedetection
 import fnmatch
-import Image
 import csv
 
 import matplotlib.image as io
