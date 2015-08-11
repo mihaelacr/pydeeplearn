@@ -66,6 +66,11 @@ Example run:
 ### Emotion recognition
 The script in code/emotions.py contains code on how to do emotion recognition from images using deep belief networks. The code there uses multiple datasets: Jaffe, Chon-Kanade, MultiPie and other other unlabelled datasets. While Jaffe and Chon-Kanade are publically available, the MultiPie dataset is available only via purchase. Some code also hadndles the data available in a previous Kaggle competition (data can be found [here](https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data). Note that I did not spend much time optimizing hyperparameters for the Kaggle compeition data, so if you are interested in obtaining better results you might start from using spearmint to obtain good values for the hyperparameters.  
 
+### Similarity detection using siamese networks
+ You can train a network to detect if two images contain represent the same person or the same emotion using code in `code/similarity`. Note that in order to be able to train such a network, labelled data (with subjects or emotions) is needed. Most of the labelled data that I used for these experiments was taken from the MultiPie dataset. The code can be run as follows:
+ 
+ `python similarityMain.py --diffsubjects --relu  --epochs 90 --rbmepochs 10`
+
 ## How to install dependencies
 
 1. Create a python virtualenv
