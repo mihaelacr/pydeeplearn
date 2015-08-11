@@ -54,6 +54,15 @@ For the future plans that I have for the library please see the TODO.txt file. N
 
 If you want a feature implemented, please either send a pull request or let me know. I will do my best to get it up and running for you.
 
+## Running examples
+
+### MNIST
+In order to be able to use the MNIST digits examples, you have to first get the data from the [official website](http://yann.lecun.com/exdb/mnist/). The code/MNISTdigits.py script reads the data using the --path argument, so you must set that argument to point to the directory in which you now have the data. In order to see the different options available for training and testing a network for digit recognition, see the possible flags in MNISTdigits.py. Note that an unnamed containing a file for the stored network is required as a final argument: if training is performed (decided with the --train flag), the resulting network will be stored in that file, and if no training is performed, a network is assumed to be already stored in that file and will be retrivied using pickle. 
+
+Example run:
+
+  `python MNISTdigits.py --trainSize 60000 --testSize 10000 --nesterov --rbmnesterov --maxEpochs 1000  --miniBatchSize 20  --rmsprop  network.p `
+
 ## How to install dependencies
 
 1. Create a python virtualenv
@@ -93,7 +102,9 @@ If you want a feature implemented, please either send a pull request or let me k
 
 11. install matplotlib
    `easy_install -m matplotlib`
+12. install sklearn
 
+   See the instructions [here](http://scikit-learn.org/stable/install.html)
 
 ## Set up
 
