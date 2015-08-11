@@ -63,6 +63,9 @@ Example run:
 
   `python MNISTdigits.py --trainSize 60000 --testSize 10000 --nesterov --rbmnesterov --maxEpochs 1000  --miniBatchSize 20  --rmsprop  network.p `
 
+### Emotion recognition
+The script in code/emotions.py contains code on how to do emotion recognition from images using deep belief networks. The code there uses multiple datasets: Jaffe, Chon-Kanade, MultiPie and other other unlabelled datasets. While Jaffe and Chon-Kanade are publically available, the MultiPie dataset is available only via purchase. Some code also hadndles the data available in a previous Kaggle competition (data can be found [here](https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data). Note that I did not spend much time optimizing hyperparameters for the Kaggle compeition data, so if you are interested in obtaining better results you might start from using spearmint to obtain good values for the hyperparameters.  
+
 ## How to install dependencies
 
 1. Create a python virtualenv
