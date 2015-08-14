@@ -536,9 +536,8 @@ class DBN(object):
       self.trainNoValidation(trainingData, trainingLabels, maxEpochs,
                                        unsupervisedData)
 
-  #TODO: if this is used from outside, you have to scale the data as well
+  # TODO: if this is method used from outside, you have to scale the data as well
   # and also the validation data
-  # Could be a good idea to use validation data from a different set?
   def _trainWithGivenValidationSet(self, data, labels,
                                   validationData,
                                   validationLabels,
