@@ -65,7 +65,7 @@ class ConvolutionalLayer(object):
 
 
     self.output = self.activationFun.deterministic(conv.conv2d(input, W) + b.dimshuffle('x', 0, 'x', 'x'))
-
+    self.weights = [W]
     self.params = [W, b]
 
   def _outputDimensions(self):
@@ -104,6 +104,7 @@ class PoolingLayer(object):
     # each layer has to have a parameter field so that it is easier to concatenate all the parameters
     # when performing gradient descent
     self.params = []
+    self.weights = []
 
 
   def _outputDimensions(self):
@@ -135,5 +136,5 @@ class SoftmaxLayer(object):
     currentLayerValues = softmax.deterministic(linearSum)
 
     self.output = currentLayerValues
-
+    self.weights = [W]
     self.params = [W, b]

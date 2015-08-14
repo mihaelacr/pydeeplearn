@@ -8,7 +8,6 @@ import numpy as np
 import theano
 from theano import tensor as T
 
-
 from batchtrainer import *
 from trainingoptions import *
 from common import *
@@ -17,7 +16,6 @@ theanoFloat  = theano.config.floatX
 
 # TODO: implicit zero padding for input
 # See Goodfellow book for advantages of that
-
 class CNNBatchTrainer(BatchTrainer):
 
   def __init__(self, layers):
@@ -25,6 +23,7 @@ class CNNBatchTrainer(BatchTrainer):
 
     # Create the params of the trainer which will be used for gradient descent
     params = concatenateLists([l.params for l in layers])
+    weights = concatenateLists([l.weights for l in layers])
 
     oldUpdates = []
     oldMeanSquares = []
@@ -40,17 +39,22 @@ class CNNBatchTrainer(BatchTrainer):
 
       oldMeanSquares += [oldMeanSquare]
 
-    super(CNNBatchTrainer, self).__init__(params, oldUpdates, oldMeanSquares)
+    super(CNNBatchTrainer, self).__init__(params, oldUpdates, oldMeanSquares, weights)
 
   def cost(self, y):
     return T.nnet.categorical_crossentropy(self.output, y)
 
+"""
+ Convolutional neural network class.
 
+ Supports only convolutional and pooling layers.
+ For training, supports all training options provided by the TrainingOptions class, and
+ supports rmsprop, momentum, nesterov momentum via the BatchTrainer abstract class.
+
+ TODO(mihaela): support fully connected layers: refactor the deepbelief net code to also
+  use the fully connected layers.
+"""
 class ConvolutionalNN(object):
-
-  """
-  TODO: weight decay
-  """
   def __init__(self, layers, trainingOptions,
                momentumForEpochFunction=getMomentumForEpochLinearIncrease,
                nameDataset=''):

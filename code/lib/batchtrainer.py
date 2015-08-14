@@ -24,11 +24,10 @@ class BatchTrainer(object):
 
     Supports momentum updates and nesterov updates, both with rmsprop
     or without (see the TrainingOptions class for more details in the available
-    training options. Also supports weight decay, if the weights parameter is
-    given in the constructor.
+    training options. Also supports L1 and L2 weight decay.
   """
 
-  def __init__(self, params, oldUpdates, oldMeanSquares, weights=None):
+  def __init__(self, params, oldUpdates, oldMeanSquares, weights):
     self.params = params
     self.oldUpdates = oldUpdates
     self.oldMeanSquares = oldMeanSquares
