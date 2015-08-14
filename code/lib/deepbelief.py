@@ -35,25 +35,26 @@ class MiniBatchTrainer(BatchTrainer):
 
     # Let's initialize the fields
     # The weights and biases, make them shared variables
-    self.weights = []
-    self.biases = []
     nrWeights = nrLayers - 1
     self.nrWeights = nrWeights
+    biases = []
+    weights = []
     for i in xrange(nrWeights):
       w = theano.shared(value=np.asarray(initialWeights[i],
                                          dtype=theanoFloat),
                         name='W')
-      self.weights.append(w)
+      weights.append(w)
 
       b = theano.shared(value=np.asarray(initialBiases[i],
                                          dtype=theanoFloat),
                         name='b')
-      self.biases.append(b)
+      biases.append(b)
 
     # Set the parameters of the object
     # Do not set more than this, these will be used for differentiation in the
     # gradient
-    params = self.weights + self.biases
+    params = weights + biases
+    self.biases = biases
 
     # Required for momentum
     # The updates that were performed in the last batch
@@ -73,7 +74,7 @@ class MiniBatchTrainer(BatchTrainer):
       oldUpdates.append(oldDb)
 
     # Rmsprop
-    # The old mean that were performed in the last batch
+    # The mean from the last batch.
     oldMeanSquares = []
     for i in xrange(nrWeights):
       oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
@@ -88,12 +89,10 @@ class MiniBatchTrainer(BatchTrainer):
       oldMeanSquares.append(oldDb)
 
     # Initialize the super class
-    super(MiniBatchTrainer, self).__init__(params, oldUpdates, oldMeanSquares)
+    super(MiniBatchTrainer, self).__init__(params, oldUpdates, oldMeanSquares, weights)
 
-    # Create a theano random number generator
-    # Required to sample units for dropout
+    # Create a theano random number generator required to sample units for dropout
     self.theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
-
     self.output = self.forwardPass(self.input)
 
     if self.adversarial_training:
@@ -364,12 +363,25 @@ class DBN(object):
     self.adversarial_coefficient = adversarial_coefficient
     self.adversarial_epsilon = adversarial_epsilon
 
+    self.trainingOptions = self.makeTrainingOptionsFromNetwork()
+
     self.nameDataset = nameDataset
 
     print "hidden dropout in DBN", hiddenDropout
     print "visible dropout in DBN", visibleDropout
 
     print "using adversarial training"
+
+  def makeTrainingOptionsFromNetwork(self):
+    return TrainingOptions(
+      miniBatchSize=self.miniBatchSize,
+      learningRate=self.supervisedLearningRate,
+      momentumMax=self.momentumMax,
+      rmsprop=self.rmsprop,
+      nesterovMomentum=self.nesterovMomentum,
+      weightDecayL1=self.weightDecayL1,
+      weightDecayL2=self.weightDecayL2,
+      momentumFactorForLearningRate=self.momentumFactorForLearningRate)
 
   def __getstate__(self):
     odict = self.__dict__.copy() # copy the dict since we change it
@@ -507,7 +519,6 @@ class DBN(object):
         print "scaling input data"
         data = scale(data)
 
-
       if unsupervisedData is not None:
         mins = unsupervisedData.min(axis=1)
         maxs = unsupervisedData.max(axis=1)
@@ -591,11 +602,7 @@ class DBN(object):
     batchLearningRate = self.supervisedLearningRate / self.miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
 
-    # Let's build the symbolic graph which takes the data trough the network
-    # allocate symbolic variables for the data
-    # index of a mini-batch
     miniBatchIndex = T.lscalar()
-    # momentum = T.fscalar()
 
     # The mini-batch data is a matrix
     x = T.matrix('x', dtype=theanoFloat)
@@ -621,21 +628,7 @@ class DBN(object):
                                  weights=batchTrainer.weights,
                                  biases=batchTrainer.biases)
 
-    # TODO: remove training error from this
-    # the error is the sum of the errors in the individual cases
-    trainingError = T.sum(batchTrainer.cost(y))
-    # also add some regularization costs
-    error = trainingError
-    for w in batchTrainer.weights:
-      error += self.weightDecayL1 * T.sum(abs(w)) + self.weightDecayL2 * T.sum(w ** 2)
-
-    self.trainingOptions = TrainingOptions(self.miniBatchSize, self.supervisedLearningRate, self.momentumMax, self.rmsprop,
-                                           self.nesterovMomentum, self.momentumFactorForLearningRate)
-
     trainModel = batchTrainer.makeTrainFunction(x, y, data, labels, self.trainingOptions)
-
-    if not self.nesterovMomentum:
-      theano.printing.pydotprint(trainModel)
 
     trainingErrorNoDropout = theano.function(
           inputs=[miniBatchIndex],
