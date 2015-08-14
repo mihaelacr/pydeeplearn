@@ -1,7 +1,8 @@
 1. Batch normalization
 2. LSTM implementation
-3. Consider using fuel for input data
-4. Spearmint: do not use the maxEpochs as something that you optimize using spearmint
+3. Refactor the deep belief net code to also use layers: this makes it easy to add fully connected layers to conv nets and to delete the ann implementation, by merging it with the dbn implementation.
+4. Consider using fuel for input data
+5. Spearmint: do not use the maxEpochs as something that you optimize using spearmint
 
 Debugging wise/theano:
 5. Use theano nanguardmode for debugging nans in theano.
