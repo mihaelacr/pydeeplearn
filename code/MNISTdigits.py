@@ -84,7 +84,7 @@ parser.add_argument('--validation', dest='validation', action='store_true', defa
                     help="if true, the network is trained using a validation set")
 parser.add_argument('--display', dest='display', action='store_true', default=False,
 		    help="if true, figures will be displayed with matplotlib when available"
-                          "Set to false when running the code via ssh, otherwise matplotlib" 
+                          "Set to false when running the code via ssh, otherwise matplotlib"
                           "might crash.")
 parser.add_argument('--path', dest='path', type=str, default="MNIST",
                     help="the path to the MNIST files")
@@ -1072,6 +1072,7 @@ def convolutionalNNMnist():
   layer2 = PoolingLayer((2, 2))
   layer3 = ConvolutionalLayer(20, (5, 5), Sigmoid())
   layer4 = PoolingLayer((2, 2))
+  # TODO: add fully connected layer
   layer5 = SoftmaxLayer(10)
 
   layers = [layer1, layer2, layer3, layer4, layer5]
