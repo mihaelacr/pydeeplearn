@@ -106,9 +106,6 @@ class MiniBatchTrainer(BatchTrainer):
   def costFun(self, x, y):
     return T.nnet.categorical_crossentropy(x, y)
 
-  def costFun(self, x, y):
-    return T.nnet.categorical_crossentropy(x, y)
-
   # TODO: do I still need to pass the y?
   def cost(self, y):
     output_error = self.costFun(self.output, y)
