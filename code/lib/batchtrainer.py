@@ -13,6 +13,7 @@ from theano import tensor as T
 import debug
 
 DEBUG = False
+theanoFloat = theano.config.floatX
 
 class BatchTrainer(object):
   """
@@ -27,11 +28,24 @@ class BatchTrainer(object):
     training options. Also supports L1 and L2 weight decay.
   """
 
-  def __init__(self, params, oldUpdates, oldMeanSquares, weights):
+  def __init__(self, params, weights):
     self.params = params
-    self.oldUpdates = oldUpdates
-    self.oldMeanSquares = oldMeanSquares
     self.weights = weights if weights else []
+
+    # Required for momentum and rmsprop
+    self.oldUpdates = []
+    self.oldMeanSquares = []
+    for param in params:
+      oldDParam = theano.shared(value=np.zeros(shape=param.shape.eval(),
+                                              dtype=theanoFloat),
+                                name='oldDParam')
+
+      self.oldUpdates += [oldDParam]
+      oldMeanSquare = theano.shared(value=np.zeros(shape=param.shape.eval(),
+                                              dtype=theanoFloat),
+                                name='oldMeanSquare')
+
+      self.oldMeanSquares += [oldMeanSquare]
 
 
   def makeTrainFunction(self, x, y, data, labels, trainingOptions):

@@ -20,26 +20,11 @@ class CNNBatchTrainer(BatchTrainer):
 
   def __init__(self, layers):
     self.output = layers[-1].output
-
     # Create the params of the trainer which will be used for gradient descent
     params = concatenateLists([l.params for l in layers])
     weights = concatenateLists([l.weights for l in layers])
 
-    oldUpdates = []
-    oldMeanSquares = []
-    for param in params:
-      oldDParam = theano.shared(value=np.zeros(shape=param.shape.eval(),
-                                              dtype=theanoFloat),
-                                name='oldDParam')
-
-      oldUpdates += [oldDParam]
-      oldMeanSquare = theano.shared(value=np.zeros(shape=param.shape.eval(),
-                                              dtype=theanoFloat),
-                                name='oldMeanSquare')
-
-      oldMeanSquares += [oldMeanSquare]
-
-    super(CNNBatchTrainer, self).__init__(params, oldUpdates, oldMeanSquares, weights)
+    super(CNNBatchTrainer, self).__init__(params, weights)
 
   def cost(self, y):
     return T.nnet.categorical_crossentropy(self.output, y)

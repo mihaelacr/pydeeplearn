@@ -11,7 +11,7 @@ import theano
 from theano import tensor as T
 from theano.tensor.shared_randomstreams import RandomStreams
 
-theanoFloat  = theano.config.floatX
+theanoFloat = theano.config.floatX
 
 DEBUG = False
 
@@ -56,40 +56,8 @@ class MiniBatchTrainer(BatchTrainer):
     params = weights + biases
     self.biases = biases
 
-    # Required for momentum
-    # The updates that were performed in the last batch
-    # It is important that the order in which we add the oldUpdates is the same
-    # as which we add the params
-    oldUpdates = []
-    for i in xrange(nrWeights):
-      oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
-                                           dtype=theanoFloat),
-                        name='oldDw')
-      oldUpdates.append(oldDw)
-
-    for i in xrange(nrWeights):
-      oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
-                                           dtype=theanoFloat),
-                        name='oldDb')
-      oldUpdates.append(oldDb)
-
-    # Rmsprop
-    # The mean from the last batch.
-    oldMeanSquares = []
-    for i in xrange(nrWeights):
-      oldDw = theano.shared(value=np.zeros(shape=initialWeights[i].shape,
-                                           dtype=theanoFloat),
-                        name='oldDw')
-      oldMeanSquares.append(oldDw)
-
-    for i in xrange(nrWeights):
-      oldDb = theano.shared(value=np.zeros(shape=initialBiases[i].shape,
-                                           dtype=theanoFloat),
-                        name='oldDb')
-      oldMeanSquares.append(oldDb)
-
     # Initialize the super class
-    super(MiniBatchTrainer, self).__init__(params, oldUpdates, oldMeanSquares, weights)
+    super(MiniBatchTrainer, self).__init__(params, weights)
 
     # Create a theano random number generator required to sample units for dropout
     self.theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
