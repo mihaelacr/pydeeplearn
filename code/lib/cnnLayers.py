@@ -16,15 +16,7 @@ from common import *
 
 theanoFloat  = theano.config.floatX
 
-# maybe set a field in each layer "isFullyConnected" that can tell you what you need to do depending
-# on that: much more scalable and supports a bigger variety of architectures
-
-# elements after the user has told you what they want
-#  but in that case you do not get much advantage in between that and a string.
-
-# you can have a basic init and a fill method that takes the current arguments for init
 class ConvolutionalLayer(object):
-
   """
   The input has to be a 4D tensor:
    1) the size of a mini-batch (we do a forward pass for multiple images at a time)
