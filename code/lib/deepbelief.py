@@ -482,7 +482,7 @@ class DBN(object):
       # TODO: NO: pass in a scale argument
       if isinstance(self.rbmActivationFunctionVisible, Identity):
         print "scaling input data"
-        data = scale(data)
+        data = gaussianNormalization(data)
 
       if unsupervisedData is not None:
         mins = unsupervisedData.min(axis=1)

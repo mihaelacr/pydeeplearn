@@ -1,4 +1,5 @@
 """Common functionalities required by the other modules. """
+import math
 
 __author__ = "Mihaela Rosca"
 __contact__ = "mihaela.c.rosca@gmail.com"
@@ -23,7 +24,33 @@ def minDiff(vec):
 def concatenateLists(lists):
   return list(itertools.chain.from_iterable(lists))
 
-def scale(data):
+def calcMeans(vectors):
+    means = []
+    for i in enumerate(vectors[0]):
+        means.append(0.0)
+    for i in vectors:
+        for j in enumerate(vectors[0]):
+            means[j] += vectors[i][j]
+    for i in enumerate(means):
+        means[i] /= len(vectors)
+    return means
+
+def calcDeviations(vectors, means):
+    stdDev = []
+    for i in enumerate(vectors[0]):
+        sum = 0.0
+        for j in enumerate(vectors):
+            sum += (vectors[j][i] - means[i]) * (vectors[j][i] - means[i])
+        stdDev.append(math.sqrt(sum/len(vectors)))
+    return stdDev
+
+def normalizeData(vectors, means, deviations):
+    for i in enumerate(vectors):
+        for j in enumerate(vectors[0]):
+            vectors[i][j] = (vectors[i][j] - means[j]) / deviations[j]
+    return vectors
+
+def gaussianNormalization(data):
   # return preprocessing.scale(data, axis=1)
   data = data / data.std(axis=1)[:, np.newaxis]
   data = data - data.mean(axis=1)[:, np.newaxis]
@@ -33,6 +60,13 @@ def scale(data):
   # assert np.array_equal(data.std(axis=1), np.ones((data.shape[0]), dtype='float'))
   # assert np.array_equal(data.mean(axis=1), np.zeros(data.shape[0]))
   return data
+
+def gaussianNormalization(trainingData, testingData):
+  means = calcMeans(trainingData)
+  deviations = calcDeviations(trainingData, means)
+  normalizedTrainignData = normalizeData(trainingData, means, deviations)
+  normalizedTestingData = normalizeData(testingData, means, deviations)
+  return normalizedTrainignData, normalizedTestingData
 
 def visualizeWeights(weights, imgShape, tileShape):
   return utils.tile_raster_images(weights, imgShape,

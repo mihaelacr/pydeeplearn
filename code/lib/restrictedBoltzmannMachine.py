@@ -250,7 +250,7 @@ class RBM(object):
     # to unit variance and zero mean
     if isinstance(self.visibleActivationFunction, Identity):
       print "scaling data for RBM"
-      data = scale(data)
+      data = gaussianNormalization(data)
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
 

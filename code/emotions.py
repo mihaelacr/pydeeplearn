@@ -113,7 +113,7 @@ def rbmEmotions(big=False, reconstructRandom=False):
 
   if args.relu:
     activationFunction = Rectified()
-    data = scale(data)
+    data = gaussianNormalization(data)
   else:
     activationFunction = Sigmoid()
 
@@ -197,7 +197,7 @@ def deepbeliefKanadeCV(big=False):
     activationFunction = Rectified()
     rbmActivationFunctionVisible = Identity()
     rbmActivationFunctionHidden = RectifiedNoisy()
-    data = scale(data)
+    data = gaussianNormalization(data)
   else:
     activationFunction = Sigmoid()
     rbmActivationFunctionVisible = Sigmoid()
@@ -286,7 +286,7 @@ def deepbeliefKanade(big=False):
 
   if args.relu:
     activationFunction = Rectified()
-    data = scale(data)
+    data = gaussianNormalization(data)
     rbmActivationFunctionVisible = Identity()
     rbmActivationFunctionHidden = RectifiedNoisy()
 
@@ -389,7 +389,7 @@ def deepbeliefMultiPIE(big=False):
     unsupervisedLearningRate = 0.005
     supervisedLearningRate = 0.001
     momentumMax = 0.95
-    data = scale(data)
+    data = gaussianNormalization(data)
   else:
     activationFunction = Sigmoid()
     rbmActivationFunctionHidden = Sigmoid()
@@ -481,7 +481,7 @@ def deepbeliefPIECV(big=False):
     rbmActivationFunctionVisible = Identity()
     rbmActivationFunctionHidden = RectifiedNoisy()
     # IMPORTANT: SCALE THE DATA IF YOU USE GAUSSIAN VISIBlE UNITS
-    data = scale(data)
+    data = gaussianNormalization(data)
   else:
     activationFunction = Sigmoid()
     rbmActivationFunctionVisible = Sigmoid()
@@ -594,7 +594,7 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
     unsupervisedLearningRate = 0.05
     supervisedLearningRate = 0.01
     momentumMax = 0.95
-    data = scale(data)
+    data = gaussianNormalization(data)
     rbmActivationFunctionVisible = Identity()
     rbmActivationFunctionHidden = RectifiedNoisy()
   else:
@@ -693,8 +693,8 @@ def deepbeliefKaggleCompetition(big=False):
     unsupervisedLearningRate = 0.001
     supervisedLearningRate = 0.001
     momentumMax = 0.95
-    trainData = scale(trainData)
-    trainData = scale(trainData)
+    trainData = gaussianNormalization(trainData)
+    trainData = gaussianNormalization(trainData)
     rbmActivationFunctionVisible = Identity()
     rbmActivationFunctionHidden = RectifiedNoisy()
 
@@ -777,7 +777,7 @@ def deepbeliefKaggleCompetitionBigCV():
 
   activationFunction = Rectified()
   momentumMax = 0.95
-  data = scale(data)
+  data = gaussianNormalization(data)
   rbmActivationFunctionVisible = Identity()
   rbmActivationFunctionHidden = RectifiedNoisy()
 
@@ -912,8 +912,8 @@ def deepBeliefPieDifferentConditions():
       unsupervisedLearningRate = 0.005
       supervisedLearningRate = 0.001
       momentumMax = 0.95
-      trainData = scale(trainData)
-      testData = scale(testData)
+      trainData = gaussianNormalization(trainData)
+      testData = gaussianNormalization(testData)
 
     else:
       activationFunction = Sigmoid()
@@ -1025,8 +1025,8 @@ def crossDataBase():
     unsupervisedLearningRate = 0.005
     supervisedLearningRate = 0.001
     momentumMax = 0.95
-    trainData = scale(trainData)
-    testData = scale(testData)
+    trainData = gaussianNormalization(trainData)
+    testData = gaussianNormalization(testData)
   else:
     activationFunction = Sigmoid()
     rbmActivationFunctionHidden = Sigmoid()
@@ -1131,8 +1131,8 @@ def crossDataBaseCV():
     activationFunction = Rectified()
     rbmActivationFunctionHidden = RectifiedNoisy()
     rbmActivationFunctionVisible = Identity()
-    trainData = scale(trainData)
-    testData = scale(testData)
+    trainData = gaussianNormalization(trainData)
+    testData = gaussianNormalization(testData)
   else:
     activationFunction = Sigmoid()
     rbmActivationFunctionHidden = Sigmoid()
@@ -1312,8 +1312,8 @@ def missingData():
     unsupervisedLearningRate = 0.005
     supervisedLearningRate = 0.001
     momentumMax = 0.95
-    trainData = scale(trainData)
-    testData = scale(testData)
+    trainData = gaussianNormalization(trainData)
+    testData = gaussianNormalization(testData)
   else:
     activationFunction = Sigmoid()
     rbmActivationFunctionHidden = Sigmoid()
@@ -1450,8 +1450,8 @@ def missingDataTestFromTrainedNet():
     unsupervisedLearningRate = 0.005
     supervisedLearningRate = 0.001
     momentumMax = 0.95
-    trainData = scale(trainData)
-    testData = scale(testData)
+    trainData = gaussianNormalization(trainData)
+    testData = gaussianNormalization(testData)
   else:
     activationFunction = Sigmoid()
     rbmActivationFunctionHidden = Sigmoid()
