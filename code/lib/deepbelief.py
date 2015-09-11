@@ -20,7 +20,8 @@ class MiniBatchTrainer(BatchTrainer):
   def __init__(self, input, inputLabels, nrLayers, initialWeights, initialBiases,
                activationFunction, classificationActivationFunction,
                visibleDropout, hiddenDropout,
-               adversarial_training, adversarial_epsilon, adversarial_coefficient):
+               adversarial_training, adversarial_epsilon, adversarial_coefficient,
+               classification=True):
     self.input = input
     self.inputLabels = inputLabels
     # If we should use adversarial training or not
@@ -32,6 +33,8 @@ class MiniBatchTrainer(BatchTrainer):
     self.hiddenDropout = hiddenDropout
     self.activationFunction = activationFunction
     self.classificationActivationFunction = classificationActivationFunction
+
+    self.classification = classification
 
     # Let's initialize the fields
     # The weights and biases, make them shared variables
@@ -104,7 +107,10 @@ class MiniBatchTrainer(BatchTrainer):
     return currentLayerValues
 
   def costFun(self, x, y):
-    return T.nnet.categorical_crossentropy(x, y)
+    if(self.classification):
+        return T.nnet.categorical_crossentropy(x, y)
+    else:
+        return (x - y) * (x - y)
 
   # TODO: do I still need to pass the y?
   def cost(self, y):
@@ -120,13 +126,15 @@ class ClassifierBatch(object):
 
   def __init__(self, input, nrLayers, weights, biases,
                visibleDropout, hiddenDropout,
-               activationFunction, classificationActivationFunction):
+               activationFunction, classificationActivationFunction, classification=True):
 
     self.input = input
 
     self.classificationWeights = classificationWeightsFromTestWeights(weights,
                                             visibleDropout=visibleDropout,
                                             hiddenDropout=hiddenDropout)
+
+    self.classification = classification
 
     nrWeights = nrLayers - 1
 
@@ -148,8 +156,10 @@ class ClassifierBatch(object):
     self.output = currentLayerValues
 
   def cost(self, y):
-    return T.nnet.categorical_crossentropy(self.output, y)
-
+    if(self.classification):
+        return T.nnet.categorical_crossentropy(self.output, y)
+    else:
+        return (self.output - y) * (self.output - y)
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
@@ -284,7 +294,8 @@ class DBN(object):
                 adversarial_epsilon=1.0/255,
                 preTrainEpochs=1,
                 initialInputShape=None,
-                nameDataset=''):
+                nameDataset='',
+                classification=True):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
 
@@ -331,6 +342,8 @@ class DBN(object):
     self.trainingOptions = self.makeTrainingOptionsFromNetwork()
 
     self.nameDataset = nameDataset
+
+    self.classification = classification
 
     print "hidden dropout in DBN", hiddenDropout
     print "visible dropout in DBN", visibleDropout
@@ -583,7 +596,8 @@ class DBN(object):
                                     hiddenDropout=self.hiddenDropout,
                                     adversarial_training=self.adversarial_training,
                                     adversarial_coefficient=self.adversarial_coefficient,
-                                    adversarial_epsilon=self.adversarial_epsilon)
+                                    adversarial_epsilon=self.adversarial_epsilon,
+                                    classification=self.classification)
 
     classifier = ClassifierBatch(input=x, nrLayers=self.nrLayers,
                                  activationFunction=self.activationFunction,
@@ -591,7 +605,8 @@ class DBN(object):
                                  visibleDropout=self.visibleDropout,
                                  hiddenDropout=self.hiddenDropout,
                                  weights=batchTrainer.weights,
-                                 biases=batchTrainer.biases)
+                                 biases=batchTrainer.biases,
+                                 classification=self.classification)
 
     trainModel = batchTrainer.makeTrainFunction(x, y, data, labels, self.trainingOptions)
 
