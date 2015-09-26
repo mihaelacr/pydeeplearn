@@ -631,7 +631,6 @@ class DBN(object):
 
 
   def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
-    # trainingErrors = []
     epochTrainingErrors = []
 
     try:
@@ -651,8 +650,8 @@ class DBN(object):
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
 
-
-    # plotTraningError(epochTrainingError)
+    # TODO: clean up, pass a flag for this
+    # plotTraningError(epochTrainingErrors)
 
     print "number of epochs"
     print epoch + 1
@@ -707,11 +706,8 @@ class DBN(object):
   # and take the best of them
   def trainModelGetBestWeights(self, batchTrainer, trainModel, validateModel, maxEpochs):
     bestValidationError = np.inf
-
     validationErrors = []
     trainingErrors = []
-
-
     bestWeights = None
     bestBiases = None
     bestEpoch = 0
@@ -728,7 +724,6 @@ class DBN(object):
 
       meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
       meanValidation = sum(meanValidations) / len(meanValidations)
-
       validationErrors += [meanValidation]
 
       if meanValidation < bestValidationError:
