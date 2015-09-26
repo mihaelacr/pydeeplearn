@@ -699,7 +699,6 @@ class DBN(object):
     print epoch + 1
 
 
-
   # A very greedy approach to training
   # A more mild version would be to actually take 3 conescutive ones
   # that give the best average (to ensure you are not in a luck place)
