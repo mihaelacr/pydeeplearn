@@ -50,7 +50,7 @@ def normalizeData(vectors, means, deviations):
             vectors[i][j] = (vectors[i][j] - means[j]) / deviations[j]
     return vectors
 
-def gaussianNormalization(data):
+def scale(data):
   # return preprocessing.scale(data, axis=1)
   data = data / data.std(axis=1)[:, np.newaxis]
   data = data - data.mean(axis=1)[:, np.newaxis]

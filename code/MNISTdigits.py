@@ -293,10 +293,10 @@ def rbmMainGauss(reconstructRandom=False):
       readmnist.read(0, args.testSize, digits=None, bTrain=False, path=args.path)
 
   trainVectors = np.array(trainVectors, dtype='float')
-  trainingScaledVectors = gaussianNormalization(trainVectors)
+  trainingScaledVectors = scale(trainVectors)
 
   testVectors = np.array(testVectors, dtype='float')
-  testingScaledVectors = gaussianNormalization(testVectors)
+  testingScaledVectors = scale(testVectors)
 
   learningRate = 0.0005
   # Train the network
@@ -735,10 +735,10 @@ def deepbeliefMNISTGaussian():
   trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
 
   trainVectors = np.array(trainVectors, dtype='float')
-  trainingScaledVectors = gaussianNormalization(trainVectors)
+  trainingScaledVectors = scale(trainVectors)
 
   testVectors = np.array(testVectors, dtype='float')
-  testingScaledVectors = gaussianNormalization(testVectors)
+  testingScaledVectors = scale(testVectors)
 
   vectorLabels = labelsToVectors(trainLabels, 10)
 
@@ -817,7 +817,7 @@ def cvMNISTGaussian():
   trainVectors = np.array(trainVectors, dtype='float')
 
   # Ensure the data has zero mean and 1 variance
-  trainingScaledVectors = gaussianNormalization(trainVectors)
+  trainingScaledVectors = scale(trainVectors)
   vectorLabels = labelsToVectors(trainLabels, 10)
 
   bestFold = -1
