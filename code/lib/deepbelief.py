@@ -3,6 +3,8 @@ import numpy as np
 import restrictedBoltzmannMachine as rbm
 from batchtrainer import *
 from activationfunctions import *
+from costfunctions import CategoricalCrossEntropy
+from costfunctions import LeastSquares
 from common import *
 from debug import *
 from trainingoptions import *
@@ -18,10 +20,9 @@ DEBUG = False
 class MiniBatchTrainer(BatchTrainer):
 
   def __init__(self, input, inputLabels, nrLayers, initialWeights, initialBiases,
-               activationFunction, classificationActivationFunction,
+               activationFunction, classificationActivationFunction, costFunction,
                visibleDropout, hiddenDropout,
-               adversarial_training, adversarial_epsilon, adversarial_coefficient,
-               classification=True):
+               adversarial_training, adversarial_epsilon, adversarial_coefficient):
     self.input = input
     self.inputLabels = inputLabels
     # If we should use adversarial training or not
@@ -33,8 +34,7 @@ class MiniBatchTrainer(BatchTrainer):
     self.hiddenDropout = hiddenDropout
     self.activationFunction = activationFunction
     self.classificationActivationFunction = classificationActivationFunction
-
-    self.classification = classification
+    self.costFun = costFunction
 
     # Let's initialize the fields
     # The weights and biases, make them shared variables
@@ -106,17 +106,11 @@ class MiniBatchTrainer(BatchTrainer):
 
     return currentLayerValues
 
-  def costFun(self, x, y):
-    if(self.classification):
-        return T.nnet.categorical_crossentropy(x, y)
-    else:
-        return (x - y) * (x - y)
-
   # TODO: do I still need to pass the y?
   def cost(self, y):
-    output_error = self.costFun(self.output, y)
+    output_error = self.costFun(self, self.output, y)
     if self.adversarial_training:
-      adversarial_error = self.costFun(self.adversarial_output, y)
+      adversarial_error = self.costFun(self, self.adversarial_output, y)
       alpha = self.adversarial_coefficient
       return alpha * output_error + (1.0 - alpha) * adversarial_error
     else:
@@ -126,15 +120,15 @@ class ClassifierBatch(object):
 
   def __init__(self, input, nrLayers, weights, biases,
                visibleDropout, hiddenDropout,
-               activationFunction, classificationActivationFunction, classification=True):
+               activationFunction, classificationActivationFunction, costFunction):
 
     self.input = input
+
+    self.costFun = costFunction
 
     self.classificationWeights = classificationWeightsFromTestWeights(weights,
                                             visibleDropout=visibleDropout,
                                             hiddenDropout=hiddenDropout)
-
-    self.classification = classification
 
     nrWeights = nrLayers - 1
 
@@ -156,10 +150,7 @@ class ClassifierBatch(object):
     self.output = currentLayerValues
 
   def cost(self, y):
-    if(self.classification):
-        return T.nnet.categorical_crossentropy(self.output, y)
-    else:
-        return (self.output - y) * (self.output - y)
+    return self.costFun(self, self.output, y)
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
@@ -267,6 +258,7 @@ class DBN(object):
                 rbmActivationFunctionVisible=Sigmoid(),
                 rbmActivationFunctionHidden=Sigmoid(),
                 classificationActivationFunction=Softmax(),
+                costFunction=CategoricalCrossEntropy(),
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,
                 nesterovMomentum=True,
@@ -294,8 +286,7 @@ class DBN(object):
                 adversarial_epsilon=1.0/255,
                 preTrainEpochs=1,
                 initialInputShape=None,
-                nameDataset='',
-                classification=True):
+                nameDataset=''):
     self.nrLayers = nrLayers
     self.layerSizes = layerSizes
 
@@ -343,7 +334,7 @@ class DBN(object):
 
     self.nameDataset = nameDataset
 
-    self.classification = classification
+    self.costFunction = costFunction
 
     print "hidden dropout in DBN", hiddenDropout
     print "visible dropout in DBN", visibleDropout
@@ -473,7 +464,6 @@ class DBN(object):
             unsupervisedData=None, trainingIndices=None):
     return self.train(data, labels, maxEpochs, validation, percentValidation, unsupervisedData, trainingIndices)
 
-
   """
     Choose a percentage (percentValidation) of the data given to be
     validation data, used for early stopping of the model.
@@ -590,23 +580,23 @@ class DBN(object):
     batchTrainer = MiniBatchTrainer(input=x, inputLabels=y, nrLayers=self.nrLayers,
                                     activationFunction=self.activationFunction,
                                     classificationActivationFunction=self.classificationActivationFunction,
+                                    costFunction=self.costFunction,
                                     initialWeights=self.weights,
                                     initialBiases=self.biases,
                                     visibleDropout=self.visibleDropout,
                                     hiddenDropout=self.hiddenDropout,
                                     adversarial_training=self.adversarial_training,
                                     adversarial_coefficient=self.adversarial_coefficient,
-                                    adversarial_epsilon=self.adversarial_epsilon,
-                                    classification=self.classification)
+                                    adversarial_epsilon=self.adversarial_epsilon)
 
     classifier = ClassifierBatch(input=x, nrLayers=self.nrLayers,
                                  activationFunction=self.activationFunction,
                                  classificationActivationFunction=self.classificationActivationFunction,
+                                 costFunction=self.costFunction,
                                  visibleDropout=self.visibleDropout,
                                  hiddenDropout=self.hiddenDropout,
                                  weights=batchTrainer.weights,
-                                 biases=batchTrainer.biases,
-                                 classification=self.classification)
+                                 biases=batchTrainer.biases)
 
     trainModel = batchTrainer.makeTrainFunction(x, y, data, labels, self.trainingOptions)
 
