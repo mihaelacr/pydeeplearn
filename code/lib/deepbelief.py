@@ -522,11 +522,7 @@ class DBN(object):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
-
     self.pretrain(data, unsupervisedData)
-
-    self.miniBatchValidateSize = min(len(validationData), self.miniBatchSize * 10)
-    self.nrMiniBatchesValidate =  self.miniBatchValidateSize / self.miniBatchValidateSize
 
     sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
     sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
