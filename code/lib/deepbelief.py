@@ -536,7 +536,7 @@ class DBN(object):
     sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels, True,
-                  sharedValidationData, sharedValidationLabels, maxEpochs)
+                  sharedValidationData, sharedValidationLabels, maxEpochs, validation_criteria)
 
   def trainNoValidation(self, data, labels, maxEpochs, unsupervisedData):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
