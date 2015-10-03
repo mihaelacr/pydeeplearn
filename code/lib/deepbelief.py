@@ -465,6 +465,11 @@ class DBN(object):
   """
     Choose a percentage (percentValidation) of the data given to be
     validation data, used for early stopping of the model.
+    validation_criteria is only used in case validation is set to True. The allowed
+    values are "patience" and "consecutive_decrease". "patience" increases the number
+    of training epochs as long as the validation error is improving, while
+    "consecutive_decrease" waits for the validation error to decrease for a
+    consecutive number of epochs before stopping training.
   """
   def train(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
             unsupervisedData=None, trainingIndices=None, validation_criteria="patience"):
