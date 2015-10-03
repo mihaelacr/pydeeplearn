@@ -72,7 +72,7 @@ class ConvolutionalNN(object):
 
     return data
 
-  def train(self, data, labels):
+  def train(self, data, labels, epochs=100):
     print "shuffling training data"
     data, labels = shuffle(data, labels)
 
@@ -87,7 +87,7 @@ class ConvolutionalNN(object):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
-    miniBatchSize = self.trainingOptions.miniBatchSize
+    miniBatchSize = self.training_options.miniBatchSize
     nrMinibatches = len(data) / miniBatchSize
 
     # Symbolic variable for the data matrix
@@ -108,16 +108,7 @@ class ConvolutionalNN(object):
     # Set the batch trainer as a field in the conv net
     # then we can access it for a forward pass during testing
     self.batchTrainer = batchTrainer
-    trainModel = batchTrainer.makeTrainFunction(x, y, sharedData, sharedLabels)
-    momentumMax = self.training_options.momentumMax
-
-    #  run the loop that trains the net
-    for epoch in xrange(self.training_options.maxEpochs):
-      print "epoch", epoch
-      momentum = self.momentum_for_epoch_function(momentumMax, epoch)
-      for i in xrange(nrMinibatches):
-        trainModel(i, momentum)
-
+    trainModel = batchTrainer.trainFixedEpochs(x, y, sharedData, sharedLabels, epochs)
 
   def test(self, data):
     miniBatchIndex = T.lscalar()

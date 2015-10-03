@@ -166,7 +166,8 @@ class BatchTrainer(object):
     print epoch + 1
 
 
-  def trainModelPatience(self, x, y, data, labels, validationData, validationLabels, classificationCost, maxEpochs):
+  def trainModelPatience(self, x, y, data, labels, validationData, validationLabels,
+      classificationCost, maxEpochs):
     training_options = self.training_options
     save_best_weights = training_options.save_best_weights
 
@@ -180,8 +181,6 @@ class BatchTrainer(object):
         x, y, validationData, validationLabels, classificationCost, miniBatchValidateSize)
     trainNoDropout = self._makeValidateModelFunction(
         x, y, data, labels, classificationCost, miniBatchSize)
-
-    save_best_weights = True
 
     epoch = 0
     doneTraining = False
