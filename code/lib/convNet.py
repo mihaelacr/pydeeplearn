@@ -18,13 +18,13 @@ theanoFloat  = theano.config.floatX
 # See Goodfellow book for advantages of that
 class CNNBatchTrainer(BatchTrainer):
 
-  def __init__(self, layers):
+  def __init__(self, layers, training_options):
     self.output = layers[-1].output
     # Create the params of the trainer which will be used for gradient descent
     params = concatenateLists([l.params for l in layers])
     weights = concatenateLists([l.weights for l in layers])
 
-    super(CNNBatchTrainer, self).__init__(params, weights)
+    super(CNNBatchTrainer, self).__init__(params, weights, training_options)
 
   def cost(self, y):
     return T.nnet.categorical_crossentropy(self.output, y)
@@ -40,12 +40,12 @@ class CNNBatchTrainer(BatchTrainer):
   use the fully connected layers.
 """
 class ConvolutionalNN(object):
-  def __init__(self, layers, trainingOptions,
-               momentumForEpochFunction=getMomentumForEpochLinearIncrease,
+  def __init__(self, layers, training_options,
+               momentum_for_epoch_function=getMomentumForEpochLinearIncrease,
                nameDataset=''):
     self.layers = layers
-    self.momentumForEpochFunction = momentumForEpochFunction
-    self.trainingOptions = trainingOptions
+    self.momentum_for_epoch_function = momentum_for_epoch_function
+    self.training_options = training_options
     self.nameDataset = nameDataset
 
   def _setUpLayers(self, x, inputDimensions):
@@ -72,11 +72,9 @@ class ConvolutionalNN(object):
 
     return data
 
-  def train(self, data, labels, epochs=100):
-
+  def train(self, data, labels):
     print "shuffling training data"
     data, labels = shuffle(data, labels)
-
 
     print "data.shape"
     print data.shape
@@ -105,20 +103,18 @@ class ConvolutionalNN(object):
     self._setUpLayers(x, data[0].shape)
 
     #  create the batch trainer and using it create the updates
-    batchTrainer = CNNBatchTrainer(self.layers)
+    batchTrainer = CNNBatchTrainer(self.layers, self.training_options)
 
     # Set the batch trainer as a field in the conv net
     # then we can access it for a forward pass during testing
     self.batchTrainer = batchTrainer
-
-    trainModel = batchTrainer.makeTrainFunction(x, y, sharedData, sharedLabels, self.trainingOptions)
-
-    momentumMax = self.trainingOptions.momentumMax
+    trainModel = batchTrainer.makeTrainFunction(x, y, sharedData, sharedLabels)
+    momentumMax = self.training_options.momentumMax
 
     #  run the loop that trains the net
-    for epoch in xrange(epochs):
+    for epoch in xrange(self.training_options.maxEpochs):
       print "epoch", epoch
-      momentum = self.momentumForEpochFunction(momentumMax, epoch)
+      momentum = self.momentum_for_epoch_function(momentumMax, epoch)
       for i in xrange(nrMinibatches):
         trainModel(i, momentum)
 
@@ -126,7 +122,7 @@ class ConvolutionalNN(object):
   def test(self, data):
     miniBatchIndex = T.lscalar()
 
-    miniBatchSize = self.trainingOptions.miniBatchSize
+    miniBatchSize = self.training_options.miniBatchSize
 
     data = self._reshapeInputData(data)
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))

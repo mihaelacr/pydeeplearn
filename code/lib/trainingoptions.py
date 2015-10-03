@@ -6,6 +6,8 @@ __author__ = "Mihaela Rosca"
 __contact__ = "mihaela.c.rosca@gmail.com"
 
 import numpy as np
+# TODO: move from common here
+import common
 
 class TrainingOptions(object):
 
@@ -16,6 +18,7 @@ class TrainingOptions(object):
         weightDecayL1=0.0,
         weightDecayL2=0.0,
         nesterovMomentum=False,
+        momentumForEpochFunction=common.getMomentumForEpochLinearIncrease,
         momentumFactorForLearningRate=False):
     self.miniBatchSize = miniBatchSize
     self.learningRate = learningRate
@@ -25,4 +28,5 @@ class TrainingOptions(object):
     self.weightDecayL2 = weightDecayL2
     self.nesterov = nesterovMomentum
     self.momentumFactorForLearningRate = momentumFactorForLearningRate
+    self.momentumForEpochFunction = momentumForEpochFunction
     self.batchLearningRate = np.float32(learningRate / miniBatchSize)
