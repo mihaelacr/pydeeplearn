@@ -83,31 +83,9 @@ class BatchTrainer(object):
     training_options = self.training_options
 
     miniBatchSize = training_options.miniBatchSize
-
-    print "data.shape.eval()"
-    print data.shape.eval()
-
-    print "validationData.shape.eval()"
-    print validationData.shape.eval()
-
-    print "validationLabels.shape.eval()"
-    print validationLabels.shape.eval()
-
-
     nrMiniBatchesTrain = max(data.shape.eval()[0] / miniBatchSize, 1)
-    print "miniBatchSize"
-    print miniBatchSize
-
-    print "nrMiniBatchesTrain"
-    print nrMiniBatchesTrain
     miniBatchValidateSize = min(validationData.shape.eval()[0], miniBatchSize * 10)
     nrMiniBatchesValidate = max(validationData.shape.eval()[0] / miniBatchValidateSize, 1)
-
-    print "miniBatchValidateSize"
-    print miniBatchValidateSize
-
-    print "nrMiniBatchesValidate"
-    print nrMiniBatchesValidate
 
     trainModel = self._makeTrainFunction(x, y, data, labels)
     validateModel = self._makeValidateModelFunction(
@@ -158,27 +136,15 @@ class BatchTrainer(object):
 
 
   # A very greedy approach to training
-  # A more mild version would be to actually take 3 conescutive ones
+  # A more mild version would be to actually take 3 consecutive ones
   # that give the best average (to ensure you are not in a luck place)
   # and take the best of them
   def trainModelGetBestWeights(self, x, y, data, labels, validationData, validationLabels, classificationCost, maxEpochs):
     training_options = self.training_options
     miniBatchSize = training_options.miniBatchSize
-
     nrMiniBatchesTrain = max(data.shape.eval()[0] / miniBatchSize, 1)
-    print "miniBatchSize"
-    print miniBatchSize
-
-    print "nrMiniBatchesTrain"
-    print nrMiniBatchesTrain
     miniBatchValidateSize = min(validationData.shape.eval()[0], miniBatchSize * 10)
     nrMiniBatchesValidate = max(validationData.shape.eval()[0] / miniBatchValidateSize, 1)
-
-    print "miniBatchValidateSize"
-    print miniBatchValidateSize
-
-    print "nrMiniBatchesValidate"
-    print nrMiniBatchesValidate
 
     trainModel = self._makeTrainFunction(x, y, data, labels)
     validateModel = self._makeValidateModelFunction(
@@ -240,21 +206,9 @@ class BatchTrainer(object):
     training_options = self.training_options
 
     miniBatchSize = training_options.miniBatchSize
-
     nrMiniBatchesTrain = max(data.shape.eval()[0] / miniBatchSize, 1)
-    print "miniBatchSize"
-    print miniBatchSize
-
-    print "nrMiniBatchesTrain"
-    print nrMiniBatchesTrain
     miniBatchValidateSize = min(validationData.shape.eval()[0], miniBatchSize * 10)
     nrMiniBatchesValidate = max(validationData.shape.eval()[0] / miniBatchValidateSize, 1)
-
-    print "miniBatchValidateSize"
-    print miniBatchValidateSize
-
-    print "nrMiniBatchesValidate"
-    print nrMiniBatchesValidate
 
     trainModel = self._makeTrainFunction(x, y, data, labels)
     validateModel = self._makeValidateModelFunction(
