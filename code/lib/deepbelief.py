@@ -362,6 +362,27 @@ class DBN(object):
   def __getinitargs__():
     return None
 
+  def initializeParameters(self, data, unsupervisedData):
+    if self.preTrainEpochs == 0:
+      print "performing no pretraining"
+      print "using the dbn like a simple feed forward net"
+      self.randomInitialize()
+    else:
+      self.pretrain(data, unsupervisedData)
+
+    assert len(self.weights) == self.nrLayers - 1
+    assert len(self.biases) == self.nrLayers - 1
+
+  def randomInitialize(self):
+    self.weights = []
+    self.biases = []
+
+    for i in xrange(len(self.layerSizes) - 1):
+      self.weights += [np.random.normal(loc=0.0,
+                                        scale=0.01,
+                                        size=(self.layerSizes[i], self.layerSizes[i+1]))]
+      self.biases += [np.zeros(shape=(self.layerSizes[i+1]),
+                               dtype=theanoFloat)]
 
   def pretrain(self, data, unsupervisedData):
     nrRbms = self.nrLayers - 2
@@ -380,7 +401,6 @@ class DBN(object):
 
     lastRbmBiases = None
     lastRbmTrainWeights = None
-
     dropoutList = [self.visibleDropout] + [self.hiddenDropout] * (self.nrLayers -1)
 
     for i in xrange(nrRbms):
@@ -452,8 +472,6 @@ class DBN(object):
     self.weights += [lastLayerWeights]
     self.biases += [lastLayerBiases]
 
-    assert len(self.weights) == self.nrLayers - 1
-    assert len(self.biases) == self.nrLayers - 1
 
   # For sklearn compatibility
   def fit(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
@@ -523,8 +541,7 @@ class DBN(object):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
-
-    self.pretrain(data, unsupervisedData)
+    self.initializeParameters(data, unsupervisedData)
 
     self.nrMiniBatchesTrain = max(len(data) / self.miniBatchSize, 1)
 
@@ -541,7 +558,7 @@ class DBN(object):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
-    self.pretrain(data, unsupervisedData)
+    self.initializeParameters(data, unsupervisedData)
 
     self.nrMiniBatchesTrain = max(len(data) / self.miniBatchSize, 1)
 
@@ -799,8 +816,8 @@ class DBN(object):
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
 
-    plotTrainingAndValidationErros(trainingError, validationErrors)
-    plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
+    # plotTrainingAndValidationErros(trainingError, validationErrors)
+    # plotTrainingAndValidationErros(tr.iningErrorNoDropout, validationErrors)
 
     print "number of epochs"
     print epoch
