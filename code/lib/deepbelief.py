@@ -668,12 +668,14 @@ class DBN(object):
 
         momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
-        sumErrors = 0
+        sumErrors = 0.0
+        sumErrorsNoDropout = 0.0
         for batchNr in xrange(self.nrMiniBatchesTrain):
-          trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
-          sumErrors += trainingErrorBatch
+          sumErrors += trainModel(batchNr, momentum) / self.miniBatchSize
+          sumErrorsNoDropout += trainNoDropout(batchNr) / self.miniBatchSize
 
         trainingErrors += [sumErrors / self.nrMiniBatchesTrain]
+        trainingErrorsNoDropout += [sumErrorsNoDropout / self.nrMiniBatchesTrain]
 
         meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
         meanValidation = sum(meanValidations) / len(meanValidations)
@@ -691,6 +693,7 @@ class DBN(object):
       print "we will continue testing with the state of the network as it is"
 
     plotTrainingAndValidationErros(trainingErrors, validationErrors)
+    plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
 
     print "number of epochs"
     print epoch + 1
@@ -713,10 +716,14 @@ class DBN(object):
 
       momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
+      sumErrors = 0.0
+      sumErrorsNoDropout = 0.0
       for batchNr in xrange(self.nrMiniBatchesTrain):
-        trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
-        trainingErrors += [trainingErrorBatch]
-        trainingErrorNoDropout +=  [trainNoDropout(batchNr)]
+        sumErrors += trainModel(batchNr, momentum) / self.miniBatchSize
+        sumErrorsNoDropout += trainNoDropout(batchNr) / self.miniBatchSize
+
+      trainingErrors += [sumErrors / self.nrMiniBatchesTrain]
+      trainingErrorNoDropout +=  [sumErrorsNoDropout / self.nrMiniBatchesTrain]
 
       meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
       meanValidation = sum(meanValidations) / len(meanValidations)
@@ -737,6 +744,7 @@ class DBN(object):
       batchTrainer.biases = bestBiases
 
     plotTrainingAndValidationErros(trainingErrors, validationErrors)
+    plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
 
     print "number of epochs"
     print epoch
@@ -804,8 +812,7 @@ class DBN(object):
             inputs=[],
             outputs=self.classifier.output,
             updates={},
-            givens={self.x: dataInstacesConverted}
-            )
+            givens={self.x: dataInstacesConverted})
     lastLayers = classifyFunction()
     return lastLayers, np.argmax(lastLayers, axis=1)
 
