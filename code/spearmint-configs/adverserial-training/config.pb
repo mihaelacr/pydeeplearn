@@ -48,5 +48,3 @@ variable {
  min:  10
  max:  1000
 }
-
-
