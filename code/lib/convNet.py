@@ -108,7 +108,7 @@ class ConvolutionalNN(object):
     # Set the batch trainer as a field in the conv net
     # then we can access it for a forward pass during testing
     self.batchTrainer = batchTrainer
-    trainModel = batchTrainer.trainFixedEpochs(x, y, sharedData, sharedLabels, epochs)
+    batchTrainer.trainFixedEpochs(x, y, sharedData, sharedLabels, epochs)
 
   def test(self, data):
     miniBatchIndex = T.lscalar()
