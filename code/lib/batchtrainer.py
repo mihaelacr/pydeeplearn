@@ -98,8 +98,8 @@ class BatchTrainer(object):
   def trainLoopWithValidation(self, x, y, data, labels, validationData, validationLabels,
       classificationCost, maxEpochs):
     lastValidationError = np.inf
-    count = 0.0
-    epoch = 0.0
+    consecutive_decrease_error_count = 0.0
+    epoch = 0
     training_options = self.training_options
     save_best_weights = training_options.save_best_weights
 
@@ -124,7 +124,7 @@ class BatchTrainer(object):
     bestEpoch = 0
 
     try:
-      while epoch < maxEpochs and count < 8:
+      while epoch < maxEpochs and consecutive_decrease_error_count < 8:
         print "epoch " + str(epoch)
 
         momentum = self.training_options.momentumForEpochFunction(training_options.momentumMax, epoch)
@@ -150,7 +150,7 @@ class BatchTrainer(object):
             bestBiases = self.biases
             bestEpoch = epoch
 
-        count = count + 1 if meanValidationError > lastValidationError else 0
+        consecutive_decrease_error_count = consecutive_decrease_error_count + 1 if meanValidationError > lastValidationError else 0
         lastValidationError = meanValidationError
         epoch += 1
 
