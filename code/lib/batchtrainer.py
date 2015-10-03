@@ -56,6 +56,13 @@ class BatchTrainer(object):
     epochTrainingErrors = []
     nrMiniBatchesTrain = max(data.shape.eval()[1] / training_options.miniBatchSize, 1)
 
+    best_training_error = np.inf
+    bestWeights = None
+    bestBiases = None
+    bestEpoch = 0
+
+    save_best_weights = True
+
     try:
       for epoch in xrange(maxEpochs):
         print "epoch " + str(epoch)
@@ -66,11 +73,24 @@ class BatchTrainer(object):
           sum_error += trainError
 
         mean_error = sum_error / nrMiniBatchesTrain
+        if save_best_weights:
+          if mean_error < best_training_error:
+            best_training_error = mean_error
+            # Save the weights which are the best ones
+            bestWeights = self.weights
+            bestBiases = self.biases
+            bestEpoch = epoch
+
         print "training error " + str(mean_error)
         epochTrainingErrors += [mean_error]
     except KeyboardInterrupt:
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
+
+    if save_best_weights:
+      if bestWeights is not None and bestBiases is not None:
+        self.weights = bestWeights
+        self.biases = bestBiases
 
     print "number of epochs"
     print epoch + 1
@@ -81,6 +101,7 @@ class BatchTrainer(object):
     count = 0.0
     epoch = 0.0
     training_options = self.training_options
+    save_best_weights = True
 
     miniBatchSize = training_options.miniBatchSize
     nrMiniBatchesTrain = max(data.shape.eval()[0] / miniBatchSize, 1)
@@ -96,6 +117,11 @@ class BatchTrainer(object):
     validationErrors = []
     trainingErrors = []
     trainingErrorsNoDropout = []
+
+    bestValidationError = np.inf
+    bestWeights = None
+    bestBiases = None
+    bestEpoch = 0
 
     try:
       while epoch < maxEpochs and count < 8:
@@ -113,16 +139,21 @@ class BatchTrainer(object):
         trainingErrorsNoDropout += [sumErrorsNoDropout / nrMiniBatchesTrain]
 
         meanValidations = map(validateModel, xrange(nrMiniBatchesValidate))
-        meanValidation = sum(meanValidations) / len(meanValidations)
-        validationErrors += [meanValidation]
+        meanValidationError = sum(meanValidations) / len(meanValidations)
+        validationErrors += [meanValidationError]
 
-        if meanValidation > lastValidationError:
-            count += 1
-        else:
-            count = 0
-        lastValidationError = meanValidation
+        if save_best_weights:
+          if meanValidationError < bestValidationError:
+            bestValidationError = meanValidationError
+            # Save the weights which are the best ones
+            bestWeights = self.weights
+            bestBiases = self.biases
+            bestEpoch = epoch
 
+        count = count + 1 if meanValidationError > lastValidationError else 0
+        lastValidationError = meanValidationError
         epoch += 1
+
     except KeyboardInterrupt:
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
@@ -133,73 +164,6 @@ class BatchTrainer(object):
 
     print "number of epochs"
     print epoch + 1
-
-
-  # A very greedy approach to training
-  # A more mild version would be to actually take 3 consecutive ones
-  # that give the best average (to ensure you are not in a luck place)
-  # and take the best of them
-  def trainModelGetBestWeights(self, x, y, data, labels, validationData, validationLabels, classificationCost, maxEpochs):
-    training_options = self.training_options
-    miniBatchSize = training_options.miniBatchSize
-    nrMiniBatchesTrain = max(data.shape.eval()[0] / miniBatchSize, 1)
-    miniBatchValidateSize = min(validationData.shape.eval()[0], miniBatchSize * 10)
-    nrMiniBatchesValidate = max(validationData.shape.eval()[0] / miniBatchValidateSize, 1)
-
-    trainModel = self._makeTrainFunction(x, y, data, labels)
-    validateModel = self._makeValidateModelFunction(
-        x, y, validationData, validationLabels, classificationCost, miniBatchValidateSize)
-    trainNoDropout = self._makeValidateModelFunction(
-        x, y, data, labels, classificationCost, miniBatchSize)
-
-    bestValidationError = np.inf
-    validationErrors = []
-    trainingErrors = []
-    trainingErrorNoDropout = []
-    bestWeights = None
-    bestBiases = None
-    bestEpoch = 0
-
-    for epoch in xrange(maxEpochs):
-      print "epoch " + str(epoch)
-
-      momentum = training_options.momentumForEpochFunction(training_options.momentumMax, epoch)
-
-      sumErrors = 0.0
-      sumErrorsNoDropout = 0.0
-      for batchNr in xrange(nrMiniBatchesTrain):
-        sumErrors += trainModel(batchNr, momentum) / training_options.miniBatchSize
-        sumErrorsNoDropout += trainNoDropout(batchNr) / training_options.miniBatchSize
-
-      trainingErrors += [sumErrors / nrMiniBatchesTrain]
-      trainingErrorNoDropout +=  [sumErrorsNoDropout / nrMiniBatchesTrain]
-
-      meanValidations = map(validateModel, xrange(nrMiniBatchesValidate))
-      meanValidation = sum(meanValidations) / len(meanValidations)
-      validationErrors += [meanValidation]
-
-      if meanValidation < bestValidationError:
-        bestValidationError = meanValidation
-        # Save the weights which are the best ones
-        bestWeights = self.weights
-        bestBiases = self.biases
-        bestEpoch = epoch
-
-    # If we have improved at all during training
-    # not sure if things work well like this with theano stuff
-    # maybe I need an update
-    if bestWeights is not None and bestBiases is not None:
-      self.weights = bestWeights
-      self.biases = bestBiases
-
-    common.plotTrainingAndValidationErros(trainingErrors, validationErrors)
-    common.plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
-
-    print "number of epochs"
-    print epoch
-
-    print "best epoch"
-    print bestEpoch
 
 
   def trainModelPatience(self, x, y, data, labels, validationData, validationLabels, classificationCost, maxEpochs):
@@ -216,11 +180,17 @@ class BatchTrainer(object):
     trainNoDropout = self._makeValidateModelFunction(
         x, y, data, labels, classificationCost, miniBatchSize)
 
-    bestValidationError = np.inf
+    save_best_weights = True
+
     epoch = 0
     doneTraining = False
-    patience = 10 * nrMiniBatchesTrain # do at least 10 passes trough the data no matter what
-    patienceIncrease = 2 # Increase our patience up to patience * patienceIncrease
+    patience = 10 * nrMiniBatchesTrain  # do at least 10 passes trough the data no matter what
+    patienceIncrease = 2  # Increase our patience up to patience * patienceIncrease
+
+    bestValidationError = np.inf
+    bestWeights = None
+    bestBiases = None
+    bestEpoch = 0
 
     validationErrors = []
     trainingErrors = []
@@ -230,7 +200,6 @@ class BatchTrainer(object):
       while (epoch < maxEpochs) and not doneTraining:
         # Train the net with all data
         print "epoch " + str(epoch)
-
         momentum = training_options.momentumForEpochFunction(training_options.momentumMax, epoch)
 
         for batchNr in xrange(nrMiniBatchesTrain):
@@ -238,17 +207,19 @@ class BatchTrainer(object):
           trainingErrorBatch = trainModel(batchNr, momentum) / training_options.miniBatchSize
 
           meanValidations = map(validateModel, xrange(nrMiniBatchesValidate))
-          meanValidation = sum(meanValidations) / len(meanValidations)
+          meanValidationError = sum(meanValidations) / len(meanValidations)
 
-          if meanValidation < bestValidationError:
-            # If we have improved well enough, then increase the patience
-            if meanValidation < bestValidationError:
-              print "increasing patience"
-              patience = max(patience, iteration * patienceIncrease)
+          if meanValidationError < bestValidationError:
+            print "increasing patience, still improving during training..."
+            patience = max(patience, iteration * patienceIncrease)
+            bestValidationError = meanValidationError
+            if save_best_weights:
+              # Save the weights which are the best ones
+              bestWeights = self.weights
+              bestBiases = self.biases
+              bestEpoch = epoch
 
-            bestValidationError = meanValidation
-
-        validationErrors += [meanValidation]
+        validationErrors += [meanValidationError]
         trainingErrors += [trainingErrorBatch]
         trainingErrorNoDropout +=  [trainNoDropout(batchNr)]
 
@@ -259,6 +230,12 @@ class BatchTrainer(object):
     except KeyboardInterrupt:
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
+
+    # TODO: double check
+    if save_best_weights:
+      if bestWeights is not None and bestBiases is not None:
+        self.weights = bestWeights
+        self.biases = bestBiases
 
     common. plotTrainingAndValidationErros(trainingErrors, validationErrors)
     common.plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
