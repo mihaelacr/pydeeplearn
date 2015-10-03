@@ -181,16 +181,16 @@ class BatchTrainer(object):
       if meanValidation < bestValidationError:
         bestValidationError = meanValidation
         # Save the weights which are the best ones
-        bestWeights = batchTrainer.weights
-        bestBiases = batchTrainer.biases
+        bestWeights = self.weights
+        bestBiases = self.biases
         bestEpoch = epoch
 
     # If we have improved at all during training
     # not sure if things work well like this with theano stuff
     # maybe I need an update
     if bestWeights is not None and bestBiases is not None:
-      batchTrainer.weights = bestWeights
-      batchTrainer.biases = bestBiases
+      self.weights = bestWeights
+      self.biases = bestBiases
 
     common.plotTrainingAndValidationErros(trainingErrors, validationErrors)
     common.plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
