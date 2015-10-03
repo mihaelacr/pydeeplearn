@@ -277,6 +277,7 @@ class DBN(object):
                 sparsityConstraintRbm=False,
                 sparsityRegularizationRbm=None,
                 sparsityTragetRbm=None,
+                save_best_weights=False,
                 adversarial_training=False,
                 adversarial_coefficient=0.5,
                 adversarial_epsilon=1.0/255,
@@ -314,10 +315,10 @@ class DBN(object):
     self.binary = binary
     self.firstRBMheuristic = firstRBMheuristic
     self.momentumFactorForLearningRateRBM = momentumFactorForLearningRateRBM
-
     self.sparsityRegularizationRbm = sparsityRegularizationRbm
     self.sparsityConstraintRbm = sparsityConstraintRbm
     self.sparsityTragetRbm = sparsityTragetRbm
+    self.save_best_weights = save_best_weights
 
     # If we should use adversarial training or not
     # For more details on adversarial training see
@@ -345,6 +346,7 @@ class DBN(object):
       weightDecayL1=self.weightDecayL1,
       weightDecayL2=self.weightDecayL2,
       momentumForEpochFunction=self.momentumForEpochFunction,
+      save_best_weights=self.save_best_weights,
       momentumFactorForLearningRate=self.momentumFactorForLearningRate)
 
   def __getstate__(self):

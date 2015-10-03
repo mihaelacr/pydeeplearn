@@ -18,6 +18,7 @@ class TrainingOptions(object):
         weightDecayL1=0.0,
         weightDecayL2=0.0,
         nesterovMomentum=False,
+        save_best_weights=False,
         momentumForEpochFunction=common.getMomentumForEpochLinearIncrease,
         momentumFactorForLearningRate=False):
     self.miniBatchSize = miniBatchSize
@@ -30,3 +31,4 @@ class TrainingOptions(object):
     self.momentumFactorForLearningRate = momentumFactorForLearningRate
     self.momentumForEpochFunction = momentumForEpochFunction
     self.batchLearningRate = np.float32(learningRate / miniBatchSize)
+    self.save_best_weights = save_best_weights

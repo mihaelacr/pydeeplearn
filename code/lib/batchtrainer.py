@@ -61,7 +61,7 @@ class BatchTrainer(object):
     bestBiases = None
     bestEpoch = 0
 
-    save_best_weights = True
+    save_best_weights = training_options.save_best_weights
 
     try:
       for epoch in xrange(maxEpochs):
@@ -101,7 +101,7 @@ class BatchTrainer(object):
     count = 0.0
     epoch = 0.0
     training_options = self.training_options
-    save_best_weights = True
+    save_best_weights = training_options.save_best_weights
 
     miniBatchSize = training_options.miniBatchSize
     nrMiniBatchesTrain = max(data.shape.eval()[0] / miniBatchSize, 1)
@@ -168,6 +168,7 @@ class BatchTrainer(object):
 
   def trainModelPatience(self, x, y, data, labels, validationData, validationLabels, classificationCost, maxEpochs):
     training_options = self.training_options
+    save_best_weights = training_options.save_best_weights
 
     miniBatchSize = training_options.miniBatchSize
     nrMiniBatchesTrain = max(data.shape.eval()[0] / miniBatchSize, 1)
