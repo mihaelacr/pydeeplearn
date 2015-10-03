@@ -589,7 +589,7 @@ class DBN(object):
     self.classifier = classifier
 
     if validation:
-      batchTrainer.trainLoopWithValidation(x, y, data, labels, validationData, validationLabels, classifier.cost, maxEpochs)
+      batchTrainer.trainModelPatience(x, y, data, labels, validationData, validationLabels, classifier.cost, maxEpochs)
     else:
       if validationData is not None or validationLabels is not None:
         raise Exception(("You provided validation data but requested a train method "
