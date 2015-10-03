@@ -610,7 +610,7 @@ class DBN(object):
           x: validationData[miniBatchIndex * self.miniBatchValidateSize:(miniBatchIndex + 1) * self.miniBatchValidateSize],
           y: validationLabels[miniBatchIndex * self.miniBatchValidateSize:(miniBatchIndex + 1) * self.miniBatchValidateSize]})
 
-      self.trainModelPatience(trainModel, validateModel, maxEpochs, trainingErrorNoDropout)
+      self.trainModelPatience(batchTrainer, trainModel, validateModel, maxEpochs, trainingErrorNoDropout)
     else:
       if validationData is not None or validationLabels is not None:
         raise Exception(("You provided validation data but requested a train method "
@@ -650,14 +650,11 @@ class DBN(object):
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
 
-    # TODO: clean up, pass a flag for this
-    # plotTraningError(epochTrainingErrors)
-
     print "number of epochs"
     print epoch + 1
 
 
-  def trainLoopWithValidation(self, trainModel, validateModel, maxEpochs):
+  def trainLoopWithValidation(self, batchTrainer, trainModel, validateModel, maxEpochs, trainNoDropout):
     lastValidationError = np.inf
     count = 0
     epoch = 0
@@ -671,12 +668,12 @@ class DBN(object):
 
         momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
 
-        s = 0
+        sumErrors = 0
         for batchNr in xrange(self.nrMiniBatchesTrain):
           trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
-          s += trainingErrorBatch
+          sumErrors += trainingErrorBatch
 
-        trainingErrors += [s / self.nrMiniBatchesTrain]
+        trainingErrors += [sumErrors / self.nrMiniBatchesTrain]
 
         meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
         meanValidation = sum(meanValidations) / len(meanValidations)
@@ -703,7 +700,7 @@ class DBN(object):
   # A more mild version would be to actually take 3 conescutive ones
   # that give the best average (to ensure you are not in a luck place)
   # and take the best of them
-  def trainModelGetBestWeights(self, batchTrainer, trainModel, validateModel, maxEpochs):
+  def trainModelGetBestWeights(self, batchTrainer, trainModel, validateModel, maxEpochs, trainNoDropout):
     bestValidationError = np.inf
     validationErrors = []
     trainingErrors = []
@@ -718,8 +715,8 @@ class DBN(object):
 
       for batchNr in xrange(self.nrMiniBatchesTrain):
         trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
-
-      trainingErrors += [trainingErrorBatch]
+        trainingErrors += [trainingErrorBatch]
+        trainingErrorNoDropout +=  [trainNoDropout(batchNr)]
 
       meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
       meanValidation = sum(meanValidations) / len(meanValidations)
@@ -748,7 +745,7 @@ class DBN(object):
     print bestEpoch
 
 
-  def trainModelPatience(self, trainModel, validateModel, maxEpochs, trainNoDropout):
+  def trainModelPatience(self, batchTrainer, trainModel, validateModel, maxEpochs, trainNoDropout):
     bestValidationError = np.inf
     epoch = 0
     doneTraining = False
@@ -794,7 +791,8 @@ class DBN(object):
       print "you have interrupted training"
       print "we will continue testing with the state of the network as it is"
 
-    plotTrainingAndValidationErros(trainingErrors, validationErrors)
+    plotTrainingAndValidationErros(trainingError, validationErrors)
+    plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
 
     print "number of epochs"
     print epoch
