@@ -49,20 +49,4 @@ variable {
  max:  1000
 }
 
-variable {
- name: "maxEpochs"
- type: INT
- size: 1
- min:  100
- max:  1000
-}
-
-# TODO(mihaelacr): add the number of pretraining epochs
-# variable {
-#  name: "preTrainEpochs"
-#  type: INT
-#  size: 1
-#  min:  10
-#  max:  1000
-# }
 
