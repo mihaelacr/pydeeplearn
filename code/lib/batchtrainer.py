@@ -95,7 +95,16 @@ class BatchTrainer(object):
     print "number of epochs"
     print epoch + 1
 
-  def trainLoopWithValidation(self, x, y, data, labels, validationData, validationLabels,
+  def trainWithValidation(self, x, y, data, labels, validationData, validationLabels,
+      classificationCost, maxEpochs, validation_criteria):
+    if validation_criteria == "patience":
+      self._trainModelPatience(x, y, data, labels, validationData, validationLabels, classificationCost, maxEpochs)
+    elif validation_criteria == "consecutive_decrease":
+      self._trainLoopWithValidation(x, y, data, labels, validationData, validationLabels, classificationCost, maxEpochs)
+    else:
+      raise Exception("unknown validation validation_criteria: " + str(validation_criteria))
+
+  def _trainLoopWithValidation(self, x, y, data, labels, validationData, validationLabels,
       classificationCost, maxEpochs):
     lastValidationError = np.inf
     consecutive_decrease_error_count = 0.0
@@ -128,7 +137,6 @@ class BatchTrainer(object):
         print "epoch " + str(epoch)
 
         momentum = self.training_options.momentumForEpochFunction(training_options.momentumMax, epoch)
-
         sumErrors = 0.0
         sumErrorsNoDropout = 0.0
         for batchNr in xrange(nrMiniBatchesTrain):
@@ -166,7 +174,7 @@ class BatchTrainer(object):
     print epoch + 1
 
 
-  def trainModelPatience(self, x, y, data, labels, validationData, validationLabels,
+  def _trainModelPatience(self, x, y, data, labels, validationData, validationLabels,
       classificationCost, maxEpochs):
     training_options = self.training_options
     save_best_weights = training_options.save_best_weights

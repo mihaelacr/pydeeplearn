@@ -241,7 +241,7 @@ class DBN(object):
       type: float
     sparsityTragetRbm: the target sparsity for the hidden units in the RBMs
       type: float
-    preTrainEpochs: the number of pre training epochs
+    preTrainEpochs: the number of pre training epochs.
       type: int
     initialInputShape: the initial shape of input data (it had to be vectorized to be made an input)
       type: tuple of ints
@@ -467,7 +467,7 @@ class DBN(object):
     validation data, used for early stopping of the model.
   """
   def train(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
-            unsupervisedData=None, trainingIndices=None):
+            unsupervisedData=None, trainingIndices=None, validation_criteria="patience"):
 
     # Required if the user wants to record on what indices they tested the dataset on
     self.trainingIndices = trainingIndices
@@ -506,7 +506,7 @@ class DBN(object):
 
       self._trainWithGivenValidationSet(trainingData, trainingLabels,
                                        validationData, validationLabels, maxEpochs,
-                                       unsupervisedData)
+                                       unsupervisedData, validation_criteria)
     else:
       trainingData = data
       trainingLabels = labels
@@ -519,7 +519,8 @@ class DBN(object):
                                   validationData,
                                   validationLabels,
                                   maxEpochs,
-                                  unsupervisedData=None):
+                                  unsupervisedData=None,
+                                  validation_criteria="patience"):
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
@@ -538,8 +539,7 @@ class DBN(object):
     self.pretrain(data, unsupervisedData)
 
     # Does backprop for the data and a the end sets the weights
-    self.fineTune(sharedData, sharedLabels, False, None, None, maxEpochs)
-
+    self.fineTune(sharedData, sharedLabels, False, None, None, maxEpochs, None)
 
   """Fine tunes the weigths and biases using backpropagation.
     data and labels are shared
@@ -553,7 +553,7 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   def fineTune(self, data, labels, validation, validationData, validationLabels,
-               maxEpochs):
+               maxEpochs, validation_criteria):
     print "supervisedLearningRate"
     print self.supervisedLearningRate
     batchLearningRate = self.supervisedLearningRate / self.miniBatchSize
@@ -587,7 +587,8 @@ class DBN(object):
     self.classifier = classifier
 
     if validation:
-      batchTrainer.trainModelPatience(x, y, data, labels, validationData, validationLabels, classifier.cost, maxEpochs)
+      batchTrainer.trainWithValidation(
+          x, y, data, labels, validationData, validationLabels, classifier.cost, maxEpochs, validation_criteria)
     else:
       if validationData is not None or validationLabels is not None:
         raise Exception(("You provided validation data but requested a train method "
