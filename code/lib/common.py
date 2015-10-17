@@ -26,34 +26,10 @@ def minDiff(vec):
 def concatenateLists(lists):
     return list(itertools.chain.from_iterable(lists))
 
-
-def calcMeans(vectors):
-    means = []
-    for i in enumerate(vectors[0]):
-        means.append(0.0)
-    for i in vectors:
-        for j in enumerate(vectors[0]):
-            # print "[" + i + "][" + j + "]"
-            means[j] += vectors[i][j]
-    for i in enumerate(means):
-        means[i] /= len(vectors)
-    return means
-
-
-def calcDeviations(vectors, means):
-    stdDev = []
-    for i in enumerate(vectors[0]):
-        sum = 0.0
-        for j in enumerate(vectors):
-            sum += (vectors[j][i] - means[i]) * (vectors[j][i] - means[i])
-        stdDev.append(math.sqrt(sum / len(vectors)))
-    return stdDev
-
-
 def normalizeData(vectors, means, deviations):
     for i in enumerate(vectors):
         for j in enumerate(vectors[0]):
-            if (deviations[j] == 0.0):
+            if deviations[j] == 0.0:
                 vectors[i][j] = 0.0
             else:
                 vectors[i][j] = (vectors[i][j] - means[j]) / deviations[j]
@@ -73,8 +49,8 @@ def scale(data):
 
 
 def gaussianNormalization(trainingData, testingData):
-    means = calcMeans(trainingData)
-    deviations = calcDeviations(trainingData, means)
+    means = trainingData.mean(axis = 1)[:, np.newaxis]
+    deviations = trainingData.std(axis = 1)[:, np.newaxis]
     normalizedTrainignData = normalizeData(trainingData, means, deviations)
     normalizedTestingData = normalizeData(testingData, means, deviations)
     return normalizedTrainignData, normalizedTestingData

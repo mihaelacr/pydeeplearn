@@ -494,7 +494,8 @@ class DBN(object):
     consecutive number of epochs before stopping training.
   """
   def train(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
-            unsupervisedData=None, trainingIndices=None, validation_criteria="patience"):
+            unsupervisedData=None, trainingIndices=None, validation_criteria="patience",
+            validationRandomized=True):
 
     # Required if the user wants to record on what indices they tested the dataset on
     self.trainingIndices = trainingIndices
@@ -517,27 +518,39 @@ class DBN(object):
         maxs = unsupervisedData.max(axis=1)
         assert np.all(mins) >=0.0 and np.all(maxs) < 1.0 + 1e-8
 
-    print "shuffling training data"
-    data, labels = shuffle(data, labels)
-
+    nrInstances = len(data)
     if validation:
-      nrInstances = len(data)
-      validationIndices = np.random.choice(xrange(nrInstances),
-                                           percentValidation * nrInstances)
-      trainingIndices = list(set(xrange(nrInstances)) - set(validationIndices))
-      trainingData = data[trainingIndices, :]
-      trainingLabels = labels[trainingIndices, :]
+        if validationRandomized:
+            print "shuffling training data"
+            data, labels = shuffle(data, labels)
+            validationIndices = np.random.choice(xrange(nrInstances),
+                                               percentValidation * nrInstances)
+            trainingIndices = list(set(xrange(nrInstances)) - set(validationIndices))
+            trainingData = data[trainingIndices, :]
+            trainingLabels = labels[trainingIndices, :]
 
-      validationData = data[validationIndices, :]
-      validationLabels = labels[validationIndices, :]
+            validationData = data[validationIndices, :]
+            validationLabels = labels[validationIndices, :]
 
-      self._trainWithGivenValidationSet(trainingData, trainingLabels,
+        else:
+            sizeOfValidation = nrInstances * percentValidation
+            sizeOfTraining = nrInstances - sizeOfValidation
+            trainingData = data[:sizeOfTraining]
+            validationData = data[sizeOfTraining:]
+
+            trainingLabels = labels[:sizeOfTraining]
+            validationLabels = labels[sizeOfTraining:]
+
+            print "shuffling training data"
+            trainingData, trainingLabels = shuffle(trainingData, trainingLabels)
+
+        self._trainWithGivenValidationSet(trainingData, trainingLabels,
                                        validationData, validationLabels, maxEpochs,
                                        unsupervisedData, validation_criteria)
     else:
-      trainingData = data
-      trainingLabels = labels
-      self.trainNoValidation(trainingData, trainingLabels, maxEpochs,
+        print "shuffling training data"
+        trainingData, trainingLabels = shuffle(data, labels)
+        self.trainNoValidation(trainingData, trainingLabels, maxEpochs,
                                        unsupervisedData)
 
   # TODO: if this is method used from outside, you have to scale the data as well
