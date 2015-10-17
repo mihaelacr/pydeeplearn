@@ -27,8 +27,8 @@ def concatenateLists(lists):
     return list(itertools.chain.from_iterable(lists))
 
 def normalizeData(vectors, means, deviations):
-    for i in enumerate(vectors):
-        for j in enumerate(vectors[0]):
+    for i in xrange(len(vectors)):
+        for j in xrange(len(vectors[0])):
             if deviations[j] == 0.0:
                 vectors[i][j] = 0.0
             else:
