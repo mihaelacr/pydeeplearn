@@ -3,6 +3,8 @@ import numpy as np
 import restrictedBoltzmannMachine as rbm
 from batchtrainer import *
 from activationfunctions import *
+from costfunctions import CategoricalCrossEntropy
+from costfunctions import LeastSquares
 from common import *
 from debug import *
 from trainingoptions import *
@@ -18,7 +20,7 @@ DEBUG = False
 class MiniBatchTrainer(BatchTrainer):
 
   def __init__(self, input, inputLabels, nrLayers, initialWeights, initialBiases,
-               activationFunction, classificationActivationFunction,
+               activationFunction, classificationActivationFunction, costFunction,
                visibleDropout, hiddenDropout,
                adversarial_training, adversarial_epsilon, adversarial_coefficient,
                training_options):
@@ -34,6 +36,7 @@ class MiniBatchTrainer(BatchTrainer):
     self.activationFunction = activationFunction
     self.classificationActivationFunction = classificationActivationFunction
     self.training_options = training_options
+    self.costFun = costFunction
 
     # Let's initialize the fields
     # The weights and biases, make them shared variables
@@ -105,13 +108,10 @@ class MiniBatchTrainer(BatchTrainer):
 
     return currentLayerValues
 
-  def costFun(self, x, y):
-    return T.nnet.categorical_crossentropy(x, y)
-
   def cost(self, y):
-    output_error = self.costFun(self.output, y)
+    output_error = self.costFun(self, self.output, y)
     if self.adversarial_training:
-      adversarial_error = self.costFun(self.adversarial_output, y)
+      adversarial_error = self.costFun(self, self.adversarial_output, y)
       alpha = self.adversarial_coefficient
       return alpha * output_error + (1.0 - alpha) * adversarial_error
     else:
@@ -121,8 +121,11 @@ class ClassifierBatch(object):
 
   def __init__(self, input, nrLayers, weights, biases,
                visibleDropout, hiddenDropout,
-               activationFunction, classificationActivationFunction):
+               activationFunction, classificationActivationFunction, costFunction):
+
     self.input = input
+    self.costFun = costFunction
+
     self.classificationWeights = classificationWeightsFromTestWeights(weights,
                                             visibleDropout=visibleDropout,
                                             hiddenDropout=hiddenDropout)
@@ -146,8 +149,7 @@ class ClassifierBatch(object):
     self.output = currentLayerValues
 
   def cost(self, y):
-    return T.nnet.categorical_crossentropy(self.output, y)
-
+    return self.costFun(self, self.output, y)
 
 """ Class that implements a deep belief network, for classification """
 class DBN(object):
@@ -255,6 +257,7 @@ class DBN(object):
                 rbmActivationFunctionVisible=Sigmoid(),
                 rbmActivationFunctionHidden=Sigmoid(),
                 classificationActivationFunction=Softmax(),
+                costFunction=CategoricalCrossEntropy(),
                 unsupervisedLearningRate=0.01,
                 supervisedLearningRate=0.05,
                 nesterovMomentum=True,
@@ -330,6 +333,8 @@ class DBN(object):
     self.training_options = self.makeTrainingOptionsFromNetwork()
 
     self.nameDataset = nameDataset
+
+    self.costFunction = costFunction
 
     print "hidden dropout in DBN", hiddenDropout
     print "visible dropout in DBN", visibleDropout
@@ -479,7 +484,6 @@ class DBN(object):
             unsupervisedData=None, trainingIndices=None):
     return self.train(data, labels, maxEpochs, validation, percentValidation, unsupervisedData, trainingIndices)
 
-
   """
     Choose a percentage (percentValidation) of the data given to be
     validation data, used for early stopping of the model.
@@ -592,6 +596,7 @@ class DBN(object):
     batchTrainer = MiniBatchTrainer(input=x, inputLabels=y, nrLayers=self.nrLayers,
                                     activationFunction=self.activationFunction,
                                     classificationActivationFunction=self.classificationActivationFunction,
+                                    costFunction=self.costFunction,
                                     initialWeights=self.weights,
                                     initialBiases=self.biases,
                                     visibleDropout=self.visibleDropout,
@@ -604,6 +609,7 @@ class DBN(object):
     classifier = ClassifierBatch(input=x, nrLayers=self.nrLayers,
                                  activationFunction=self.activationFunction,
                                  classificationActivationFunction=self.classificationActivationFunction,
+                                 costFunction=self.costFunction,
                                  visibleDropout=self.visibleDropout,
                                  hiddenDropout=self.hiddenDropout,
                                  weights=batchTrainer.weights,
