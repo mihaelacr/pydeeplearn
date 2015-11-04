@@ -6,6 +6,7 @@ __contact__ = "mihaela.c.rosca@gmail.com"
 
 import argparse
 import matplotlib
+import warnings
 try:
   import matplotlib.pyplot as plt
 except (TypeError) as matplotlib_exception:

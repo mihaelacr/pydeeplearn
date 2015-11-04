@@ -13,6 +13,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 
 import matplotlib
+import warnings
 
 try:
   import matplotlib.pyplot as plt
