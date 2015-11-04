@@ -66,7 +66,7 @@ def trainDBN(unsupervisedLearningRate,
                   sparsityRegularizationRbm=None)
 
   net.train(trainingScaledVectors, trainVectorLabels,
-            maxEpochs=maxEpochs, validation=False)
+            maxEpochs=200, validation=False)
 
   proabilities, predicted = net.classify(testingScaledVectors)
   error = getClassificationError(predicted, testLabels)
@@ -82,6 +82,5 @@ def main(job_id, params):
                   visibleDropout=params['visibleDropout'][0],
                   hiddenDropout=params['hiddenDropout'][0],
                   miniBatchSize=params['miniBatchSize'][0],
-                  momentumMax=params['momentumMax'][0],
-                  maxEpochs=params['maxEpochs'][0])
+                  momentumMax=params['momentumMax'][0])
 
