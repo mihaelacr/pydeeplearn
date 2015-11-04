@@ -7,13 +7,14 @@ __contact__ = "mihaela.c.rosca@gmail.com"
 import argparse
 import warnings
 import matplotlib
+import warnings
 try:
   import matplotlib.pyplot as plt
 except (TypeError) as matplotlib_exception:
-    warnings.warn("Unable to import matplotlib.pyplot. This is often the case "
-                  "when working via SSH."
-                   "Some features unavailable. "
-                   "Original exception: " + str(matplotlib_exception))
+  warnings.warn("Unable to import matplotlib.pyplot. This is often the case "
+                "when working via SSH."
+                 "Some features unavailable. "
+                 "Original exception: " + str(matplotlib_exception))
 import numpy as np
 import cPickle as pickle
 import PCA
