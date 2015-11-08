@@ -71,6 +71,11 @@ The script in code/emotions.py contains code on how to do emotion recognition fr
  
  `python similarityMain.py --diffsubjects --relu  --epochs 90 --rbmepochs 10`
 
+## Cloning the repo
+By now `pydeeplearn` has a big git history. If you do not want to get all of it (and you probably do not need it) use:
+
+  `git clone https://github.com/mihaelacr/pydeeplearn.git --depth 1`
+
 ## How to install dependencies
 
 1. Create a python virtualenv
