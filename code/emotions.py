@@ -12,7 +12,17 @@ from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 
-import matplotlib.pyplot as plt
+import matplotlib
+import warnings
+
+try:
+  import matplotlib.pyplot as plt
+except (TypeError) as matplotlib_exception:
+  warnings.warn("Unable to import matplotlib.pyplot. This is often the case "
+                "when working via SSH."
+                 "Some features unavailable. "
+                 "Original exception: " + str(matplotlib_exception))
+
 import numpy as np
 
 from lib import deepbelief as db

@@ -7,8 +7,18 @@ import numpy as np
 import utils
 from theano import tensor as T
 from sklearn import preprocessing
-import matplotlib.pyplot as plt
 import itertools
+
+import matplotlib
+import warnings
+
+try:
+  import matplotlib.pyplot as plt
+except (TypeError) as matplotlib_exception:
+  warnings.warn("Unable to import matplotlib.pyplot. This is often the case "
+                "when working via SSH."
+                 "Some features unavailable. "
+                 "Original exception: " + str(matplotlib_exception))
 
 
 def getClassificationError(predicted, actual):

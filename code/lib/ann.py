@@ -9,15 +9,11 @@ import theano
 from theano import tensor as T
 from theano.tensor.shared_randomstreams import RandomStreams
 
-import matplotlib.pyplot as plt
 
 theanoFloat  = theano.config.floatX
 
 """In all the above topLayer does not mean the top most layer, but rather the
 layer above the current one."""
-
-# TODO: different activation function and try relu
-# and fix this
 
 from common import *
 from debug import *
@@ -401,12 +397,6 @@ class ANN(object):
 
       epoch +=1
 
-    try:
-      plt.plot(validationErrors)
-      plt.show()
-    except e:
-      print "validation error plot not made"
-
     print "number of epochs"
     print epoch
 
@@ -446,11 +436,6 @@ class ANN(object):
     if bestWeights is not None and bestBiases is not None:
       batchTrainer.weights = bestWeights
       batchTrainer.biases = bestBiases
-    try:
-      plt.plot(validationErrors)
-      plt.show()
-    except e:
-      print "validation error plot not made"
 
     print "number of epochs"
     print epoch
