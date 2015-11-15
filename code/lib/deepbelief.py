@@ -20,7 +20,8 @@ class MiniBatchTrainer(BatchTrainer):
   def __init__(self, input, inputLabels, nrLayers, initialWeights, initialBiases,
                activationFunction, classificationActivationFunction,
                visibleDropout, hiddenDropout,
-               adversarial_training, adversarial_epsilon, adversarial_coefficient):
+               adversarial_training, adversarial_epsilon, adversarial_coefficient,
+               training_options):
     self.input = input
     self.inputLabels = inputLabels
     # If we should use adversarial training or not
@@ -32,6 +33,7 @@ class MiniBatchTrainer(BatchTrainer):
     self.hiddenDropout = hiddenDropout
     self.activationFunction = activationFunction
     self.classificationActivationFunction = classificationActivationFunction
+    self.training_options = training_options
 
     # Let's initialize the fields
     # The weights and biases, make them shared variables
@@ -57,7 +59,7 @@ class MiniBatchTrainer(BatchTrainer):
     self.biases = biases
 
     # Initialize the super class
-    super(MiniBatchTrainer, self).__init__(params, weights)
+    super(MiniBatchTrainer, self).__init__(params, weights, training_options)
 
     # Create a theano random number generator required to sample units for dropout
     self.theanoRng = RandomStreams(seed=np.random.randint(1, 1000))
@@ -106,7 +108,6 @@ class MiniBatchTrainer(BatchTrainer):
   def costFun(self, x, y):
     return T.nnet.categorical_crossentropy(x, y)
 
-  # TODO: do I still need to pass the y?
   def cost(self, y):
     output_error = self.costFun(self.output, y)
     if self.adversarial_training:
@@ -121,15 +122,12 @@ class ClassifierBatch(object):
   def __init__(self, input, nrLayers, weights, biases,
                visibleDropout, hiddenDropout,
                activationFunction, classificationActivationFunction):
-
     self.input = input
-
     self.classificationWeights = classificationWeightsFromTestWeights(weights,
                                             visibleDropout=visibleDropout,
                                             hiddenDropout=hiddenDropout)
 
     nrWeights = nrLayers - 1
-
     currentLayerValues = input
 
     for stage in xrange(nrWeights -1):
@@ -243,7 +241,7 @@ class DBN(object):
       type: float
     sparsityTragetRbm: the target sparsity for the hidden units in the RBMs
       type: float
-    preTrainEpochs: the number of pre training epochs
+    preTrainEpochs: the number of pre training epochs.
       type: int
     initialInputShape: the initial shape of input data (it had to be vectorized to be made an input)
       type: tuple of ints
@@ -279,6 +277,7 @@ class DBN(object):
                 sparsityConstraintRbm=False,
                 sparsityRegularizationRbm=None,
                 sparsityTragetRbm=None,
+                save_best_weights=False,
                 adversarial_training=False,
                 adversarial_coefficient=0.5,
                 adversarial_epsilon=1.0/255,
@@ -316,10 +315,10 @@ class DBN(object):
     self.binary = binary
     self.firstRBMheuristic = firstRBMheuristic
     self.momentumFactorForLearningRateRBM = momentumFactorForLearningRateRBM
-
     self.sparsityRegularizationRbm = sparsityRegularizationRbm
     self.sparsityConstraintRbm = sparsityConstraintRbm
     self.sparsityTragetRbm = sparsityTragetRbm
+    self.save_best_weights = save_best_weights
 
     # If we should use adversarial training or not
     # For more details on adversarial training see
@@ -328,7 +327,7 @@ class DBN(object):
     self.adversarial_coefficient = adversarial_coefficient
     self.adversarial_epsilon = adversarial_epsilon
 
-    self.trainingOptions = self.makeTrainingOptionsFromNetwork()
+    self.training_options = self.makeTrainingOptionsFromNetwork()
 
     self.nameDataset = nameDataset
 
@@ -346,6 +345,8 @@ class DBN(object):
       nesterovMomentum=self.nesterovMomentum,
       weightDecayL1=self.weightDecayL1,
       weightDecayL2=self.weightDecayL2,
+      momentumForEpochFunction=self.momentumForEpochFunction,
+      save_best_weights=self.save_best_weights,
       momentumFactorForLearningRate=self.momentumFactorForLearningRate)
 
   def __getstate__(self):
@@ -464,9 +465,14 @@ class DBN(object):
   """
     Choose a percentage (percentValidation) of the data given to be
     validation data, used for early stopping of the model.
+    validation_criteria is only used in case validation is set to True. The allowed
+    values are "patience" and "consecutive_decrease". "patience" increases the number
+    of training epochs as long as the validation error is improving, while
+    "consecutive_decrease" waits for the validation error to decrease for a
+    consecutive number of epochs before stopping training.
   """
   def train(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
-            unsupervisedData=None, trainingIndices=None):
+            unsupervisedData=None, trainingIndices=None, validation_criteria="patience"):
 
     # Required if the user wants to record on what indices they tested the dataset on
     self.trainingIndices = trainingIndices
@@ -505,7 +511,7 @@ class DBN(object):
 
       self._trainWithGivenValidationSet(trainingData, trainingLabels,
                                        validationData, validationLabels, maxEpochs,
-                                       unsupervisedData)
+                                       unsupervisedData, validation_criteria)
     else:
       trainingData = data
       trainingLabels = labels
@@ -518,36 +524,27 @@ class DBN(object):
                                   validationData,
                                   validationLabels,
                                   maxEpochs,
-                                  unsupervisedData=None):
+                                  unsupervisedData=None,
+                                  validation_criteria="patience"):
 
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
-
     self.pretrain(data, unsupervisedData)
-
-    self.nrMiniBatchesTrain = max(len(data) / self.miniBatchSize, 1)
-
-    self.miniBatchValidateSize = min(len(validationData), self.miniBatchSize * 10)
-    self.nrMiniBatchesValidate =  self.miniBatchValidateSize / self.miniBatchValidateSize
 
     sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
     sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels, True,
-                  sharedValidationData, sharedValidationLabels, maxEpochs)
+                  sharedValidationData, sharedValidationLabels, maxEpochs, validation_criteria)
 
   def trainNoValidation(self, data, labels, maxEpochs, unsupervisedData):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
-
     self.pretrain(data, unsupervisedData)
 
-    self.nrMiniBatchesTrain = max(len(data) / self.miniBatchSize, 1)
-
     # Does backprop for the data and a the end sets the weights
-    self.fineTune(sharedData, sharedLabels, False, None, None, maxEpochs)
-
+    self.fineTune(sharedData, sharedLabels, False, None, None, maxEpochs, None)
 
   """Fine tunes the weigths and biases using backpropagation.
     data and labels are shared
@@ -561,13 +558,12 @@ class DBN(object):
       epochs: The number of epochs to use for fine tuning
   """
   def fineTune(self, data, labels, validation, validationData, validationLabels,
-               maxEpochs):
+               maxEpochs, validation_criteria):
     print "supervisedLearningRate"
     print self.supervisedLearningRate
     batchLearningRate = self.supervisedLearningRate / self.miniBatchSize
     batchLearningRate = np.float32(batchLearningRate)
 
-    miniBatchIndex = T.lscalar()
 
     # The mini-batch data is a matrix
     x = T.matrix('x', dtype=theanoFloat)
@@ -583,7 +579,8 @@ class DBN(object):
                                     hiddenDropout=self.hiddenDropout,
                                     adversarial_training=self.adversarial_training,
                                     adversarial_coefficient=self.adversarial_coefficient,
-                                    adversarial_epsilon=self.adversarial_epsilon)
+                                    adversarial_epsilon=self.adversarial_epsilon,
+                                    training_options=self.training_options)
 
     classifier = ClassifierBatch(input=x, nrLayers=self.nrLayers,
                                  activationFunction=self.activationFunction,
@@ -592,227 +589,36 @@ class DBN(object):
                                  hiddenDropout=self.hiddenDropout,
                                  weights=batchTrainer.weights,
                                  biases=batchTrainer.biases)
-
-    trainModel = batchTrainer.makeTrainFunction(x, y, data, labels, self.trainingOptions)
-
-    trainingErrorNoDropout = theano.function(
-          inputs=[miniBatchIndex],
-          outputs=T.mean(classifier.cost(y)),
-          givens={
-              x: data[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize],
-              y: labels[miniBatchIndex * self.miniBatchSize:(miniBatchIndex + 1) * self.miniBatchSize]})
+    self.classifier = classifier
 
     if validation:
-    # Let's create the function that validates the model!
-      validateModel = theano.function(inputs=[miniBatchIndex],
-        outputs=T.mean(classifier.cost(y)),
-        givens={
-          x: validationData[miniBatchIndex * self.miniBatchValidateSize:(miniBatchIndex + 1) * self.miniBatchValidateSize],
-          y: validationLabels[miniBatchIndex * self.miniBatchValidateSize:(miniBatchIndex + 1) * self.miniBatchValidateSize]})
-
-      self.trainModelPatience(batchTrainer, trainModel, validateModel, maxEpochs, trainingErrorNoDropout)
+      batchTrainer.trainWithValidation(
+          x, y, data, labels, validationData, validationLabels, classifier.cost, maxEpochs, validation_criteria)
     else:
       if validationData is not None or validationLabels is not None:
         raise Exception(("You provided validation data but requested a train method "
                         "that does not need validation"))
 
-      self.trainLoopModelFixedEpochs(batchTrainer, trainModel, maxEpochs)
+      batchTrainer.trainFixedEpochs(x, y, data, labels, maxEpochs)
 
-    # Set up the weights in the dbn object
     self.x = x
-    self.classifier = classifier
 
     self.weights = map(lambda x: x.get_value(), batchTrainer.weights)
     self.biases = map(lambda x: x.get_value(), batchTrainer.biases)
 
-    self.classificationWeights = classificationWeightsFromTestWeights(self.weights,
-                                      visibleDropout=self.visibleDropout,
-                                      hiddenDropout=self.hiddenDropout)
-
-
-  def trainLoopModelFixedEpochs(self, batchTrainer, trainModel, maxEpochs):
-    epochTrainingErrors = []
-
-    try:
-      for epoch in xrange(maxEpochs):
-        print "epoch " + str(epoch)
-
-        momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
-        s = 0
-        for batchNr in xrange(self.nrMiniBatchesTrain):
-          trainError = trainModel(batchNr, momentum) / self.miniBatchSize
-          s += trainError
-
-        s = s / self.nrMiniBatchesTrain
-        print "training error " + str(trainError)
-        epochTrainingErrors += [s]
-    except KeyboardInterrupt:
-      print "you have interrupted training"
-      print "we will continue testing with the state of the network as it is"
-
-    print "number of epochs"
-    print epoch + 1
-
-
-  def trainLoopWithValidation(self, batchTrainer, trainModel, validateModel, maxEpochs, trainNoDropout):
-    lastValidationError = np.inf
-    count = 0
-    epoch = 0
-
-    validationErrors = []
-    trainingErrors = []
-
-    try:
-      while epoch < maxEpochs and count < 8:
-        print "epoch " + str(epoch)
-
-        momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
-
-        sumErrors = 0.0
-        sumErrorsNoDropout = 0.0
-        for batchNr in xrange(self.nrMiniBatchesTrain):
-          sumErrors += trainModel(batchNr, momentum) / self.miniBatchSize
-          sumErrorsNoDropout += trainNoDropout(batchNr) / self.miniBatchSize
-
-        trainingErrors += [sumErrors / self.nrMiniBatchesTrain]
-        trainingErrorsNoDropout += [sumErrorsNoDropout / self.nrMiniBatchesTrain]
-
-        meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
-        meanValidation = sum(meanValidations) / len(meanValidations)
-        validationErrors += [meanValidation]
-
-        if meanValidation > lastValidationError:
-            count +=1
-        else:
-            count = 0
-        lastValidationError = meanValidation
-
-        epoch +=1
-    except KeyboardInterrupt:
-      print "you have interrupted training"
-      print "we will continue testing with the state of the network as it is"
-
-    plotTrainingAndValidationErros(trainingErrors, validationErrors)
-    plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
-
-    print "number of epochs"
-    print epoch + 1
-
-
-  # A very greedy approach to training
-  # A more mild version would be to actually take 3 conescutive ones
-  # that give the best average (to ensure you are not in a luck place)
-  # and take the best of them
-  def trainModelGetBestWeights(self, batchTrainer, trainModel, validateModel, maxEpochs, trainNoDropout):
-    bestValidationError = np.inf
-    validationErrors = []
-    trainingErrors = []
-    bestWeights = None
-    bestBiases = None
-    bestEpoch = 0
-
-    for epoch in xrange(maxEpochs):
-      print "epoch " + str(epoch)
-
-      momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
-
-      sumErrors = 0.0
-      sumErrorsNoDropout = 0.0
-      for batchNr in xrange(self.nrMiniBatchesTrain):
-        sumErrors += trainModel(batchNr, momentum) / self.miniBatchSize
-        sumErrorsNoDropout += trainNoDropout(batchNr) / self.miniBatchSize
-
-      trainingErrors += [sumErrors / self.nrMiniBatchesTrain]
-      trainingErrorNoDropout +=  [sumErrorsNoDropout / self.nrMiniBatchesTrain]
-
-      meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
-      meanValidation = sum(meanValidations) / len(meanValidations)
-      validationErrors += [meanValidation]
-
-      if meanValidation < bestValidationError:
-        bestValidationError = meanValidation
-        # Save the weights which are the best ones
-        bestWeights = batchTrainer.weights
-        bestBiases = batchTrainer.biases
-        bestEpoch = epoch
-
-    # If we have improved at all during training
-    # not sure if things work well like this with theano stuff
-    # maybe I need an update
-    if bestWeights is not None and bestBiases is not None:
-      batchTrainer.weights = bestWeights
-      batchTrainer.biases = bestBiases
-
-    plotTrainingAndValidationErros(trainingErrors, validationErrors)
-    plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
-
-    print "number of epochs"
-    print epoch
-
-    print "best epoch"
-    print bestEpoch
-
-
-  def trainModelPatience(self, batchTrainer, trainModel, validateModel, maxEpochs, trainNoDropout):
-    bestValidationError = np.inf
-    epoch = 0
-    doneTraining = False
-    patience = 10 * self.nrMiniBatchesTrain # do at least 10 passes trough the data no matter what
-    patienceIncrease = 2 # Increase our patience up to patience * patienceIncrease
-
-    validationErrors = []
-    trainingErrors = []
-    trainingErrorNoDropout = []
-
-    try:
-      while (epoch < maxEpochs) and not doneTraining:
-        # Train the net with all data
-        print "epoch " + str(epoch)
-
-        momentum = self.momentumForEpochFunction(self.momentumMax, epoch)
-
-        for batchNr in xrange(self.nrMiniBatchesTrain):
-          iteration = epoch * self.nrMiniBatchesTrain  + batchNr
-          trainingErrorBatch = trainModel(batchNr, momentum) / self.miniBatchSize
-
-          meanValidations = map(validateModel, xrange(self.nrMiniBatchesValidate))
-          meanValidation = sum(meanValidations) / len(meanValidations)
-
-
-          if meanValidation < bestValidationError:
-            # If we have improved well enough, then increase the patience
-            if meanValidation < bestValidationError:
-              print "increasing patience"
-              patience = max(patience, iteration * patienceIncrease)
-
-            bestValidationError = meanValidation
-
-        validationErrors += [meanValidation]
-        trainingErrors += [trainingErrorBatch]
-        trainingErrorNoDropout +=  [trainNoDropout(batchNr)]
-
-        if patience <= iteration:
-          doneTraining = True
-
-        epoch += 1
-    except KeyboardInterrupt:
-      print "you have interrupted training"
-      print "we will continue testing with the state of the network as it is"
-
-    plotTrainingAndValidationErros(trainingError, validationErrors)
-    plotTrainingAndValidationErros(trainingErrorNoDropout, validationErrors)
-
-    print "number of epochs"
-    print epoch
+    self.classificationWeights = classificationWeightsFromTestWeights(
+        self.weights,
+        visibleDropout=self.visibleDropout,
+        hiddenDropout=self.hiddenDropout)
 
   def classify(self, dataInstaces):
     dataInstacesConverted = theano.shared(np.asarray(dataInstaces, dtype=theanoFloat))
 
     classifyFunction = theano.function(
-            inputs=[],
-            outputs=self.classifier.output,
-            updates={},
-            givens={self.x: dataInstacesConverted})
+        inputs=[],
+        outputs=self.classifier.output,
+        updates={},
+        givens={self.x: dataInstacesConverted})
     lastLayers = classifyFunction()
     return lastLayers, np.argmax(lastLayers, axis=1)
 

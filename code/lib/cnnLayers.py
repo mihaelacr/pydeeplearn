@@ -56,7 +56,7 @@ class ConvolutionalLayer(object):
                                          dtype=theanoFloat),
                         name='bconv')
 
-    self.output = self.activationFun.dekittenterministic(conv.conv2d(input, W) + b.dimshuffle('x', 0, 'x', 'x'))
+    self.output = self.activationFun.deterministic(conv.conv2d(input, W) + b.dimshuffle('x', 0, 'x', 'x'))
     self.weights = [W]
     self.params = [W, b]
 
