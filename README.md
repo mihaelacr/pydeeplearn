@@ -77,6 +77,10 @@ Supported image preprocessing:
 ## Future and current work
 For the future plans that I have for the library please see the TODO.txt file. Note that currently pydeeplearn is a side project for me and some features might take some time to implement. 
 
+Branches which will soon be into master:
+  * training_types
+  * no_pretrain
+
 If you want a feature implemented, please either send a pull request or let me know. I will do my best to get it up and running for you.
 
 ## Running examples
