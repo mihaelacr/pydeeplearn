@@ -14,17 +14,6 @@ from sklearn.metrics import classification_report
 
 import matplotlib
 import warnings
-
-try:
-  import matplotlib.pyplot as plt
-except (TypeError) as matplotlib_exception:
-  warnings.warn("Unable to import matplotlib.pyplot. This is often the case "
-                "when working via SSH."
-                 "Some features unavailable. "
-                 "Original exception: " + str(matplotlib_exception))
-  matplotlib.use('Agg')
-  import matplotlib.pyplot as plt
-
 import numpy as np
 
 from lib import deepbelief as db
@@ -34,6 +23,7 @@ from lib.activationfunctions import *
 from lib.common import *
 from read.readfacedatabases import *
 
+ImportMatplotlibPlot()
 
 parser = argparse.ArgumentParser(description='emotion recongnition')
 parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,

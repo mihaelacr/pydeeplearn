@@ -5,21 +5,12 @@ __author__ = "Mihaela Rosca"
 __contact__ = "mihaela.c.rosca@gmail.com"
 
 import argparse
-import matplotlib
-import warnings
-try:
-  import matplotlib.pyplot as plt
-except (TypeError) as matplotlib_exception:
-  warnings.warn("Unable to import matplotlib.pyplot. This is often the case "
-                "when working via SSH."
-                 "Some features unavailable. "
-                 "Original exception: " + str(matplotlib_exception))
-  matplotlib.use('Agg')
-  import matplotlib.pyplot as plt
-
-import numpy as np
 import cPickle as pickle
+import matplotlib
+import numpy as np
+import os
 import PCA
+import warnings
 
 from sklearn import cross_validation
 
@@ -34,6 +25,7 @@ from lib.trainingoptions import *
 
 from read import readmnist
 
+ImportMatplotlibPlot()
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,
