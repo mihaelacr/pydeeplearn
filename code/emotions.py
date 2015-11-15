@@ -22,6 +22,8 @@ except (TypeError) as matplotlib_exception:
                 "when working via SSH."
                  "Some features unavailable. "
                  "Original exception: " + str(matplotlib_exception))
+  matplotlib.use('Agg')
+  import matplotlib.pyplot as plt
 
 import numpy as np
 
