@@ -25,7 +25,8 @@ from lib.trainingoptions import *
 
 from read import readmnist
 
-ImportMatplotlibPlot()
+import lib.matplotlib_plt_import
+lib.matplotlib_plt_import.ImportMatplotlibPlot()
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,

@@ -23,6 +23,9 @@ from lib.activationfunctions import *
 from lib.common import *
 from read.readfacedatabases import *
 
+import lib.matplotlib_plt_import
+lib.matplotlib_plt_import.ImportMatplotlibPlot()
+
 ImportMatplotlibPlot()
 
 parser = argparse.ArgumentParser(description='emotion recongnition')

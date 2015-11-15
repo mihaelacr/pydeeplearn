@@ -11,21 +11,8 @@ import matplotlib
 import numpy as np
 import utils
 import warnings
-
-def ImportMatplotlibPlot():
-  import matplotlib
-  import os
-  havedisplay = "DISPLAY" in os.environ
-  if not havedisplay:
-    exitval = os.system('python -c "import matplotlib.pyplot as plt; plt.figure()"')
-    havedisplay = (exitval == 0)
-  if havedisplay:
-    import matplotlib.pyplot as plt
-  else:
-    matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
-
-ImportMatplotlibPlot()
+import matplotlib_plt_import
+matplotlib_plt_import.ImportMatplotlibPlot()
 
 def getClassificationError(predicted, actual):
   return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)

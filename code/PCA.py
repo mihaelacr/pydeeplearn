@@ -15,7 +15,8 @@ from scipy import misc
 # Import all common functions
 from lib.common import *
 
-ImportMatplotlibPlot()
+import lib.matplotlib_plt_import
+lib.matplotlib_plt_import.ImportMatplotlibPlot()
 
 # The directory path to the images
 PICTURE_PATH = "/pics/cambrdige_pics/"
