@@ -22,7 +22,32 @@ I used pydeeplearn and openCV to make an application which detects emotions live
   * The old code that is not based on theano but only numpy is in `code/old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
   * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
   * If you still have questions, pop me an email or a message.
+
+## NEW: Docker container
+If you do not want to go trough all the hurdle of installing the dependencies needed for pydeeplearn then you can just use the docker container found at on [docker hub](https://hub.docker.com/r/mihaelacr/pydeeplearn-labeled/).
+The docker container comes with the MNIST digits so you do not have to download the files yourself.
+
+For GPU usage, I suggest using the [nvidia-docker](https://github.com/NVIDIA/nvidia-docker) wrapper to ensure that docker works with the GPU.
+
+These instructions should get you up and running with `pydeeplearn`:
+  ```
+  git clone https://github.com/NVIDIA/nvidia-docker.git
+  cd nvidia-docker
+  GPU=0 ./nvidia-docker run --rm -it mihaelacr/pydeeplearn-labeled bash
+  cd pydeeplearn/code
+  ```
+
+Check that pydeeplearn works:
+ ```
+ THEANO_FLAGS='device=gpu,floatX=float32' PATH=/usr/local/cuda/bin:$PATH LD_LIBRARY_PATH=/usr/local/cuda/lib64 python MNISTdigits.py --trainSize 1000 --testSize 10 --db --train --rbmnesterov test.p --save
+ ```
  
+ If you just want to check that theano works with the GPU then just try:
+ ```
+ THEANO_FLAGS='device=gpu,floatX=float32' PATH=/usr/local/cuda/bin:$PATH LD_LIBRARY_PATH=/usr/local/cuda/lib64 python -c 'import theano'
+ ```
+ This should print something like `Using GPU device...`.
+
 ## Key features
 
 ### Network types
