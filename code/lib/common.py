@@ -3,23 +3,16 @@
 __author__ = "Mihaela Rosca"
 __contact__ = "mihaela.c.rosca@gmail.com"
 
+from sklearn import preprocessing
+from theano import tensor as T
+
+import itertools
+import matplotlib
 import numpy as np
 import utils
-from theano import tensor as T
-from sklearn import preprocessing
-import itertools
-
-import matplotlib
 import warnings
-
-try:
-  import matplotlib.pyplot as plt
-except (TypeError) as matplotlib_exception:
-  warnings.warn("Unable to import matplotlib.pyplot. This is often the case "
-                "when working via SSH."
-                 "Some features unavailable. "
-                 "Original exception: " + str(matplotlib_exception))
-
+import matplotlib_plt_import
+matplotlib_plt_import.ImportMatplotlibPlot()
 
 def getClassificationError(predicted, actual):
   return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
