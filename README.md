@@ -22,7 +22,32 @@ I used pydeeplearn and openCV to make an application which detects emotions live
   * The old code that is not based on theano but only numpy is in `code/old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
   * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
   * If you still have questions, pop me an email or a message.
+
+## NEW: Docker container
+If you do not want to go trough all the hurdle of installing the dependencies needed for pydeeplearn then you can just use the docker container found at on [docker hub](https://hub.docker.com/r/mihaelacr/pydeeplearn-labeled/).
+The docker container comes with the MNIST digits so you do not have to download the files yourself.
+
+For GPU usage, I suggest using the [nvidia-docker](https://github.com/NVIDIA/nvidia-docker) wrapper to ensure that docker works with the GPU.
+
+These instructions should get you up and running with `pydeeplearn`:
+  ```
+  git clone https://github.com/NVIDIA/nvidia-docker.git
+  cd nvidia-docker
+  GPU=0 ./nvidia-docker run --rm -it mihaelacr/pydeeplearn-labeled bash
+  cd pydeeplearn/code
+  ```
+
+Check that pydeeplearn works:
+ ```
+ THEANO_FLAGS='device=gpu,floatX=float32' PATH=/usr/local/cuda/bin:$PATH LD_LIBRARY_PATH=/usr/local/cuda/lib64 python MNISTdigits.py --trainSize 1000 --testSize 10 --db --train --rbmnesterov test.p --save
+ ```
  
+ If you just want to check that theano works with the GPU then just try:
+ ```
+ THEANO_FLAGS='device=gpu,floatX=float32' PATH=/usr/local/cuda/bin:$PATH LD_LIBRARY_PATH=/usr/local/cuda/lib64 python -c 'import theano'
+ ```
+ This should print something like `Using GPU device...`.
+
 ## Key features
 
 ### Network types
@@ -52,6 +77,10 @@ Supported image preprocessing:
 ## Future and current work
 For the future plans that I have for the library please see the TODO.txt file. Note that currently pydeeplearn is a side project for me and some features might take some time to implement. 
 
+Branches which will soon be into master:
+  * training_types
+  * no_pretrain
+
 If you want a feature implemented, please either send a pull request or let me know. I will do my best to get it up and running for you.
 
 ## Running examples
@@ -70,6 +99,11 @@ The script in code/emotions.py contains code on how to do emotion recognition fr
  You can train a network to detect if two images contain represent the same person or the same emotion using code in `code/similarity`. Note that in order to be able to train such a network, labelled data (with subjects or emotions) is needed. Most of the labelled data that I used for these experiments was taken from the MultiPie dataset. The code can be run as follows:
  
  `python similarityMain.py --diffsubjects --relu  --epochs 90 --rbmepochs 10`
+
+## Cloning the repo
+By now `pydeeplearn` has a big git history. If you do not want to get all of it (and you probably do not need it) use:
+
+  `git clone https://github.com/mihaelacr/pydeeplearn.git --depth 1`
 
 ## How to install dependencies
 
