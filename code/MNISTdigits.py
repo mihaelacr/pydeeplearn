@@ -25,8 +25,17 @@ from lib.trainingoptions import *
 
 from read import readmnist
 
-import lib.matplotlib_plt_import
-lib.matplotlib_plt_import.ImportMatplotlibPlot()
+import matplotlib
+import os
+havedisplay = "DISPLAY" in os.environ
+if not havedisplay:
+  exitval = os.system('python -c "import matplotlib.pyplot as plt; plt.figure()"')
+  havedisplay = (exitval == 0)
+if havedisplay:
+  import matplotlib.pyplot as plt
+else:
+  matplotlib.use('Agg')
+  import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,
