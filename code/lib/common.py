@@ -1,4 +1,5 @@
 """Common functionalities required by the other modules. """
+import math
 
 __author__ = "Mihaela Rosca"
 __contact__ = "mihaela.c.rosca@gmail.com"
@@ -25,31 +26,54 @@ else:
   import matplotlib.pyplot as plt
 
 def getClassificationError(predicted, actual):
-  return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
+    return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)
+
 
 def minDiff(vec):
-  vec = np.sort(vec)
-  rolled = np.roll(vec, -1)
-  diff = rolled - vec
-  return np.min(diff[0:-1])
+    vec = np.sort(vec)
+    rolled = np.roll(vec, -1)
+    diff = rolled - vec
+    return np.min(diff[0:-1])
+
 
 def concatenateLists(lists):
-  return list(itertools.chain.from_iterable(lists))
+    return list(itertools.chain.from_iterable(lists))
+
+def normalizeData(vectors, means, deviations):
+    for i in xrange(len(vectors)):
+        for j in xrange(len(vectors[0])):
+            if deviations[j] == 0.0:
+                vectors[i][j] = 0.0
+            else:
+                vectors[i][j] = (vectors[i][j] - means[j]) / deviations[j]
+    return vectors
+
 
 def scale(data):
-  # return preprocessing.scale(data, axis=1)
-  data = data / data.std(axis=1)[:, np.newaxis]
-  data = data - data.mean(axis=1)[:, np.newaxis]
+    # return preprocessing.scale(data, axis=1)
+    data = data / data.std(axis = 1)[:, np.newaxis]
+    data = data - data.mean(axis = 1)[:, np.newaxis]
 
-  # print data.std(axis=1).sum()
-  # print np.ones((data.shape[0]), dtype='float')
-  # assert np.array_equal(data.std(axis=1), np.ones((data.shape[0]), dtype='float'))
-  # assert np.array_equal(data.mean(axis=1), np.zeros(data.shape[0]))
-  return data
+    # print data.std(axis=1).sum()
+    # print np.ones((data.shape[0]), dtype='float')
+    # assert np.array_equal(data.std(axis=1), np.ones((data.shape[0]), dtype='float'))
+    # assert np.array_equal(data.mean(axis=1), np.zeros(data.shape[0]))
+    return data
+
+
+def gaussianNormalization(trainingData, testingData):
+    means = trainingData.mean(axis = 1)[:, np.newaxis]
+    deviations = trainingData.std(axis = 1)[:, np.newaxis]
+    normalizedTrainignData = normalizeData(trainingData, means, deviations)
+    normalizedTestingData = normalizeData(testingData, means, deviations)
+    return normalizedTrainignData, normalizedTestingData
+
 
 def visualizeWeights(weights, imgShape, tileShape):
-  return utils.tile_raster_images(weights, imgShape,
-                                  tileShape, tile_spacing=(1, 1))
+    return utils.tile_raster_images(weights, imgShape,
+                                    tileShape, tile_spacing = (1, 1))
+
+
 """
 Arguments:
   vec: A numpy 1-D vector.
@@ -59,8 +83,11 @@ Returns:
   A 2-D vector of dimension 'size', only if 'vec' has compatible dimensions.
   Otherwise it throws an error.
 """
+
+
 def vectorToImage(vec, size):
-  return vec.reshape(size)
+    return vec.reshape(size)
+
 
 """ Transforms the 2D images into 1D vectors
 Arguments:
@@ -69,171 +96,186 @@ Returns:
   A python list of 1-D numpy arrays, transformed from the input 2D ones
   No data is lost in the transformation.
 """
+
+
 def imagesToVectors(images):
-  return np.array(map(lambda x: x.reshape(-1), images))
+    return np.array(map(lambda x: x.reshape(-1), images))
+
 
 def sample(p, size):
-  return np.random.uniform(size=size) <= p
+    return np.random.uniform(size = size) <= p
+
 
 # this can be done with a binomial
 def sampleAll(probs):
-  return np.random.uniform(size=probs.shape) <= probs
+    return np.random.uniform(size = probs.shape) <= probs
+
 
 def enum(**enums):
-  return type('Enum', (), enums)
+    return type('Enum', (), enums)
+
 
 def rmse(prediction, actual):
-  return np.linalg.norm(prediction - actual) / np.sqrt(len(prediction))
+    return np.linalg.norm(prediction - actual) / np.sqrt(len(prediction))
+
 
 def safeLogFraction(p):
-  assert p >=0 and p <= 1
-  # TODO: think about this a bit better
-  # you should not set them to be equal, on the contrary,
-  # they should be opposites
-  if p * (1 - p) == 0:
-    return 0
-  return np.log(p / (1 -p))
+    assert p >= 0 and p <= 1
+    # TODO: think about this a bit better
+    # you should not set them to be equal, on the contrary,
+    # they should be opposites
+    if p * (1 - p) == 0:
+        return 0
+    return np.log(p / (1 - p))
 
 
 def labelsToVectors(labels, size):
-  result = np.zeros((len(labels), size), dtype=float)
-  for index, label in enumerate(labels):
-    result[index, label] = 1.0
+    result = np.zeros((len(labels), size), dtype = float)
+    for index, label in enumerate(labels):
+        result[index, label] = 1.0
 
-  return result
+    return result
+
 
 def zerosFromShape(l):
-  return map(lambda x: np.zeros(x.shape), l)
+    return map(lambda x: np.zeros(x.shape), l)
+
 
 def shuffle(*args):
-  shuffled = shuffleList(*args)
-  f = lambda x: np.array(x)
-  return tuple(map(f, shuffled))
+    shuffled = shuffleList(*args)
+    f = lambda x: np.array(x)
+    return tuple(map(f, shuffled))
 
 
 # Returns lists
 def shuffleList(*args):
-  lenght = len(args[0])
+    lenght = len(args[0])
 
-  # Assert they all have the same size
-  assert np.array_equal(np.array(map(len, args)), np.ones(len(args)) * lenght)
+    # Assert they all have the same size
+    assert np.array_equal(np.array(map(len, args)), np.ones(len(args)) * lenght)
 
-  indexShuffle = np.random.permutation(lenght)
+    indexShuffle = np.random.permutation(lenght)
 
-  f = lambda x: [x[i] for i in indexShuffle]
-  return tuple(map(f, args))
+    f = lambda x: [x[i] for i in indexShuffle]
+    return tuple(map(f, args))
+
 
 def shuffle3(data1, data2, labels):
-  indexShuffle = np.random.permutation(len(data1))
-  shuffledData1 = np.array([data1[i] for i in indexShuffle])
-  shuffledData2 = np.array([data2[i] for i in indexShuffle])
-  shuffledLabels = np.array([labels[i] for i in indexShuffle])
+    indexShuffle = np.random.permutation(len(data1))
+    shuffledData1 = np.array([data1[i] for i in indexShuffle])
+    shuffledData2 = np.array([data2[i] for i in indexShuffle])
+    shuffledLabels = np.array([labels[i] for i in indexShuffle])
 
-  return shuffledData1, shuffledData2, shuffledLabels
+    return shuffledData1, shuffledData2, shuffledLabels
+
 
 # Cost required for the sparsity in RBMs
 def squaredDiff(first, second):
-  return T.sqr(first - second)
+    return T.sqr(first - second)
+
 
 # Makes a parameter grid required for cross validation
 # the input should be a list of tuples of size 3: min, max and  number of steps
 # for each parameter
 # EG:  makeParamsGrid([(1, 3, 2), (4,5,2)])
 def makeParamsGrid(paramBorders):
-  f = lambda x: np.linspace(*x)
-  linspaces = map(f, paramBorders)
+    f = lambda x: np.linspace(*x)
+    linspaces = map(f, paramBorders)
 
-  return list(itertools.product(*tuple(linspaces)))
+    return list(itertools.product(*tuple(linspaces)))
+
 
 # Makes a parameter grid required for cross validation
 # the input should be a list of tuples of size 3: min, max and  number of steps
 # for each parameter
 # EG:  makeParamsGrid([(1, 3, 2), (4,5,2)])
 def makeParamsGrid(paramBorders):
-  f = lambda x: np.linspace(*x)
-  linspaces = map(f, paramBorders)
+    f = lambda x: np.linspace(*x)
+    linspaces = map(f, paramBorders)
 
-  return list(itertools.product(*tuple(linspaces)))
+    return list(itertools.product(*tuple(linspaces)))
 
 
-def getMomentumForEpochLinearIncrease(momentumMax, epoch, step=0.01):
-  return np.float32(min(np.float32(0.5) + epoch * np.float32(step),
-                     np.float32(momentumMax)))
+def getMomentumForEpochLinearIncrease(momentumMax, epoch, step = 0.01):
+    return np.float32(min(np.float32(0.5) + epoch * np.float32(step),
+                          np.float32(momentumMax)))
+
 
 # This is called once per epoch so doing the
 # conversion again and again is not a problem
 # I do not like this hardcoding business for the GPU: TODO
 def getMomentumForEpochSimple(momentumMax, epoch):
-  if epoch < 10:
-    return np.float32(0.5)
-  else:
-    return np.float32(momentumMax)
+    if epoch < 10:
+        return np.float32(0.5)
+    else:
+        return np.float32(momentumMax)
 
 
 def plotTrainingAndValidationErros(trainingErrors, validationErrors):
-  # if run remotely without a display
-  try:
-    plt.plot(trainingErrors, label="Training error")
-    plt.plot(validationErrors, label="Validation error")
-    plt.xlabel('Epoch')
-    plt.ylabel('Cross entropy average error')
-    plt.title('Training and validation error during DBN training')
-    plt.legend()
-    plt.show()
-  except Exception as e:
-    print "validation error plot not made"
-    print "error ", e
+    # if run remotely without a display
+    try:
+        plt.plot(trainingErrors, label = "Training error")
+        plt.plot(validationErrors, label = "Validation error")
+        plt.xlabel('Epoch')
+        plt.ylabel('Cross entropy average error')
+        plt.title('Training and validation error during DBN training')
+        plt.legend()
+        plt.show()
+    except Exception as e:
+        print "validation error plot not made"
+        print "error ", e
 
-    # If we had an error we are either not sshed with -X
-    # or we are in a detached screen session.
-    # so turn the io off and save the pic
-    plt.ioff()
-    plt.plot(trainingErrors, label="Training error")
-    plt.plot(validationErrors, label="Validation error")
-    plt.xlabel('Epoch')
-    plt.ylabel('Cross entropy average error')
-    plt.title('Training and validation error during DBN training')
-    plt.legend()
-    plt.savefig("validationandtrainingerror.png" , transparent=True)
+        # If we had an error we are either not sshed with -X
+        # or we are in a detached screen session.
+        # so turn the io off and save the pic
+        plt.ioff()
+        plt.plot(trainingErrors, label = "Training error")
+        plt.plot(validationErrors, label = "Validation error")
+        plt.xlabel('Epoch')
+        plt.ylabel('Cross entropy average error')
+        plt.title('Training and validation error during DBN training')
+        plt.legend()
+        plt.savefig("validationandtrainingerror.png", transparent = True)
 
-    print "printing validation errors and training errors instead"
-    print "validationErrors"
-    print validationErrors
-    print "trainingErrors"
-    print trainingErrors
+        print "printing validation errors and training errors instead"
+        print "validationErrors"
+        print validationErrors
+        print "trainingErrors"
+        print trainingErrors
+
 
 def plotTraningError(trainingErrors):
-  try:
-    plt.plot(trainingErrors, label="Training error")
-    plt.xlabel('Epoch')
-    plt.ylabel('Cross entropy average error')
-    plt.title('Training error during DBN training')
-    plt.legend()
-    plt.show()
-  except Exception as e:
-    print "plot not made"
-    print "error ", e
+    try:
+        plt.plot(trainingErrors, label = "Training error")
+        plt.xlabel('Epoch')
+        plt.ylabel('Cross entropy average error')
+        plt.title('Training error during DBN training')
+        plt.legend()
+        plt.show()
+    except Exception as e:
+        print "plot not made"
+        print "error ", e
 
-    plt.ioff()
-    plt.plot(trainingErrors, label="Training error")
-    plt.xlabel('Epoch')
-    plt.ylabel('Cross entropy average error')
-    plt.title('Training error during DBN training')
-    plt.legend()
-    plt.savefig("trainingerror.png" , transparent=True)
+        plt.ioff()
+        plt.plot(trainingErrors, label = "Training error")
+        plt.xlabel('Epoch')
+        plt.ylabel('Cross entropy average error')
+        plt.title('Training error during DBN training')
+        plt.legend()
+        plt.savefig("trainingerror.png", transparent = True)
 
-    print "printing training errors "
-    print "trainingErrors"
-    print trainingErrors
+        print "printing training errors "
+        print "trainingErrors"
+        print trainingErrors
 
 
 def plot3Errors(trainingErrors, trainWithDropout, validationErrors):
-  # if run remotely without a display
-  plt.plot(trainWithDropout, label="Training error on dropped out set.")
-  plt.plot(trainingErrors, label="Training error")
-  plt.plot(validationErrors, label="Validation error")
-  plt.xlabel('Epoch')
-  plt.ylabel('Cross entropy average error')
-  plt.title('Training and validation error during DBN training')
-  plt.legend()
-  plt.show()
+    # if run remotely without a display
+    plt.plot(trainWithDropout, label = "Training error on dropped out set.")
+    plt.plot(trainingErrors, label = "Training error")
+    plt.plot(validationErrors, label = "Validation error")
+    plt.xlabel('Epoch')
+    plt.ylabel('Cross entropy average error')
+    plt.title('Training and validation error during DBN training')
+    plt.legend()
+    plt.show()
