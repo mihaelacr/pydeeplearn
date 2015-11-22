@@ -8,6 +8,7 @@ __contact__ = "mihaela.c.rosca@gmail.com"
 
 import argparse
 import cPickle as pickle
+import warnings
 from sklearn import cross_validation
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
