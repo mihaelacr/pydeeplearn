@@ -15,15 +15,6 @@ from sklearn.metrics import classification_report
 
 import matplotlib
 import warnings
-
-try:
-  import matplotlib.pyplot as plt
-except (TypeError) as matplotlib_exception:
-  warnings.warn("Unable to import matplotlib.pyplot. This is often the case "
-                "when working via SSH."
-                 "Some features unavailable. "
-                 "Original exception: " + str(matplotlib_exception))
-
 import numpy as np
 
 from lib import deepbelief as db
@@ -33,6 +24,19 @@ from lib.activationfunctions import *
 from lib.common import *
 from read.readfacedatabases import *
 
+import matplotlib
+import os
+havedisplay = "DISPLAY" in os.environ
+if not havedisplay:
+  exitval = os.system('python -c "import matplotlib.pyplot as plt; plt.figure()"')
+  havedisplay = (exitval == 0)
+if havedisplay:
+  import matplotlib.pyplot as plt
+else:
+  matplotlib.use('Agg')
+  import matplotlib.pyplot as plt
+
+ImportMatplotlibPlot()
 
 parser = argparse.ArgumentParser(description='emotion recongnition')
 parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
@@ -63,6 +67,8 @@ parser.add_argument('--rmsprop', dest='rmsprop',action='store_true', default=Fal
                     help=("if true, rmsprop is used when training the deep belief net."))
 parser.add_argument('--rbmrmsprop', dest='rbmrmsprop',action='store_true', default=False,
                     help=("if true, rmsprop is used when training the rbms."))
+parser.add_argument('--save_best_weights', dest='save_best_weights',action='store_true', default=False,
+                    help=("if true, the best weights are used and saved during training."))
 parser.add_argument('--cv', dest='cv',action='store_true', default=False,
                     help=("if true, do cross validation"))
 parser.add_argument('--cvPIE', dest='cvPIE',action='store_true', default=False,
@@ -241,6 +247,7 @@ def deepbeliefKanadeCV(big=False):
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
+               save_best_weights=args.save_best_weights,
                hiddenDropout=0.5,
                momentumFactorForLearningRateRBM=False,
                visibleDropout=0.8,
@@ -329,6 +336,7 @@ def deepbeliefKanade(big=False):
              nesterovMomentum=args.nesterov,
              rbmNesterovMomentum=args.rbmnesterov,
              rmsprop=args.rmsprop,
+             save_best_weights=args.save_best_weights,
              miniBatchSize=args.miniBatchSize,
              hiddenDropout=0.5,
              visibleDropout=0.8,
@@ -421,6 +429,7 @@ def deepbeliefMultiPIE(big=False):
                nesterovMomentum=args.nesterov,
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
+               save_best_weights=args.save_best_weights,
                miniBatchSize=args.miniBatchSize,
                visibleDropout=0.8,
                hiddenDropout=0.5,
@@ -527,6 +536,7 @@ def deepbeliefPIECV(big=False):
                supervisedLearningRate=params[fold][1],
                momentumMax=params[fold][2],
                nesterovMomentum=args.nesterov,
+               save_best_weights=args.save_best_weights,
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
@@ -630,6 +640,7 @@ def deepbeliefKaggleCompetitionSmallDataset(big=False):
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
+               save_best_weights=args.save_best_weights,
                firstRBMheuristic=False,
                hiddenDropout=0.5,
                visibleDropout=0.8,
@@ -730,6 +741,7 @@ def deepbeliefKaggleCompetition(big=False):
              rbmNesterovMomentum=args.rbmnesterov,
              rmsprop=args.rmsprop,
              miniBatchSize=args.miniBatchSize,
+             save_best_weights=args.save_best_weights,
              firstRBMheuristic=False,
              hiddenDropout=0.5,
              visibleDropout=0.8,
@@ -828,6 +840,7 @@ def deepbeliefKaggleCompetitionBigCV():
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
+               save_best_weights=args.save_best_weights,
                firstRBMheuristic=False,
                hiddenDropout=0.5,
                visibleDropout=0.8,
@@ -949,6 +962,7 @@ def deepBeliefPieDifferentConditions():
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
                  miniBatchSize=args.miniBatchSize,
+                 save_best_weights=args.save_best_weights,
                  visibleDropout=0.8,
                  hiddenDropout=1.0,
                  rbmHiddenDropout=1.0,
@@ -1059,6 +1073,7 @@ def crossDataBase():
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
+               save_best_weights=args.save_best_weights,
                visibleDropout=0.8,
                hiddenDropout=1.0,
                rbmHiddenDropout=1.0,
@@ -1163,6 +1178,7 @@ def crossDataBaseCV():
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
                  miniBatchSize=args.miniBatchSize,
+                 save_best_weights=args.save_best_weights,
                  visibleDropout=0.8,
                  hiddenDropout=1.0,
                  rbmHiddenDropout=1.0,
@@ -1345,6 +1361,7 @@ def missingData():
                nesterovMomentum=args.nesterov,
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
+               save_best_weights=args.save_best_weights,
                miniBatchSize=args.miniBatchSize,
                visibleDropout=0.8,
                hiddenDropout=1.0,
@@ -1484,6 +1501,7 @@ def missingDataTestFromTrainedNet():
                rbmNesterovMomentum=args.rbmnesterov,
                rmsprop=args.rmsprop,
                miniBatchSize=args.miniBatchSize,
+               save_best_weights=args.save_best_weights,
                visibleDropout=0.8,
                hiddenDropout=1.0,
                rbmHiddenDropout=1.0,

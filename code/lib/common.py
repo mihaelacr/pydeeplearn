@@ -3,13 +3,26 @@
 __author__ = "Mihaela Rosca"
 __contact__ = "mihaela.c.rosca@gmail.com"
 
+from sklearn import preprocessing
+from theano import tensor as T
+
+import itertools
+import matplotlib
 import numpy as np
 import utils
-from theano import tensor as T
-from sklearn import preprocessing
-import matplotlib.pyplot as plt
-import itertools
+import warnings
 
+import matplotlib
+import os
+havedisplay = "DISPLAY" in os.environ
+if not havedisplay:
+  exitval = os.system('python -c "import matplotlib.pyplot as plt; plt.figure()"')
+  havedisplay = (exitval == 0)
+if havedisplay:
+  import matplotlib.pyplot as plt
+else:
+  matplotlib.use('Agg')
+  import matplotlib.pyplot as plt
 
 def getClassificationError(predicted, actual):
   return 1.0 - (predicted == actual).sum() * 1.0 / len(actual)

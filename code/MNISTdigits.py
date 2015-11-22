@@ -5,19 +5,12 @@ __author__ = "Mihaela Rosca"
 __contact__ = "mihaela.c.rosca@gmail.com"
 
 import argparse
-import warnings
-import matplotlib
-import warnings
-try:
-  import matplotlib.pyplot as plt
-except (TypeError) as matplotlib_exception:
-  warnings.warn("Unable to import matplotlib.pyplot. This is often the case "
-                "when working via SSH."
-                 "Some features unavailable. "
-                 "Original exception: " + str(matplotlib_exception))
-import numpy as np
 import cPickle as pickle
+import matplotlib
+import numpy as np
+import os
 import PCA
+import warnings
 
 from sklearn import cross_validation
 
@@ -32,6 +25,17 @@ from lib.trainingoptions import *
 
 from read import readmnist
 
+import matplotlib
+import os
+havedisplay = "DISPLAY" in os.environ
+if not havedisplay:
+  exitval = os.system('python -c "import matplotlib.pyplot as plt; plt.figure()"')
+  havedisplay = (exitval == 0)
+if havedisplay:
+  import matplotlib.pyplot as plt
+else:
+  matplotlib.use('Agg')
+  import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='digit recognition')
 parser.add_argument('--save',dest='save',action='store_true', default=False,
@@ -52,6 +56,8 @@ parser.add_argument('--rbmGauss', dest='rbmGauss',action='store_true', default=F
 parser.add_argument('--db', dest='db',action='store_true', default=False,
                     help=("if true, the code for training a deepbelief net on the"
                           "data is run"))
+parser.add_argument('--save_best_weights', dest='save_best_weights',action='store_true', default=False,
+                    help=("if true, the best weights are used and saved during training."))
 parser.add_argument('--dbgauss', dest='dbgauss',action='store_true', default=False,
                     help=(("if true, a dbn is trained with gaussian visible units for rbms"
                       "and relu for hidden units")))
@@ -538,6 +544,7 @@ def cvMNIST():
                   rbmActivationFunctionVisible=activationFunction,
                   rbmActivationFunctionHidden=activationFunction,
                   rmsprop=args.rmsprop,
+                  save_best_weights=args.save_best_weights,
                   visibleDropout=0.8,
                   hiddenDropout=0.5,
                   weightDecayL1=0,
@@ -676,6 +683,7 @@ def deepbeliefMNIST():
                  visibleDropout=0.8,
                  rbmHiddenDropout=1.0,
                  rbmVisibleDropout=1.0,
+                 save_best_weights=args.save_best_weights,
                  adversarial_training=args.adversarial_training,
                  adversarial_coefficient=0.5,
                  adversarial_epsilon=1.0 / 255,
@@ -769,6 +777,7 @@ def deepbeliefMNISTGaussian():
                  rbmActivationFunctionHidden=RectifiedNoisy(),
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
+                 save_best_weights=args.save_best_weights,
                  rmsprop=args.rmsprop,
                  hiddenDropout=0.5,
                  visibleDropout=0.8,
@@ -855,6 +864,7 @@ def cvMNISTGaussian():
                   rbmActivationFunctionVisible=Identity(),
                   rbmActivationFunctionHidden=RectifiedNoisy(),
                   rmsprop=args.rmsprop,
+                  save_best_weights=args.save_best_weights,
                   visibleDropout=0.8,
                   hiddenDropout=0.5,
                   weightDecayL1=0,
@@ -942,6 +952,7 @@ def cvadversarialMNIST():
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
+                 save_best_weights=args.save_best_weights,
                  hiddenDropout=0.5,
                  visibleDropout=0.8,
                  rbmHiddenDropout=1.0,
@@ -1018,6 +1029,7 @@ def adversarialMNIST():
                  nesterovMomentum=args.nesterov,
                  rbmNesterovMomentum=args.rbmnesterov,
                  rmsprop=args.rmsprop,
+                 save_best_weights=args.save_best_weights,
                  hiddenDropout=0.5,
                  visibleDropout=0.8,
                  rbmHiddenDropout=1.0,

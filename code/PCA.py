@@ -1,22 +1,13 @@
-
-
 __author__ = "Mihaela Rosca"
 __contact__ = "mihaela.c.rosca@gmail.com"
 
 import heapq
 import matplotlib
-import warnings
-try:
-  import matplotlib.pyplot as plt
-except (TypeError) as matplotlib_exception:
-  warnings.warn("Unable to import matplotlib.pyplot. This is often the case "
-                "when working via SSH."
-                 "Some features unavailable. "
-                 "Original exception: " + str(matplotlib_exception))
 import numpy
 import os
 import scipy
 import scipy.linalg
+import warnings
 
 from os.path import isfile, join
 from scipy import misc
@@ -24,6 +15,17 @@ from scipy import misc
 # Import all common functions
 from lib.common import *
 
+import matplotlib
+import os
+havedisplay = "DISPLAY" in os.environ
+if not havedisplay:
+  exitval = os.system('python -c "import matplotlib.pyplot as plt; plt.figure()"')
+  havedisplay = (exitval == 0)
+if havedisplay:
+  import matplotlib.pyplot as plt
+else:
+  matplotlib.use('Agg')
+  import matplotlib.pyplot as plt
 
 # The directory path to the images
 PICTURE_PATH = "/pics/cambrdige_pics/"
