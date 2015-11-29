@@ -12,6 +12,9 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 
  In case you use my code for a paper, study or project please cite my report and if you can, add a link to this repository.
 
+## Status
+[![Build Status](https://travis-ci.org/mihaelacr/pydeeplearn.png)](https://travis-ci.org/mihaelacr/pydeeplearn)
+
 ## Demo video
 I used pydeeplearn and openCV to make an application which detects emotions live from the webcam stream. You can see a demo video of me fooling around at the camera here: http://elarosca.net/video.ogv
 
