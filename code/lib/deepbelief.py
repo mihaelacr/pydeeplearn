@@ -241,7 +241,8 @@ class DBN(object):
       type: float
     sparsityTragetRbm: the target sparsity for the hidden units in the RBMs
       type: float
-    preTrainEpochs: the number of pre training epochs.
+    preTrainEpochs: the number of pre training epochs. If 0, no pretraining is performed and this
+      class is an usual feed forward neural net.
       type: int
     initialInputShape: the initial shape of input data (it had to be vectorized to be made an input)
       type: tuple of ints
