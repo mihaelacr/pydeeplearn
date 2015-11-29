@@ -1,5 +1,10 @@
-""" This module is manily created to test the deep belief and
-rbm implementations on MNIST"""
+"""Module created to test the library on MNIST digits.
+
+Contains:
+  * ANN/ DBN network training.
+  * RBM training and feature exposure.
+  * CNN network training.
+"""
 
 __author__ = "Mihaela Rosca"
 __contact__ = "mihaela.c.rosca@gmail.com"
