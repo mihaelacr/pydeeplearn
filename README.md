@@ -1,4 +1,4 @@
-pydeeplearn
+pydeeplearn [![Build Status](https://travis-ci.org/mihaelacr/pydeeplearn.png)](https://travis-ci.org/mihaelacr/pydeeplearn)
 ===========
 
 Library for deep belief nets and rbms and convolutional neural networks (simple version). Provides code for dropout, rmsprop, momentum, rectified linear units, sparsity constraints, weight decay, adversarial training, etc. Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/).
