@@ -1,0 +1,15 @@
+sudo: required
+
+language: python
+
+services:
+  - docker
+
+before_install:
+- docker pull mihaelacr/pydeeplearn-labeled
+- docker run -d -p 127.0.0.1:80:4567 mihaelacr/pydeeplearn-labeled /bin/sh -c "cd pydeeplearn/code; python MNISTdigits.py --trainSize 100 --testSize 10 --db --train  --rbmnesterov test.p  --validation --save --save_best_weights --preTrainEpochs 0;"
+- docker ps -a
+- docker run mihaelacr/pydeeplearn-labeled /bin/sh -c "cd pydeeplearn/code; python MNISTdigits.py --trainSize 100 --testSize 10 --db --train  --rbmnesterov test.p  --validation --save --save_best_weights --preTrainEpochs 0;"
+
+script:
+- python MNISTdigits.py --trainSize 100 --testSize 10 --db --train  --rbmnesterov test.p  --validation --save --save_best_weights --preTrainEpochs 0
