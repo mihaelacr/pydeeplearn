@@ -1,4 +1,4 @@
-pydeeplearn
+pydeeplearn [![Build Status](https://travis-ci.org/mihaelacr/pydeeplearn.png)](https://travis-ci.org/mihaelacr/pydeeplearn)
 ===========
 
 Library for deep belief nets and rbms and convolutional neural networks (simple version). Provides code for dropout, rmsprop, momentum, rectified linear units, sparsity constraints, weight decay, adversarial training, etc. Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/).
@@ -11,9 +11,6 @@ One of the key points of this implementation and API is that they do not impose 
 The API provided by DBNs is compatible with scikit learn so you can use all the functionality from that library in conjuction with my implementation.
 
  In case you use my code for a paper, study or project please cite my report and if you can, add a link to this repository.
-
-## Status
-[![Build Status](https://travis-ci.org/mihaelacr/pydeeplearn.png)](https://travis-ci.org/mihaelacr/pydeeplearn)
 
 ## Demo video
 I used pydeeplearn and openCV to make an application which detects emotions live from the webcam stream. You can see a demo video of me fooling around at the camera here: http://elarosca.net/video.ogv
