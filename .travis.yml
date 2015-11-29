@@ -12,4 +12,5 @@ before_install:
 - docker run mihaelacr/pydeeplearn-labeled /bin/sh -c "cd pydeeplearn/code; python MNISTdigits.py --trainSize 100 --testSize 10 --db --train  --rbmnesterov test.p  --validation --save --save_best_weights --preTrainEpochs 0;"
 
 script:
+- cd pydeeplearn/code
 - python MNISTdigits.py --trainSize 100 --testSize 10 --db --train  --rbmnesterov test.p  --validation --save --save_best_weights --preTrainEpochs 0
