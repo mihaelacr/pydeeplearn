@@ -54,7 +54,7 @@ Check that pydeeplearn works:
   * RBM
   * DBN
   * CNN
-  * ANN
+  * ANN (trough the dbn.py implementation by setting preTrainEpochs=0 in the constructor)
   * similarity networks (with RBM siamese networks)
 
 
@@ -76,9 +76,6 @@ Supported image preprocessing:
 
 ## Future and current work
 For the future plans that I have for the library please see the TODO.txt file. Note that currently pydeeplearn is a side project for me and some features might take some time to implement. 
-
-Branches which will soon be into master:
-  * no_pretrain
 
 If you want a feature implemented, please either send a pull request or let me know. I will do my best to get it up and running for you.
 

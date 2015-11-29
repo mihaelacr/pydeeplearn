@@ -363,6 +363,27 @@ class DBN(object):
   def __getinitargs__():
     return None
 
+  def initializeParameters(self, data, unsupervisedData):
+    if self.preTrainEpochs == 0:
+      print "performing no pretraining"
+      print "using the dbn like a simple feed forward net"
+      self.randomInitialize()
+    else:
+      self.pretrain(data, unsupervisedData)
+
+    assert len(self.weights) == self.nrLayers - 1
+    assert len(self.biases) == self.nrLayers - 1
+
+  def randomInitialize(self):
+    self.weights = []
+    self.biases = []
+
+    for i in xrange(len(self.layerSizes) - 1):
+      self.weights += [np.random.normal(loc=0.0,
+                                        scale=0.01,
+                                        size=(self.layerSizes[i], self.layerSizes[i+1]))]
+      self.biases += [np.zeros(shape=(self.layerSizes[i+1]),
+                               dtype=theanoFloat)]
 
   def pretrain(self, data, unsupervisedData):
     nrRbms = self.nrLayers - 2
@@ -381,7 +402,6 @@ class DBN(object):
 
     lastRbmBiases = None
     lastRbmTrainWeights = None
-
     dropoutList = [self.visibleDropout] + [self.hiddenDropout] * (self.nrLayers -1)
 
     for i in xrange(nrRbms):
@@ -453,8 +473,6 @@ class DBN(object):
     self.weights += [lastLayerWeights]
     self.biases += [lastLayerBiases]
 
-    assert len(self.weights) == self.nrLayers - 1
-    assert len(self.biases) == self.nrLayers - 1
 
   # For sklearn compatibility
   def fit(self, data, labels, maxEpochs, validation=True, percentValidation=0.05,
@@ -530,7 +548,7 @@ class DBN(object):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
 
-    self.pretrain(data, unsupervisedData)
+    self.initializeParameters(data, unsupervisedData)
 
     sharedValidationData = theano.shared(np.asarray(validationData, dtype=theanoFloat))
     sharedValidationLabels = theano.shared(np.asarray(validationLabels, dtype=theanoFloat))
@@ -541,7 +559,8 @@ class DBN(object):
   def trainNoValidation(self, data, labels, maxEpochs, unsupervisedData):
     sharedData = theano.shared(np.asarray(data, dtype=theanoFloat))
     sharedLabels = theano.shared(np.asarray(labels, dtype=theanoFloat))
-    self.pretrain(data, unsupervisedData)
+
+    self.initializeParameters(data, unsupervisedData)
 
     # Does backprop for the data and a the end sets the weights
     self.fineTune(sharedData, sharedLabels, False, None, None, maxEpochs, None)
@@ -605,6 +624,7 @@ class DBN(object):
 
     self.weights = map(lambda x: x.get_value(), batchTrainer.weights)
     self.biases = map(lambda x: x.get_value(), batchTrainer.biases)
+
 
     self.classificationWeights = classificationWeightsFromTestWeights(
         self.weights,

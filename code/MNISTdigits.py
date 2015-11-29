@@ -16,7 +16,6 @@ from sklearn import cross_validation
 
 from lib import convNet
 from lib import deepbelief as db
-from lib import ann
 from lib import restrictedBoltzmannMachine as rbm
 from lib.common import *
 from lib.cnnLayers import *
@@ -45,8 +44,6 @@ parser.add_argument('--train',dest='train',action='store_true', default=False,
                           "training data"))
 parser.add_argument('--sparsity', dest='sparsity',action='store_true', default=False,
                     help=("if true, the the networks are trained with sparsity constraints"))
-parser.add_argument('--ann',dest='ann',action='store_true', default=False,
-                    help=("if true, we train an ann not a dbn"))
 parser.add_argument('--pca', dest='pca',action='store_true', default=False,
                     help=("if true, the code for running PCA on the data is run"))
 parser.add_argument('--rbm', dest='rbm',action='store_true', default=False,
@@ -578,69 +575,6 @@ def cvMNIST():
   print "bestParameter " + str(params[bestFold])
   print "bestError" + str(bestError)
 
-
-
-def annMNIST():
-  training = args.trainSize
-  testing = args.testSize
-
-  trainVectors, trainLabels =\
-      readmnist.read(0, training, bTrain=True, path=args.path)
-  testVectors, testLabels =\
-      readmnist.read(0, testing, bTrain=False, path=args.path)
-  print trainVectors[0].shape
-
-  trainVectors, trainLabels = shuffle(trainVectors, trainLabels)
-
-  trainingScaledVectors = trainVectors / 255.0
-  testingScaledVectors = testVectors / 255.0
-
-  vectorLabels = labelsToVectors(trainLabels, 10)
-
-  if args.train:
-    # Try 1200, 1200, 1200
-    # [784, 500, 500, 2000, 10
-    net = ann.ANN(5, [784, 1000, 1000, 1000, 10],
-                 supervisedLearningRate=0.001,
-                 nesterovMomentum=args.nesterov,
-                 rmsprop=args.rmsprop,
-                 hiddenDropout=0.5,
-                 visibleDropout=0.8,
-                 miniBatchSize=args.miniBatchSize,
-                 normConstraint=15)
-    net.train(trainingScaledVectors, vectorLabels,
-              maxEpochs=args.maxEpochs, validation=args.validation)
-  else:
-    # Take the saved network and use that for reconstructions
-    f = open(args.netFile, "rb")
-    net = pickle.load(f)
-    f.close()
-
-
-  probs, predicted = net.classify(testingScaledVectors)
-  correct = 0
-  errorCases = []
-  for i in xrange(testing):
-    print "predicted"
-    print "probs"
-    print probs[i]
-    print predicted[i]
-    print "actual"
-    actual = testLabels[i]
-    print actual
-    if predicted[i] == actual:
-      correct += 1
-    else:
-      errorCases.append(i)
-
-  print "correct"
-  print correct
-
-  if args.save:
-    f = open(args.netFile, "wb")
-    pickle.dump(net, f)
-    f.close()
-
 # NOT for relu: use GaussianMNIST for that
 def deepbeliefMNIST():
   assert not args.relu, "do not run this method for rectified linear units"
@@ -1122,7 +1056,7 @@ def main():
   random.seed(6)
   np.random.seed(6)
   if args.db + args.pca + args.rbm + args.cv + \
-      args.ann + args.cvgauss + args.rbmGauss + args.dbgauss + args.display_main + args.conv + args.cvadv != 1:
+      args.cvgauss + args.rbmGauss + args.dbgauss + args.display_main + args.conv + args.cvadv != 1:
     raise Exception("You have to decide on one main method to run")
 
   # makeNicePlots()
@@ -1135,8 +1069,6 @@ def main():
     rbmMain()
   if args.cv:
     cvMNIST()
-  if args.ann:
-    annMNIST()
   if args.cvgauss:
     cvMNISTGaussian()
   if args.rbmGauss:
