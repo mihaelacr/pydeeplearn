@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 
-
 # Create window for image display
 CASCADE_FN = "haarcascade_frontalface_default.xml"
 
@@ -20,7 +19,6 @@ SAD_IMAGE = cv2.imread("icon_39345withoutalpha.png", cv2.IMREAD_GRAYSCALE)
 # Surprise designed by Chris McDonnell from the thenounproject.com
 SUPRISED_IMAGE = cv2.imread("icon_6231withoutalpha.png", cv2.IMREAD_GRAYSCALE)
 
-
 EMOTIONS = [0, 1, 2]
 
 EMOTION_TO_IMAGE = {
@@ -34,7 +32,6 @@ EMOTION_TO_TEXT = {
   1: "SAD",
   2: "SUPRISE"
 }
-
 
 def getFaceCoordinates(image):
   cascade = cv2.CascadeClassifier(CASCADE_FN)
@@ -55,7 +52,6 @@ def getFaceCoordinates(image):
 
 
 def to_rgb1(im):
-    # I think this will be slow
     w, h = im.shape
     ret = np.empty((w, h, 3), dtype=np.uint8)
     ret[:, :, 0] = im
@@ -70,11 +66,11 @@ def drawFace(image, faceCoordinates, emotion):
   w = faceCoordinates[2]
   h = faceCoordinates[3]
 
-
+  # Draw the face detection rectangles.
   cv2.rectangle(np.asarray(image), (x,y), (x + w, y + h), RECTANGE_COLOUR,
                   thickness=THICKNESS)
 
-  #  draw the emotion
+  #  Draw the emotion specifc emoticon.
   if emotion is not None:
     if emotion not in EMOTIONS:
       raise Exception("unknown emotion")
@@ -106,4 +102,3 @@ def getAndDrawFace(image, display=False):
       drawFace(image, faceCoordinates)
 
   return cropFace(image, faceCoordinates)
-
