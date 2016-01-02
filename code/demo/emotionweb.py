@@ -29,8 +29,9 @@ parser.add_argument("-frequency", type=float, default=TIME_BETWEEN_FACE_CHECKS,
 parser.add_argument('netFile', help="file where the serialized network should be saved")
 
 
-
 args = parser.parse_args()
+
+# Parse the user given arguments
 displayCam = args.displayWebcam
 frequency = args.frequency
 displayFaces = args.seeFaces
@@ -65,7 +66,6 @@ def destroyWindow():
   cv2.waitKey(1)
 
 def readNetwork():
-  # return makeMihaeladb.trainNet()
   with open(args.netFile, "rb") as f:
     net = pickle.load(f)
   return net
