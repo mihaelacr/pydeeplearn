@@ -24,7 +24,7 @@ parser.add_argument('--displayWebcam', action='store_const', const=True,
 parser.add_argument('--gather_training_data', action='store_const', const=True,
                     default=False,
                     help=("if false, detects emotions by using the trained network "
-                          "given by net_file. If this flag is set to true, this script "
+                          "given by netFile. If this flag is set to true, this script "
                           "is used to collect training data. In that case, the "
                           "recording_emotion flag needs to be set."))
 parser.add_argument("--seeFaces", action='store_const', const=True,
@@ -41,7 +41,7 @@ parser.add_argument('--recording_emotion',
                      default="")
 parser.add_argument("--frequency", type=float, default=TIME_BETWEEN_FACE_CHECKS,
                     help="How often should the camera be queried for a face")
-parser.add_argument("--net_file",
+parser.add_argument("--netFile",
                      help=("pickle file from which to read the network for testing the camera stream."
                            "Used only if the gather_training_data flag is set to False."))
 
@@ -84,7 +84,7 @@ def destroyWindow():
   cv2.waitKey(1)
 
 def readNetwork():
-  with open(args.net_file, "rb") as f:
+  with open(args.netFile, "rb") as f:
     net = pickle.load(f)
   return net
 
@@ -156,7 +156,7 @@ def main():
     print 'Please try to display that emotion during the recording.'
     saveFaceImage(capture, frequency, showCam, displayFaces)
   else:
-    print 'Detection emotions from net ', args.net_file
+    print 'Detection emotions from net ', args.netFile
     detectEmotions(capture, frequency, showCam, displayFaces)
 
 if __name__ == '__main__':
