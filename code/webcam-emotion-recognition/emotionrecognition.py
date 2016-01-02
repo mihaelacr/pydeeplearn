@@ -20,7 +20,7 @@ nrToEmotion = {
   2: "surprise"
 }
 
-def testImage(image, faceCoordinates, net, save=True):
+def preprocess(image, faceCoordinates):
   image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
   size  = SMALL_SIZE
@@ -32,9 +32,11 @@ def testImage(image, faceCoordinates, net, save=True):
   resized = resize(cropped, size)
 
   # Step 3: Equalize the image (needs to be done in the same way it has been with the training data)
-  testImg = readfacedatabases.equalizeFromFloatCLAHE(resized, size)
+  return readfacedatabases.equalizeFromFloatCLAHE(resized, size)
 
-  # Step4: Test the image with the network
+def testImage(image, faceCoordinates, net):
+  testImg = preprocess(image, faceCoordinates)
+
   # IMPORTANT: scale the image for it to be testable
   test = common.scale(testImg.reshape(1, len(testImg)))
   probs, emotion = net.classify(test)
