@@ -117,9 +117,9 @@ def main():
   else:
     showCam = displayCam
 
-
   net = readNetwork()
   detectEmotions(frequency, net, showCam, displayFaces)
+  destroyWindow()
 
 
 if __name__ == '__main__':
