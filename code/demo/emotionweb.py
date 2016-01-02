@@ -76,7 +76,6 @@ def recogintionWork(image, faceCoordinates, net):
 
 # Draw faces argument is only taken into account if display was set as true.
 def detectedAndDisplayFaces(capture, net, display=False, drawFaces=False):
-  # Maybe flag?
   recognition = True
   # Flag gives us some information about the capture
   # Frame is the webcam frame (a numpy image)
