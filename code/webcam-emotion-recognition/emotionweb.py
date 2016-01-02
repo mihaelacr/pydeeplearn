@@ -39,6 +39,14 @@ parser.add_argument('--recording_emotion',
                           "is running and recording data.",
                      type=str,
                      default="")
+parser.add_argument('--emotions',
+                    nargs='+',
+                    help=('The emotions labels that were used to train the network. '
+                          'These should be strings to associate to the integer classes '
+                          'given by the network. For example, if the network should output '
+                          '0 when the input face displays a happy emotion and 1 otherwise, '
+                          'this map should be \'happy neutral\''),
+                    type=str)
 parser.add_argument("--frequency", type=float, default=TIME_BETWEEN_FACE_CHECKS,
                     help="How often should the camera be queried for a face")
 parser.add_argument("--netFile",
@@ -53,6 +61,11 @@ displayCam = args.displayWebcam
 frequency = args.frequency
 displayFaces = args.seeFaces
 
+emotion_to_text = {}
+
+for index, emotion: args.emotions:
+  emotion_to_text[index] = emotion
+
 # Person by Catherine Please from The Noun Project
 HAPPY_IMAGE = cv2.imread("icon_4895withoutalpha.png", cv2.IMREAD_GRAYSCALE)
 # Sad by Cengiz SARI from The Noun Project
@@ -64,12 +77,6 @@ EMOTION_TO_IMAGE = {
   0: HAPPY_IMAGE,
   1: SAD_IMAGE,
   2: SUPRISED_IMAGE
-}
-
-EMOTION_TO_TEXT = {
-  0: "HAPPY",
-  1: "SAD",
-  2: "SUPRISE"
 }
 
 # When user presses Control-C, gracefully exit program
@@ -93,7 +100,7 @@ def showFrame(frame, faceCoordinates, emotion=None, draw=False):
   if draw and faceCoordinates:
     #  Draw emotions here as well
     faceRecognition.drawFace(frame, faceCoordinates, emotion,
-                              EMOTION_TO_TEXT, EMOTION_TO_IMAGE)
+                              emotion_to_text, EMOTION_TO_IMAGE)
 
   cv2.imshow(WINDOW_NAME, frame)
 
