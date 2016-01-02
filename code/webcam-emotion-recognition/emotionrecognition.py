@@ -23,16 +23,15 @@ nrToEmotion = {
 def preprocess(image, faceCoordinates):
   image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-  size  = SMALL_SIZE
-
   # Step 1: crop the the image
   cropped = faceRecognition.cropFace(image, faceCoordinates)
 
   # Step 2: Resize
-  resized = resize(cropped, size)
+  resized = resize(cropped, SMALL_SIZE)
 
   # Step 3: Equalize the image (needs to be done in the same way it has been with the training data)
-  return readfacedatabases.equalizeFromFloatCLAHE(resized, size)
+  equalized = readfacedatabases.equalizeFromFloatCLAHE(resized, SMALL_SIZE)
+  return np.reshape(equalized, SMALL_SIZE)
 
 def testImage(image, faceCoordinates, net):
   testImg = preprocess(image, faceCoordinates)
