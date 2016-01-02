@@ -16,6 +16,16 @@ The webcam detected images are processed as follows:
   
 The same preprocessing should be used on the input data when training the emotion classifier.
 
+## Emotion classifier
+ The emotion classifier I used for the [demo](http://elarosca.net/video.ogv) was a DBN network trained usign `pydeeplearn`.
+ 
+ There is no need for the user of the code under this directory to use `pydeeplearn` as the emotion classifier. The user can pass in as a flag a pickle file of a model that has a `classify` method:
+ 
+ ```model.classify(image) ```
+ that returns the probabilities obtained from the network as well as the classification label.
+ 
+ Replacing a `pydeeplearn` classifier with another classifier can be made easier. If you are interested in that, please either send a pull request or create an issue. 
+ 
 ## Recognition for icons
   * Happy emotiocon: Person by Catherine Please from The Noun Project
   * Sad emoticon: Sad by Cengiz SARI from The Noun Project
