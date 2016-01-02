@@ -15,7 +15,7 @@ SMALL_SIZE = (40, 30)
 SQUARE_SIZE = (48, 48)
 
 
-def preprocess(image, faceCoordinates):
+def preprocess(image, faceCoordinates, return_vector=False):
   image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
   # Step 1: crop the the image
@@ -26,10 +26,12 @@ def preprocess(image, faceCoordinates):
 
   # Step 3: Equalize the image (needs to be done in the same way it has been with the training data)
   equalized = readfacedatabases.equalizeFromFloatCLAHE(resized, SMALL_SIZE)
+  if return_vector:
+    return equalized
   return np.reshape(equalized, SMALL_SIZE)
 
 def testImage(image, faceCoordinates, net):
-  testImg = preprocess(image, faceCoordinates)
+  testImg = preprocess(image, faceCoordinates, return_vector=True)
 
   # IMPORTANT: scale the image for it to be testable
   test = common.scale(testImg.reshape(1, len(testImg)))

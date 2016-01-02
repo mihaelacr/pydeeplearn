@@ -54,23 +54,22 @@ def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=
 
   #  Draw the emotion specifc emoticon.
   if emotion is not None:
-    if emotion not in emotion_to_text.keys():
-      raise Exception("unknown emotion")
-    else:
-      cv2.putText(image,
-                  emotion_to_text[emotion],
-                  (x,y),
-                  cv2.FONT_HERSHEY_SIMPLEX,
-                  2,
-                  BOX_COLOR,
-                  thickness=2)
+    cv2.putText(image,
+                # Get the text associated with this emotion, but
+                # if we do not have one just display the integer.
+                emotion_to_text.get(emotion, str(emotion)),
+                (x,y),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                2,
+                BOX_COLOR,
+                thickness=2)
 
-      # Add a nice smiley to show the classification
-      if emotion_to_image:
-        smallImage = emotion_to_image[emotion]
-        smallImage = cv2.resize(smallImage, (x,y))
-        smallImage = to_rgb1(smallImage)
-        image[0:0+smallImage.shape[0], 0:0+smallImage.shape[1]] = smallImage
+    # Add a nice smiley to show the classification
+    if emotion_to_image:
+      smallImage = emotion_to_image[emotion]
+      smallImage = cv2.resize(smallImage, (x,y))
+      smallImage = to_rgb1(smallImage)
+      image[0:0+smallImage.shape[0], 0:0+smallImage.shape[1]] = smallImage
 
 def cropFace(image, faceCoordinates):
   x = faceCoordinates[0]

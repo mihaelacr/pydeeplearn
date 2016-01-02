@@ -63,8 +63,9 @@ displayFaces = args.seeFaces
 
 emotion_to_text = {}
 
-for index, emotion: args.emotions:
-  emotion_to_text[index] = emotion
+if args.emotions:
+  for index, emotion in enumerate(args.emotions):
+    emotion_to_text[index] = emotion
 
 # Person by Catherine Please from The Noun Project
 HAPPY_IMAGE = cv2.imread("icon_4895withoutalpha.png", cv2.IMREAD_GRAYSCALE)
