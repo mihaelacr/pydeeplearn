@@ -99,7 +99,6 @@ def detectEmotions(frequency, net, display=False, drawFaces=False):
   capture = getCameraCapture()
   if display:
     cv2.startWindowThread()
-    # cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_AUTOSIZE)
     cv2.namedWindow(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty(WINDOW_NAME, cv2.WND_PROP_FULLSCREEN, cv2.WND_PROP_FULLSCREEN)
 
@@ -107,7 +106,6 @@ def detectEmotions(frequency, net, display=False, drawFaces=False):
   while True:
     detectedAndDisplayFaces(capture, net, display, drawFaces)
     time.sleep(frequency)
-
 
 def main():
   global frequency
