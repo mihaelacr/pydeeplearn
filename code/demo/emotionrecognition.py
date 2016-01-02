@@ -37,10 +37,10 @@ def testImage(image, faceCoordinates, net, save=True):
   # Step4: Test the image with the network
   # IMPORTANT: scale the image for it to be testable
   test = common.scale(testImg.reshape(1, len(testImg)))
-  probs, vals = net.classify(test)
+  probs, emotion = net.classify(test)
 
   print "probs"
   print probs
-  print nrToEmotion[vals[0]]
+  print nrToEmotion[emotion[0]]
 
   return vals[0]
