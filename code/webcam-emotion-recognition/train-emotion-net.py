@@ -30,6 +30,12 @@ parser.add_argument('--display_example_data',
                     action='store_true',
                     default=False,
                     help=("if true, shows a couple of the training examples."))
+parser.add_argument('--cv',
+                    dest='cv',
+                    action='store_true',
+                    default=False,
+                    help=("if true, runs the cv code to try multiple hyperparameters "
+                          "to find one which does best."))
 args = parser.parse_args()
 
 sys.path.append("..")
@@ -139,7 +145,7 @@ def trainNetWithAllData():
              firstRBMheuristic=False,
              rbmVisibleDropout=1.0,
              rbmHiddenDropout=1.0,
-             preTrainEpochs=1,
+             preTrainEpochs=10,
              sparsityConstraintRbm=False,
              sparsityRegularizationRbm=0.001,
              sparsityTragetRbm=0.01)
@@ -201,7 +207,7 @@ def trainAndTestNet():
              firstRBMheuristic=False,
              rbmVisibleDropout=1.0,
              rbmHiddenDropout=1.0,
-             preTrainEpochs=1,
+             preTrainEpochs=10,
              sparsityConstraintRbm=False,
              sparsityRegularizationRbm=0.001,
              sparsityTragetRbm=0.01)
@@ -238,7 +244,7 @@ def trainAndTestNet():
     pickle.dump(net, f)
   return net
 
-def getHyperParams():
+def getHyperParamsAndBestNet():
   unsupervisedData, data, labels = createTrainingSet()
 
   print np.unique(np.argmax(labels, axis=1))
@@ -262,7 +268,7 @@ def getHyperParams():
   index = 0
 
   # Random data for training and testing
-  kf = cross_validation.KFold(n=len(data), k=10)
+  kf = cross_validation.KFold(n=len(data), n_folds=10)
   for train, test in kf:
     unsupervisedLearningRate = random.uniform(0.0001, 0.2)
     supervisedLearningRate = random.uniform(0.0001, 0.2)
@@ -293,7 +299,7 @@ def getHyperParams():
                firstRBMheuristic=False,
                rbmVisibleDropout=1.0,
                rbmHiddenDropout=1.0,
-               preTrainEpochs=1,
+               preTrainEpochs=10,
                sparsityConstraintRbm=False,
                sparsityRegularizationRbm=0.001,
                sparsityTragetRbm=0.01)
@@ -319,6 +325,9 @@ def getHyperParams():
 
     if percentage_correct < best_correct:
       best_index = index
+      with open(args.netFile, "wb") as f:
+        pickle.dump(net, f)
+
 
     percentages += [percentage_correct]
     index += 1
@@ -333,5 +342,8 @@ if __name__ == '__main__':
   if args.display_example_data:
     seeData()
 
-  trainNetWithAllData()
+  if args.cv:
+    getHyperParamsAndBestNet()
+  else:
+    trainNetWithAllData()
 
