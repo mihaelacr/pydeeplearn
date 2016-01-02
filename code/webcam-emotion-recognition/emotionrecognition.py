@@ -14,11 +14,6 @@ from lib import common
 SMALL_SIZE = (40, 30)
 SQUARE_SIZE = (48, 48)
 
-nrToEmotion = {
-  0: "happy",
-  1: "sad",
-  2: "surprise"
-}
 
 def preprocess(image, faceCoordinates):
   image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -50,6 +45,6 @@ def testImage(image, faceCoordinates, net):
   print "probs"
   print probs
   print "label"
-  print nrToEmotion[emotion]
+  print emotion
 
   return emotion
