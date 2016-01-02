@@ -3,6 +3,7 @@ import os
 import fnmatch
 import cv2
 import sys
+import random
 import matplotlib.pyplot as plt
 import cPickle as pickle
 import numpy as np
@@ -236,6 +237,96 @@ def trainAndTestNet():
   with open(args.netFile, "wb") as f:
     pickle.dump(net, f)
   return net
+
+def getHyperParams():
+  unsupervisedData, data, labels = createTrainingSet()
+
+  print np.unique(np.argmax(labels, axis=1))
+
+  print "data.shape"
+  print data.shape
+  print "labels.shape"
+  print labels.shape
+
+  print data
+  data = common.scale(data)
+  unsupervisedData = None
+
+  activationFunction = activationfunctions.Rectified()
+  rbmActivationFunctionVisible = activationfunctions.Identity()
+  rbmActivationFunctionHidden = activationfunctions.RectifiedNoisy()
+
+  tried_params = []
+  percentages = []
+  best_index = 0
+  index = 0
+
+  # Random data for training and testing
+  kf = cross_validation.KFold(n=len(data), k=10)
+  for train, test in kf:
+    unsupervisedLearningRate = random.uniform(0.0001, 0.2)
+    supervisedLearningRate = random.uniform(0.0001, 0.2)
+    momentumMax = random.uniform(0.7, 1)
+
+    tried_params += [{'unsupervisedLearningRate': unsupervisedLearningRate,
+                      'supervisedLearningRate': supervisedLearningRate,
+                      'momentumMax': momentumMax}]
+
+    trainData = data[train]
+    trainLabels = labels[train]
+
+    net = db.DBN(4, [1200, 1500, 1000, len(args.emotions)],
+               binary=False,
+               activationFunction=activationFunction,
+               rbmActivationFunctionVisible=rbmActivationFunctionVisible,
+               rbmActivationFunctionHidden=rbmActivationFunctionHidden,
+               unsupervisedLearningRate=unsupervisedLearningRate,
+               supervisedLearningRate=supervisedLearningRate,
+               momentumMax=momentumMax,
+               nesterovMomentum=True,
+               rbmNesterovMomentum=True,
+               rmsprop=True,
+               miniBatchSize=20,
+               hiddenDropout=0.5,
+               visibleDropout=0.8,
+               momentumFactorForLearningRateRBM=False,
+               firstRBMheuristic=False,
+               rbmVisibleDropout=1.0,
+               rbmHiddenDropout=1.0,
+               preTrainEpochs=1,
+               sparsityConstraintRbm=False,
+               sparsityRegularizationRbm=0.001,
+               sparsityTragetRbm=0.01)
+
+    net.train(trainData, trainLabels, maxEpochs=200,
+              validation=False,
+              unsupervisedData=unsupervisedData)
+
+    probs, predicted = net.classify(data[test])
+
+    actualLabels = labels[test]
+    correct = 0
+
+    for i in xrange(len(test)):
+      actual = actualLabels[i]
+      print probs[i]
+      if predicted[i] == np.argmax(actual):
+        correct += 1
+
+    percentage_correct = correct  * 1.0 / len(test)
+    print "percentage correct"
+    print percentage_correct
+
+    if percentage_correct < best_correct:
+      best_index = index
+
+    percentages += [percentage_correct]
+    index += 1
+
+  print 'best params'
+  print tried_params[best_index]
+  print 'precision'
+  print best_correct
 
 
 if __name__ == '__main__':
