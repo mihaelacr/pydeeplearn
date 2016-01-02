@@ -53,6 +53,24 @@ displayCam = args.displayWebcam
 frequency = args.frequency
 displayFaces = args.seeFaces
 
+# Person by Catherine Please from The Noun Project
+HAPPY_IMAGE = cv2.imread("icon_4895withoutalpha.png", cv2.IMREAD_GRAYSCALE)
+# Sad by Cengiz SARI from The Noun Project
+SAD_IMAGE = cv2.imread("icon_39345withoutalpha.png", cv2.IMREAD_GRAYSCALE)
+# Surprise designed by Chris McDonnell from the thenounproject.com
+SUPRISED_IMAGE = cv2.imread("icon_6231withoutalpha.png", cv2.IMREAD_GRAYSCALE)
+
+EMOTION_TO_IMAGE = {
+  0: HAPPY_IMAGE,
+  1: SAD_IMAGE,
+  2: SUPRISED_IMAGE
+}
+
+EMOTION_TO_TEXT = {
+  0: "HAPPY",
+  1: "SAD",
+  2: "SUPRISE"
+}
 
 # When user presses Control-C, gracefully exit program
 def signal_handler(signal, frame):
@@ -74,7 +92,8 @@ def getCameraCapture():
 def showFrame(frame, faceCoordinates, emotion=None, draw=False):
   if draw and faceCoordinates:
     #  Draw emotions here as well
-    faceRecognition.drawFace(frame, faceCoordinates, emotion)
+    faceRecognition.drawFace(frame, faceCoordinates, emotion,
+                              EMOTION_TO_TEXT, EMOTION_TO_IMAGE)
 
   cv2.imshow(WINDOW_NAME, frame)
 

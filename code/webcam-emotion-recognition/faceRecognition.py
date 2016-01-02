@@ -12,26 +12,6 @@ RECTANGE_COLOUR = (117, 30, 104)
 BOX_COLOR = (255, 255, 255)
 THICKNESS = 2
 
-# Person by Catherine Please from The Noun Project
-HAPPY_IMAGE = cv2.imread("icon_4895withoutalpha.png", cv2.IMREAD_GRAYSCALE)
-# Sad by Cengiz SARI from The Noun Project
-SAD_IMAGE = cv2.imread("icon_39345withoutalpha.png", cv2.IMREAD_GRAYSCALE)
-# Surprise designed by Chris McDonnell from the thenounproject.com
-SUPRISED_IMAGE = cv2.imread("icon_6231withoutalpha.png", cv2.IMREAD_GRAYSCALE)
-
-EMOTIONS = [0, 1, 2]
-
-EMOTION_TO_IMAGE = {
-  0: HAPPY_IMAGE,
-  1: SAD_IMAGE,
-  2: SUPRISED_IMAGE
-}
-
-EMOTION_TO_TEXT = {
-  0: "HAPPY",
-  1: "SAD",
-  2: "SUPRISE"
-}
 
 def getFaceCoordinates(image):
   cascade = cv2.CascadeClassifier(CASCADE_FN)
@@ -59,7 +39,7 @@ def to_rgb1(im):
     return ret
 
 # (294, 454, 3) this is the shape of the frame
-def drawFace(image, faceCoordinates, emotion):
+def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=None):
   x = faceCoordinates[0]
   y = faceCoordinates[1]
   w = faceCoordinates[2]
@@ -74,22 +54,23 @@ def drawFace(image, faceCoordinates, emotion):
 
   #  Draw the emotion specifc emoticon.
   if emotion is not None:
-    if emotion not in EMOTIONS:
+    if emotion not in emotion_to_text.keys():
       raise Exception("unknown emotion")
     else:
       cv2.putText(image,
-                  EMOTION_TO_TEXT[emotion],
+                  emotion_to_text[emotion],
                   (x,y),
                   cv2.FONT_HERSHEY_SIMPLEX,
                   2,
                   BOX_COLOR,
                   thickness=2)
 
-      smallImage = EMOTION_TO_IMAGE[emotion]
-
-    smallImage = cv2.resize(smallImage, (x,y))
-    smallImage = to_rgb1(smallImage)
-    image[0:0+smallImage.shape[0], 0:0+smallImage.shape[1]] = smallImage
+      # Add a nice smiley to show the classification
+      if emotion_to_image:
+        smallImage = emotion_to_image[emotion]
+        smallImage = cv2.resize(smallImage, (x,y))
+        smallImage = to_rgb1(smallImage)
+        image[0:0+smallImage.shape[0], 0:0+smallImage.shape[1]] = smallImage
 
 def cropFace(image, faceCoordinates):
   x = faceCoordinates[0]
@@ -98,16 +79,3 @@ def cropFace(image, faceCoordinates):
   h = faceCoordinates[3]
 
   return image[y:y+h, x:x+w]
-
-
-def getAndDrawFace(image, display=False):
-  faceCoordinates = getFaceCoordinates(image)
-
-  # If there is no face, do not continue
-  if faceCoordinates is None:
-    return None
-
-  if display:
-      drawFace(image, faceCoordinates)
-
-  return cropFace(image, faceCoordinates)
