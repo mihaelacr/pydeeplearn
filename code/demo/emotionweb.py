@@ -47,9 +47,12 @@ signal.signal(signal.SIGINT, signal_handler)
 
 def getCameraCapture():
   with ignoreoutput.suppress_stdout_stderr():
-  # 0 is supposed to detected any webcam connected to the device
-    return cv2.VideoCapture(0)
-
+    # 0 is supposed to detected any webcam connected to the device
+    capture = cv2.VideoCapture(0)
+    if not capture:
+      print "Failed VideoCapture: unable to open device 0"
+      sys.exit(1)
+    return capture
 
 def showFrame(frame, faceCoordinates, emotion=None, draw=False):
   if draw and faceCoordinates:
