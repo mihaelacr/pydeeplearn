@@ -60,8 +60,6 @@ def showFrame(frame, faceCoordinates, emotion=None, draw=False):
     drawFace(frame, faceCoordinates, emotion)
 
   cv2.imshow(WINDOW_NAME, frame)
-  cv2.waitKey(100)
-
 
 # Currently does not destroy window due to OpenCV issues
 def destroyWindow():
