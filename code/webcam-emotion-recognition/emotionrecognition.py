@@ -39,8 +39,16 @@ def testImage(image, faceCoordinates, net, save=True):
   test = common.scale(testImg.reshape(1, len(testImg)))
   probs, emotion = net.classify(test)
 
+  # classify returns a vector, as it is made to classify multiple test instances
+  # at the same time.
+  # We check if emotion is iterable before getting the first element, in case
+  # someone uses an api in which a vector is not returned.
+  if hasattr(emotion, '__iter__'):
+    emotion = emotion[0]
+
   print "probs"
   print probs
-  print nrToEmotion[emotion[0]]
+  print "label"
+  print nrToEmotion[emotion]
 
-  return vals[0]
+  return emotion
