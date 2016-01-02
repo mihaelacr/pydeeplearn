@@ -20,8 +20,6 @@ nrToEmotion = {
 }
 
 def testImage(image, faceCoordinates, net, save=True):
-  global count
-  count += 1
   image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
   size  = SMALL_SIZE

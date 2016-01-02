@@ -67,8 +67,11 @@ def drawFace(image, faceCoordinates, emotion):
   h = faceCoordinates[3]
 
   # Draw the face detection rectangles.
-  cv2.rectangle(np.asarray(image), (x,y), (x + w, y + h), RECTANGE_COLOUR,
-                  thickness=THICKNESS)
+  cv2.rectangle(np.asarray(image),
+                (x,y),
+                (x + w, y + h),
+                RECTANGE_COLOUR,
+                thickness=THICKNESS)
 
   #  Draw the emotion specifc emoticon.
   if emotion is not None:
