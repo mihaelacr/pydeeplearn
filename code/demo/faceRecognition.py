@@ -47,8 +47,7 @@ def getFaceCoordinates(image):
     return None
 
   r = rects[0]
-  new_r = map((lambda x: RESIZE_SCALE * x), r)
-  return new_r
+  return map((lambda x: RESIZE_SCALE * x), r)
 
 
 def to_rgb1(im):
@@ -67,15 +66,25 @@ def drawFace(image, faceCoordinates, emotion):
   h = faceCoordinates[3]
 
   # Draw the face detection rectangles.
-  cv2.rectangle(np.asarray(image), (x,y), (x + w, y + h), RECTANGE_COLOUR,
-                  thickness=THICKNESS)
+  cv2.rectangle(np.asarray(image),
+                (x,y),
+                (x + w, y + h),
+                RECTANGE_COLOUR,
+                thickness=THICKNESS)
 
   #  Draw the emotion specifc emoticon.
   if emotion is not None:
     if emotion not in EMOTIONS:
       raise Exception("unknown emotion")
     else:
-      cv2.putText(image, EMOTION_TO_TEXT[emotion], (x,y), cv2.FONT_HERSHEY_SIMPLEX, 2, BOX_COLOR, thickness=2)
+      cv2.putText(image,
+                  EMOTION_TO_TEXT[emotion],
+                  (x,y),
+                  cv2.FONT_HERSHEY_SIMPLEX,
+                  2,
+                  BOX_COLOR,
+                  thickness=2)
+
       smallImage = EMOTION_TO_IMAGE[emotion]
 
     smallImage = cv2.resize(smallImage, (x,y))

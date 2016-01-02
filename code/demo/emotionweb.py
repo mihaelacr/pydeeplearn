@@ -4,7 +4,7 @@ import signal
 import sys
 import time
 
-from faceRecognition import *
+import faceRecognition
 import ignoreoutput
 import emotionrecognition
 import cPickle as pickle
@@ -57,7 +57,7 @@ def getCameraCapture():
 def showFrame(frame, faceCoordinates, emotion=None, draw=False):
   if draw and faceCoordinates:
     #  Draw emotions here as well
-    drawFace(frame, faceCoordinates, emotion)
+    faceRecognition.drawFace(frame, faceCoordinates, emotion)
 
   cv2.imshow(WINDOW_NAME, frame)
 
@@ -82,7 +82,7 @@ def detectedAndDisplayFaces(capture, net, display=False, drawFaces=False):
   flag, frame = capture.read()
   # Not sure if there is an error from the cam if we should lock the screen
   if flag:
-    faceCoordinates = getFaceCoordinates(frame)
+    faceCoordinates = faceRecognition.getFaceCoordinates(frame)
     if faceCoordinates and recognition:
       emotion = recogintionWork(frame, faceCoordinates, net)
     else:

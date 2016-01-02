@@ -17,11 +17,10 @@ SQUARE_SIZE = (48, 48)
 nrToEmotion = {
   0: "happy",
   1: "sad",
+  2: "surprise"
 }
 
 def testImage(image, faceCoordinates, net, save=True):
-  global count
-  count += 1
   image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
   size  = SMALL_SIZE
