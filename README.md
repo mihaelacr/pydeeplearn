@@ -31,7 +31,7 @@ I used pydeeplearn and openCV to make an application which detects emotions live
   * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
   * If you still have questions, pop me an email or a message.
 
-## NEW: Docker container
+## Docker container
 If you do not want to go trough all the hurdle of installing the dependencies needed for pydeeplearn then you can just use the docker container found at on [docker hub](https://hub.docker.com/r/mihaelacr/pydeeplearn-labeled/).
 The docker container comes with the MNIST digits so you do not have to download the files yourself.
 
