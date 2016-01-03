@@ -1,5 +1,6 @@
 import argparse
 import cv2
+import os
 import scipy
 import signal
 import sys
@@ -128,7 +129,9 @@ def saveFaceImage(capture, frequency, display, drawFaces):
     if faceCoordinates:
       image = emotionrecognition.preprocess(frame, faceCoordinates)
       # Save the image that will later be used for training.
-      scipy.misc.imsave(args.recording_emotion + str(img_count) + '.png', image)
+      scipy.misc.imsave(os.path.join(args.recording_emotion,
+                                     args.recording_emotion + str(img_count) + '.png'),
+                        image)
 
       if display:
         showFrame(frame, faceCoordinates, None, drawFaces)
