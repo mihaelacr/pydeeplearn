@@ -54,7 +54,7 @@ def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=
     cv2.putText(image,
                 # Get the text associated with this emotion, but
                 # if we do not have one just display the integer.
-                emotion_to_text.get(emotion, str(emotion)),
+                emotion_to_text.get(emotion, ""),
                 (faceCoordinates[0], faceCoordinates[2]),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 2,

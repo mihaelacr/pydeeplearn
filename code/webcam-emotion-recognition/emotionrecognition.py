@@ -22,7 +22,7 @@ def preprocess(image, faceCoordinates, return_vector=False):
   cropped = faceRecognition.cropFace(image, faceCoordinates)
 
   # Step 2: Resize
-  resized = resize(cropped, SMALL_SIZE)
+  resized = np.ascontiguousarray(resize(cropped, SMALL_SIZE))
 
   # Step 3: Equalize the image (needs to be done in the same way it has been with the training data)
   equalized = readfacedatabases.equalizeFromFloatCLAHE(resized, SMALL_SIZE)
