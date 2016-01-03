@@ -20,9 +20,9 @@ The webcam detected images are processed as follows:
 The same preprocessing should be used on the input data when training the emotion classifier.
 
 ## Example run
-``` python emotionweb.py --displayWebcam --seeFaces --netFile 3emotions.p ```
+``` python emotionweb.py --displayWebcam --seeFaces --netFile mihaela-happy-sad.p ```
 
-Note: `3emotions.p` is a network trained with pictures of me. It works very well for my face, but might not work for others (I wear glasses and I have long hair, using a network trained with the standard databases did not work well as they do not contain pictures of people wearing glasses and also not a lot of women are present).
+Note: `mihaela-happy-sad.p` is a network trained with pictures of me. It works very well for my face, but might not work for others (I wear glasses and I have long hair, using a network trained with the standard databases did not work well as they do not contain pictures of people wearing glasses and also not a lot of women are present).
 
 ## Getting training data
 
