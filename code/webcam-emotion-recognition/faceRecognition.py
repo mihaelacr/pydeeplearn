@@ -55,7 +55,7 @@ def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=
                 # Get the text associated with this emotion, but
                 # if we do not have one just display the integer.
                 emotion_to_text.get(emotion, str(emotion)),
-                (x,y),
+                (faceCoordinates[0], faceCoordinates[2]),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 2,
                 BOX_COLOR,
@@ -64,9 +64,9 @@ def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=
     # Add a nice smiley to show the classification
     if emotion_to_image:
       smallImage = emotion_to_image[emotion]
-      smallImage = cv2.resize(smallImage, (x,y))
+      smallImage = cv2.resize(smallImage, (faceCoordinates[0], faceCoordinates[2]))
       smallImage = to_rgb1(smallImage)
-      image[0:0+smallImage.shape[0], 0:0+smallImage.shape[1]] = smallImage
+      image[0:0+smallImage.shape[0], 0:0 + smallImage.shape[1]] = smallImage
 
 def cropFace(image, faceCoordinates):
   return image[faceCoordinates[1]: faceCoordinates[3],

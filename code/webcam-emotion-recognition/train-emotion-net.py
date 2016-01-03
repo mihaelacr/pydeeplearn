@@ -320,7 +320,7 @@ def getHyperParamsAndBestNet():
       if predicted[i] == np.argmax(actual):
         correct += 1
 
-    percentage_correct = correct  * 1.0 / len(test)
+    percentage_correct = correct * 1.0 / len(test)
     print "percentage correct"
     print percentage_correct
 
