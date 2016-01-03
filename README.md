@@ -1,7 +1,7 @@
 pydeeplearn [![Build Status](https://travis-ci.org/mihaelacr/pydeeplearn.png)](https://travis-ci.org/mihaelacr/pydeeplearn)
 ===========
 
-Library for deep belief nets and rbms and convolutional neural networks (simple version). Provides code for dropout, rmsprop, momentum, rectified linear units, sparsity constraints, weight decay, adversarial training, etc. Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/).
+Library for deep belief nets and rbms and convolutional neural networks. Provides code for dropout, rmsprop, momentum, rectified linear units, sparsity constraints, weight decay, adversarial training, etc. Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/). Provides code and a demo for live emotion detection from the webcam.
 
 
 For more details see the [report](http://www.doc.ic.ac.uk/teaching/distinguished-projects/2014/mrosca.pdf) of the project which used this code and the [ poster](http://elarosca.net/poster.pdf) submitted for the participation to the SET awards. The project was made as part of the requirements for a master degree at Imperial College London and received a [prize of excellence](http://www3.imperial.ac.uk/computing/teaching/ug/ug-distinguished-projects).
@@ -20,13 +20,16 @@ The API provided by DBNs is compatible with scikit learn so you can use all the 
 }
  ```
 
-## Demo video
+## Live emotion recognition from the webcam
 I used pydeeplearn and openCV to make an application which detects emotions live from the webcam stream. You can see a demo video of me fooling around at the camera here: http://elarosca.net/video.ogv
+
+If you want to try out the `code/webcam-emotion-recognition/` to check out the demo for yourself! The instructions in the [readme](https://github.com/mihaelacr/pydeeplearn/blob/master/code/webcam-emotion-recognition/Readme.md) will show you how to run the code. I also uploaded a trained network so that you do not have to run the training code to try it out. However, if you want to maximize results for yourself you might want to train a network from your own dataset. I have provided code to do that as well. 
 
 ## User guide
   * The library is in `code/lib/`. You can find there the implementations of RBMs, CNNs and DBNs.
   * Multiple examples on how to use RBMs, DBNs and CNNs are in `code/MNISTdigits.py` and `code/emotions.py`
   * The code that implements a network which determines the similarity between two inputs is in `code/similarity`
+  * The code for the webcam demo (includes training a network from the webcam data) can be found in  `code/webcam-emotion-recognition/`
   * The old code that is not based on theano but only numpy is in `code/old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
   * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
   * If you still have questions, pop me an email or a message.
@@ -86,6 +89,9 @@ Supported image preprocessing:
 For the future plans that I have for the library please see the TODO.txt file. Note that currently pydeeplearn is a side project for me and some features might take some time to implement. 
 
 If you want a feature implemented, please either send a pull request or let me know. I will do my best to get it up and running for you.
+
+### Webcam demo 
+You can do live emotion recongnition from the webcam with the code in `code/webcam-emotion-recognition/`. Note that you can replace the `pydeeplearn` classifier with another classifier, in case you wish to do so.
 
 ## Running examples
 
