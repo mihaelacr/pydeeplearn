@@ -121,6 +121,11 @@ def recogintionWork(image, faceCoordinates, net):
 
 def saveFaceImage(capture, frequency, display, drawFaces):
   img_count = 0
+
+  # Create the directory in which we record the faces.
+  if not os.path.exists(args.recording_emotion):
+    os.makedirs(args.recording_emotion)
+
   while True:
     flag, frame = capture.read()
 
