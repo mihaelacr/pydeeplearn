@@ -70,6 +70,7 @@ def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=
         return
       image[0:0+smallImage.shape[0], 0:0 + smallImage.shape[1]] = smallImage
 
+
 def cropFace(image, faceCoordinates):
   return image[faceCoordinates[1]: faceCoordinates[3],
                 faceCoordinates[0]: faceCoordinates[2]]

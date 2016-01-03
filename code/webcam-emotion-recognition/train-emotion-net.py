@@ -44,6 +44,7 @@ from lib import activationfunctions
 from lib import deepbelief as db
 from lib import common
 
+
 def getFiles(cateogry, show=False):
   imgs = []
 

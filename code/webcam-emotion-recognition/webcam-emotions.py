@@ -6,7 +6,7 @@ import signal
 import sys
 import time
 
-import faceRecognition
+import face_detection
 import ignoreoutput
 import emotionrecognition
 import cPickle as pickle
@@ -98,26 +98,25 @@ def getCameraCapture():
       sys.exit(1)
     return capture
 
+
 def showFrame(frame, faceCoordinates, emotion=None, draw=False):
   if draw and faceCoordinates:
     #  Draw emotions here as well
-    faceRecognition.drawFace(frame, faceCoordinates, emotion,
+    face_detection.drawFace(frame, faceCoordinates, emotion,
                               emotion_to_text, EMOTION_TO_IMAGE)
 
   cv2.imshow(WINDOW_NAME, frame)
 
-# Currently does not destroy window due to OpenCV issues
-def destroyWindow():
-  cv2.destroyWindow(WINDOW_NAME)
-  cv2.waitKey(1)
 
 def readNetwork():
   with open(args.netFile, "rb") as f:
     net = pickle.load(f)
   return net
 
+
 def recogintionWork(image, faceCoordinates, net):
   return emotionrecognition.testImage(image, faceCoordinates, net)
+
 
 def saveFaceImage(capture, frequency, display, drawFaces):
   img_count = 0
@@ -130,7 +129,7 @@ def saveFaceImage(capture, frequency, display, drawFaces):
     flag, frame = capture.read()
 
     if flag:
-      faceCoordinates = faceRecognition.getFaceCoordinates(frame)
+      faceCoordinates = face_detection.getFaceCoordinates(frame)
     if faceCoordinates:
       image = emotionrecognition.preprocess(frame, faceCoordinates)
       # Save the image that will later be used for training.
@@ -144,6 +143,7 @@ def saveFaceImage(capture, frequency, display, drawFaces):
 
     time.sleep(frequency)
 
+
 # Draw faces argument is only taken into account if display was set as true.
 def detectedAndDisplayFaces(capture, net, display=False, drawFaces=False):
   recognition = True
@@ -152,7 +152,7 @@ def detectedAndDisplayFaces(capture, net, display=False, drawFaces=False):
   flag, frame = capture.read()
   # Not sure if there is an error from the cam if we should lock the screen
   if flag:
-    faceCoordinates = faceRecognition.getFaceCoordinates(frame)
+    faceCoordinates = face_detection.getFaceCoordinates(frame)
     if faceCoordinates and recognition:
       emotion = recogintionWork(frame, faceCoordinates, net)
     else:
@@ -164,12 +164,14 @@ def detectedAndDisplayFaces(capture, net, display=False, drawFaces=False):
   else:
     return True
 
+
 def detectEmotions(capture, frequency, display=False, drawFaces=False):
   net = readNetwork()
 
   while True:
     detectedAndDisplayFaces(capture, net, display, drawFaces)
     time.sleep(frequency)
+
 
 def main():
   global frequency
