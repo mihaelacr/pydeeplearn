@@ -14,6 +14,13 @@ THICKNESS = 2
 
 
 def getFaceCoordinates(image):
+  """Uses openCV to detect the face present in the input image.
+
+  Returns a list of length 4, with the two corners of the rectangle that define
+  the position of the face: [x1, y1, x2, y2], where (x1, y1) and (x2, y2)
+  are the defining corners of the rectangle.
+  """
+
   cascade = cv2.CascadeClassifier(CASCADE_FN)
   img_copy = cv2.resize(image, (image.shape[1]/RESIZE_SCALE,
                                 image.shape[0]/RESIZE_SCALE))
@@ -32,6 +39,7 @@ def getFaceCoordinates(image):
   return map((lambda x: RESIZE_SCALE * x), corners)
 
 
+# Turns an image into a rbg image by replicating the 2d data on each of the axis.
 def to_rgb1(im):
     w, h = im.shape
     ret = np.empty((w, h, 3), dtype=np.uint8)
@@ -40,8 +48,9 @@ def to_rgb1(im):
     ret[:, :, 2] = im
     return ret
 
-
 def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=None):
+  """ Draws the face information (together with emotion information) on the input image. """
+
   # Draw the face detection rectangles.
   cv2.rectangle(np.asarray(image),
                 (faceCoordinates[0], faceCoordinates[1]),
