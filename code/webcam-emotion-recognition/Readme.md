@@ -19,7 +19,12 @@ The webcam detected images are processed as follows:
 
 The same preprocessing should be used on the input data when training the emotion classifier.
 
-## Example run
+## Main files in this directory
+ * `webcam-emotions.py`: live emotion recognition from the webcam using an already trained network using `pydeeplearn`
+ * `webcam-emotions.py`: collect data from the webcam for training a network.
+ * `train-emotion-net.py`: trains a network with the collected data.
+
+## Webcam emotion recognition example run
 ``` python webcam-emotions.py --displayWebcam --seeFaces --netFile mihaela-happy-sad.p ```
 
 Note: `mihaela-happy-sad.p` is a network trained with pictures of me. It works very well for my face, but might not work for others (I wear glasses and I have long hair, using a network trained with the standard databases did not work well as they do not contain pictures of people wearing glasses and also not a lot of women are present).
