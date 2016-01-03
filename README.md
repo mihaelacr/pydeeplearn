@@ -4,7 +4,7 @@ pydeeplearn [![Build Status](https://travis-ci.org/mihaelacr/pydeeplearn.png)](h
 Library for deep belief nets and rbms and convolutional neural networks (simple version). Provides code for dropout, rmsprop, momentum, rectified linear units, sparsity constraints, weight decay, adversarial training, etc. Runs on GPUs for high performance by using [theano](http://deeplearning.net/software/theano/).
 
 
-For more details see the [report](http://elarosca.net/report.pdf) of the project which used this code and the [ poster](http://elarosca.net/poster.pdf) submitted for the participation to the SET awards. The project was made as part of the requirements for a master degree at Imperial College London and received a [prize of excellence](http://www3.imperial.ac.uk/computing/teaching/ug/ug-distinguished-projects).
+For more details see the [report](http://www.doc.ic.ac.uk/teaching/distinguished-projects/2014/mrosca.pdf) of the project which used this code and the [ poster](http://elarosca.net/poster.pdf) submitted for the participation to the SET awards. The project was made as part of the requirements for a master degree at Imperial College London and received a [prize of excellence](http://www3.imperial.ac.uk/computing/teaching/ug/ug-distinguished-projects).
 
 One of the key points of this implementation and API is that they do not impose theano on the user. While theano is a great tool it has quite a steep learning curve so I decided to take advantage of its power without imposing that the user learns theano. Hence all the interface code just requires python and basic numpy knowledge. To the best of my knowledge this is the only library with these features.
 
