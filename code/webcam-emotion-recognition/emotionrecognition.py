@@ -1,10 +1,9 @@
-import sys
-import cv2
 from skimage.transform import resize
+import cv2
 import numpy as np
-import faceRecognition
-import scipy
-import matplotlib.pyplot as plt
+import sys
+
+import face_detection
 
 # We need this to import other modules
 sys.path.append("..")
@@ -32,7 +31,7 @@ def preprocess(image, faceCoordinates, return_vector=False):
   image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
   # Step 1: crop the the image
-  cropped = faceRecognition.cropFace(image, faceCoordinates)
+  cropped = face_detection.cropFace(image, faceCoordinates)
 
   # Step 2: Resize
   resized = np.ascontiguousarray(resize(cropped, SMALL_SIZE))
