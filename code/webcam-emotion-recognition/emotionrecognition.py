@@ -16,6 +16,19 @@ SQUARE_SIZE = (48, 48)
 
 
 def preprocess(image, faceCoordinates, return_vector=False):
+  """Preprocess the input image according to the face coordinates detected
+   by a face recognition engine.
+
+   This method:
+     * crops the input image, keeping only the face given by faceCoordinates
+     * transforms the picture into black and white
+     * equalizes the input image
+
+   If return_vector is True, returns a vector by concatenating the rows of the
+   processed image. Otherwise, a matrix (2-d numpy array) is returned.
+
+   This method needs to be called both for training and testing.
+  """
   image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
   # Step 1: crop the the image
@@ -30,12 +43,19 @@ def preprocess(image, faceCoordinates, return_vector=False):
     return equalized
   return np.reshape(equalized, SMALL_SIZE)
 
-def testImage(image, faceCoordinates, net):
+def testImage(image, faceCoordinates, emotion_classifier):
+  """Classifies the emotions in the input image according to the face coordinates
+  detected by a face detection engine.
+
+  First calls preprocess and then uses the given emotion_classifier to detect
+  emotions in the processed image.
+
+  """
   testImg = preprocess(image, faceCoordinates, return_vector=True)
 
   # IMPORTANT: scale the image for it to be testable
   test = common.scale(testImg.reshape(1, len(testImg)))
-  probs, emotion = net.classify(test)
+  probs, emotion = emotion_classifier.classify(test)
 
   # classify returns a vector, as it is made to classify multiple test instances
   # at the same time.
