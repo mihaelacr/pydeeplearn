@@ -45,7 +45,12 @@ from lib import deepbelief as db
 from lib import common
 
 
+
 def getFiles(cateogry, show=False):
+  """Returns all the png files in the subdirectory given by the input argument.
+
+  The images are returns as a list of numpy arrays.
+  """
   imgs = []
 
   extension = "png"
@@ -68,7 +73,6 @@ def getFiles(cateogry, show=False):
   return imgs
 
 
-"""Create the files needed to train the network. """
 def createTrainingSet(show=False):
   # Read the unsupervised data.
   unsupervised = getFiles("unsupervised")
@@ -94,7 +98,7 @@ def createTrainingSet(show=False):
   return unsupervised, data, labels
 
 
-def seeData():
+def visualizeTrainingData():
   unsupervised, data, labels = createTrainingSet()
 
   if unsupervised:
@@ -245,6 +249,7 @@ def trainAndTestNet():
     pickle.dump(net, f)
   return net
 
+# Performs CV to choose the best hyperparameters given the data.
 def getHyperParamsAndBestNet():
   unsupervisedData, data, labels = createTrainingSet()
 
@@ -342,7 +347,7 @@ def getHyperParamsAndBestNet():
 
 if __name__ == '__main__':
   if args.display_example_data:
-    seeData()
+    visualizeTrainingData()
 
   if args.cv:
     getHyperParamsAndBestNet()
