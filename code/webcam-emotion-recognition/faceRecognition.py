@@ -64,7 +64,7 @@ def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=
     # Add a nice smiley to show the classification
     if emotion_to_image:
       smallImage = emotion_to_image[emotion]
-      smallImage = cv2.resize(smallImage, (faceCoordinates[0], faceCoordinates[2]))
+      smallImage = cv2.resize(smallImage, (faceCoordinates[0], faceCoordinates[1]))
       smallImage = to_rgb1(smallImage)
       if smallImage.shape[0] > image.shape[0] or smallImage.shape[1] > image.shape[0]:
         return
