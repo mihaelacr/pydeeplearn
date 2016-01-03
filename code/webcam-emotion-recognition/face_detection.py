@@ -40,7 +40,7 @@ def to_rgb1(im):
     ret[:, :, 2] = im
     return ret
 
-# (294, 454, 3) this is the shape of the frame
+
 def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=None):
   # Draw the face detection rectangles.
   cv2.rectangle(np.asarray(image),
@@ -49,7 +49,7 @@ def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=
                 RECTANGE_COLOUR,
                 thickness=THICKNESS)
 
-  #  Draw the emotion specifc emoticon.
+  # Display the emotion on the webcam stream.
   if emotion is not None:
     cv2.putText(image,
                 # Get the text associated with this emotion, but
