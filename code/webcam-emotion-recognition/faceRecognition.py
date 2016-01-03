@@ -66,6 +66,8 @@ def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=
       smallImage = emotion_to_image[emotion]
       smallImage = cv2.resize(smallImage, (faceCoordinates[0], faceCoordinates[2]))
       smallImage = to_rgb1(smallImage)
+      if smallImage.shape[0] > image.shape[0] or smallImage.shape[1] > image.shape[0]:
+        return
       image[0:0+smallImage.shape[0], 0:0 + smallImage.shape[1]] = smallImage
 
 def cropFace(image, faceCoordinates):
