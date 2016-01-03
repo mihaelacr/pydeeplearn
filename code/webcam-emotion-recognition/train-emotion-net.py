@@ -240,7 +240,7 @@ def trainAndTestNet():
   print "confusion matrix"
   print confMatrix
 
-  with open(args.netFile, "wb") as f:
+  with open(args.net_file, "wb") as f:
     pickle.dump(net, f)
   return net
 
@@ -266,6 +266,7 @@ def getHyperParamsAndBestNet():
   percentages = []
   best_index = 0
   index = 0
+  best_correct = 0
 
   # Random data for training and testing
   kf = cross_validation.KFold(n=len(data), n_folds=10)
@@ -323,11 +324,11 @@ def getHyperParamsAndBestNet():
     print "percentage correct"
     print percentage_correct
 
-    if percentage_correct < best_correct:
+    if percentage_correct > best_correct:
       best_index = index
-      with open(args.netFile, "wb") as f:
+      best_correct = percentage_correct
+      with open(args.net_file, "wb") as f:
         pickle.dump(net, f)
-
 
     percentages += [percentage_correct]
     index += 1

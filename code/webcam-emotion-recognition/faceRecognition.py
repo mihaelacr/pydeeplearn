@@ -27,7 +27,9 @@ def getFaceCoordinates(image):
     return None
 
   r = rects[0]
-  return map((lambda x: RESIZE_SCALE * x), r)
+  corners = [r[0], r[1], r[0] + r[2], r[1] + r[3]]
+
+  return map((lambda x: RESIZE_SCALE * x), corners)
 
 
 def to_rgb1(im):
@@ -40,15 +42,10 @@ def to_rgb1(im):
 
 # (294, 454, 3) this is the shape of the frame
 def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=None):
-  x = faceCoordinates[0]
-  y = faceCoordinates[1]
-  w = faceCoordinates[2]
-  h = faceCoordinates[3]
-
   # Draw the face detection rectangles.
   cv2.rectangle(np.asarray(image),
-                (x,y),
-                (x + w, y + h),
+                (faceCoordinates[0], faceCoordinates[1]),
+                (faceCoordinates[2], faceCoordinates[3]),
                 RECTANGE_COLOUR,
                 thickness=THICKNESS)
 
@@ -72,9 +69,5 @@ def drawFace(image, faceCoordinates, emotion, emotion_to_text, emotion_to_image=
       image[0:0+smallImage.shape[0], 0:0+smallImage.shape[1]] = smallImage
 
 def cropFace(image, faceCoordinates):
-  x = faceCoordinates[0]
-  y = faceCoordinates[1]
-  w = faceCoordinates[2]
-  h = faceCoordinates[3]
-
-  return image[y:y+h, x:x+w]
+  return image[faceCoordinates[1]: faceCoordinates[3],
+                faceCoordinates[0]: faceCoordinates[2]]
