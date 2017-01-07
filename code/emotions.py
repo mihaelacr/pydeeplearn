@@ -36,8 +36,6 @@ else:
   matplotlib.use('Agg')
   import matplotlib.pyplot as plt
 
-ImportMatplotlibPlot()
-
 parser = argparse.ArgumentParser(description='emotion recongnition')
 parser.add_argument('--rbmnesterov', dest='rbmnesterov',action='store_true', default=False,
                     help=("if true, rbms are trained using nesterov momentum"))
