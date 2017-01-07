@@ -33,6 +33,10 @@ If you want to try out the `code/webcam-emotion-recognition/` to check out the d
   * The old code that is not based on theano but only numpy is in `code/old-version`. This code is incomplete. Do not use it. It is there for educational purposes because it is easier to understand how to implement RBMs and DBNs without theano.
   * If you are a beginner in deep learning, please check out my [report](http://elarosca.net/report.pdf). It explains the foundation behind the concepts used in this library.
   * If you still have questions, pop me an email or a message.
+  
+## New dataset
+
+There is a new dataset of faces available: [Labeled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/). Would love for someone to try pydeeplearn on that dataset!! Let me know if you are interested :)
 
 ## Docker container
 If you do not want to go trough all the hurdle of installing the dependencies needed for pydeeplearn then you can just use the docker container found at on [docker hub](https://hub.docker.com/r/mihaelacr/pydeeplearn-labeled/).
