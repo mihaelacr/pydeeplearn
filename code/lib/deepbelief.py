@@ -184,13 +184,13 @@ class DBN(object):
         type: bool
     momentumMax: the maximum value momentum is allowed to increase to
         type: float
-    momentumMax: the maximum value momentum is allowed to increase to in training RBMs
+    momentumMaxRbm: the maximum value momentum is allowed to increase to in training RBMs
         type: float
     momentumForEpochFunction: the function used to increase momentum during training
         type: python function (for examples see module common)
     rmsprop: if true, rmsprop is used for training
         type: bool
-    rmsprop: if true, rmsprop is used for training RBMs
+    rmspropRbm: if true, rmsprop is used for training RBMs
         type: bool
     miniBatchSize: the number of instances to be used in a mini batch during training
         type: int
